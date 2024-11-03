@@ -28,8 +28,6 @@ public class BattleManagerAlt : MonoBehaviour
     public Button monsterDetailButton;
     public GameObject monsterConditionPanel;
     public GameObject monsterDetailPanel;
-
-
     public Transform cardSpawnPoint;
     public Transform cardAreaBorderLeft;
     public Transform cardAreaBorderRight;
