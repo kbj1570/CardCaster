@@ -529,7 +529,7 @@ public class BattleManagerAlt : MonoBehaviour
     {
         
         GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-        cardObject.SetActive(false);
+        // cardObject.SetActive(false);
         cardObject.transform.SetParent(canvas.transform);
         cardObjectList.Add(cardObject);
         CardData cardData = deckList[deckList.Count - 1];
@@ -542,7 +542,7 @@ public class BattleManagerAlt : MonoBehaviour
         CardAlignmentAlt();
         yield return new WaitForSeconds(0.2f);
 
-        StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
+        // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
         cardObject.SetActive(true);
         // CardAlignment();
     }

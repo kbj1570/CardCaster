@@ -20,6 +20,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
 
+    void Update()
+    {
+    }
+
     public void UpdateCardCost(int monsterCost, int spellCost)
     {
         if(cardData.GetCardType() == ECardType.Monster)
@@ -74,11 +78,16 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        BattleManagerAlt.Inst.CardAlignmentAlt();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        this.transform.position = eventData.delta;
+        // this.transform.position = eventData.delta;
+        // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
+        
+
+        this.transform.position = Input.mousePosition;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
