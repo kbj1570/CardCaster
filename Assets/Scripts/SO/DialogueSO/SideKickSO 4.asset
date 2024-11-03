@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8591b70474c035e4fae5544b110a9cb6, type: 3}
+  m_Name: SideKickSO 4
+  m_EditorClassIdentifier: 
+  nextNode_First: {fileID: 0}
+  nextNode_Second: {fileID: 0}
+  nextNode_Third: {fileID: 0}
+  characterSprite_Left: {fileID: 0}
+  characterSprite_Middle: {fileID: 0}
+  characterSprite_Right: {fileID: 0}
+  text_1: "\uC608\uC544."
+  text_2: "\uC548\uB420\uAC70 \uBB50 \uC788\uB178"
+  text_3: 
+  name: "\uBE0C\uB85C\uB514"
+  switchSequence: 0
+  hasSelection: 0
+  sequenceValue: 0
+  dialogueOwner: 0
