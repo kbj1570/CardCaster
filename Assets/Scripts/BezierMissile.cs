@@ -6,7 +6,6 @@ using DG.Tweening;
 public class BezierMissile : MonoBehaviour {
  
     Vector2[] point = new Vector2[4];
-    Animator anim;
     bool hit = false;
 
     [SerializeField] [Range(0, 1)] private float t = 0;
@@ -18,7 +17,6 @@ public class BezierMissile : MonoBehaviour {
 
     void Start()
     {
-        anim = GetComponent<Animator>();
 
         point[0] = master.transform.position;// P0
         point[1] = PointSetting(master.transform.position);// P1
@@ -54,14 +52,6 @@ public class BezierMissile : MonoBehaviour {
         transform.DOMove(new Vector2(
             FourPointBezier(point[0].x, point[1].x, point[2].x, point[3].x),
             FourPointBezier(point[0].y, point[1].y, point[2].y, point[3].y)), 0);
-    }
-
-    void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.gameObject == enemy) {
-            hit = true;
-            anim.SetTrigger("hit");
-            Destroy(gameObject, 0.35f);
-        }
     }
     private float FourPointBezier(float a, float b, float c, float d)
     {

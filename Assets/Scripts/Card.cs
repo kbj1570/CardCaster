@@ -78,7 +78,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        BattleManagerAlt.Inst.CardAlignmentAlt();
+        BattleManagerAlt.Inst.DeleteDragLine();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -86,8 +86,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
         
-
-        this.transform.position = Input.mousePosition;
+        BattleManagerAlt.Inst.DrawDragLine(this.transform.position);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
