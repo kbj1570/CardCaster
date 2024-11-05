@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.EventSystems;
+using System;
+
 
 
 public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
@@ -47,7 +49,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         this.cardData = cardData;
         this.isFront = isFront;
         nameTMP.text = this.cardData.GetCardName();
-        if(cardData.GetCardType() == ECardType.Monster)
+        if(cardData.GetCardType() == BattleManagerAlt.ECardType.Monster)
             forceTMP.text = this.cardData.GetForce().ToString();
         
         descriptionTMP.text = this.cardData.GetCardAbility();

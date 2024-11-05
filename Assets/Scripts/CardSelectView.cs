@@ -38,7 +38,7 @@ public class CardSelectView : MonoBehaviour
         {
             if(button.GetComponent<CardToggleButton>().GetToggle().isOn)
             {
-                CardManager.Inst.AddSelectedCard(button.GetComponent<CardToggleButton>().GetCardDataSO());
+                // CardManager.Inst.AddSelectedCard(button.GetComponent<CardToggleButton>().GetCardDataSO());
             }
             
         }
