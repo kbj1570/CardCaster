@@ -44,6 +44,11 @@ public class BattleManagerAlt : MonoBehaviour
 
     public LineRenderer dragLine;
     public int lineCount;
+    public enum ECardType{Monster, Spell}
+    public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
+    public enum EMonsterAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
+    public enum EServentCondition{Void, Oblivion}
+    enum EParryState{Idle, Parry}
 
 
 
@@ -68,7 +73,6 @@ public class BattleManagerAlt : MonoBehaviour
     public bool isLoading;
     public int startCardCount;
     public bool fastMode;
-    enum EParryState{Idle, Parry}
     private EParryState parryState;
     private bool justGuard;
 
@@ -220,7 +224,7 @@ public class BattleManagerAlt : MonoBehaviour
             break;
             //소환수 하나에 걸려있는 상태를 모두 해제한다.
 
-            case 2: // 공정한 거래
+            case 2: // 정당한 거래
             DrawCard();
             player.GetComponent<Field>().LoseForce(2);
             break;
@@ -321,7 +325,10 @@ public class BattleManagerAlt : MonoBehaviour
             {
                 int p = 5 - handList.Count;
                 for(int i = 0; i < p; ++i)
-                {DrawCard();}
+                {
+                    DrawCard();
+                    yield return delay05;
+                }
             }
             else
             {DrawCard();}
@@ -585,11 +592,6 @@ public class BattleManagerAlt : MonoBehaviour
     public void ResetMouseOnField()
     {mouseOnField = null;}
 
-    public void Notification(string message)
-    {
-        //  notificationPanel.Show(message);
-    }
-
     public void SelectTarget(GameObject field)
     {
         missileTarget = field;
@@ -609,14 +611,6 @@ public class BattleManagerAlt : MonoBehaviour
     }
 
     //위치 선정, 패 정렬, 미사일 발사, 카드 POP 
-
-
-
-    public void RoundAlignmentAlt()
-    {
-
-    }
-
     List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int objectCount, float height, Vector3 scale)
     {
         float[] objLerps = new float[objectCount];
@@ -647,7 +641,6 @@ public class BattleManagerAlt : MonoBehaviour
             }
             results.Add(new PRS(targetPos, targetRot, scale));
         }
-
         return results;
     }
 
@@ -668,29 +661,23 @@ public class BattleManagerAlt : MonoBehaviour
     public void DeleteDragLine()
     {dragLine.positionCount = 0;}
 
-    public void DrawDragLine(Vector2 value)
+    public void DrawDragLine(Vector2 startPoint)
     {
         Vector3[] point = new Vector3[lineCount];
         float posA = 300f;
         float posB = 300f;
-
-        
-
         dragLine.positionCount = lineCount;
 
         for(int i = 0; i < lineCount; ++i)
         {
             float t;
             if (i == 0)
-            {
-                t = 0;
-            }
+            {t = 0;}
             else
-            {
-                t = (float)i / (lineCount - 1);
-            }
-            point[i] = camera.ScreenToWorldPoint(Bezier(value, PointSetting(value), PointSetting(Input.mousePosition),
-                Input.mousePosition, t));
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = camera.ScreenToWorldPoint(Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(Input.mousePosition),Input.mousePosition, t));
             point[i].z = 0;
         }
         dragLine.SetPositions(point);
@@ -713,16 +700,10 @@ public class BattleManagerAlt : MonoBehaviour
 
             return Vector3.Lerp(B0, B1, t);
         }
-
-
     }
 
     public void TestFunction()
     {
-        testField.GetComponent<Field>().AddCondition(EServentCondition.Void);
-        testField.GetComponent<Field>().AddCondition(EServentCondition.Oblivion);
-
-        testField.GetComponent<Field>().UpdateCondition();
     }
 
     public bool CheckSpellUsable(int spellNum)
@@ -730,14 +711,8 @@ public class BattleManagerAlt : MonoBehaviour
         switch(spellNum)
         {
             case 0: //엘리멘탈 부스트
-            
-            
             break;
         }
-
-
         return false;
     }
-
-    
 }

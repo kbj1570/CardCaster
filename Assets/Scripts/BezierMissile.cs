@@ -44,9 +44,9 @@ public class BezierMissile : MonoBehaviour {
     void DrawTrajectory() {
         transform.DOMove(new Vector2(
             FourPointBezier(point[0].x, point[1].x, point[2].x, point[3].x),
-            FourPointBezier(point[0].y, point[1].y, point[2].y, point[3].y)), 0);
+            FourPointBezier(point[0].y, point[1].y, point[2].y, point[3].y)), 0);
     }
-    private float FourPointBezier(float a, float b, float c, float d)
+    private float FourPointBezier(float a, float b, float c, float d)
     {
         return Mathf.Pow((1 - t), 3) * a
             + Mathf.Pow((1 - t), 2) * 3 * t * b
