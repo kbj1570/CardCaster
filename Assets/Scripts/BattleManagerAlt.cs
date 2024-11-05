@@ -6,6 +6,11 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+public enum ECardType{Servent, Spell}
+public enum EMonsterAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
+public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
+public enum ECardTargetType{Selected, Select}
+public enum EServentCondition{Void, Oblivion}
 public class BattleManagerAlt : MonoBehaviour
 {
     public static BattleManagerAlt Inst{get; private set;}
@@ -44,10 +49,8 @@ public class BattleManagerAlt : MonoBehaviour
 
     public LineRenderer dragLine;
     public int lineCount;
-    public enum ECardType{Monster, Spell}
-    public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
-    public enum EMonsterAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
-    public enum EServentCondition{Void, Oblivion}
+
+
     enum EParryState{Idle, Parry}
 
 
@@ -256,7 +259,22 @@ public class BattleManagerAlt : MonoBehaviour
         }
 
         FieldManager.Inst.UpdateAllFieldStatus();
+    }
 
+    public bool CheckAbilityUsable()
+    {return false;}
+    public bool CheckSpellUsable(ECardTargetType value, int spellNum)
+    {
+        if(value == ECardTargetType.Selected)
+        {return true;}
+
+
+        switch(spellNum)
+        {
+            case 4: //사소한 건망증
+            break;
+        }
+        return false;
     }
 
      void GameSetup()
@@ -706,13 +724,5 @@ public class BattleManagerAlt : MonoBehaviour
     {
     }
 
-    public bool CheckSpellUsable(int spellNum)
-    {
-        switch(spellNum)
-        {
-            case 0: //엘리멘탈 부스트
-            break;
-        }
-        return false;
-    }
+
 }

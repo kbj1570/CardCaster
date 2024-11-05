@@ -26,7 +26,7 @@ public class CardButton : MonoBehaviour
         this.cardData = cardData;
         // character.sprite = this.cardData.GetSprite();
         nameTMP.text = this.cardData.GetCardName();
-        if(cardData.GetCardType() == ECardType.Monster)
+        if(cardData.GetCardType() == ECardType.Servent)
             healthTMP.text = this.cardData.GetForce().ToString();
         
         descriptionTMP.text = this.cardData.GetCardAbility();

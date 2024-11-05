@@ -424,8 +424,8 @@ public class FieldManager : MonoBehaviour
     {
         if(startPointField != null && mouseOnField != null)
         {
-            if(startPointField.filled && mouseOnField.filled)
-                BattleManager.Inst.Battle(startPointField, mouseOnField);
+            if(startPointField.filled && mouseOnField.filled);
+                // BattleManager.Inst.Battle(startPointField, mouseOnField);
         }
 
         

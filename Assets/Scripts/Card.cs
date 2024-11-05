@@ -19,6 +19,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     bool isUsable;
     int currentCost;
     public PRS originPRS;
+
+    public ECardTargetType cardTargetType;
+
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
 
@@ -28,7 +31,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void UpdateCardCost(int monsterCost, int spellCost)
     {
-        if(cardData.GetCardType() == ECardType.Monster)
+        if(cardData.GetCardType() == ECardType.Servent)
         {
             currentCost = this.cardData.GetCardCost() - monsterCost;
             if(currentCost < 0){currentCost = 0;}
@@ -49,7 +52,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         this.cardData = cardData;
         this.isFront = isFront;
         nameTMP.text = this.cardData.GetCardName();
-        if(cardData.GetCardType() == BattleManagerAlt.ECardType.Monster)
+        if(cardData.GetCardType() == ECardType.Servent)
             forceTMP.text = this.cardData.GetForce().ToString();
         
         descriptionTMP.text = this.cardData.GetCardAbility();
