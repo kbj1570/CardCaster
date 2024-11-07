@@ -31,27 +31,27 @@ public class ServentInfoWindow : MonoBehaviour
         serventAbility.text = cardData.GetCardAbility();
         switch(cardData.GetAttribute())
         {
-            case EMonsterAttribute.Fire:
+            case EServentAttribute.Fire:
             serventAttribute.sprite = fireAttribute;
             break;
 
-            case EMonsterAttribute.Wind:
+            case EServentAttribute.Wind:
             serventAttribute.sprite = windAttribute;
             break;
 
-            case EMonsterAttribute.Ice:
+            case EServentAttribute.Ice:
             serventAttribute.sprite = iceAttribute;
             break;
 
-            case EMonsterAttribute.Earth:
+            case EServentAttribute.Earth:
             serventAttribute.sprite = earthAttribute;
             break;
 
-            case EMonsterAttribute.Darkness:
+            case EServentAttribute.Darkness:
             serventAttribute.sprite = darknessAttribute;
             break;
 
-            case EMonsterAttribute.Light:
+            case EServentAttribute.Light:
             serventAttribute.sprite = lightAttribute;
             break;
         }

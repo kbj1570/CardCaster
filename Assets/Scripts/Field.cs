@@ -45,7 +45,7 @@ public class Field : MonoBehaviour
     public int GetFieldNum(){return fieldNum;}
 
     public void GainForce(int value){currentForce += value;}
-    public EMonsterAttribute GetMonsterAttribute(){return cardData.GetAttribute();}
+    public EServentAttribute GetServentAttribute(){return cardData.GetAttribute();}
     public void LoseForce(int value)
     {
         if(!filled)

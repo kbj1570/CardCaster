@@ -135,23 +135,23 @@ public class FieldManager : MonoBehaviour
         {
             case 0: // 엘리멘탈 부스트
 
-            List<EMonsterAttribute> attrubutes = new();
+            List<EServentAttribute> attrubutes = new();
             if(field1.GetFilled())
             {
-                if(!attrubutes.Contains(field1.GetMonsterAttribute()))
-                {attrubutes.Add(field1.GetMonsterAttribute());}
+                if(!attrubutes.Contains(field1.GetServentAttribute()))
+                {attrubutes.Add(field1.GetServentAttribute());}
             }
 
             if(field2.GetFilled())
             {
-                if(!attrubutes.Contains(field2.GetMonsterAttribute()))
-                {attrubutes.Add(field2.GetMonsterAttribute());}
+                if(!attrubutes.Contains(field2.GetServentAttribute()))
+                {attrubutes.Add(field2.GetServentAttribute());}
             }
 
             if(field3.GetFilled())
             {
-                if(!attrubutes.Contains(field3.GetMonsterAttribute()))
-                {attrubutes.Add(field3.GetMonsterAttribute());}
+                if(!attrubutes.Contains(field3.GetServentAttribute()))
+                {attrubutes.Add(field3.GetServentAttribute());}
             }
 
             int value = attrubutes.Count;
@@ -168,37 +168,37 @@ public class FieldManager : MonoBehaviour
 
             if(field1.filled)
             {
-                if(field1.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field1.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field1.Kill();}
             }
 
             if(field2.filled)
             {
-                if(field2.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field2.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field2.Kill();}
             }
 
             if(field3.filled)
             {
-                if(field3.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field3.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field3.Kill();}
             }
 
             if(field4.filled)
             {
-                if(field4.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field4.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field4.Kill();}
             }
 
             if(field5.filled)
             {
-                if(field5.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field5.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field5.Kill();}
             }
 
             if(field6.filled)
             {
-                if(field6.GetMonsterAttribute().Equals(EMonsterAttribute.Darkness))
+                if(field6.GetServentAttribute().Equals(EServentAttribute.Darkness))
                 {field6.Kill();}
             }
             

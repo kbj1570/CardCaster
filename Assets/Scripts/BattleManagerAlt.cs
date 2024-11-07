@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 public enum ECardType{Servent, Spell}
-public enum EMonsterAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
+public enum EServentAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{Void, Oblivion}
@@ -195,23 +195,23 @@ public class BattleManagerAlt : MonoBehaviour
         switch(cardData.GetCardNum())
         {
             case 0:// 엘리멘탈 부스트
-            List<EMonsterAttribute> attributes = new();
+            List<EServentAttribute> attributes = new();
             if(field_1.GetComponent<Field>().GetFilled())
             {
-                if(!attributes.Contains(field_1.GetComponent<Field>().GetMonsterAttribute()))
-                {attributes.Add(field_1.GetComponent<Field>().GetMonsterAttribute());}
+                if(!attributes.Contains(field_1.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_1.GetComponent<Field>().GetServentAttribute());}
             }
 
             if(field_2.GetComponent<Field>().GetFilled())
             {
-                if(!attributes.Contains(field_2.GetComponent<Field>().GetMonsterAttribute()))
-                {attributes.Add(field_2.GetComponent<Field>().GetMonsterAttribute());}
+                if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
             }
 
             if(field_3.GetComponent<Field>().GetFilled())
             {
-                if(!attributes.Contains(field_3.GetComponent<Field>().GetMonsterAttribute()))
-                {attributes.Add(field_3.GetComponent<Field>().GetMonsterAttribute());}
+                if(!attributes.Contains(field_3.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_3.GetComponent<Field>().GetServentAttribute());}
             }
 
             int value = attributes.Count;
@@ -238,6 +238,7 @@ public class BattleManagerAlt : MonoBehaviour
 
             if(foo)
             {
+                selectedTarget.GetComponent<Field>().GetServentAttribute();
 
             }
 
@@ -245,7 +246,7 @@ public class BattleManagerAlt : MonoBehaviour
             //소환된 자신의 빛 속성 소환수가 있다면 상대 소환수 전부에게 [실명]을 부여한다.
 
             case 4: //사소한 건망증
-
+            selectedTarget.GetComponent<Field>().AddCondition(EServentCondition.Oblivion);
             break;
             //소환수 하나에게 [망각]을 부여한다.
 
@@ -254,15 +255,24 @@ public class BattleManagerAlt : MonoBehaviour
             break;
             //자신의 소환수 하나에게 [자폭]을 부여한다.
 
+            case 6: //
+            break;
+            //자신의 소환수 하나를 소멸시키고 그 소환수의 포스 수만큼 드로우한다.
 
-
+            case 7: // 등가교환
+            break;
+            //자신의 소환수 하나와 마주보고 있는 상대 소환수의 포스를 서로 바꾼다.
         }
 
         FieldManager.Inst.UpdateAllFieldStatus();
     }
 
     public bool CheckAbilityUsable()
-    {return false;}
+    {
+
+        
+        return false;
+    }
     public bool CheckSpellUsable(ECardTargetType value, int spellNum)
     {
         if(value == ECardTargetType.Selected)
