@@ -46,25 +46,14 @@ public class BattleManagerAlt : MonoBehaviour
     private Dictionary<ItemSO, int> inventory;
     WaitForSeconds delay05 = new WaitForSeconds(0.5f);
     WaitForSeconds delay07 = new WaitForSeconds(0.7f);
-
     public LineRenderer dragLine;
     public int lineCount;
-
-
     enum EParryState{Idle, Parry}
-
-
-
 
 
 
     public List<GameObject> conditionMarkList;
 
-    /*
-    상태 리스트
-    0.공허
-    1.망각
-    */
 
     private int currentCost;
     // 현재 지불해놓은 코스트의 수
@@ -225,7 +214,7 @@ public class BattleManagerAlt : MonoBehaviour
             case 1: // 달의 축복
             selectedTarget.GetComponent<Field>().ResetCondition();
             break;
-            //소환수 하나에 걸려있는 상태를 모두 해제한다.
+            //소환수 하나에게 걸려있는 상태를 모두 해제한다.
 
             case 2: // 정당한 거래
             DrawCard();
@@ -234,13 +223,6 @@ public class BattleManagerAlt : MonoBehaviour
             //덱을 1장 뽑고 체력을 2 잃는다.
 
             case 3: //눈부신 빛
-            bool foo = false;
-
-            if(foo)
-            {
-                selectedTarget.GetComponent<Field>().GetServentAttribute();
-
-            }
 
             break;
             //소환된 자신의 빛 속성 소환수가 있다면 상대 소환수 전부에게 [실명]을 부여한다.
@@ -261,16 +243,25 @@ public class BattleManagerAlt : MonoBehaviour
 
             case 7: // 등가교환
             break;
-            //자신의 소환수 하나와 마주보고 있는 상대 소환수의 포스를 서로 바꾼다.
+            //자신의 소환수 하나와 마주보고 있는 소환수의 포스를 서로 바꾼다.
+
+            case 8: //상승기류
+            break;
+            //자신의 바람 속성 소환수 하나를 패로 되돌린다.
+
+            case 9:
+            break;
+            //자신의 소환수 하나의 포스를 2배로 한다. 그 소환수는 이 턴이 끝나면 소멸한다.
         }
 
         FieldManager.Inst.UpdateAllFieldStatus();
     }
 
+    // 효과를 만
+
     public bool CheckAbilityUsable()
     {
 
-        
         return false;
     }
     public bool CheckSpellUsable(ECardTargetType value, int spellNum)

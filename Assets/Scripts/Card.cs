@@ -21,6 +21,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public PRS originPRS;
 
     public ECardTargetType cardTargetType;
+    public ECardType cardType;
 
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
