@@ -264,17 +264,17 @@ public class BattleManagerAlt : MonoBehaviour
 
         return false;
     }
-    public bool CheckSpellUsable(ECardTargetType value, int spellNum)
+    public bool CheckCardUsable(ECardTargetType value, int cardNum)
     {
         if(value == ECardTargetType.Selected)
         {return true;}
 
-
-        switch(spellNum)
+        switch(cardNum)
         {
             case 4: //사소한 건망증
             break;
         }
+        
         return false;
     }
 
@@ -673,12 +673,12 @@ public class BattleManagerAlt : MonoBehaviour
         {
             var targetCard = cardObjectList[i];
             targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
-            targetCard.GetComponent<Card>().MoveTransform(
-            targetCard.GetComponent<Card>().originPRS, true, 0.7f);
+            targetCard.GetComponent<Card>().MoveTransform(targetCard.GetComponent<Card>().originPRS, true, 0.7f);
         }
     }
     public void DeleteDragLine()
-    {dragLine.positionCount = 0;}
+    {
+        dragLine.positionCount = 0;}
 
     public void DrawDragLine(Vector2 startPoint)
     {
@@ -700,6 +700,11 @@ public class BattleManagerAlt : MonoBehaviour
             point[i].z = 0;
         }
         dragLine.SetPositions(point);
+        
+
+        //마우스가 필드 구역 위에 있다면 Line의 끝을 그 필드의 중앙으로 고정한다.
+        if(true)
+        {}
 
         Vector3 PointSetting(Vector3 origin){
             float x, y;

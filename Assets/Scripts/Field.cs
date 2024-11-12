@@ -18,6 +18,8 @@ public class Field : MonoBehaviour
     public GameObject conditionPanel;
     public GameObject conditionPanelButton;
 
+    public GameObject fieldArea;
+
     public GameObject monsterPrefab;
     public GameObject summonEffectPrefab;
     public GameObject summonEffectObject;
@@ -29,15 +31,9 @@ public class Field : MonoBehaviour
     public Color forceColorWind;
     public Color forceColorDarkness;
     public Color forceColorLight;
-
-
     
     public int currentForce;
-    
     public int fieldNum;
-
-    void Start()
-    {}
 
     public void SetForce(int value){ currentForce = value;}
     public int GetForce(){return currentForce;}

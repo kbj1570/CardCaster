@@ -85,12 +85,16 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public void OnEndDrag(PointerEventData eventData)
     {
         BattleManagerAlt.Inst.DeleteDragLine();
+
+        if(BattleManagerAlt.Inst.CheckCardUsable(this.cardTargetType ,this.cardData.cardNum))
+        {Destroy(this.gameObject);}
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
+        // Dark Night, Black Sky, The Devils Cry
         
         BattleManagerAlt.Inst.DrawDragLine(this.transform.position);
     }
