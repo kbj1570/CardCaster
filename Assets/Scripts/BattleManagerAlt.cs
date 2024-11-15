@@ -48,6 +48,7 @@ public class BattleManagerAlt : MonoBehaviour
     WaitForSeconds delay07 = new WaitForSeconds(0.7f);
     public LineRenderer dragLine;
     public int lineCount;
+    private CardTargetingSystem targetingSystem;
     enum EParryState{Idle, Parry}
 
 
@@ -72,7 +73,7 @@ public class BattleManagerAlt : MonoBehaviour
     public GameObject missileTarget;
     public Servent clickedServent;
     public int shot = 1;
-
+    private CardEffectSystem effectSystem;
 
 
 
@@ -82,9 +83,17 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
+        effectSystem = gameObject.AddComponent<CardEffectSystem>();
+        effectSystem.Initialize();
 
         
         // StartCoroutine(StartTurnCo());
+    }
+
+        
+    void ActivateSpell(CardData cardData)
+    {
+        effectSystem.ExecuteCardEffect(cardData.GetCardNum(), this);
     }
 
     void Update()
@@ -178,105 +187,87 @@ public class BattleManagerAlt : MonoBehaviour
         StartCoroutine(StartTurnCo());
     }
 
-    void ActivateSpell(CardData cardData)
-    {
+    // void ActivateSpell(CardData cardData)
+    // {
 
-        switch(cardData.GetCardNum())
-        {
-            case 0:// 엘리멘탈 부스트
-            List<EServentAttribute> attributes = new();
-            if(field_1.GetComponent<Field>().GetFilled())
-            {
-                if(!attributes.Contains(field_1.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_1.GetComponent<Field>().GetServentAttribute());}
-            }
+    //     switch(cardData.GetCardNum())
+    //     {
+    //         case 0:// 엘리멘탈 부스트
+    //         List<EServentAttribute> attributes = new();
+    //         if(field_1.GetComponent<Field>().GetFilled())
+    //         {
+    //             if(!attributes.Contains(field_1.GetComponent<Field>().GetServentAttribute()))
+    //             {attributes.Add(field_1.GetComponent<Field>().GetServentAttribute());}
+    //         }
 
-            if(field_2.GetComponent<Field>().GetFilled())
-            {
-                if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
-            }
+    //         if(field_2.GetComponent<Field>().GetFilled())
+    //         {
+    //             if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
+    //             {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
+    //         }
 
-            if(field_3.GetComponent<Field>().GetFilled())
-            {
-                if(!attributes.Contains(field_3.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_3.GetComponent<Field>().GetServentAttribute());}
-            }
+    //         if(field_3.GetComponent<Field>().GetFilled())
+    //         {
+    //             if(!attributes.Contains(field_3.GetComponent<Field>().GetServentAttribute()))
+    //             {attributes.Add(field_3.GetComponent<Field>().GetServentAttribute());}
+    //         }
 
-            int value = attributes.Count;
+    //         int value = attributes.Count;
 
-            field_1.GetComponent<Field>().GainForce(value);
-            field_2.GetComponent<Field>().GainForce(value);
-            field_3.GetComponent<Field>().GainForce(value);
-            break;
-            // 자신의 소환수들의 속성의 종류 수만큼 자신의 모든 소환수는 포스를 얻는다.
+    //         field_1.GetComponent<Field>().GainForce(value);
+    //         field_2.GetComponent<Field>().GainForce(value);
+    //         field_3.GetComponent<Field>().GainForce(value);
+    //         break;
+    //         // 자신의 소환수들의 속성의 종류 수만큼 자신의 모든 소환수는 포스를 얻는다.
 
-            case 1: // 달의 축복
-            selectedTarget.GetComponent<Field>().ResetCondition();
-            break;
-            //소환수 하나에게 걸려있는 상태를 모두 해제한다.
+    //         case 1: // 달의 축복
+    //         selectedTarget.GetComponent<Field>().ResetCondition();
+    //         break;
+    //         //소환수 하나에게 걸려있는 상태를 모두 해제한다.
 
-            case 2: // 정당한 거래
-            DrawCard();
-            player.GetComponent<Field>().LoseForce(2);
-            break;
-            //덱을 1장 뽑고 체력을 2 잃는다.
+    //         case 2: // 정당한 거래
+    //         DrawCard();
+    //         player.GetComponent<Field>().LoseForce(2);
+    //         break;
+    //         //덱을 1장 뽑고 체력을 2 잃는다.
 
-            case 3: //눈부신 빛
+    //         case 3: //눈부신 빛
 
-            break;
-            //소환된 자신의 빛 속성 소환수가 있다면 상대 소환수 전부에게 [실명]을 부여한다.
+    //         break;
+    //         //소환된 자신의 빛 속성 소환수가 있다면 상대 소환수 전부에게 [실명]을 부여한다.
 
-            case 4: //사소한 건망증
-            selectedTarget.GetComponent<Field>().AddCondition(EServentCondition.Oblivion);
-            break;
-            //소환수 하나에게 [망각]을 부여한다.
+    //         case 4: //사소한 건망증
+    //         selectedTarget.GetComponent<Field>().AddCondition(EServentCondition.Oblivion);
+    //         break;
+    //         //소환수 하나에게 [망각]을 부여한다.
 
-            case 5: //잔혹한 진실
+    //         case 5: //잔혹한 진실
             
-            break;
-            //자신의 소환수 하나에게 [자폭]을 부여한다.
+    //         break;
+    //         //자신의 소환수 하나에게 [자폭]을 부여한다.
 
-            case 6: //
-            break;
-            //자신의 소환수 하나를 소멸시키고 그 소환수의 포스 수만큼 드로우한다.
+    //         case 6: //
+    //         break;
+    //         //자신의 소환수 하나를 소멸시키고 그 소환수의 포스 수만큼 드로우한다.
 
-            case 7: // 등가교환
-            break;
-            //자신의 소환수 하나와 마주보고 있는 소환수의 포스를 서로 바꾼다.
+    //         case 7: // 등가교환
+    //         break;
+    //         //자신의 소환수 하나와 마주보고 있는 소환수의 포스를 서로 바꾼다.
 
-            case 8: //상승기류
-            break;
-            //자신의 바람 속성 소환수 하나를 패로 되돌린다.
+    //         case 8: //상승기류
+    //         break;
+    //         //자신의 바람 속성 소환수 하나를 패로 되돌린다.
 
-            case 9:
-            break;
-            //자신의 소환수 하나의 포스를 2배로 한다. 그 소환수는 이 턴이 끝나면 소멸한다.
-        }
+    //         case 9:
+    //         break;
+    //         //자신의 소환수 하나의 포스를 2배로 한다. 그 소환수는 이 턴이 끝나면 소멸한다.
+    //     }
 
-        FieldManager.Inst.UpdateAllFieldStatus();
-    }
+    //     FieldManager.Inst.UpdateAllFieldStatus();
+    // }
 
     // 효과를 만
 
-    public bool CheckAbilityUsable()
-    {
-
-        return false;
-    }
-    public bool CheckCardUsable(ECardTargetType value, int cardNum)
-    {
-        if(value == ECardTargetType.Selected)
-        {return true;}
-
-        switch(cardNum)
-        {
-            case 4: //사소한 건망증
-            break;
-        }
-        
-        return false;
-    }
 
      void GameSetup()
     {
@@ -702,9 +693,12 @@ public class BattleManagerAlt : MonoBehaviour
         dragLine.SetPositions(point);
         
 
-        //마우스가 필드 구역 위에 있다면 Line의 끝을 그 필드의 중앙으로 고정한다.
-        if(true)
-        {}
+        if (mouseOnField != null) {
+            Card draggedCard = GetDraggedCard(); // 현재 드래그 중인 카드 가져오기
+            if (draggedCard != null) {
+                targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.CardId, mouseOnField);
+            }
+        }
 
         Vector3 PointSetting(Vector3 origin){
             float x, y;
@@ -725,10 +719,4 @@ public class BattleManagerAlt : MonoBehaviour
             return Vector3.Lerp(B0, B1, t);
         }
     }
-
-    public void TestFunction()
-    {
-    }
-
-
 }

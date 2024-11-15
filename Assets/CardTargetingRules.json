@@ -1,0 +1,12 @@
+[{
+    "cardId": 0,
+    "targetType": "None",
+    "conditions": [],
+    "conditionValues": [] 
+},
+{
+    "cardId": 1,
+    "targetType": "SingleAlly",
+    "conditions": ["HasAttribute", "HasMinForce"],
+    "conditionValues": ["Fire", 3]
+}]
