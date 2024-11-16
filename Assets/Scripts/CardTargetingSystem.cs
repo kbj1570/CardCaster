@@ -96,7 +96,7 @@ public class CardTargetingSystem : MonoBehaviour {
             case TargetCondition.HasMinForce:
                 return field.GetForce() >= (int)value;
             case TargetCondition.HasCondition:
-                return field.HasCondition((EServentCondition)value);
+                return false;
             // 다른 조건들 추가
             default:
                 return false;
