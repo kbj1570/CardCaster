@@ -83,6 +83,7 @@ public class CardTargetingSystem : MonoBehaviour {
             // 다른 케이스들 추가
             default:
                 return false;
+            
         }
     }
 
