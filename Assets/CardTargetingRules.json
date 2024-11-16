@@ -3,4 +3,5 @@
     "targetType": "SingleAlly",
     "conditions": ["HasAttribute", "HasMinForce"],
     "conditionValues": ["Fire", 3]
+    
 }]
