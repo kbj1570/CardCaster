@@ -26,6 +26,7 @@ public class CardTargetingRule {
     public TargetType targetType;
     public List<TargetCondition> conditions;
     public List<object> conditionValues; // 조건에 필요한 값들 (속성, 최소값 등)
+    // 사랑해요
 }
 
 // CardTargetingSystem.cs
