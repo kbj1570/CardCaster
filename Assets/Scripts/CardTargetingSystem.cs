@@ -37,7 +37,8 @@ public class CardTargetingSystem : MonoBehaviour {
 
     public void Initialize() {
         LoadTargetingRules();
-        //나는 나야
+        //ㄴㄴㅇㅁ
+        //ㅁㅇㅁㅇㅁㅁㅁ
     }
 
     private void LoadTargetingRules() {
