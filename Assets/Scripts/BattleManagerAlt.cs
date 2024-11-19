@@ -5,10 +5,12 @@ using System;
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public enum ECardType{Servent, Spell}
 public enum EServentAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
+public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, Hole}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{Void, Oblivion}
 public class BattleManagerAlt : MonoBehaviour
@@ -17,6 +19,16 @@ public class BattleManagerAlt : MonoBehaviour
     void Awake() => Inst = this;
     public Canvas canvas;
     public Camera camera;
+    public RectTransform backgroundDetectArea;
+    public RectTransform playerDetectArea;
+    public RectTransform enemyDetectArea;
+    public RectTransform holeDetectArea;
+    public RectTransform fieldDetectArea_1;
+    public RectTransform fieldDetectArea_2;
+    public RectTransform fieldDetectArea_3;
+    public RectTransform fieldDetectArea_4;
+    public RectTransform fieldDetectArea_5;
+    public RectTransform fieldDetectArea_6;
     public GameObject player;
     public GameObject enemy;
     public GameObject testField;
@@ -30,6 +42,7 @@ public class BattleManagerAlt : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject itemWindow;
     public GameObject selectedTarget;
+    public GameObject draggedCard;
     public Button monsterAbilityButton;
     public Button monsterDetailButton;
     public GameObject monsterConditionPanel;
@@ -37,7 +50,7 @@ public class BattleManagerAlt : MonoBehaviour
     public Transform cardSpawnPoint;
     public Transform cardAreaBorderLeft;
     public Transform cardAreaBorderRight;
-    public Field mouseOnField;
+    public EMouseOnArea mouseOnArea;
     public TMP_Text parryText;
     private List<CardData> deckList;
     private List<CardData> trashList;
@@ -54,7 +67,7 @@ public class BattleManagerAlt : MonoBehaviour
 
 
     public List<GameObject> conditionMarkList;
-
+    public List<GameObject> cardPrefabList;
 
     private int currentCost;
     // 현재 지불해놓은 코스트의 수
@@ -83,10 +96,8 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
-        effectSystem = gameObject.AddComponent<CardEffectSystem>();
-        effectSystem.Initialize();
-
-        
+        // effectSystem = gameObject.AddComponent<CardEffectSystem>();
+        // effectSystem.Initialize();
         // StartCoroutine(StartTurnCo());
     }
 
@@ -106,6 +117,37 @@ public class BattleManagerAlt : MonoBehaviour
 
             
             // StartCoroutine(CreateMissile(player, enemy));
+        }
+
+        if(backgroundDetectArea.rect.Contains(backgroundDetectArea.InverseTransformPoint(Input.mousePosition)))
+        {
+            
+            if(fieldDetectArea_1.rect.Contains(fieldDetectArea_1.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_1;}
+            else if(fieldDetectArea_2.rect.Contains(fieldDetectArea_2.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_2;}
+            else if(fieldDetectArea_3.rect.Contains(fieldDetectArea_3.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_3;}
+            else if(fieldDetectArea_4.rect.Contains(fieldDetectArea_4.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_4;}
+            else if(fieldDetectArea_5.rect.Contains(fieldDetectArea_5.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_5;}
+            else if(fieldDetectArea_6.rect.Contains(fieldDetectArea_6.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Field_6;}
+            else if(playerDetectArea.rect.Contains(playerDetectArea.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Player;}
+            else if(enemyDetectArea.rect.Contains(enemyDetectArea.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Enemy;}
+            else if(holeDetectArea.rect.Contains(holeDetectArea.InverseTransformPoint(Input.mousePosition)))
+            {mouseOnArea = EMouseOnArea.Hole;}
+            else
+            {mouseOnArea = EMouseOnArea.None;}
+
+            
+        }
+        else
+        {
+            mouseOnArea = EMouseOnArea.None;
         }
     }
 
@@ -273,9 +315,9 @@ public class BattleManagerAlt : MonoBehaviour
     {
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
         List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
-        Dictionary<string, int> dumb = DataController.Inst.LoadDeck();
+        Dictionary<string, int> myDeck = DataController.Inst.LoadDeck();
 
-        foreach(KeyValuePair<string, int> value in dumb)
+        foreach(KeyValuePair<string, int> value in myDeck)
         {deck.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
         deckList = new();
         cardObjectList = new();
@@ -549,14 +591,33 @@ public class BattleManagerAlt : MonoBehaviour
         StartCoroutine(StartTurnCo());
     }
 
+    public void CardOnDrag(GameObject gameObject)
+    {
+        DrawDragLine(gameObject.transform.position);
+        // 사용가능한지 판단하는 코드
+        // 사용여부에 따라서 라인의 색이 달라진다.
+    }
+
+    public void CardEndDrag(GameObject gameObject)
+    {
+        DeleteDragLine();
+        // if(true)
+        // {Destroy(gameObject);}
+    }
+
+    //만들어야 하는 리스트?
+    //덱리스트(오브젝트 없이 데이터만)
+    //패 리스트(오브젝트)
+    //패 리스트(데이터) <- 굳이 필요한가?
+    //트래쉬 리스트
     public IEnumerator DrawCard()
     {
         
         GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-        // cardObject.SetActive(false);
         cardObject.transform.SetParent(canvas.transform);
         cardObjectList.Add(cardObject);
         CardData cardData = deckList[deckList.Count - 1];
+        cardObject.GetComponent<Card>().Setup(cardData);
 
         handList.Add(cardData);
 
@@ -568,6 +629,7 @@ public class BattleManagerAlt : MonoBehaviour
 
         // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
         cardObject.SetActive(true);
+        
         // CardAlignment();
     }
 
@@ -596,11 +658,11 @@ public class BattleManagerAlt : MonoBehaviour
     public void ResetCost()
     {currentCost = 0;}
 
-    public void SetMouseOnField(Field field)
-    {mouseOnField = field;}
+    // public void SetMouseOnField(Field field)
+    // {mouseOnField = field;}
 
-    public void ResetMouseOnField()
-    {mouseOnField = null;}
+    // public void ResetMouseOnField()
+    // {mouseOnField = null;}
 
     public void SelectTarget(GameObject field)
     {
@@ -674,9 +736,58 @@ public class BattleManagerAlt : MonoBehaviour
     public void DrawDragLine(Vector2 startPoint)
     {
         Vector3[] point = new Vector3[lineCount];
-        float posA = 300f;
-        float posB = 300f;
+        float posA = 200f;
+        float posB = 200f;
         dragLine.positionCount = lineCount;
+        Vector3 targetPoint = new Vector3();
+
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.None:
+            targetPoint = Input.mousePosition;
+            break;
+
+            case EMouseOnArea.Field_1:
+            targetPoint = fieldDetectArea_1.position;
+            break;
+
+            case EMouseOnArea.Field_2:
+            targetPoint = fieldDetectArea_2.position;
+            break;
+
+            case EMouseOnArea.Field_3:
+            targetPoint = fieldDetectArea_3.position;
+            break;
+
+            case EMouseOnArea.Field_4:
+            targetPoint = fieldDetectArea_4.position;
+            break;
+
+            case EMouseOnArea.Field_5:
+            targetPoint = fieldDetectArea_5.position;
+            break;
+
+            case EMouseOnArea.Field_6:
+            targetPoint = fieldDetectArea_6.position;
+            break;
+
+            case EMouseOnArea.Hole:
+            targetPoint = holeDetectArea.position;
+            break;
+
+            case EMouseOnArea.Player:
+            targetPoint = playerDetectArea.position;
+            break;
+
+            case EMouseOnArea.Enemy:
+            targetPoint = enemyDetectArea.position;
+            break;
+            
+            default:
+            targetPoint = Input.mousePosition;
+            break;
+            
+        }
 
         for(int i = 0; i < lineCount; ++i)
         {
@@ -687,18 +798,19 @@ public class BattleManagerAlt : MonoBehaviour
             {t = (float)i / (lineCount - 1);}
             
             point[i] = camera.ScreenToWorldPoint(Bezier(startPoint, PointSetting(startPoint),
-            PointSetting(Input.mousePosition),Input.mousePosition, t));
+            PointSetting(targetPoint),targetPoint, t));
             point[i].z = 0;
         }
         dragLine.SetPositions(point);
         
 
-        if (mouseOnField != null) {
-            Card draggedCard = GetDraggedCard(); // 현재 드래그 중인 카드 가져오기
-            if (draggedCard != null) {
-                targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.CardId, mouseOnField);
-            }
-        }
+        // if (mouseOnField != null) {
+        //      // 현재 드래그 중인 카드 가져오기
+        //     if (draggedCard != null) {
+        //         targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.GetComponent<Card>()
+        //         .GetCardData().GetCardNum(), mouseOnField);
+        //     }
+        //}
 
         Vector3 PointSetting(Vector3 origin){
             float x, y;

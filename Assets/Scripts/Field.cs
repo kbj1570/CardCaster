@@ -119,8 +119,8 @@ public class Field : MonoBehaviour
     {BattleManagerAlt.Inst.SelectTarget(this.gameObject);}
 
     void OnMouseEnter()
-    {BattleManagerAlt.Inst.SetMouseOnField(this);}
+    {}
 
     void OnMouseExit()
-    {BattleManagerAlt.Inst.ResetMouseOnField();}
+    {}
 }

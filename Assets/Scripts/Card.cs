@@ -14,7 +14,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public TMP_Text costTMP;
     public Sprite cardBack;
     public CardData cardData;
-    public GameObject CardHighlightBorder;
+    public GameObject cardHighlightBorder;
     bool isFront;
     bool isUsable;
     int currentCost;
@@ -48,18 +48,17 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public void UpdateIsUsable()
     {isUsable = (currentCost == 0);}
 
-    public void Setup(CardData cardData, bool isFront)
+    public void Setup(CardData cardData)
     {
         this.cardData = cardData;
-        this.isFront = isFront;
         nameTMP.text = this.cardData.GetCardName();
-        if(cardData.GetCardType() == ECardType.Servent)
-            forceTMP.text = this.cardData.GetForce().ToString();
+        // if(cardData.GetCardType() == ECardType.Servent)
+        //     forceTMP.text = this.cardData.GetForce().ToString();
         
-        descriptionTMP.text = this.cardData.GetCardAbility();
-        costTMP.text = this.cardData.GetCardCost().ToString();
-        currentCost = this.cardData.GetCardCost();
-        UpdateIsUsable();
+        // descriptionTMP.text = this.cardData.GetCardAbility();
+        // costTMP.text = this.cardData.GetCardCost().ToString();
+        // currentCost = this.cardData.GetCardCost();
+        // UpdateIsUsable();
     }
 
     public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
@@ -84,10 +83,11 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        BattleManagerAlt.Inst.DeleteDragLine();
+        //BattleManager에게 이 카드를 놓았다는 신호를 보냄
+        //신호를 받은 BattleManager는 카드를 사용하는지 아니면 코스트로 버리는지 등등을 판단하며 카드 오브젝트를 삭제함
+        
+        BattleManagerAlt.Inst.CardEndDrag(this.gameObject);
 
-        if(BattleManagerAlt.Inst.CheckCardUsable(this.cardTargetType ,this.cardData.cardNum))
-        {Destroy(this.gameObject);}
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -95,12 +95,18 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
         // Dark Night, Black Sky, The Devils Cry
-        
-        BattleManagerAlt.Inst.DrawDragLine(this.transform.position);
+        BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
+        this.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
-    {}
+    {
+        this.cardHighlightBorder.SetActive(true);
+        this.transform.localScale = new Vector3(1.4f, 1.4f, 1);
+    }
     public void OnPointerExit(PointerEventData eventData)
-    {}
+    {
+        this.cardHighlightBorder.SetActive(false);
+        this.transform.localScale = new Vector3(1, 1, 1);
+    }
 }
