@@ -32,14 +32,24 @@ public class BattleManagerAlt : MonoBehaviour
     public GameObject player;
     public GameObject enemy;
     public GameObject testField;
-    public GameObject field_1;
-    public GameObject field_2;
-    public GameObject field_3;
-    public GameObject field_4;
-    public GameObject field_5;
-    public GameObject field_6;
+    public Field field_1;
+    public Field field_2;
+    public Field field_3;
+    public Field field_4;
+    public Field field_5;
+    public Field field_6;
     public GameObject hole;
+    
+    
+    //Prefab
     public GameObject cardPrefab;
+    public List<GameObject> serventPrefabList;
+
+    //나중에 리스트로 카드와 소환수 Prefab 하나하나 만들어 넣고 번호 순서대로 넣을 예정
+
+
+
+
     public GameObject itemWindow;
     public GameObject selectedTarget;
     public GameObject draggedCard;
@@ -397,7 +407,7 @@ public class BattleManagerAlt : MonoBehaviour
         //소환 확률 배정
         for(int i = 0; i < enemyTokens; ++i)
         {
-            List<GameObject> filledField = new();
+            List<Field> filledField = new();
 
             int probability = 0;
             if(field_4.GetComponent<Field>().GetFilled())
@@ -429,7 +439,7 @@ public class BattleManagerAlt : MonoBehaviour
 
             if(p > probability)
             {
-                List<GameObject> dumb = new();
+                List<Field> dumb = new();
 
                 if
                 (field_1.GetComponent<Field>().GetFilled()
@@ -489,7 +499,7 @@ public class BattleManagerAlt : MonoBehaviour
                     dumb.Add(field_6);
                 }
 
-                foreach(GameObject gameObject in filledField)
+                foreach(Field gameObject in filledField)
                 {dumb.Remove(gameObject);}
 
                 int randomNum = Random.Range(0, dumb.Count);
@@ -502,8 +512,8 @@ public class BattleManagerAlt : MonoBehaviour
             {
                 int foo;
                 int randomNum = Random.Range(0, 6);
-                List<GameObject> filledPlayerFields = new();
-                List<GameObject> filledEnemyFields = new();
+                List<Field> filledPlayerFields = new();
+                List<Field> filledEnemyFields = new();
 
                 if(field_1.GetComponent<Field>().GetFilled())
                 {filledPlayerFields.Add(field_1);}
@@ -598,11 +608,39 @@ public class BattleManagerAlt : MonoBehaviour
         // 사용여부에 따라서 라인의 색이 달라진다.
     }
 
-    public void CardEndDrag(GameObject gameObject)
+    public void CardEndDrag(Card card)
     {
         DeleteDragLine();
-        // if(true)
-        // {Destroy(gameObject);}
+
+        Field targetField = new();
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.Field_1:
+            targetField = field_1;
+            break;
+        }
+
+        if(true)
+        {
+            handList.RemoveAt(card.GetCardOrder());
+            cardObjectList.Remove(card.gameObject);
+            Destroy(card.gameObject);
+            //ServentPrefab 생성
+
+
+
+            SummonServent(0, targetField);
+            //field에 ServentData넣기
+            CardAlignmentAlt();
+        }
+
+    }
+
+    public void SummonServent(int serventID, Field field)
+    {
+        GameObject serventObject = Instantiate(serventPrefabList[0], new Vector3() , Utils.QI);
+
+
     }
 
     //만들어야 하는 리스트?
@@ -620,6 +658,7 @@ public class BattleManagerAlt : MonoBehaviour
         cardObject.GetComponent<Card>().Setup(cardData);
 
         handList.Add(cardData);
+        
 
         deckList.RemoveAt(deckList.Count - 1);
         
@@ -665,11 +704,13 @@ public class BattleManagerAlt : MonoBehaviour
     // {mouseOnField = null;}
 
     public void SelectTarget(GameObject field)
-    {
-        missileTarget = field;
-    }
+    {missileTarget = field;}
+
     public void CardAlignmentAlt()
     {
+        if(handList.Count == 0)
+        {return;}
+
         List<PRS> originCardPRSs = new List<PRS>();
 
         originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
@@ -730,8 +771,7 @@ public class BattleManagerAlt : MonoBehaviour
         }
     }
     public void DeleteDragLine()
-    {
-        dragLine.positionCount = 0;}
+    {dragLine.positionCount = 0;}
 
     public void DrawDragLine(Vector2 startPoint)
     {

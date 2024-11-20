@@ -18,10 +18,15 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     bool isFront;
     bool isUsable;
     int currentCost;
+    public int cardOrder;
     public PRS originPRS;
+    public Vector3 originPosition;
 
     public ECardTargetType cardTargetType;
     public ECardType cardType;
+
+    public bool moving;
+    private Sequence currentSequence;
 
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
@@ -29,6 +34,12 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     void Update()
     {
     }
+
+    public void SetCardOrder(int value)
+    {this.cardOrder = value;}
+
+    public int GetCardOrder()
+    {return cardOrder;}
 
     public void UpdateCardCost(int monsterCost, int spellCost)
     {
@@ -52,8 +63,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     {
         this.cardData = cardData;
         nameTMP.text = this.cardData.GetCardName();
-        // if(cardData.GetCardType() == ECardType.Servent)
-        //     forceTMP.text = this.cardData.GetForce().ToString();
+        this.cardHighlightBorder.SetActive(true);
+        cardType = cardData.GetCardType();
+        if(cardType == ECardType.Servent)
+            forceTMP.text = this.cardData.GetForce().ToString();
         
         // descriptionTMP.text = this.cardData.GetCardAbility();
         // costTMP.text = this.cardData.GetCardCost().ToString();
@@ -86,7 +99,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         //BattleManager에게 이 카드를 놓았다는 신호를 보냄
         //신호를 받은 BattleManager는 카드를 사용하는지 아니면 코스트로 버리는지 등등을 판단하며 카드 오브젝트를 삭제함
         
-        BattleManagerAlt.Inst.CardEndDrag(this.gameObject);
+        BattleManagerAlt.Inst.CardEndDrag(this);
 
     }
 
@@ -95,18 +108,39 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
         // Dark Night, Black Sky, The Devils Cry
+
+        
+        if (currentSequence != null && currentSequence.IsActive())
+        {currentSequence.Kill();}
+                
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
+        .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+        currentSequence = sequence;
         BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
-        this.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        this.cardHighlightBorder.SetActive(true);
-        this.transform.localScale = new Vector3(1.4f, 1.4f, 1);
+        if (currentSequence != null && currentSequence.IsActive())
+        {currentSequence.Kill();}
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
+        .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
+        currentSequence = sequence;
     }
     public void OnPointerExit(PointerEventData eventData)
     {
-        this.cardHighlightBorder.SetActive(false);
-        this.transform.localScale = new Vector3(1, 1, 1);
+        if (currentSequence != null && currentSequence.IsActive())
+        {currentSequence.Kill();}
+                
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
+        .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+        currentSequence = sequence;
     }
+
+    public void SetOriginPosition(Vector3 value)
+    {originPosition = value;}
 }

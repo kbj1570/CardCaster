@@ -236,7 +236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58366637}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 966.5379, y: 605.3352, z: -5.303448}
+  m_LocalPosition: {x: 966.5379, y: 569, z: -5.303448}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -932,7 +932,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 522.08093, y: -267.03003}
+  m_AnchoredPosition: {x: 527, y: -257}
   m_SizeDelta: {x: 189.5953, y: 121.03}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &326516405
@@ -1040,6 +1040,7 @@ MonoBehaviour:
   field_6: {fileID: 0}
   hole: {fileID: 47490742}
   cardPrefab: {fileID: 8357732725725720325, guid: 03a09a3e6bb8afb4b9d81b2d954827da, type: 3}
+  serventPrefabList: []
   itemWindow: {fileID: 0}
   selectedTarget: {fileID: 0}
   draggedCard: {fileID: 0}
@@ -1098,7 +1099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -660, y: -388}
+  m_AnchoredPosition: {x: -365, y: -449}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &530937486
@@ -3264,7 +3265,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 573, y: -388}
+  m_AnchoredPosition: {x: 443, y: -451}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1983280043

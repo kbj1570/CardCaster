@@ -29,7 +29,7 @@
 "cardGuideDescription":"실험 기록 제 275장, 시간이 얼마 남지 않았다.",
 "force":0,
 "cardCost":2,
-"cardType":0,
+"cardType":1,
 "cardEffectType":0}
 ,
 {"name":"Goro's Emergency Call",
