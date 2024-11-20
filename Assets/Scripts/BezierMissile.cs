@@ -23,12 +23,21 @@ public class BezierMissile : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (t > 1) return;
+        
         if (hit) return;
 
         if(Vector2.Distance(transform.position, enemy.transform.position) < 1f)
-        {Destroy(gameObject, 0.1f);}
+        {
+            Destroy(gameObject, 0.1f);
+        }
 
+        t += Time.deltaTime * spd;
+        DrawTrajectory();
+    }
+
+    public void Move()
+    {
+        if (t > 1) return;
         t += Time.deltaTime * spd;
         DrawTrajectory();
     }

@@ -9,7 +9,8 @@ public class CardData
     public int cardCost;
     public ECardType cardType;
     // public List<ActionData> cardEffect;
-    public EServentAttribute monsterAttribute;
+    public EServentAttribute serventAttribute;
+    public EServentSize serventSize;
     // public List<CardDataSO> requirements;
 
     public int GetCardNum(){return cardNum;}
@@ -19,6 +20,6 @@ public class CardData
     // public Sprite GetSprite(){return sprite;}
     // public int GetCardCount() {return cardCount;}
     public int GetCardCost(){return cardCost;}
-    public EServentAttribute GetAttribute(){return monsterAttribute;}
+    public EServentAttribute GetAttribute(){return serventAttribute;}
     public ECardType GetCardType(){return cardType;}
 }

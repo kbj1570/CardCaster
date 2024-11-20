@@ -114,8 +114,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         {currentSequence.Kill();}
                 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
-        .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad));
+        //.Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+
+        this.transform.position = originPRS.pos;
         currentSequence = sequence;
         BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
     }

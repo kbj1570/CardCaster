@@ -24,13 +24,13 @@ public class Window : MonoBehaviour
         if(isOpened)
         {
             DG.Tweening.Sequence sequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InOutQuad));
+            .Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.OutCirc));
             isOpened = false;
         }
         else
         {
             DG.Tweening.Sequence sequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.InOutQuad);
+            .Append(transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.OutCirc);
             isOpened = true;
         }
     }

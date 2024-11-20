@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using DG.Tweening;
 
 public enum ECardType{Servent, Spell}
 public enum EServentAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
@@ -13,6 +14,7 @@ public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, Hole}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{Void, Oblivion}
+public enum EServentSize{Small, Middle, Big}
 public class BattleManagerAlt : MonoBehaviour
 {
     public static BattleManagerAlt Inst{get; private set;}
@@ -39,6 +41,8 @@ public class BattleManagerAlt : MonoBehaviour
     public Field field_5;
     public Field field_6;
     public GameObject hole;
+
+    public GameObject aura;
     
     
     //Prefab
@@ -47,11 +51,6 @@ public class BattleManagerAlt : MonoBehaviour
 
     //나중에 리스트로 카드와 소환수 Prefab 하나하나 만들어 넣고 번호 순서대로 넣을 예정
 
-
-
-
-    public GameObject itemWindow;
-    public GameObject selectedTarget;
     public GameObject draggedCard;
     public Button monsterAbilityButton;
     public Button monsterDetailButton;
@@ -106,6 +105,7 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
+        
         // effectSystem = gameObject.AddComponent<CardEffectSystem>();
         // effectSystem.Initialize();
         // StartCoroutine(StartTurnCo());
@@ -119,15 +119,24 @@ public class BattleManagerAlt : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            CloseServentInfo();
+        }
+
         if(Input.GetKeyDown(KeyCode.Space))
         {
             StartCoroutine(DrawCard());
+            
             // if(parryState.Equals(EParryState.Parry))
             // {justGuard = true;}
 
             
             // StartCoroutine(CreateMissile(player, enemy));
         }
+
+        if(Input.GetKeyDown(KeyCode.Z))
+        {ShowAura();}
 
         if(backgroundDetectArea.rect.Contains(backgroundDetectArea.InverseTransformPoint(Input.mousePosition)))
         {
@@ -201,14 +210,24 @@ public class BattleManagerAlt : MonoBehaviour
         int _shot = shot;
         while (_shot > 0) {
             _shot--;
-            GameObject bullet = Instantiate(missile, start.transform.position, Utils.QI);
-            bullet.transform.SetParent(canvas.transform);
-            bullet.GetComponent<BezierMissile>().master = start;
-            bullet.GetComponent<BezierMissile>().enemy = missileTarget;
+            
 
             yield return new WaitForSeconds(0.1f);
         }
         yield return null;
+    }
+
+    void ShotMissile()
+    {
+        GameObject bullet = Instantiate(missile, hole.transform.position, Utils.QI);
+            bullet.transform.SetParent(canvas.transform);
+            bullet.GetComponent<BezierMissile>().master = hole;
+            bullet.GetComponent<BezierMissile>().enemy = missileTarget;
+
+        while(true)
+        {
+            bullet.GetComponent<BezierMissile>().Move();
+        }
     }
 
     public void ShowServentInfo(Servent servent)
@@ -611,16 +630,35 @@ public class BattleManagerAlt : MonoBehaviour
     public void CardEndDrag(Card card)
     {
         DeleteDragLine();
+        bool foo = true;
 
-        Field targetField = new();
+        Field targetField = null;
         switch(mouseOnArea)
         {
             case EMouseOnArea.Field_1:
             targetField = field_1;
             break;
+            case EMouseOnArea.Field_2:
+            targetField = field_2;
+            break;
+            case EMouseOnArea.Field_3:
+            targetField = field_3;
+            break;
+            case EMouseOnArea.Field_4:
+            targetField = field_4;
+            break;
+            case EMouseOnArea.Field_5:
+            targetField = field_5;
+            break;
+            case EMouseOnArea.Field_6:
+            targetField = field_6;
+            break;
+            default:
+            foo = false;
+            break;
         }
 
-        if(true)
+        if(foo)
         {
             handList.RemoveAt(card.GetCardOrder());
             cardObjectList.Remove(card.gameObject);
@@ -638,13 +676,12 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void SummonServent(int serventID, Field field)
     {
-        GameObject serventObject = Instantiate(serventPrefabList[0], new Vector3() , Utils.QI);
-
-
+        GameObject serventObject = Instantiate(serventPrefabList[0], field.transform.position , Utils.QI);
+        serventObject.transform.SetParent(canvas.transform);
     }
 
     //만들어야 하는 리스트?
-    //덱리스트(오브젝트 없이 데이터만)
+    //덱 리스트(오브젝트 없이 데이터만)
     //패 리스트(오브젝트)
     //패 리스트(데이터) <- 굳이 필요한가?
     //트래쉬 리스트
@@ -721,6 +758,15 @@ public class BattleManagerAlt : MonoBehaviour
             targetCard.transform.position = originCardPRSs[i].pos;
         }
 
+    }
+
+    public void ShowAura()
+    {
+        DG.Tweening.Sequence sequence = DOTween.Sequence();
+
+        sequence.Append(aura.transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.InOutQuad)
+        .AppendInterval(0.9f)
+        .Append(aura.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InOutQuad));
     }
 
     //위치 선정, 패 정렬, 미사일 발사, 카드 POP 

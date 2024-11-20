@@ -34,6 +34,7 @@ public class Field : MonoBehaviour
     
     public int currentForce;
     public int fieldNum;
+    
 
     public void SetForce(int value){ currentForce = value;}
     public int GetForce(){return currentForce;}

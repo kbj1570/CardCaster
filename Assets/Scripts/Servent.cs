@@ -27,7 +27,9 @@ public class Servent: MonoBehaviour, IPointerClickHandler
     {}
 
     public void OnPointerClick(PointerEventData eventData)
-    {BattleManagerAlt.Inst.ShowServentInfo(this);}
+    {
+        BattleManagerAlt.Inst.ShowServentInfo(this);
+    }
 
     public void ShowInfo()
     {

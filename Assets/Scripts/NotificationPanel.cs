@@ -13,7 +13,7 @@ public class NotificationPanel : MonoBehaviour
     {
         notificationTMP.text = message;
         Sequence sequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.InOutQuad)
+            .Append(transform.DOScale(Vector3.one, 0.2f)).SetEase(Ease.InOutQuad)
             .AppendInterval(0.9f)
             .Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InOutQuad));
 
