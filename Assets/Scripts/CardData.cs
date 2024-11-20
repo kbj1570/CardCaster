@@ -21,5 +21,6 @@ public class CardData
     // public int GetCardCount() {return cardCount;}
     public int GetCardCost(){return cardCost;}
     public EServentAttribute GetAttribute(){return serventAttribute;}
+    public EServentSize GetSize(){return serventSize;}
     public ECardType GetCardType(){return cardType;}
 }

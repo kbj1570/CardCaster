@@ -25,6 +25,10 @@ public class Field : MonoBehaviour
     public GameObject summonEffectObject;
     public GameObject monsterEntity;
 
+    public Transform lowLinePoint;
+    public Transform middleLinePoint;
+    public Transform highLinePoint;
+
     public Color forceColorFire;
     public Color forceColorWater;
     public Color forceColorEarth;
@@ -116,6 +120,26 @@ public class Field : MonoBehaviour
     public CardData GetCardData()
     {return cardData;}
 
+    public Transform GetLinePoint()
+    {
+        if(!filled)
+        return lowLinePoint;
+
+        switch(cardData.GetSize())
+        {
+            case EServentSize.Small:
+            return lowLinePoint;
+
+            case EServentSize.Middle:
+            return middleLinePoint;
+
+            case EServentSize.Big:
+            return highLinePoint;
+
+            default:
+            return null;
+        }
+    }
     void OnMouseDown()
     {BattleManagerAlt.Inst.SelectTarget(this.gameObject);}
 

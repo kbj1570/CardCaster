@@ -7,6 +7,7 @@
 "cardGuideDescription":"누명을 쓰고 달에서 추방당했다는 전설 속의 기사, 언젠간 다시 달로 돌아갈 날을 기다리며 지상을 떠돌고 있다.",
 "force":3,
 "cardCost":1,
+"serventSize":1,
 "cardType":0,
 "cardEffectType":0}
 ,
@@ -18,6 +19,7 @@
 "cardGuideDescription":"심연 속 감옥의 최심층에 갇힌 미치광이 과학자, 그의 발명품은 너무나도 위험해서 감옥에 가두었지만 감옥에서도 천재성을 발휘하며 발명품 연구를 계속하고 있다.",
 "force":1,
 "cardCost":1,
+"serventSize":0,
 "cardType":0,
 "cardEffectType":0}
 ,

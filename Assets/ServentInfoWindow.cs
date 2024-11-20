@@ -17,7 +17,7 @@ public class ServentInfoWindow : MonoBehaviour
     public Sprite iceAttribute;
     public Sprite earthAttribute;
     public Sprite darknessAttribute;
-    public Sprite lightAttribute;
+    public Sprite lightnessAttribute;
 
     void Start()
     {
@@ -39,7 +39,7 @@ public class ServentInfoWindow : MonoBehaviour
             serventAttribute.sprite = windAttribute;
             break;
 
-            case EServentAttribute.Ice:
+            case EServentAttribute.Water:
             serventAttribute.sprite = iceAttribute;
             break;
 
@@ -51,8 +51,8 @@ public class ServentInfoWindow : MonoBehaviour
             serventAttribute.sprite = darknessAttribute;
             break;
 
-            case EServentAttribute.Light:
-            serventAttribute.sprite = lightAttribute;
+            case EServentAttribute.Lightness:
+            serventAttribute.sprite = lightnessAttribute;
             break;
         }
     }

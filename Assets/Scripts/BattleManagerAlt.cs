@@ -5,11 +5,10 @@ using System;
 using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using Unity.VisualScripting;
 using DG.Tweening;
 
 public enum ECardType{Servent, Spell}
-public enum EServentAttribute{Fire, Ice, Earth, Wind, Darkness, Light}
+public enum EServentAttribute{Fire, Water, Earth, Wind, Darkness, Lightness}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, Hole}
 public enum ECardTargetType{Selected, Select}
@@ -622,9 +621,16 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void CardOnDrag(GameObject gameObject)
     {
-        DrawDragLine(gameObject.transform.position);
+        
         // 사용가능한지 판단하는 코드
+
+
         // 사용여부에 따라서 라인의 색이 달라진다.
+
+        if(mouseOnArea == EMouseOnArea.None)
+        {}
+        else
+        {DrawDragLine(gameObject.GetComponent<Field>().GetLinePoint().position);}
     }
 
     public void CardEndDrag(Card card)
