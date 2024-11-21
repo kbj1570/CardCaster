@@ -73,10 +73,9 @@ public class Field : MonoBehaviour
 
     public void Summon(CardData cardData)
     {
-        monsterEntity = Instantiate(monsterPrefab, this.transform.position, Utils.QI);
         this.cardData = cardData;
-        currentForce = cardData.GetForce();
-        forceTMP.text = currentForce.ToString();
+        // currentForce = cardData.GetForce();
+        // forceTMP.text = currentForce.ToString();
         filled = true;
         attacked = false;
     }

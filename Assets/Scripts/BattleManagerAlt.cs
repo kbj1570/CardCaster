@@ -104,6 +104,16 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
+        dragLine.sortingLayerName = "UI";
+        dragLine.sortingOrder = 100;
+        Material lineMaterial = dragLine.material;
+        lineMaterial.renderQueue = 4000;
+
+        dragLine.transform.position = new Vector3(
+        dragLine.transform.position.x,
+        dragLine.transform.position.y,
+        canvas.planeDistance - 0.1f // Canvas보다 약간 앞에 위치
+        );
         
         // effectSystem = gameObject.AddComponent<CardEffectSystem>();
         // effectSystem.Initialize();
@@ -626,11 +636,7 @@ public class BattleManagerAlt : MonoBehaviour
 
 
         // 사용여부에 따라서 라인의 색이 달라진다.
-
-        if(mouseOnArea == EMouseOnArea.None)
-        {}
-        else
-        {DrawDragLine(gameObject.GetComponent<Field>().GetLinePoint().position);}
+        DrawDragLine(gameObject.transform.position);
     }
 
     public void CardEndDrag(Card card)
@@ -671,10 +677,9 @@ public class BattleManagerAlt : MonoBehaviour
             Destroy(card.gameObject);
             //ServentPrefab 생성
 
-
-
             SummonServent(0, targetField);
             //field에 ServentData넣기
+            targetField.Summon(card.GetCardData());
             CardAlignmentAlt();
         }
 
@@ -840,15 +845,15 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case EMouseOnArea.Field_1:
-            targetPoint = fieldDetectArea_1.position;
+            targetPoint = field_1.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_2:
-            targetPoint = fieldDetectArea_2.position;
+            targetPoint = field_2.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_3:
-            targetPoint = fieldDetectArea_3.position;
+            targetPoint = field_3.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_4:
