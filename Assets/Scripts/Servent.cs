@@ -4,7 +4,7 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.EventSystems;
 
-public class Servent: MonoBehaviour, IPointerClickHandler
+public class Servent: MonoBehaviour
 {
     private string serventName;
     private string serventNum;
@@ -25,11 +25,8 @@ public class Servent: MonoBehaviour, IPointerClickHandler
 
     public void Summon()
     {}
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        BattleManagerAlt.Inst.ShowServentInfo(this);
-    }
+    public void OnMouseUp()
+    {StartCoroutine(BattleManagerAlt.Inst.ShowServentInfo(this));}
 
     public void ShowInfo()
     {

@@ -47,6 +47,7 @@ public class BattleManagerAlt : MonoBehaviour
     //Prefab
     public GameObject cardPrefab;
     public List<GameObject> serventPrefabList;
+    public List<GameObject> serventInfoList;
 
     //나중에 리스트로 카드와 소환수 Prefab 하나하나 만들어 넣고 번호 순서대로 넣을 예정
 
@@ -93,8 +94,13 @@ public class BattleManagerAlt : MonoBehaviour
     public GameObject missile;
     public GameObject missileTarget;
     public Servent clickedServent;
+    public GameObject clickedServentInfo;
     public int shot = 1;
     private CardEffectSystem effectSystem;
+
+    public TMP_Text costCountText;
+    public TMP_Text deckCountText;
+    public TMP_Text trashCountText;
 
 
 
@@ -104,16 +110,7 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
-        dragLine.sortingLayerName = "UI";
-        dragLine.sortingOrder = 100;
-        Material lineMaterial = dragLine.material;
-        lineMaterial.renderQueue = 4000;
-
-        dragLine.transform.position = new Vector3(
-        dragLine.transform.position.x,
-        dragLine.transform.position.y,
-        canvas.planeDistance - 0.1f // Canvas보다 약간 앞에 위치
-        );
+        mouseOnArea = EMouseOnArea.None;
         
         // effectSystem = gameObject.AddComponent<CardEffectSystem>();
         // effectSystem.Initialize();
@@ -144,39 +141,39 @@ public class BattleManagerAlt : MonoBehaviour
             // StartCoroutine(CreateMissile(player, enemy));
         }
 
-        if(Input.GetKeyDown(KeyCode.Z))
-        {ShowAura();}
+        // if(Input.GetKeyDown(KeyCode.Z))
+        // {ShowAura();}
 
-        if(backgroundDetectArea.rect.Contains(backgroundDetectArea.InverseTransformPoint(Input.mousePosition)))
-        {
+        // if(backgroundDetectArea.rect.Contains(backgroundDetectArea.InverseTransformPoint(Input.mousePosition)))
+        // {
             
-            if(fieldDetectArea_1.rect.Contains(fieldDetectArea_1.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_1;}
-            else if(fieldDetectArea_2.rect.Contains(fieldDetectArea_2.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_2;}
-            else if(fieldDetectArea_3.rect.Contains(fieldDetectArea_3.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_3;}
-            else if(fieldDetectArea_4.rect.Contains(fieldDetectArea_4.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_4;}
-            else if(fieldDetectArea_5.rect.Contains(fieldDetectArea_5.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_5;}
-            else if(fieldDetectArea_6.rect.Contains(fieldDetectArea_6.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Field_6;}
-            else if(playerDetectArea.rect.Contains(playerDetectArea.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Player;}
-            else if(enemyDetectArea.rect.Contains(enemyDetectArea.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Enemy;}
-            else if(holeDetectArea.rect.Contains(holeDetectArea.InverseTransformPoint(Input.mousePosition)))
-            {mouseOnArea = EMouseOnArea.Hole;}
-            else
-            {mouseOnArea = EMouseOnArea.None;}
+        //     if(fieldDetectArea_1.rect.Contains(fieldDetectArea_1.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_1;}
+        //     else if(fieldDetectArea_2.rect.Contains(fieldDetectArea_2.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_2;}
+        //     else if(fieldDetectArea_3.rect.Contains(fieldDetectArea_3.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_3;}
+        //     else if(fieldDetectArea_4.rect.Contains(fieldDetectArea_4.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_4;}
+        //     else if(fieldDetectArea_5.rect.Contains(fieldDetectArea_5.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_5;}
+        //     else if(fieldDetectArea_6.rect.Contains(fieldDetectArea_6.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Field_6;}
+        //     else if(playerDetectArea.rect.Contains(playerDetectArea.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Player;}
+        //     else if(enemyDetectArea.rect.Contains(enemyDetectArea.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Enemy;}
+        //     else if(holeDetectArea.rect.Contains(holeDetectArea.InverseTransformPoint(Input.mousePosition)))
+        //     {mouseOnArea = EMouseOnArea.Hole;}
+        //     else
+        //     {mouseOnArea = EMouseOnArea.None;}
 
             
-        }
-        else
-        {
-            mouseOnArea = EMouseOnArea.None;
-        }
+        // }
+        // else
+        // {
+        //     mouseOnArea = EMouseOnArea.None;
+        // }
     }
 
     public void UpdateAllFieldStatus()
@@ -239,18 +236,44 @@ public class BattleManagerAlt : MonoBehaviour
         }
     }
 
-    public void ShowServentInfo(Servent servent)
+    // public void ShowServentInfo(Servent servent)
+    // {
+    //     CloseServentInfo();
+    //     servent.ShowInfo();
+    //     clickedServentInfo = Instantiate(serventInfoList[0], Input.mousePosition, Utils.QI);
+    //     Debug.Log("되나?");
+    //     Vector3 vector = clickedServentInfo.transform.position;
+    //     vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
+    //     clickedServentInfo.transform.position = vector;
+    //     // yield return new WaitForSeconds(0.1f);
+    //     clickedServentInfo.GetComponent<ServentInfoWindow>().OnOff(true);
+    //     clickedServentInfo.transform.SetParent(canvas.transform);
+    //     clickedServent = servent;
+    // }
+
+        public IEnumerator ShowServentInfo(Servent servent)
     {
-        CloseServentInfo();
-        servent.ShowInfo();
+        clickedServentInfo = Instantiate(serventInfoList[0], Input.mousePosition, Utils.QI);
+        Debug.Log("되나?");
+        Vector3 vector = clickedServentInfo.transform.position;
+        vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
+        clickedServentInfo.transform.position = vector;
+        yield return new WaitForSeconds(0.1f);
+        clickedServentInfo.GetComponent<ServentInfoWindow>().OnOff(true);
+        clickedServentInfo.transform.SetParent(canvas.transform);
         clickedServent = servent;
+        
     }
     public void CloseServentInfo()
     {
+        if(clickedServent == null)
+        {return;}
+
+
         if(clickedServent != null)
         {
-            clickedServent.CloseInfo();
             clickedServent = null;
+            Destroy(clickedServentInfo.gameObject);
         }
     }
 
@@ -629,14 +652,16 @@ public class BattleManagerAlt : MonoBehaviour
         StartCoroutine(StartTurnCo());
     }
 
-    public void CardOnDrag(GameObject gameObject)
+    public void CardOnDrag(GameObject cardObject)
     {
-        
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<Card>().SetLock(true);}
+        cardObject.GetComponent<Card>().SetLock(false);
         // 사용가능한지 판단하는 코드
 
 
         // 사용여부에 따라서 라인의 색이 달라진다.
-        DrawDragLine(gameObject.transform.position);
+        DrawDragLine(cardObject.transform.position);
     }
 
     public void CardEndDrag(Card card)
@@ -683,12 +708,15 @@ public class BattleManagerAlt : MonoBehaviour
             CardAlignmentAlt();
         }
 
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(false);}
+
     }
 
     public void SummonServent(int serventID, Field field)
     {
         GameObject serventObject = Instantiate(serventPrefabList[0], field.transform.position , Utils.QI);
-        serventObject.transform.SetParent(canvas.transform);
+//        serventObject.transform.SetParent(field.transform);
     }
 
     //만들어야 하는 리스트?
@@ -745,11 +773,11 @@ public class BattleManagerAlt : MonoBehaviour
     public void ResetCost()
     {currentCost = 0;}
 
-    // public void SetMouseOnField(Field field)
-    // {mouseOnField = field;}
+    public void SetMouseOnField(EMouseOnArea mouseOnArea)
+    {this.mouseOnArea = mouseOnArea;}
 
-    // public void ResetMouseOnField()
-    // {mouseOnField = null;}
+    public void ResetMouseOnField()
+    {mouseOnArea = EMouseOnArea.None;}
 
     public void SelectTarget(GameObject field)
     {missileTarget = field;}
@@ -833,19 +861,20 @@ public class BattleManagerAlt : MonoBehaviour
     public void DrawDragLine(Vector2 startPoint)
     {
         Vector3[] point = new Vector3[lineCount];
-        float posA = 200f;
-        float posB = 200f;
+        float posA = 10f;
+        float posB = 10f;
         dragLine.positionCount = lineCount;
+        
         Vector3 targetPoint = new Vector3();
 
         switch(mouseOnArea)
         {
             case EMouseOnArea.None:
-            targetPoint = Input.mousePosition;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
 
             case EMouseOnArea.Field_1:
-            targetPoint = field_1.GetLinePoint().position;
+            targetPoint = field_1.GetLinePoint().transform.position;
             break;
 
             case EMouseOnArea.Field_2:
@@ -881,10 +910,11 @@ public class BattleManagerAlt : MonoBehaviour
             break;
             
             default:
-            targetPoint = Input.mousePosition;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
             
         }
+        startPoint = camera.ScreenToWorldPoint(startPoint);
 
         for(int i = 0; i < lineCount; ++i)
         {
@@ -894,8 +924,8 @@ public class BattleManagerAlt : MonoBehaviour
             else
             {t = (float)i / (lineCount - 1);}
             
-            point[i] = camera.ScreenToWorldPoint(Bezier(startPoint, PointSetting(startPoint),
-            PointSetting(targetPoint),targetPoint, t));
+            point[i] = Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(targetPoint),targetPoint, t);
             point[i].z = 0;
         }
         dragLine.SetPositions(point);

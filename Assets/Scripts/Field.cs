@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class Field : MonoBehaviour
 {
+    public FieldArea fieldArea;
     public CardData cardData;
     public List<EServentCondition> conditions;
     
@@ -17,8 +18,6 @@ public class Field : MonoBehaviour
 
     public GameObject conditionPanel;
     public GameObject conditionPanelButton;
-
-    public GameObject fieldArea;
 
     public GameObject monsterPrefab;
     public GameObject summonEffectPrefab;
@@ -147,4 +146,5 @@ public class Field : MonoBehaviour
 
     void OnMouseExit()
     {}
+
 }

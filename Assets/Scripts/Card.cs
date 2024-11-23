@@ -25,15 +25,11 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public ECardTargetType cardTargetType;
     public ECardType cardType;
 
-    public bool moving;
+    public bool locked;
     private Sequence currentSequence;
 
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
-
-    void Update()
-    {
-    }
 
     public void SetCardOrder(int value)
     {this.cardOrder = value;}
@@ -73,6 +69,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         // currentCost = this.cardData.GetCardCost();
         // UpdateIsUsable();
     }
+
+    public void SetLock(bool value)
+    {this.locked = value;}
 
     public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
     {
@@ -124,6 +123,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if(locked)
+        {return;}
+
         if (currentSequence != null && currentSequence.IsActive())
         {currentSequence.Kill();}
 
@@ -134,6 +136,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     }
     public void OnPointerExit(PointerEventData eventData)
     {
+        if(locked)
+        {return;}
+
         if (currentSequence != null && currentSequence.IsActive())
         {currentSequence.Kill();}
                 
