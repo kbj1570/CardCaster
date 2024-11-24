@@ -102,6 +102,10 @@ public class BattleManagerAlt : MonoBehaviour
     public TMP_Text deckCountText;
     public TMP_Text trashCountText;
 
+    private int costCount;
+    private int deckCount;
+    private int trashCount;
+
 
 
     void Start()
@@ -119,12 +123,11 @@ public class BattleManagerAlt : MonoBehaviour
 
         
     void ActivateSpell(CardData cardData)
-    {
-        effectSystem.ExecuteCardEffect(cardData.GetCardNum(), this);
-    }
+    {effectSystem.ExecuteCardEffect(cardData.GetCardNum(), this);}
 
     void Update()
     {
+        UpdateCondition();
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
             CloseServentInfo();
@@ -374,6 +377,11 @@ public class BattleManagerAlt : MonoBehaviour
 
      void GameSetup()
     {
+        trashCount = 0;
+        deckCount = 0;
+        costCount = 0;
+
+
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
         List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
         Dictionary<string, int> myDeck = DataController.Inst.LoadDeck();
@@ -404,7 +412,19 @@ public class BattleManagerAlt : MonoBehaviour
         if(fastMode)
             delay05 = new WaitForSeconds(0.05f);
 
+
+
         myTurn = true;
+    }
+
+    public void UpdateCondition()
+    {
+        deckCount = deckList.Count;
+        trashCount = trashList.Count;
+
+        costCountText.text = "Cost: " + costCount.ToString();
+        deckCountText.text = "Deck: " + deckCount.ToString();
+        trashCountText.text = "Trash: " + trashCount.ToString();
     }
 
     IEnumerator StartTurnCo()
@@ -668,6 +688,7 @@ public class BattleManagerAlt : MonoBehaviour
     {
         DeleteDragLine();
         bool foo = true;
+        bool mouseOnHole = false;
 
         Field targetField = null;
         switch(mouseOnArea)
@@ -690,9 +711,24 @@ public class BattleManagerAlt : MonoBehaviour
             case EMouseOnArea.Field_6:
             targetField = field_6;
             break;
+            case EMouseOnArea.Hole:
+            foo = false;
+            mouseOnHole = true;
+            break;
+
             default:
             foo = false;
             break;
+        }
+
+        if(mouseOnHole)
+        {
+            handList.RemoveAt(card.GetCardOrder());
+            cardObjectList.Remove(card.gameObject);
+            trashList.Add(card.GetCardData());
+            Destroy(card.gameObject);
+            costCount++;
+            CardAlignmentAlt();
         }
 
         if(foo)
@@ -912,7 +948,6 @@ public class BattleManagerAlt : MonoBehaviour
             default:
             targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
-            
         }
         startPoint = camera.ScreenToWorldPoint(startPoint);
 
