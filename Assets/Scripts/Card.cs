@@ -121,31 +121,62 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
     }
 
+    // public void OnPointerEnter(PointerEventData eventData)
+    // {
+    //     if(locked)
+    //     {return;}
+
+    //     if (currentSequence != null && currentSequence.IsActive())
+    //     {currentSequence.Kill();}
+
+    //     Sequence sequence = DOTween.Sequence();
+    //     sequence.Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
+    //     .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
+    //     currentSequence = sequence;
+    // }
+    // public void OnPointerExit(PointerEventData eventData)
+    // {
+    //     if(locked)
+    //     {return;}
+
+    //     if (currentSequence != null && currentSequence.IsActive())
+    //     {currentSequence.Kill();}
+                
+    //     Sequence sequence = DOTween.Sequence();
+    //     sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
+    //     .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+    //     currentSequence = sequence;
+    // }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(locked)
-        {return;}
+        if (locked) return;
 
+         // 현재 카드의 인덱스를 가져옴
+        BattleManagerAlt.Inst.UpdateHandAlignment(cardOrder);
+
+        // 카드 확대 애니메이션
         if (currentSequence != null && currentSequence.IsActive())
-        {currentSequence.Kill();}
+            currentSequence.Kill();
 
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
-        .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
-        currentSequence = sequence;
+        currentSequence = DOTween.Sequence()
+            .Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
+            .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
     }
+
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(locked)
-        {return;}
+        if (locked) return;
 
+        BattleManagerAlt.Inst.UpdateHandAlignment(-1); // 모든 카드를 기본 상태로 정렬
+
+        // 카드 복귀 애니메이션
         if (currentSequence != null && currentSequence.IsActive())
-        {currentSequence.Kill();}
-                
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
-        .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
-        currentSequence = sequence;
+            currentSequence.Kill();
+
+        currentSequence = DOTween.Sequence()
+            .Append(transform.DOScale(Vector3.one, 0.07f).SetEase(Ease.InOutQuad))
+            .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
     }
 
     public void SetOriginPosition(Vector3 value)

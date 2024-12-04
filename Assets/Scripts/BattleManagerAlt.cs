@@ -12,8 +12,9 @@ public enum EServentAttribute{Fire, Water, Earth, Wind, Darkness, Lightness}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, Hole}
 public enum ECardTargetType{Selected, Select}
-public enum EServentCondition{Void, Oblivion}
+public enum EServentCondition{Void, Oblivion, Poison}
 public enum EServentSize{Small, Middle, Big}
+
 public class BattleManagerAlt : MonoBehaviour
 {
     public static BattleManagerAlt Inst{get; private set;}
@@ -72,9 +73,6 @@ public class BattleManagerAlt : MonoBehaviour
     public int lineCount;
     private CardTargetingSystem targetingSystem;
     enum EParryState{Idle, Parry}
-
-
-
     public List<GameObject> conditionMarkList;
     public List<GameObject> cardPrefabList;
 
@@ -135,7 +133,7 @@ public class BattleManagerAlt : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(DrawCard());
+            DrawCard();
             
             // if(parryState.Equals(EParryState.Parry))
             // {justGuard = true;}
@@ -170,8 +168,6 @@ public class BattleManagerAlt : MonoBehaviour
         //     {mouseOnArea = EMouseOnArea.Hole;}
         //     else
         //     {mouseOnArea = EMouseOnArea.None;}
-
-            
         // }
         // else
         // {
@@ -234,9 +230,7 @@ public class BattleManagerAlt : MonoBehaviour
             bullet.GetComponent<BezierMissile>().enemy = missileTarget;
 
         while(true)
-        {
-            bullet.GetComponent<BezierMissile>().Move();
-        }
+        {bullet.GetComponent<BezierMissile>().Move();}
     }
 
     // public void ShowServentInfo(Servent servent)
@@ -728,7 +722,7 @@ public class BattleManagerAlt : MonoBehaviour
             trashList.Add(card.GetCardData());
             Destroy(card.gameObject);
             costCount++;
-            CardAlignmentAlt();
+            // CardAlignmentAlt();
         }
 
         if(foo)
@@ -741,7 +735,7 @@ public class BattleManagerAlt : MonoBehaviour
             SummonServent(0, targetField);
             //field에 ServentData넣기
             targetField.Summon(card.GetCardData());
-            CardAlignmentAlt();
+            // CardAlignmentAlt();
         }
 
         foreach(GameObject cardObject in cardObjectList)
@@ -752,7 +746,7 @@ public class BattleManagerAlt : MonoBehaviour
     public void SummonServent(int serventID, Field field)
     {
         GameObject serventObject = Instantiate(serventPrefabList[0], field.transform.position , Utils.QI);
-//        serventObject.transform.SetParent(field.transform);
+//      serventObject.transform.SetParent(field.transform);
     }
 
     //만들어야 하는 리스트?
@@ -760,24 +754,37 @@ public class BattleManagerAlt : MonoBehaviour
     //패 리스트(오브젝트)
     //패 리스트(데이터) <- 굳이 필요한가?
     //트래쉬 리스트
-    public IEnumerator DrawCard()
+    public void DrawCard()
     {
+
+        if(deckList.Count == 0 && trashList.Count == 0)
+        {return;}
+
+        List<CardData> targetList;
+
+        if(deckList.Count != 0)
+        {targetList = deckList;}
+        else
+        {targetList = trashList;}
+
+
+
         
         GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
         cardObject.transform.SetParent(canvas.transform);
         cardObjectList.Add(cardObject);
-        CardData cardData = deckList[deckList.Count - 1];
+        CardData cardData = targetList[targetList.Count - 1];
         cardObject.GetComponent<Card>().Setup(cardData);
-
+        
+        cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
         handList.Add(cardData);
+
+
         
 
-        deckList.RemoveAt(deckList.Count - 1);
-        
+        targetList.RemoveAt(targetList.Count - 1);
 
         CardAlignmentAlt();
-        yield return new WaitForSeconds(0.2f);
-
         // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
         cardObject.SetActive(true);
         
@@ -833,6 +840,47 @@ public class BattleManagerAlt : MonoBehaviour
             targetCard.transform.position = originCardPRSs[i].pos;
         }
 
+    }
+    List<PRS> GetCardAlignment(Vector3 leftBoundary, Vector3 rightBoundary, int cardCount, float spacing)
+    {
+        
+        List<PRS> result = new List<PRS>();
+
+        for (int i = 0; i < cardCount; ++i)
+        {
+            float t = (float)i / (cardCount - 1); // Normalize index
+            Vector3 position = Vector3.Lerp(leftBoundary, rightBoundary, t);
+            Quaternion rotation = Quaternion.identity;
+            Vector3 scale = Vector3.one; // Default scale
+            result.Add(new PRS(position, rotation, scale));
+        }
+
+        return result;
+    }
+
+    public void UpdateHandAlignment(int highlightedIndex)
+    {
+        if (handList.Count == 0) return;
+
+        List<PRS> positions = GetCardAlignment(cardAreaBorderLeft.position, cardAreaBorderRight.position, handList.Count, 0.5f);
+        float offset = 50.0f; // Highlighted 카드 주변으로 밀리는 거리
+
+        for (int i = 0; i < handList.Count; i++)
+        {
+            var targetPRS = positions[i];
+            // cardObjectList[i].GetComponent<Card>().originPRS = positions[i];
+
+            if (i < highlightedIndex)
+            {
+                targetPRS.pos.x -= offset;
+            }
+            else if (i > highlightedIndex)
+            {
+                targetPRS.pos.x += offset;
+            }
+
+            cardObjectList[i].GetComponent<Card>().MoveTransform(targetPRS, true, 0.2f); // DOTween으로 애니메이션
+        }
     }
 
     public void ShowAura()
