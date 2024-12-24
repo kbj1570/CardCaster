@@ -10,7 +10,7 @@ using DG.Tweening;
 public enum ECardType{Servent, Spell}
 public enum EServentAttribute{Fire, Water, Earth, Wind, Darkness, Lightness}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
-public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, Hole}
+public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{Void, Oblivion, Poison}
 public enum EServentSize{Small, Middle, Big}
@@ -43,6 +43,8 @@ public class BattleManagerAlt : MonoBehaviour
     public GameObject hole;
 
     public GameObject aura;
+
+    public List<GameObject> anyWhereAreas;
     
     
     //Prefab
@@ -60,6 +62,8 @@ public class BattleManagerAlt : MonoBehaviour
     public Transform cardSpawnPoint;
     public Transform cardAreaBorderLeft;
     public Transform cardAreaBorderRight;
+    public Transform selectedTargetLineEnd;
+
     public EMouseOnArea mouseOnArea;
     public TMP_Text parryText;
     private List<CardData> deckList;
@@ -668,6 +672,12 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void CardOnDrag(GameObject cardObject)
     {
+        if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
+        {
+            foreach(GameObject gameObject in anyWhereAreas)
+            {gameObject.SetActive(true);}
+        }
+
         foreach(GameObject card in cardObjectList)
         {card.GetComponent<Card>().SetLock(true);}
         cardObject.GetComponent<Card>().SetLock(false);
@@ -675,11 +685,13 @@ public class BattleManagerAlt : MonoBehaviour
 
 
         // 사용여부에 따라서 라인의 색이 달라진다.
-        DrawDragLine(cardObject.transform.position);
+        DrawDragLine(cardObject.transform.position, cardObject.GetComponent<Card>().GetCardData().GetCardTargetType());
     }
 
     public void CardEndDrag(Card card)
     {
+        foreach(GameObject gameObject in anyWhereAreas)
+        {gameObject.SetActive(false);}
         DeleteDragLine();
         bool foo = true;
         bool mouseOnHole = false;
@@ -705,6 +717,9 @@ public class BattleManagerAlt : MonoBehaviour
             case EMouseOnArea.Field_6:
             targetField = field_6;
             break;
+            case EMouseOnArea.AnyWhere:
+            break;
+
             case EMouseOnArea.Hole:
             foo = false;
             mouseOnHole = true;
@@ -717,26 +732,79 @@ public class BattleManagerAlt : MonoBehaviour
 
         if(mouseOnHole)
         {
+
+            
+
             handList.RemoveAt(card.GetCardOrder());
             cardObjectList.Remove(card.gameObject);
             trashList.Add(card.GetCardData());
             Destroy(card.gameObject);
             costCount++;
-            // CardAlignmentAlt();
+
+            List<CardData> newHandList = new List<CardData>();
+
+            foreach(CardData cardData in handList)
+            {newHandList.Add(cardData);}
+
+            for(int i = 0; i < cardObjectList.Count; ++i)
+            {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+            handList = newHandList;
+            CardAlignmentAlt();
         }
 
-        if(foo)
+        switch(card.GetCardType())
         {
-            handList.RemoveAt(card.GetCardOrder());
-            cardObjectList.Remove(card.gameObject);
-            Destroy(card.gameObject);
-            //ServentPrefab 생성
+            case ECardType.Servent:
+            if(foo)
+            {
+                handList.RemoveAt(card.GetCardOrder());
+                cardObjectList.Remove(card.gameObject);
+                Destroy(card.gameObject);
+                //ServentPrefab 생성
 
-            SummonServent(0, targetField);
-            //field에 ServentData넣기
-            targetField.Summon(card.GetCardData());
-            // CardAlignmentAlt();
+                SummonServent(0, targetField);
+                //field에 ServentData넣기
+                targetField.Summon(card.GetCardData());
+
+                List<CardData> newHandList = new List<CardData>();
+
+                foreach(CardData cardData in handList)
+                {newHandList.Add(cardData);}
+
+                for(int i = 0; i < cardObjectList.Count; ++i)
+                {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                handList = newHandList;
+                CardAlignmentAlt();
+            }
+            break;
+
+            case ECardType.Spell:
+            if(foo)
+            {
+                handList.RemoveAt(card.GetCardOrder());
+                cardObjectList.Remove(card.gameObject);
+                Destroy(card.gameObject);
+                
+                List<CardData> newHandList = new List<CardData>();
+
+                foreach(CardData cardData in handList)
+                {newHandList.Add(cardData);}
+
+                for(int i = 0; i < cardObjectList.Count; ++i)
+                {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                handList = newHandList;
+                CardAlignmentAlt();
+            }
+            break;
+
+            default:
+            break;
         }
+
+
 
         foreach(GameObject cardObject in cardObjectList)
         {cardObject.GetComponent<Card>().SetLock(false);}
@@ -767,13 +835,17 @@ public class BattleManagerAlt : MonoBehaviour
         else
         {targetList = trashList;}
 
+        CardData cardData = targetList[targetList.Count - 1];
+
+        cardPrefab = cardPrefabList[cardData.GetCardNum()];
+
 
 
         
         GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
         cardObject.transform.SetParent(canvas.transform);
         cardObjectList.Add(cardObject);
-        CardData cardData = targetList[targetList.Count - 1];
+        
         cardObject.GetComponent<Card>().Setup(cardData);
         
         cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
@@ -858,30 +930,30 @@ public class BattleManagerAlt : MonoBehaviour
         return result;
     }
 
-    public void UpdateHandAlignment(int highlightedIndex)
-    {
-        if (handList.Count == 0) return;
+    // public void UpdateHandAlignment(int highlightedIndex)
+    // {
+    //     if (handList.Count == 0) return;
 
-        List<PRS> positions = GetCardAlignment(cardAreaBorderLeft.position, cardAreaBorderRight.position, handList.Count, 0.5f);
-        float offset = 50.0f; // Highlighted 카드 주변으로 밀리는 거리
+    //     List<PRS> positions = GetCardAlignment(cardAreaBorderLeft.position, cardAreaBorderRight.position, handList.Count, 0.5f);
+    //     float offset = 50.0f; // Highlighted 카드 주변으로 밀리는 거리
 
-        for (int i = 0; i < handList.Count; i++)
-        {
-            var targetPRS = positions[i];
-            // cardObjectList[i].GetComponent<Card>().originPRS = positions[i];
+    //     for (int i = 0; i < handList.Count; i++)
+    //     {
+    //         var targetPRS = positions[i];
+    //         // cardObjectList[i].GetComponent<Card>().originPRS = positions[i];
 
-            if (i < highlightedIndex)
-            {
-                targetPRS.pos.x -= offset;
-            }
-            else if (i > highlightedIndex)
-            {
-                targetPRS.pos.x += offset;
-            }
+    //         if (i < highlightedIndex)
+    //         {
+    //             targetPRS.pos.x -= offset;
+    //         }
+    //         else if (i > highlightedIndex)
+    //         {
+    //             targetPRS.pos.x += offset;
+    //         }
 
-            cardObjectList[i].GetComponent<Card>().MoveTransform(targetPRS, true, 0.2f); // DOTween으로 애니메이션
-        }
-    }
+    //         cardObjectList[i].GetComponent<Card>().MoveTransform(targetPRS, true, 0.2f); // DOTween으로 애니메이션
+    //     }
+    // }
 
     public void ShowAura()
     {
@@ -937,12 +1009,13 @@ public class BattleManagerAlt : MonoBehaviour
             var targetCard = cardObjectList[i];
             targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
             targetCard.GetComponent<Card>().MoveTransform(targetCard.GetComponent<Card>().originPRS, true, 0.7f);
+
         }
     }
     public void DeleteDragLine()
     {dragLine.positionCount = 0;}
 
-    public void DrawDragLine(Vector2 startPoint)
+    public void DrawDragLine(Vector2 startPoint, ECardTargetType cardTargetType)
     {
         Vector3[] point = new Vector3[lineCount];
         float posA = 10f;
@@ -958,7 +1031,7 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case EMouseOnArea.Field_1:
-            targetPoint = field_1.GetLinePoint().transform.position;
+            targetPoint = field_1.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_2:
@@ -970,16 +1043,18 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case EMouseOnArea.Field_4:
-            targetPoint = fieldDetectArea_4.position;
+            targetPoint = field_4.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_5:
-            targetPoint = fieldDetectArea_5.position;
+            targetPoint = field_5.GetLinePoint().position;
             break;
 
             case EMouseOnArea.Field_6:
-            targetPoint = fieldDetectArea_6.position;
+            targetPoint = field_6.GetLinePoint().position;
             break;
+
+
 
             case EMouseOnArea.Hole:
             targetPoint = holeDetectArea.position;
@@ -991,6 +1066,10 @@ public class BattleManagerAlt : MonoBehaviour
 
             case EMouseOnArea.Enemy:
             targetPoint = enemyDetectArea.position;
+            break;
+            
+            case EMouseOnArea.AnyWhere:
+            targetPoint = selectedTargetLineEnd.position;
             break;
             
             default:

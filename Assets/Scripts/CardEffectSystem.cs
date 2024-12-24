@@ -42,6 +42,8 @@ public class ExtendedCardRule {
 }
 
 
+
+
 // CardEffectSystem.cs
 public class CardEffectSystem : MonoBehaviour {
     private Dictionary<int, ExtendedCardRule> cardRules = new Dictionary<int, ExtendedCardRule>();

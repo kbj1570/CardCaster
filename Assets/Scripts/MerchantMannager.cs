@@ -150,7 +150,7 @@ public class MerchantMannager : MonoBehaviour
     }
 
     public void ExitShop()
-    {SceneManager.LoadScene("SafeZone");}
+    {SceneManager.LoadScene("Campsite");}
 
     public void SetPurchaseMenu()
     {this.currentMenu = EMerchantMenu.EPurchase;}

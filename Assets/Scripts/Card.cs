@@ -22,7 +22,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public PRS originPRS;
     public Vector3 originPosition;
 
-    public ECardTargetType cardTargetType;
+    
     public ECardType cardType;
 
     public bool locked;
@@ -36,6 +36,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public int GetCardOrder()
     {return cardOrder;}
+
+    public ECardType GetCardType()
+    {return cardType;}
 
     public void UpdateCardCost(int monsterCost, int spellCost)
     {
@@ -65,7 +68,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
             forceTMP.text = this.cardData.GetForce().ToString();
         
         // descriptionTMP.text = this.cardData.GetCardAbility();
-        // costTMP.text = this.cardData.GetCardCost().ToString();
+        costTMP.text = this.cardData.GetCardCost().ToString();
         // currentCost = this.cardData.GetCardCost();
         // UpdateIsUsable();
     }
@@ -153,7 +156,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         if (locked) return;
 
          // 현재 카드의 인덱스를 가져옴
-        BattleManagerAlt.Inst.UpdateHandAlignment(cardOrder);
+        // BattleManagerAlt.Inst.UpdateHandAlignment(cardOrder);
 
         // 카드 확대 애니메이션
         if (currentSequence != null && currentSequence.IsActive())
@@ -168,7 +171,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     {
         if (locked) return;
 
-        BattleManagerAlt.Inst.UpdateHandAlignment(-1); // 모든 카드를 기본 상태로 정렬
+        // BattleManagerAlt.Inst.UpdateHandAlignment(-1); // 모든 카드를 기본 상태로 정렬
 
         // 카드 복귀 애니메이션
         if (currentSequence != null && currentSequence.IsActive())

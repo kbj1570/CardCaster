@@ -1,12 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine.UI;
-using UnityEditor.UIElements;
 using System.Linq;
-using Unity.VisualScripting;
-
 public class DeckManager : MonoBehaviour
 {
     public List<Transform> cardLocation;
@@ -23,27 +19,22 @@ public class DeckManager : MonoBehaviour
     private Dictionary<CardData, int> currentCardList;
     private int currentPage;
     private int pageLimit;
-
     public static DeckManager Inst{get; private set;}
     void Awake() => Inst = this;
 
     void Start()
     {
         currentPage = 0;
-        
         cardDatabase = DataController.Inst.LoadCardDatabase();
 
-        LoadCardList();
-        LoadDeck();
-        CreatePage();
+        // LoadCardList();
+        // LoadDeck();
+        // CreatePage();
     }
 
     public void SaveDeck()
     {
         Dictionary<string, int> dumb = new Dictionary<string, int>();
-
-        
-
         foreach(KeyValuePair<CardData, int> value in myDeckList)
         {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
 

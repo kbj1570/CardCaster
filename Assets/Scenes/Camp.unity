@@ -901,6 +901,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedCategory: 0
   gold: 0
+  additionalHealth: 0
+  maxHealth: 0
   inventory: []
   gridLayout: {fileID: 0}
   goldText: {fileID: 0}
@@ -5012,7 +5014,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2139334686
 RectTransform:
   m_ObjectHideFlags: 0
