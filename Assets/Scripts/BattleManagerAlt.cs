@@ -8,7 +8,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 public enum ECardType{Servent, Spell}
-public enum EServentAttribute{Fire, Water, Earth, Wind, Darkness, Lightness}
+public enum EServentAttribute{None, Fire, Water, Earth, Wind, Darkness, Lightness}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
 public enum ECardTargetType{Selected, Select}
@@ -664,13 +664,68 @@ public class BattleManagerAlt : MonoBehaviour
         justGuard = false;
     }
 
+    public Field ReturnMouseOnField()
+    {
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.Field_1:
+            return field_1;
+
+            case EMouseOnArea.Field_2:
+            return field_2;
+
+            case EMouseOnArea.Field_3:
+            return field_3;
+
+            case EMouseOnArea.Field_4:
+            return field_4;
+
+            case EMouseOnArea.Field_5:
+            return field_5;
+
+            case EMouseOnArea.Field_6:
+            return field_6;
+
+            default:
+            return null;
+        }
+    }
+
     public void EndTurn()
     {
         myTurn = !myTurn;
         StartCoroutine(StartTurnCo());
     }
+    public bool CheckCardUsable(GameObject cardObject)
+    {
+        CardData cardData = cardObject.GetComponent<Card>().GetCardData();
 
-    public void CardOnDrag(GameObject cardObject)
+        if(mouseOnArea == EMouseOnArea.Hole)
+        {return true;}
+
+        if(cardData.cardType == ECardType.Servent)
+        {
+            if(ReturnMouseOnField() != null)
+            {return!ReturnMouseOnField().GetFilled();}
+        }
+        else
+        {
+            List<PreRequisite> preRequisites = cardData.GetPreRequisites();
+
+            foreach(PreRequisite value in preRequisites)
+            {
+                switch(value.preRequisite)
+                {
+                    case EPreRequisite.None:
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public void CardBeginDrag(GameObject cardObject)
     {
         if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
         {
@@ -681,11 +736,14 @@ public class BattleManagerAlt : MonoBehaviour
         foreach(GameObject card in cardObjectList)
         {card.GetComponent<Card>().SetLock(true);}
         cardObject.GetComponent<Card>().SetLock(false);
+    }
+
+    public void CardOnDrag(GameObject cardObject)
+    {
         // 사용가능한지 판단하는 코드
-
-
+        
         // 사용여부에 따라서 라인의 색이 달라진다.
-        DrawDragLine(cardObject.transform.position, cardObject.GetComponent<Card>().GetCardData().GetCardTargetType());
+        DrawDragLine(cardObject.transform.position, CheckCardUsable(cardObject));
     }
 
     public void CardEndDrag(Card card)
@@ -786,7 +844,7 @@ public class BattleManagerAlt : MonoBehaviour
                 handList.RemoveAt(card.GetCardOrder());
                 cardObjectList.Remove(card.gameObject);
                 Destroy(card.gameObject);
-                
+
                 List<CardData> newHandList = new List<CardData>();
 
                 foreach(CardData cardData in handList)
@@ -1013,14 +1071,24 @@ public class BattleManagerAlt : MonoBehaviour
         }
     }
     public void DeleteDragLine()
-    {dragLine.positionCount = 0;}
+    {
+        dragLine.positionCount = 0;
+        dragLine.endColor = Color.blue;
+    }
 
-    public void DrawDragLine(Vector2 startPoint, ECardTargetType cardTargetType)
+
+
+    public void DrawDragLine(Vector2 startPoint, Boolean isUsuable)
     {
         Vector3[] point = new Vector3[lineCount];
         float posA = 10f;
         float posB = 10f;
         dragLine.positionCount = lineCount;
+
+        if(isUsuable)
+        {dragLine.endColor = Color.blue;}
+        else
+        {dragLine.endColor = Color.red;}
         
         Vector3 targetPoint = new Vector3();
 

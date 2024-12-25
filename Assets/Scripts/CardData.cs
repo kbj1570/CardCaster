@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class CardData
 {
     public int cardNum;
@@ -10,6 +12,7 @@ public class CardData
     public ECardTargetType cardTargetType;
     public EServentAttribute serventAttribute;
     public EServentSize serventSize;
+    public List<PreRequisite> preRequisites;
 
     public int GetCardNum(){return cardNum;}
     public string GetCardName(){return cardName;}
@@ -20,4 +23,14 @@ public class CardData
     public EServentSize GetSize(){return serventSize;}
     public ECardType GetCardType(){return cardType;}
     public ECardTargetType GetCardTargetType(){return cardTargetType;}
+    public List<PreRequisite> GetPreRequisites(){return preRequisites;}
+
+
+}
+public struct PreRequisite
+{
+    public EPreRequisite preRequisite;
+    public EServentAttribute serventAttribute;
+    public int count;
+    public string name;
 }

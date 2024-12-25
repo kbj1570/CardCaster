@@ -94,6 +94,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);
     }
 
     public void OnEndDrag(PointerEventData eventData)

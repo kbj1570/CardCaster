@@ -1968,7 +1968,9 @@ MonoBehaviour:
   - {fileID: 187478257729737258, guid: 3a59c96408d246045bc9ee0ef7adccc4, type: 3}
   cardPrefabList:
   - {fileID: 8357732725725720325, guid: 03a09a3e6bb8afb4b9d81b2d954827da, type: 3}
+  - {fileID: 8357732725725720325, guid: c66db2f838c5e4240a8beb548a0f1f76, type: 3}
   - {fileID: 8357732725725720325, guid: 3de050d4a8fdd824da761c25617271e4, type: 3}
+  - {fileID: 8357732725725720325, guid: a7d02a0f21ce51e43878f5a34bdaaef4, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0

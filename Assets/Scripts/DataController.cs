@@ -55,12 +55,19 @@ public class  DataController : MonoBehaviour
 
      public List<CardData> LoadCardDatabase()
     {
-        if(File.Exists(Path.Combine(Application.dataPath, "CardDatabase.json")))
-        {
-            List<CardData> data = JsonMapper.ToObject<List<CardData>>(File.ReadAllText(Path.Combine(Application.dataPath , "CardDatabase.json")));
-            return data;
-        }
-        return null;
+        // if(File.Exists(Path.Combine(Application.dataPath, "CardDatabase.json")))
+        // {
+        //     List<CardData> data = JsonMapper.ToObject<List<CardData>>(File.ReadAllText(Path.Combine(Application.dataPath , "CardDatabase.json")));
+        //     return data;
+        // }
+
+        List<CardData> cardDatas = new();
+
+        cardDatas.Add(new CrescentLancer());
+        cardDatas.Add(new Duplicate());
+        cardDatas.Add(new ElementalBoost());
+        cardDatas.Add(new GloriousLight());
+        return cardDatas;
     }
 
     public Dictionary<string, int> LoadCardList()
