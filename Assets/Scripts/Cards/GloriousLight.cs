@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 public class GloriousLight : CardData
 {
-    List<PreRequisite> preRequisites;
-
     public GloriousLight()
     {
         cardNum = 3;

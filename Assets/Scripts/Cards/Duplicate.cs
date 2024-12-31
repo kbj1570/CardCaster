@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 public class Duplicate : CardData
 {
-    List<PreRequisite> preRequisites;
-
     public Duplicate()
     {
         cardNum = 2;
@@ -16,9 +14,10 @@ public class Duplicate : CardData
 
         preRequisites = new();
         PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.PlayerServentCount;
-        preRequisite.count = 1;
+        preRequisite.preRequisite = EPreRequisite.SelectedServent;
         preRequisite.serventAttribute = EServentAttribute.None;
+
+        preRequisites.Add(preRequisite);
     }
 
 }

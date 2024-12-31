@@ -62,7 +62,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     {
         this.cardData = cardData;
         nameTMP.text = this.cardData.GetCardName();
-        this.cardHighlightBorder.SetActive(true);
+        // this.cardHighlightBorder.SetActive(true);
         cardType = cardData.GetCardType();
         if(cardType == ECardType.Servent)
             forceTMP.text = this.cardData.GetForce().ToString();

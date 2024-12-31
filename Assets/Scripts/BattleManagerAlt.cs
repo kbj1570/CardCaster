@@ -255,7 +255,6 @@ public class BattleManagerAlt : MonoBehaviour
         public IEnumerator ShowServentInfo(Servent servent)
     {
         clickedServentInfo = Instantiate(serventInfoList[0], Input.mousePosition, Utils.QI);
-        Debug.Log("되나?");
         Vector3 vector = clickedServentInfo.transform.position;
         vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
         clickedServentInfo.transform.position = vector;
@@ -686,6 +685,9 @@ public class BattleManagerAlt : MonoBehaviour
             case EMouseOnArea.Field_6:
             return field_6;
 
+            case EMouseOnArea.AnyWhere:
+            return field_1;
+
             default:
             return null;
         }
@@ -703,6 +705,9 @@ public class BattleManagerAlt : MonoBehaviour
         if(mouseOnArea == EMouseOnArea.Hole)
         {return true;}
 
+        if(ReturnMouseOnField() == null)
+        {return false;}
+
         if(cardData.cardType == ECardType.Servent)
         {
             if(ReturnMouseOnField() != null)
@@ -711,15 +716,374 @@ public class BattleManagerAlt : MonoBehaviour
         else
         {
             List<PreRequisite> preRequisites = cardData.GetPreRequisites();
+            bool flag = false;
+
+            int count;
+
 
             foreach(PreRequisite value in preRequisites)
             {
+                count = 0;
                 switch(value.preRequisite)
                 {
                     case EPreRequisite.None:
                     return true;
+
+                    case EPreRequisite.SelectedServent:
+                    if(ReturnMouseOnField().GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {return true;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {return true;}
+                        }
+                        
+                    }
+                    return false;
+                    
+
+                    case EPreRequisite.AllServentCount:
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count == value.count;
+                    break;
+
+                    case EPreRequisite.AllServentCountOver:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count >= value.count;
+                    break;
+
+                    case EPreRequisite.AllServentCountUnder:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count <= value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCount:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count == value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCountOver:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == field_1.GetServentAttribute() ||
+                         value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count >= value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCountUnder:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count <= value.count;
+                    break;
                 }
+
+                if(!flag)
+                {return flag;}
             }
+            return flag;
+
+            
         }
 
         return false;

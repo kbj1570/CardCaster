@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class ElementalBoost : CardData
 {
-    List<PreRequisite> preRequisites;
+    
     public ElementalBoost()
     {
         cardNum = 1;
@@ -15,9 +15,11 @@ public class ElementalBoost : CardData
         
         preRequisites = new();
         PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.PlayerServentCount;
+        preRequisite.preRequisite = EPreRequisite.PlayerServentCountOver;
         preRequisite.count = 1;
         preRequisite.serventAttribute = EServentAttribute.None;
+
+        preRequisites.Add(preRequisite);
 
     }
 }
@@ -56,7 +58,8 @@ public enum EPreRequisite
     EnemyHPUnder, //상대의 체력 ~이하
     AllServentCount, // 소환수의 수
     AllServentCountOver, //소환수의 수 ~이상
-    AllServentCountUnder //소환수의 수 ~이하
+    AllServentCountUnder, //소환수의 수 ~이하
+    SelectedServent // 내가 선택한 소환수
 }
 
 public struct AbilityPreRequisite
@@ -67,13 +70,7 @@ public struct AbilityPreRequisite
     public string name;
 }
 
-public struct PreRequisite
-{
-    public EPreRequisite preRequisite;
-    public EServentAttribute serventAttribute;
-    public int count;
-    public string name;
-}
+
 // Verb 소환된 내 소환수가 있을 때
 // 무슨 속성?
 // 몇 마리?

@@ -10,6 +10,7 @@ public class Field : MonoBehaviour
     public FieldArea fieldArea;
     public CardData cardData;
     public List<EServentCondition> conditions;
+    public EServentAttribute serventAttribute;
     
     public bool filled;
     public bool isDragable;
@@ -33,7 +34,7 @@ public class Field : MonoBehaviour
     public Color forceColorEarth;
     public Color forceColorWind;
     public Color forceColorDarkness;
-    public Color forceColorLight;
+    public Color forceColorLightness;
     
     public int currentForce;
     public int fieldNum;
@@ -45,7 +46,7 @@ public class Field : MonoBehaviour
     public int GetFieldNum(){return fieldNum;}
 
     public void GainForce(int value){currentForce += value;}
-    public EServentAttribute GetServentAttribute(){return cardData.GetAttribute();}
+    public EServentAttribute GetServentAttribute(){return serventAttribute;}
     public void LoseForce(int value)
     {
         if(!filled)
@@ -77,6 +78,7 @@ public class Field : MonoBehaviour
         // forceTMP.text = currentForce.ToString();
         filled = true;
         attacked = false;
+        serventAttribute = cardData.serventAttribute;
     }
 
     public void UpdateCondition()
@@ -117,6 +119,7 @@ public class Field : MonoBehaviour
     {this.attacked = value;}
     public CardData GetCardData()
     {return cardData;}
+
 
     public Transform GetLinePoint()
     {

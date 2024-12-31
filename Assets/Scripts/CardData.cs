@@ -3,6 +3,8 @@ using System.Collections.Generic;
 public class CardData
 {
     public int cardNum;
+    public int serventNum;
+    public int spellNum;
     public string cardName;
     public string cardAbility;
     public string cardGuideDescription;
@@ -15,6 +17,8 @@ public class CardData
     public List<PreRequisite> preRequisites;
 
     public int GetCardNum(){return cardNum;}
+    public int GetServentNum(){return serventNum;}
+    public int GetSpellNum(){return serventNum;}
     public string GetCardName(){return cardName;}
     public string GetCardAbility(){return cardAbility;}
     public int GetForce(){return force;}
