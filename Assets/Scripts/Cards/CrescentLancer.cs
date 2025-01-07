@@ -12,5 +12,6 @@ public class CrescentLancer : CardData
         cardAbility = "공격 시 이 소환수의 포스가 상대 소환수의 포스보다 높다면 그 차이만큼 상대에게 대미지를 준다";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
+        serventAttribute = EServentAttribute.Lightness;
     }
 }

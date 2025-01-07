@@ -643,7 +643,7 @@ Transform:
   m_GameObject: {fileID: 107770710}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
-  m_LocalScale: {x: 10.7196, y: 6.8893147, z: 1}
+  m_LocalScale: {x: 9.038767, y: 5.80907, z: 0.8432}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 325286227}
@@ -1972,6 +1972,7 @@ MonoBehaviour:
   - {fileID: 8357732725725720325, guid: c66db2f838c5e4240a8beb548a0f1f76, type: 3}
   - {fileID: 8357732725725720325, guid: 3de050d4a8fdd824da761c25617271e4, type: 3}
   - {fileID: 8357732725725720325, guid: a7d02a0f21ce51e43878f5a34bdaaef4, type: 3}
+  - {fileID: 8357732725725720325, guid: c437a705e88842c41ae8ee65d5cf17b4, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0

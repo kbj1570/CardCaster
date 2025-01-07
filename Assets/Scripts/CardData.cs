@@ -35,6 +35,7 @@ public struct PreRequisite
 {
     public EPreRequisite preRequisite;
     public EServentAttribute serventAttribute;
+    public ECardType cardType;
     public int count;
     public string name;
 }

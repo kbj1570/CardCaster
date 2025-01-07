@@ -3,6 +3,7 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.EventSystems;
 using System;
+using UnityEngine.UI;
 
 
 
@@ -15,15 +16,22 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public Sprite cardBack;
     public CardData cardData;
     public GameObject cardHighlightBorder;
+
+    public GridLayoutGroup forceAttribute;
     bool isFront;
     bool isUsable;
     int currentCost;
     public int cardOrder;
     public PRS originPRS;
     public Vector3 originPosition;
-
-    
     public ECardType cardType;
+
+    public Image fireElement;
+    public Image waterElement;
+    public Image earthElement;
+    public Image windElement;
+    public Image darknessElement;
+    public Image lightElement;
 
     public bool locked;
     private Sequence currentSequence;
@@ -69,6 +77,51 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         
         // descriptionTMP.text = this.cardData.GetCardAbility();
         costTMP.text = this.cardData.GetCardCost().ToString();
+
+        if(cardData.GetCardType() == ECardType.Servent)
+        {
+            Image image = null;
+            switch(cardData.GetAttribute())
+            {
+                case EServentAttribute.Fire:
+                image = fireElement;
+                break;
+
+                case EServentAttribute.Water:
+                image = waterElement;
+                break;
+
+                case EServentAttribute.Earth:
+                image = earthElement;
+                break;
+
+                case EServentAttribute.Darkness:
+                image = darknessElement;
+                break;
+
+                case EServentAttribute.Wind:
+                image = windElement;
+                break;
+
+                case EServentAttribute.Lightness:
+                image = lightElement;
+                break;
+
+            }
+            
+            for(int i = 0; i < cardData.GetForce(); ++i)
+            {
+                Image gameObject = Instantiate(image, forceAttribute.transform.position, Utils.QI);
+
+                gameObject.transform.SetParent(forceAttribute.transform);
+
+                gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+            }
+        }
+
+        
+
+
         // currentCost = this.cardData.GetCardCost();
         // UpdateIsUsable();
     }
@@ -93,34 +146,24 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     }
 
     public void OnBeginDrag(PointerEventData eventData)
-    {
-        BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);
-    }
+    {BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);}
 
     public void OnEndDrag(PointerEventData eventData)
-    {
-        //BattleManager에게 이 카드를 놓았다는 신호를 보냄
-        //신호를 받은 BattleManager는 카드를 사용하는지 아니면 코스트로 버리는지 등등을 판단하며 카드 오브젝트를 삭제함
-        
-        BattleManagerAlt.Inst.CardEndDrag(this);
-
-    }
+    {BattleManagerAlt.Inst.CardEndDrag(this);}
 
     public void OnDrag(PointerEventData eventData)
     {
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
-        // Dark Night, Black Sky, The Devils Cry
 
-        
         if (currentSequence != null && currentSequence.IsActive())
         {currentSequence.Kill();}
                 
         Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad));
+        sequence.Append(transform.DOScale(new Vector3(this.transform.localScale.x, this.transform.localScale.y, 1), 0.07f).SetEase(Ease.InOutQuad));
         //.Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
 
-        this.transform.position = originPRS.pos;
+        // this.transform.position = originPRS.pos;
         currentSequence = sequence;
         BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
     }
@@ -159,13 +202,13 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
          // 현재 카드의 인덱스를 가져옴
         // BattleManagerAlt.Inst.UpdateHandAlignment(cardOrder);
 
-        // 카드 확대 애니메이션
         if (currentSequence != null && currentSequence.IsActive())
             currentSequence.Kill();
+        
 
         currentSequence = DOTween.Sequence()
-            .Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
-            .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
+            .Append(transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.13f).SetEase(Ease.InOutQuad))
+            .Append(transform.DOMoveY(originPRS.pos.y + 130, 0.13f).SetEase(Ease.OutCirc));
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -179,7 +222,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
             currentSequence.Kill();
 
         currentSequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.one, 0.07f).SetEase(Ease.InOutQuad))
+            .Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
             .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
     }
 

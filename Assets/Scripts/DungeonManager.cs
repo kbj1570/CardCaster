@@ -12,12 +12,12 @@ public class DungeonManager : MonoBehaviour
     public Sprite monsterSprite;
     
     public Node startNode;
-    int width = 5;
-    int height = 5;
+    int width = 18;
+    int height = 10;
 
     public int waypointFloor = 3;
     public int floor;
-    public int floorSize;
+    const int floorSize = 180;
     bool flag;
     List<Node> horizontalNodeLine;
     List<Node> map;
@@ -65,11 +65,11 @@ public class DungeonManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.W))
         {
-            if(CheckOutOfIndex(currentPlayerLocation - 10))
+            if(CheckOutOfIndex(currentPlayerLocation - width))
             {
-                if(nodeMap[currentPlayerLocation - 10] != null)
+                if(nodeMap[currentPlayerLocation - width] != null)
                 {
-                    currentPlayerLocation -= 10;
+                    currentPlayerLocation -= width;
                     MovePlayer(currentPlayerLocation);
                 }
             }
@@ -89,11 +89,11 @@ public class DungeonManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.S))
         {
-            if(CheckOutOfIndex(currentPlayerLocation + 10))
+            if(CheckOutOfIndex(currentPlayerLocation + width))
             {
-                if(nodeMap[currentPlayerLocation + 10] != null)
+                if(nodeMap[currentPlayerLocation + width] != null)
                 {
-                    currentPlayerLocation += 10;
+                    currentPlayerLocation += width;
                     MovePlayer(currentPlayerLocation);
                 }
             }
@@ -136,11 +136,12 @@ public class DungeonManager : MonoBehaviour
     public void CreateFloor()
     {
         nodeNumList = new List<int>();
-        while(nodeNumList.Count < 5)
+        while(nodeNumList.Count < 50) // 생성된 층의 크기가 10보다 작으면 다시 만듬
         {
             map = new();
-            for(int i = 0; i < 90; ++i)
+            for(int i = 0; i < floorSize; ++i)
             {map.Add(null);}
+            Debug.Log(map.Count);
 
             CreateFirstRoom();
             CreateNodeNumList();
@@ -188,7 +189,7 @@ public class DungeonManager : MonoBehaviour
     {
         nodeMap = new();
 
-        for(int i = 0; i < 90; ++i)
+        for(int i = 0; i < floorSize; ++i)
         {nodeMap.Add(null);}
 
         for(int i = 0; i < map.Count; ++i)
@@ -217,14 +218,15 @@ public class DungeonManager : MonoBehaviour
 
     private void CreateFirstRoom()
     {
-        int roomNum = 45;
+        int roomNum = floorSize / 2;
+        Debug.Log(map.Count);
         map[roomNum] = new Node();
         map[roomNum].SetRoomType(ERoomType.None);
 
         CreateRoomNode(roomNum + 1);
         CreateRoomNode(roomNum - 1);
-        CreateRoomNode(roomNum + 10);
-        CreateRoomNode(roomNum - 10);
+        CreateRoomNode(roomNum + width);
+        CreateRoomNode(roomNum - width);
     }
 
     // private List<int> FindCloseNodes(List<int> list, int value, int direction, int target)
@@ -254,7 +256,7 @@ public class DungeonManager : MonoBehaviour
         if(map[roomNum] != null)
         {return;}
 
-        if(roomNum / 10 == 0)
+        if(roomNum / width == 0)
         {return;}
 
         if(TrueOrFalse())
@@ -268,14 +270,14 @@ public class DungeonManager : MonoBehaviour
     
         CreateRoomNode(roomNum + 1);
         CreateRoomNode(roomNum - 1);
-        CreateRoomNode(roomNum + 10);
-        CreateRoomNode(roomNum - 10);
+        CreateRoomNode(roomNum + width);
+        CreateRoomNode(roomNum - width);
     }
 
     private Vector3 CalculateNodePosition(int roomNum)
     {
-        int x = ((roomNum  % 10) - 5 ) * 100;
-        int y = -(((roomNum / 10) - 4) * 100);
+        int x = ((roomNum  % width) - 9) * 100;
+        int y = -(((roomNum / width) - 8) * 100);
 
         return new Vector3(x, y, 0);
     }
@@ -296,15 +298,15 @@ public class DungeonManager : MonoBehaviour
             {count++;}
         }
 
-        if(CheckOutOfIndex(roomNum + 10))
+        if(CheckOutOfIndex(roomNum + width))
         {
-            if(map[roomNum + 10] != null)
+            if(map[roomNum + width] != null)
             {count++;}
         }
 
-        if(CheckOutOfIndex(roomNum - 10))
+        if(CheckOutOfIndex(roomNum - width))
         {
-            if(map[roomNum - 10] != null)
+            if(map[roomNum - width] != null)
             {count++;}
         }
 
@@ -317,10 +319,10 @@ public class DungeonManager : MonoBehaviour
         if(roomNum < 0)
         {return false;}
 
-        if(roomNum % 10 == 0)
+        if(roomNum % width == 0)
         {return false;}
 
-        if(roomNum > 89)
+        if(roomNum > floorSize - 1)
         {return false;}
 
         return true;
@@ -354,9 +356,9 @@ public class DungeonManager : MonoBehaviour
             {return true;}
         }
 
-        if(CheckOutOfIndex(value - 10) && CheckOutOfIndex(value + 10))
+        if(CheckOutOfIndex(value - width) && CheckOutOfIndex(value + width))
         {
-            if(map[value + 10] != null && map[value - 10] != null)
+            if(map[value + width] != null && map[value - width] != null)
             {return true;}
         }
         
@@ -546,13 +548,13 @@ public class DungeonManager : MonoBehaviour
         if(CheckOutOfIndex(roomNum + 1))
         {
             if(nodeMap[roomNum + 1] != null)
-            {nodeMap[roomNum+ 1].SetActive(true);}
+            {nodeMap[roomNum + 1].SetActive(true);}
         }
 
-        if(CheckOutOfIndex(roomNum + 10))
+        if(CheckOutOfIndex(roomNum + width))
         {
-            if(nodeMap[roomNum + 10] != null)
-            {nodeMap[roomNum + 10].SetActive(true);}
+            if(nodeMap[roomNum + width] != null)
+            {nodeMap[roomNum + width].SetActive(true);}
         }
 
         if(CheckOutOfIndex(roomNum - 1))
@@ -561,10 +563,10 @@ public class DungeonManager : MonoBehaviour
             {nodeMap[roomNum - 1].SetActive(true);}
         }
 
-        if(CheckOutOfIndex(roomNum - 10))
+        if(CheckOutOfIndex(roomNum - width))
         {
-            if(nodeMap[roomNum - 10] != null)
-            {nodeMap[roomNum - 10].SetActive(true);}
+            if(nodeMap[roomNum - width] != null)
+            {nodeMap[roomNum - width].SetActive(true);}
         }
 
         if(map[roomNum].GetRoomType() == ERoomType.EStair)
