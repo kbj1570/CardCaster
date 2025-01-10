@@ -2,27 +2,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
+using DG.Tweening;
+using Unity.Mathematics;
 
 public class DungeonManager : MonoBehaviour
 {
 
-
+    public Camera camera;
     public Sprite stairSprite;
     public Sprite encounterSprite;
     public Sprite monsterSprite;
     
     public Node startNode;
-    int width = 18;
-    int height = 10;
-
+    int width = 14;
     public int waypointFloor = 3;
     public int floor;
-    const int floorSize = 180;
+    const int floorSize = 140;
     bool flag;
     List<Node> horizontalNodeLine;
     List<Node> map;
     List<GameObject> nodeMap;
-    List<List<Node>> allNodeMap;
 
     List<int> openList;
     List<int> closeList;
@@ -55,8 +54,9 @@ public class DungeonManager : MonoBehaviour
     {
         // LoadEncounter();
         // ShowEncounter();
-
         CreateFloor();
+        camera.transform.position = player.transform.position;
+        camera.transform.position += new Vector3(0,0,-1);
         
     }
 
@@ -71,8 +71,11 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation -= width;
                     MovePlayer(currentPlayerLocation);
+                    
                 }
             }
+            camera.transform.position = player.transform.position;
+            camera.transform.position += new Vector3(0,0,-1);
         }
 
         if(Input.GetKeyDown(KeyCode.A))
@@ -84,6 +87,8 @@ public class DungeonManager : MonoBehaviour
                     currentPlayerLocation -= 1;
                     MovePlayer(currentPlayerLocation);
                 }
+                camera.transform.position = player.transform.position;
+                camera.transform.position += new Vector3(0,0,-1);
             }
         }
 
@@ -96,6 +101,8 @@ public class DungeonManager : MonoBehaviour
                     currentPlayerLocation += width;
                     MovePlayer(currentPlayerLocation);
                 }
+                camera.transform.position = player.transform.position;
+                camera.transform.position += new Vector3(0,0,-1);
             }
         }
 
@@ -108,6 +115,8 @@ public class DungeonManager : MonoBehaviour
                     currentPlayerLocation += 1;
                     MovePlayer(currentPlayerLocation);
                 }
+                camera.transform.position = player.transform.position;
+                camera.transform.position += new Vector3(0,0,-1);
             }
         }
     }
@@ -136,22 +145,22 @@ public class DungeonManager : MonoBehaviour
     public void CreateFloor()
     {
         nodeNumList = new List<int>();
-        while(nodeNumList.Count < 50) // 생성된 층의 크기가 10보다 작으면 다시 만듬
+        while(nodeNumList.Count < 20) // 생성된 층의 크기가 10보다 작으면 다시 만듬
         {
             map = new();
             for(int i = 0; i < floorSize; ++i)
             {map.Add(null);}
-            Debug.Log(map.Count);
-
             CreateFirstRoom();
             CreateNodeNumList();
         }
 
         floorText.text = floor.ToString() + "F";
-
+        AddLoopCorridor();
         InstantiateNode();
-        SetNodeRoom();
+        
         CreateNodeNumList();
+        // UpdateNodeBlocked();
+        SetNodeRoom();
         UpdateNode();
     }
 
@@ -161,21 +170,70 @@ public class DungeonManager : MonoBehaviour
         {Destroy(node);}
     }
 
+    public void AddLoopCorridor()
+    {
+
+        int random = Random.Range(0,3);
+
+        int first = nodeNumList[random];
+        int last = nodeNumList[nodeNumList.Count - 1];
+
+        int x = (last / width) - (first / width);
+
+        int z = first;
+
+        for(int p = 0; p < x; ++p)
+        {
+            z = z + width;
+            if(map[z] == null)
+            {map[z] = new();}
+
+            if(!nodeNumList.Contains(z))
+            {nodeNumList.Add(z);}
+        }
+
+        for(int q = z; q < last; ++q)
+        {
+            z = z + 1;
+            if(map[z] == null)
+            {map[z] = new();}
+
+            if(!nodeNumList.Contains(z))
+            {nodeNumList.Add(z);}
+        }
+    }
+
+
+    public void UpdateNodeBlocked()
+    {
+        for(int i = 0; i < nodeNumList.Count; ++i)
+        {
+            nodeMap[nodeNumList[i]].GetComponent<RoomNode>().SetBlocked(
+                !nodeNumList.Contains(nodeNumList[i] - width),
+                !nodeNumList.Contains(nodeNumList[i] + width),
+                !nodeNumList.Contains(nodeNumList[i] - 1),
+                !nodeNumList.Contains(nodeNumList[i] + 1));
+
+            Debug.Log(nodeNumList[i]);
+        }
+
+    }
+
     private void UpdateNode()
     {
         for(int i = 0; i < nodeNumList.Count; ++i)
         {
             switch(map[nodeNumList[i]].GetRoomType())
             {
-                case(ERoomType.EStair):
+                case ERoomType.EStair:
                 nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(stairSprite);
                 break;
 
-                case(ERoomType.EMonster):
+                case ERoomType.EMonster:
                 nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(monsterSprite);
                 break;
 
-                case(ERoomType.EEncount):
+                case ERoomType.EEncount:
                 nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(encounterSprite);
                 break;
 
@@ -196,12 +254,13 @@ public class DungeonManager : MonoBehaviour
         {
             if(map[i] != null)
             {
-                GameObject gameObject = Instantiate(nodePrefab,new Vector3(), Utils.QI);
+                GameObject gameObject = Instantiate(nodePrefab,new UnityEngine.Vector3(), Utils.QI);
                 gameObject.transform.SetParent(mapObject.transform);
                 gameObject.transform.position = mapObject.transform.position;
                 gameObject.GetComponent<RoomNode>().SetNodeNum(i);
                 gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
                 gameObject.SetActive(false);
+
                  
                 nodeMap.Insert(i, gameObject);
             }
@@ -219,7 +278,6 @@ public class DungeonManager : MonoBehaviour
     private void CreateFirstRoom()
     {
         int roomNum = floorSize / 2;
-        Debug.Log(map.Count);
         map[roomNum] = new Node();
         map[roomNum].SetRoomType(ERoomType.None);
 
@@ -274,12 +332,12 @@ public class DungeonManager : MonoBehaviour
         CreateRoomNode(roomNum - width);
     }
 
-    private Vector3 CalculateNodePosition(int roomNum)
+    private UnityEngine.Vector3 CalculateNodePosition(int roomNum)
     {
-        int x = ((roomNum  % width) - 9) * 100;
-        int y = -(((roomNum / width) - 8) * 100);
+        int x = ((roomNum  % width) - 9) * 2;
+        int y = -(((roomNum / width) - 8) * 2);
 
-        return new Vector3(x, y, 0);
+        return new UnityEngine.Vector3(x, y, 0);
     }
 
     private int CountNeighbourhood(int roomNum)
@@ -336,6 +394,9 @@ public class DungeonManager : MonoBehaviour
             if(!CheckCorridor(i))
             {nodeNumList.Add(i);}
         }
+
+
+
     }
 
     private bool CheckCorridor(int value)
@@ -540,33 +601,61 @@ public class DungeonManager : MonoBehaviour
 
     public void MovePlayer(int roomNum)
     {
-        if(flag)
-        {}
         player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
         nodeMap[roomNum].SetActive(true);
+        nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
         if(CheckOutOfIndex(roomNum + 1))
         {
             if(nodeMap[roomNum + 1] != null)
-            {nodeMap[roomNum + 1].SetActive(true);}
+            {
+                if(!nodeMap[roomNum + 1].active)
+                {
+                    nodeMap[roomNum + 1].SetActive(true);
+                    StartCoroutine(nodeMap[roomNum + 1].GetComponent<RoomNode>().FadeOut());
+
+                }
+                
+            }
         }
 
         if(CheckOutOfIndex(roomNum + width))
         {
             if(nodeMap[roomNum + width] != null)
-            {nodeMap[roomNum + width].SetActive(true);}
+            {
+                if(!nodeMap[roomNum + width].active)
+                {
+                    nodeMap[roomNum + width].SetActive(true);
+                    StartCoroutine(nodeMap[roomNum + width].GetComponent<RoomNode>().FadeOut());
+                }
+                
+            }
         }
 
         if(CheckOutOfIndex(roomNum - 1))
         {
             if(nodeMap[roomNum - 1] != null)
-            {nodeMap[roomNum - 1].SetActive(true);}
+            {
+                if(!nodeMap[roomNum - 1].active)
+                {
+                    nodeMap[roomNum - 1].SetActive(true);
+                    StartCoroutine(nodeMap[roomNum - 1].GetComponent<RoomNode>().FadeOut());
+                }
+            }
+
+            
         }
 
         if(CheckOutOfIndex(roomNum - width))
         {
             if(nodeMap[roomNum - width] != null)
-            {nodeMap[roomNum - width].SetActive(true);}
+            {
+                if(!nodeMap[roomNum - width].active)
+                {
+                    nodeMap[roomNum - width].SetActive(true);
+                    StartCoroutine(nodeMap[roomNum - width].GetComponent<RoomNode>().FadeOut());
+                }
+            }
         }
 
         if(map[roomNum].GetRoomType() == ERoomType.EStair)
@@ -761,7 +850,7 @@ public class DungeonManager : MonoBehaviour
 
     private bool TrueOrFalse()
     {
-        int value = Random.Range(0, 2);
+        int value = Random.Range(0,3);
         
         if(value == 0)
         {return true;}
