@@ -74,8 +74,9 @@ public class Field : MonoBehaviour
     public void Summon(CardData cardData)
     {
         this.cardData = cardData;
-        // currentForce = cardData.GetForce();
-        // forceTMP.text = currentForce.ToString();
+        currentForce = cardData.GetForce();
+        forceTMP.gameObject.SetActive(true);
+        forceTMP.text = currentForce.ToString();
         filled = true;
         attacked = false;
         serventAttribute = cardData.serventAttribute;

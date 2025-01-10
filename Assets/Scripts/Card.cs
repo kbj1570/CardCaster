@@ -156,45 +156,27 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
 
-        if (currentSequence != null && currentSequence.IsActive())
-        {currentSequence.Kill();}
+        // if (currentSequence != null && currentSequence.IsActive())
+        // {currentSequence.Kill();}
                 
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(transform.DOScale(new Vector3(this.transform.localScale.x, this.transform.localScale.y, 1), 0.07f).SetEase(Ease.InOutQuad));
-        //.Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+        // Sequence sequence = DOTween.Sequence();
+        // sequence.Append(transform.DOScale(new Vector3(this.transform.localScale.x, this.transform.localScale.y, 1), 0.07f).SetEase(Ease.InOutQuad));
 
-        // this.transform.position = originPRS.pos;
-        currentSequence = sequence;
+        // currentSequence = sequence;
+        
+
+
+        // if (currentSequence != null && currentSequence.IsActive())
+        // currentSequence.Kill();
+
+        // currentSequence = DOTween.Sequence()
+        //     .Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
+        //     .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+
+        this.transform.localScale = new Vector3(0.4f, 0.4f, 1);
+        this.transform.position = originPRS.pos;
         BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
     }
-
-    // public void OnPointerEnter(PointerEventData eventData)
-    // {
-    //     if(locked)
-    //     {return;}
-
-    //     if (currentSequence != null && currentSequence.IsActive())
-    //     {currentSequence.Kill();}
-
-    //     Sequence sequence = DOTween.Sequence();
-    //     sequence.Append(transform.DOScale(new Vector3(1.6f, 1.6f, 1), 0.13f).SetEase(Ease.InOutQuad))
-    //     .Append(transform.DOMoveY(originPRS.pos.y + 70, 0.13f).SetEase(Ease.OutCirc));
-    //     currentSequence = sequence;
-    // }
-    // public void OnPointerExit(PointerEventData eventData)
-    // {
-    //     if(locked)
-    //     {return;}
-
-    //     if (currentSequence != null && currentSequence.IsActive())
-    //     {currentSequence.Kill();}
-                
-    //     Sequence sequence = DOTween.Sequence();
-    //     sequence.Append(transform.DOScale(new Vector3(1f, 1f, 1), 0.07f).SetEase(Ease.InOutQuad))
-    //     .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
-    //     currentSequence = sequence;
-    // }
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (locked) return;
