@@ -118,10 +118,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
                 gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
             }
         }
-
-        
-
-
         // currentCost = this.cardData.GetCardCost();
         // UpdateIsUsable();
     }

@@ -188,5 +188,4 @@ public class PlayerManager : MonoBehaviour
     public int GetGold()
     {return gold;}
 }
-public enum EItemCategory
-{ETool, EUsableItem, EImportantItem, EUnUsableItem}
+
