@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +9,8 @@ public class PlayerManager : MonoBehaviour
     public int gold;
     public int additionalHealth;
     public int maxHealth;
+
+    private int health;
 
     public List<ItemSO> inventory;
     public Dictionary<ItemSO, int> importantItem;
@@ -187,5 +186,16 @@ public class PlayerManager : MonoBehaviour
 
     public int GetGold()
     {return gold;}
+
+    public int GetHealth()
+    {return health;}
+    public void GainHealth(int value)
+    {health += value;}
+
+    public void LoseHealth(int value)
+    {health -= value;}
+
+    public void SetHealth(int value)
+    {health = value;}
 }
 

@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
-using DG.Tweening;
-using Unity.Mathematics;
 
 public class DungeonManager : MonoBehaviour
 {
@@ -18,13 +16,8 @@ public class DungeonManager : MonoBehaviour
     public int waypointFloor = 3;
     public int floor;
     const int floorSize = 140;
-    bool flag;
-    List<Node> horizontalNodeLine;
     List<Node> map;
     List<GameObject> nodeMap;
-
-    List<int> openList;
-    List<int> closeList;
     List<int> nodeNumList;
 
     public GameObject nodePrefab;
@@ -39,6 +32,11 @@ public class DungeonManager : MonoBehaviour
     public TMP_Text floorText;
     public TMP_Text encounterName;
     public TMP_Text encounterDescription;
+
+    public TMP_Text healthText;
+    public TMP_Text goldText;
+
+    public TMP_Text textbox;
 
     private Encounter currentEncounter;
 
@@ -332,12 +330,12 @@ public class DungeonManager : MonoBehaviour
         CreateRoomNode(roomNum - width);
     }
 
-    private UnityEngine.Vector3 CalculateNodePosition(int roomNum)
+    private Vector3 CalculateNodePosition(int roomNum)
     {
         int x = ((roomNum  % width) - 9) * 2;
         int y = -(((roomNum / width) - 8) * 2);
 
-        return new UnityEngine.Vector3(x, y, 0);
+        return new Vector3(x, y, 0);
     }
 
     private int CountNeighbourhood(int roomNum)
@@ -441,6 +439,34 @@ public class DungeonManager : MonoBehaviour
             CreateFloor();
         }
         
+    }
+
+    public void UseItem()
+    {
+        Item item = new();
+
+        switch(item.GetNum())
+        {
+            case "0": // 빨간포션
+            PlayerManager.Inst.GainHealth(2);
+            break;
+
+            case "1": // 거대한포션
+            PlayerManager.Inst.GainHealth(6);
+            break;
+
+            case "2": // 황금주사위
+            
+            break;
+
+            case "3": // 부숴진나침반
+            
+            break;
+
+            case "4": // 불길한향로
+            
+            break;
+        }
     }
 
     // public void RotateFloor()
