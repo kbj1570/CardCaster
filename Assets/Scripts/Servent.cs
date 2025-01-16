@@ -1,8 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 using TMPro;
+using System.Collections;
+using UnityEngine.EventSystems;
 
-public class Servent: MonoBehaviour
+public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     private ESequence sequence;
     private string serventName;
@@ -17,6 +20,8 @@ public class Servent: MonoBehaviour
     public TMP_Text serventForceText;
     public Button activationButton;
 
+    public bool mouseOn;
+
 
     public void Attack()
     {}
@@ -30,13 +35,15 @@ public class Servent: MonoBehaviour
 
     public void OnMouseUp()
     {
-        StartCoroutine(BattleManagerAlt.Inst.ShowServentInfo(this));
+        if(mouseOn)
+        {StartCoroutine(BattleManagerAlt.Inst.ShowServentInfo(this));}
     }
 
-    public void OnMouseDown()
-    {
+    public void OnMouseEnter()
+    {mouseOn = true;}
 
-    }
+    public void OnMouseExit()
+    {mouseOn = false;}
 
     public void ShowInfo()
     {
@@ -50,7 +57,21 @@ public class Servent: MonoBehaviour
         border.SetActive(false);
         activationButton.gameObject.SetActive(false);
     }
+    // public IEnumerator FadeOut()
+    // {
 
+    // }
+    void OnMouseDrag()
+    {
+        Debug.Log("Dragging");
+    }
+    public void OnBeginDrag(PointerEventData eventData)
+    {Debug.Log("Dragging");}
+
+    public void OnEndDrag(PointerEventData eventData)
+    {}
+    public void OnDrag(PointerEventData eventData)
+    {Debug.Log("Dragging");}
 
 
 }

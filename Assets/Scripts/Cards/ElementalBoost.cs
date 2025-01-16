@@ -6,6 +6,7 @@ public class ElementalBoost : CardData
     public ElementalBoost()
     {
         cardNum = 1;
+        spellNum = 1;
         cardName = "엘리멘탈 부스트";
         cardCost = 1;
         cardType = ECardType.Spell;

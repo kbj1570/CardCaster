@@ -125,7 +125,85 @@ public class BattleManagerAlt : MonoBehaviour
 
         
     void ActivateSpell(CardData cardData)
-    {effectSystem.ExecuteCardEffect(cardData.GetCardNum(), this);}
+    {
+        switch(cardData.GetSpellNum())
+        {
+            case 0: //듀플리케이트
+            Debug.Log(cardData.GetCardName() + " 발동");
+            break;
+
+            case 1: //엘리멘탈 부스트
+            List<EServentAttribute> attributes = new();
+            if(field_1.GetComponent<Field>().GetFilled())
+            {
+                if(!attributes.Contains(field_1.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_1.GetComponent<Field>().GetServentAttribute());}
+            }
+
+            if(field_2.GetComponent<Field>().GetFilled())
+            {
+                if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
+            }
+
+            if(field_3.GetComponent<Field>().GetFilled())
+            {
+                if(!attributes.Contains(field_3.GetComponent<Field>().GetServentAttribute()))
+                {attributes.Add(field_3.GetComponent<Field>().GetServentAttribute());}
+            }
+
+            int value = attributes.Count;
+
+            field_1.GetComponent<Field>().GainForce(value);
+            field_2.GetComponent<Field>().GainForce(value);
+            field_3.GetComponent<Field>().GainForce(value);
+
+            Debug.Log(cardData.GetCardName() + " 발동");
+            break;
+
+            case 2: //악을 멸하는 등불
+            if(field_1.GetComponent<Field>().GetFilled())
+            {
+                if(field_1.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_1.GetComponent<Field>().Kill();}
+
+                if(field_2.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_2.GetComponent<Field>().Kill();}
+
+                if(field_3.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_3.GetComponent<Field>().Kill();}
+
+                if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_4.GetComponent<Field>().Kill();}
+
+                if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_5.GetComponent<Field>().Kill();}
+
+                if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+                {field_6.GetComponent<Field>().Kill();}
+            }
+
+            Debug.Log(cardData.GetCardName() + " 발동");
+            break;
+
+            case 3: //타오르는 심장
+            ReturnMouseOnField().SetForce(ReturnMouseOnField().GetForce() * 2);
+
+            Debug.Log(cardData.GetCardName() + " 발동");
+            break;
+
+            case 4: //작은 것을 위한 희생
+            foreach(CardData card in trashList)
+            {deckList.Add(card);}
+
+            trashList.Clear();
+
+            Debug.Log(cardData.GetCardName() + " 발동");
+            break;
+
+        }
+
+    }
 
     void Update()
     {
@@ -468,6 +546,11 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = false;
     }
 
+    public void StartEnemyTurn()
+    {
+        StartCoroutine(EnemyTurnCo());
+    }
+
     public IEnumerator EnemyTurnCo()
     {
         int enemyTokens = 2;
@@ -572,7 +655,8 @@ public class BattleManagerAlt : MonoBehaviour
 
                 int randomNum = Random.Range(0, dumb.Count);
 
-                dumb[randomNum].GetComponent<Field>().Summon(null);
+                // dumb[randomNum].GetComponent<Field>().Summon(null);
+                SummonServent(0, dumb[randomNum]);
 
 
             }//몬스터 소환
@@ -1076,6 +1160,10 @@ public class BattleManagerAlt : MonoBehaviour
 
                     flag = count <= value.count;
                     break;
+
+                    case EPreRequisite.TrashCountOver:
+                    flag = trashCount > value.count;
+                    break;
                 }
 
                 if(!flag)
@@ -1175,61 +1263,71 @@ public class BattleManagerAlt : MonoBehaviour
             CardAlignmentAlt();
         }
 
-        switch(card.GetCardType())
+
+        if(CheckCardUsable(card.gameObject))
         {
-            case ECardType.Servent:
-            if(foo)
+            switch(card.GetCardType())
             {
-                handList.RemoveAt(card.GetCardOrder());
-                cardObjectList.Remove(card.gameObject);
-                Destroy(card.gameObject);
-                //ServentPrefab 생성
+                case ECardType.Servent:
+                if(foo)
+                {
+                    handList.RemoveAt(card.GetCardOrder());
+                    cardObjectList.Remove(card.gameObject);
+                    Destroy(card.gameObject);
+                    //ServentPrefab 생성
 
-                SummonServent(0, targetField);
-                //field에 ServentData넣기
-                targetField.Summon(card.GetCardData());
+                    SummonServent(0, targetField);
+                    //field에 ServentData넣기
+                    targetField.Summon(card.GetCardData());
 
-                List<CardData> newHandList = new List<CardData>();
+                    List<CardData> newHandList = new List<CardData>();
 
-                foreach(CardData cardData in handList)
-                {newHandList.Add(cardData);}
+                    foreach(CardData cardData in handList)
+                    {newHandList.Add(cardData);}
 
-                for(int i = 0; i < cardObjectList.Count; ++i)
-                {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+                    for(int i = 0; i < cardObjectList.Count; ++i)
+                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
 
-                handList = newHandList;
-                CardAlignmentAlt();
+                    handList = newHandList;
+                    CardAlignmentAlt();
+                }
+                break;
+
+                case ECardType.Spell:
+                if(foo)
+                {
+                    ActivateSpell(card.GetCardData());
+
+                    handList.RemoveAt(card.GetCardOrder());
+                    cardObjectList.Remove(card.gameObject);
+                    Destroy(card.gameObject);
+
+                    List<CardData> newHandList = new List<CardData>();
+
+                    foreach(CardData cardData in handList)
+                    {newHandList.Add(cardData);}
+
+                    for(int i = 0; i < cardObjectList.Count; ++i)
+                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                    handList = newHandList;
+                    CardAlignmentAlt();
+                }
+                break;
+
+                default:
+                break;
             }
-            break;
-
-            case ECardType.Spell:
-            if(foo)
-            {
-                handList.RemoveAt(card.GetCardOrder());
-                cardObjectList.Remove(card.gameObject);
-                Destroy(card.gameObject);
-
-                List<CardData> newHandList = new List<CardData>();
-
-                foreach(CardData cardData in handList)
-                {newHandList.Add(cardData);}
-
-                for(int i = 0; i < cardObjectList.Count; ++i)
-                {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
-
-                handList = newHandList;
-                CardAlignmentAlt();
-            }
-            break;
-
-            default:
-            break;
         }
+        else
+        {
+            foreach(GameObject cardObject in cardObjectList)
+            {cardObject.GetComponent<Card>().SetLock(false);}
+        }
+        
 
 
 
-        foreach(GameObject cardObject in cardObjectList)
-        {cardObject.GetComponent<Card>().SetLock(false);}
 
     }
 

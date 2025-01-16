@@ -68,6 +68,7 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new ElementalBoost());
         cardDatas.Add(new GloriousLight());
         cardDatas.Add(new VioletLichLord());
+        cardDatas.Add(new NoPainNoGain());
         return cardDatas;
     }
 
