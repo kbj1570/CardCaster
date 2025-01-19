@@ -18,7 +18,7 @@ public class CardData
 
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}
-    public int GetSpellNum(){return serventNum;}
+    public int GetSpellNum(){return spellNum;}
     public string GetCardName(){return cardName;}
     public string GetCardAbility(){return cardAbility;}
     public int GetForce(){return force;}

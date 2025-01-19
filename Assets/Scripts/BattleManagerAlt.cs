@@ -103,10 +103,17 @@ public class BattleManagerAlt : MonoBehaviour
     public TMP_Text costCountText;
     public TMP_Text deckCountText;
     public TMP_Text trashCountText;
+    public TMP_Text playerHealthText;
+    public TMP_Text enemyHealthText;
+
 
     private int costCount;
     private int deckCount;
     private int trashCount;
+
+    private int playerHealth;
+    private int enemyHealth;
+
 
 
 
@@ -129,7 +136,11 @@ public class BattleManagerAlt : MonoBehaviour
         switch(cardData.GetSpellNum())
         {
             case 0: //듀플리케이트
-            Debug.Log(cardData.GetCardName() + " 발동");
+
+            deckList.Add(ReturnMouseOnField().GetCardData());
+            deckList.Add(ReturnMouseOnField().GetCardData());
+            Shuffle();
+
             break;
 
             case 1: //엘리멘탈 부스트
@@ -183,22 +194,21 @@ public class BattleManagerAlt : MonoBehaviour
                 {field_6.GetComponent<Field>().Kill();}
             }
 
-            Debug.Log(cardData.GetCardName() + " 발동");
             break;
 
             case 3: //타오르는 심장
             ReturnMouseOnField().SetForce(ReturnMouseOnField().GetForce() * 2);
-
-            Debug.Log(cardData.GetCardName() + " 발동");
             break;
 
             case 4: //작은 것을 위한 희생
+            
+            int x = trashCount;
+            
             foreach(CardData card in trashList)
             {deckList.Add(card);}
-
             trashList.Clear();
 
-            Debug.Log(cardData.GetCardName() + " 발동");
+            playerHealth -= x;
             break;
 
         }
@@ -455,6 +465,8 @@ public class BattleManagerAlt : MonoBehaviour
         trashCount = 0;
         deckCount = 0;
         costCount = 0;
+        playerHealth = 30;
+        enemyHealth = 30;
 
 
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
@@ -474,6 +486,18 @@ public class BattleManagerAlt : MonoBehaviour
         };
 
         // Deck Shuffle
+        Shuffle();
+
+        if(fastMode)
+            delay05 = new WaitForSeconds(0.05f);
+
+
+
+        myTurn = true;
+    }
+
+    private void Shuffle()
+    {
         for(int i = 0; i < 100; ++i)
         {
             int a = Random.Range(0, deckList.Count);
@@ -482,14 +506,6 @@ public class BattleManagerAlt : MonoBehaviour
             deckList[a] = deckList[b];
             deckList[b] = c;
         }
-
-
-        if(fastMode)
-            delay05 = new WaitForSeconds(0.05f);
-
-
-
-        myTurn = true;
     }
 
     public void UpdateCondition()
@@ -500,6 +516,9 @@ public class BattleManagerAlt : MonoBehaviour
         costCountText.text = "Cost: " + costCount.ToString();
         deckCountText.text = "Deck: " + deckCount.ToString();
         trashCountText.text = "Trash: " + trashCount.ToString();
+
+        playerHealthText.text = "PCHealth: "+ playerHealth.ToString();
+        enemyHealthText.text = "EnemyHealth: "+ enemyHealth.ToString();
     }
 
     IEnumerator StartTurnCo()
@@ -820,7 +839,7 @@ public class BattleManagerAlt : MonoBehaviour
                         {return true;}
                         else
                         {
-                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            if(value.serventAttribute == ReturnMouseOnField().GetServentAttribute())
                             {return true;}
                         }
                         
@@ -1297,7 +1316,7 @@ public class BattleManagerAlt : MonoBehaviour
                 if(foo)
                 {
                     ActivateSpell(card.GetCardData());
-
+                    trashList.Add(card.GetCardData());
                     handList.RemoveAt(card.GetCardOrder());
                     cardObjectList.Remove(card.gameObject);
                     Destroy(card.gameObject);
@@ -1599,7 +1618,8 @@ public class BattleManagerAlt : MonoBehaviour
             break;
             
             case EMouseOnArea.AnyWhere:
-            targetPoint = selectedTargetLineEnd.position;
+            //targetPoint = selectedTargetLineEnd.position;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
             
             default:

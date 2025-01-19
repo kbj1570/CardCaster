@@ -15,7 +15,7 @@ public class NoPainNoGain : CardData
         preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.TrashCountOver;
-        preRequisite.count = 1;
+        preRequisite.count = 0;
 
         preRequisites.Add(preRequisite);
     }
