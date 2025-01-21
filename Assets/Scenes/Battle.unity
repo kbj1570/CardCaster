@@ -2505,7 +2505,8 @@ MonoBehaviour:
   selectedTargetLineEnd: {fileID: 1537512786}
   mouseOnArea: 0
   parryText: {fileID: 1199067116}
-  dragLine: {fileID: 1191078158}
+  cardDragLine: {fileID: 1191078158}
+  attackDragLine: {fileID: 710731400}
   lineCount: 30
   conditionMarkList:
   - {fileID: 187478257729737258, guid: 75f1198cd09b95b428afe8c9dfc24534, type: 3}
@@ -2517,6 +2518,8 @@ MonoBehaviour:
   - {fileID: 8357732725725720325, guid: a7d02a0f21ce51e43878f5a34bdaaef4, type: 3}
   - {fileID: 8357732725725720325, guid: c437a705e88842c41ae8ee65d5cf17b4, type: 3}
   - {fileID: 8357732725725720325, guid: 8481ad91ee9947241a44cb71888b0c27, type: 3}
+  - {fileID: 8357732725725720325, guid: 697d5e0bd37ea194dae1b600d32cb4e5, type: 3}
+  - {fileID: 8357732725725720325, guid: f693ec89ec274814aabef34c1fd1beaa, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0
@@ -3510,7 +3513,7 @@ GameObject:
   - component: {fileID: 710731401}
   - component: {fileID: 710731400}
   m_Layer: 5
-  m_Name: ServentDragLineRenderer
+  m_Name: AttackDragLineRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

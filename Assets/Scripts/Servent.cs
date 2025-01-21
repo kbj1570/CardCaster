@@ -61,10 +61,10 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     // {
 
     // }
-    void OnMouseDrag()
-    {
-        Debug.Log("Dragging");
-    }
+    // void OnMouseDrag()
+    // {
+    //     Debug.Log("Dragging");
+    // }
     public void OnBeginDrag(PointerEventData eventData)
     {Debug.Log("Dragging");}
 

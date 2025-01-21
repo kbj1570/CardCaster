@@ -73,7 +73,8 @@ public class BattleManagerAlt : MonoBehaviour
     private Dictionary<ItemSO, int> inventory;
     WaitForSeconds delay05 = new WaitForSeconds(0.5f);
     WaitForSeconds delay07 = new WaitForSeconds(0.7f);
-    public LineRenderer dragLine;
+    public LineRenderer cardDragLine;
+    public LineRenderer attackDragLine;
     public int lineCount;
     private CardTargetingSystem targetingSystem;
     enum EParryState{Idle, Parry}
@@ -130,6 +131,20 @@ public class BattleManagerAlt : MonoBehaviour
         // StartCoroutine(StartTurnCo());
     }
 
+    void ActivateSummonAbility(CardData cardData, Field field)
+    {
+        switch(cardData.GetServentNum())
+        {
+            case 1: //바이올렛 리치 로드
+
+            break;
+
+            case 2: //암흑요리사
+
+            break;
+        }
+    }
+
         
     void ActivateSpell(CardData cardData)
     {
@@ -173,26 +188,23 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case 2: //악을 멸하는 등불
-            if(field_1.GetComponent<Field>().GetFilled())
-            {
-                if(field_1.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_1.GetComponent<Field>().Kill();}
+            if(field_1.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_1.GetComponent<Field>().Kill();}
 
-                if(field_2.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_2.GetComponent<Field>().Kill();}
+            if(field_2.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_2.GetComponent<Field>().Kill();}
 
-                if(field_3.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_3.GetComponent<Field>().Kill();}
+            if(field_3.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_3.GetComponent<Field>().Kill();}
 
-                if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_4.GetComponent<Field>().Kill();}
+            if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_4.GetComponent<Field>().Kill();}
 
-                if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_5.GetComponent<Field>().Kill();}
+            if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_5.GetComponent<Field>().Kill();}
 
-                if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-                {field_6.GetComponent<Field>().Kill();}
-            }
+            if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            {field_6.GetComponent<Field>().Kill();}
 
             break;
 
@@ -209,6 +221,31 @@ public class BattleManagerAlt : MonoBehaviour
             trashList.Clear();
 
             playerHealth -= x;
+            break;
+
+            case 5: //오직 침묵만이
+
+            if(field_1.GetComponent<Field>().GetFilled())
+            {field_1.GetComponent<Field>().Kill();}
+
+            if(field_2.GetComponent<Field>().GetFilled())
+            {field_2.GetComponent<Field>().Kill();}
+
+            if(field_3.GetComponent<Field>().GetFilled())
+            {field_3.GetComponent<Field>().Kill();}
+
+            if(field_4.GetComponent<Field>().GetFilled())
+            {field_4.GetComponent<Field>().Kill();}
+
+            if(field_5.GetComponent<Field>().GetFilled())
+            {field_5.GetComponent<Field>().Kill();}
+
+            if(field_6.GetComponent<Field>().GetFilled())
+            {field_6.GetComponent<Field>().Kill();}
+            break;
+
+            case 6: // 스튜
+            playerHealth += 1; 
             break;
 
         }
@@ -801,9 +838,8 @@ public class BattleManagerAlt : MonoBehaviour
         myTurn = !myTurn;
         StartCoroutine(StartTurnCo());
     }
-    public bool CheckCardUsable(GameObject cardObject)
+    public bool CheckCardUsable(CardData cardData)
     {
-        CardData cardData = cardObject.GetComponent<Card>().GetCardData();
 
         if(mouseOnArea == EMouseOnArea.Hole)
         {return true;}
@@ -819,6 +855,10 @@ public class BattleManagerAlt : MonoBehaviour
         else
         {
             List<PreRequisite> preRequisites = cardData.GetPreRequisites();
+
+            if(preRequisites == null)
+            return true;
+
             bool flag = false;
 
             int count;
@@ -1183,6 +1223,18 @@ public class BattleManagerAlt : MonoBehaviour
                     case EPreRequisite.TrashCountOver:
                     flag = trashCount > value.count;
                     break;
+
+                    case EPreRequisite.PlayerHPCount:
+                    flag = playerHealth == value.count;
+                    break;
+
+                    case EPreRequisite.PlayerHPCountOver:
+                    flag = playerHealth > value.count;
+                    break;
+
+                    case EPreRequisite.PlayerHPCountUnder:
+                    flag = playerHealth < value.count;
+                    break;
                 }
 
                 if(!flag)
@@ -1210,12 +1262,7 @@ public class BattleManagerAlt : MonoBehaviour
     }
 
     public void CardOnDrag(GameObject cardObject)
-    {
-        // 사용가능한지 판단하는 코드
-        
-        // 사용여부에 따라서 라인의 색이 달라진다.
-        DrawDragLine(cardObject.transform.position, CheckCardUsable(cardObject));
-    }
+    {DrawDragLine(cardObject.transform.position, CheckCardUsable(cardObject.GetComponent<Card>().GetCardData()));}
 
     public void CardEndDrag(Card card)
     {
@@ -1261,9 +1308,6 @@ public class BattleManagerAlt : MonoBehaviour
 
         if(mouseOnHole)
         {
-
-            
-
             handList.RemoveAt(card.GetCardOrder());
             cardObjectList.Remove(card.gameObject);
             trashList.Add(card.GetCardData());
@@ -1283,7 +1327,7 @@ public class BattleManagerAlt : MonoBehaviour
         }
 
 
-        if(CheckCardUsable(card.gameObject))
+        if(CheckCardUsable(card.GetCardData()))
         {
             switch(card.GetCardType())
             {
@@ -1298,6 +1342,9 @@ public class BattleManagerAlt : MonoBehaviour
                     SummonServent(0, targetField);
                     //field에 ServentData넣기
                     targetField.Summon(card.GetCardData());
+
+                    if(CheckCardUsable(card.GetCardData()))
+                    {ActivateSummonAbility(card.GetCardData(), targetField);}
 
                     List<CardData> newHandList = new List<CardData>();
 
@@ -1553,8 +1600,113 @@ public class BattleManagerAlt : MonoBehaviour
     }
     public void DeleteDragLine()
     {
-        dragLine.positionCount = 0;
-        dragLine.endColor = Color.blue;
+        cardDragLine.positionCount = 0;
+        cardDragLine.endColor = Color.blue;
+    }
+
+    public void DrawAttackLine(Vector2 startPoint, Boolean isUsuable)
+    {
+        Vector3[] point = new Vector3[lineCount];
+        float posA = 10f;
+        float posB = 10f;
+        attackDragLine.positionCount = lineCount;
+        Vector3 targetPoint = new Vector3();
+
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.None:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+
+            case EMouseOnArea.Field_1:
+            targetPoint = field_1.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_2:
+            targetPoint = field_2.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_3:
+            targetPoint = field_3.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_4:
+            targetPoint = field_4.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_5:
+            targetPoint = field_5.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_6:
+            targetPoint = field_6.GetLinePoint().position;
+            break;
+
+
+
+            case EMouseOnArea.Hole:
+            targetPoint = holeDetectArea.position;
+            break;
+
+            case EMouseOnArea.Player:
+            targetPoint = playerDetectArea.position;
+            break;
+
+            case EMouseOnArea.Enemy:
+            targetPoint = enemyDetectArea.position;
+            break;
+            
+            case EMouseOnArea.AnyWhere:
+            //targetPoint = selectedTargetLineEnd.position;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+            
+            default:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+        }
+
+        for(int i = 0; i < lineCount; ++i)
+        {
+            float t;
+            if (i == 0)
+            {t = 0;}
+            else
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(targetPoint),targetPoint, t);
+            point[i].z = 0;
+        }
+        attackDragLine.SetPositions(point);
+        
+
+        // if (mouseOnField != null) {
+        //      // 현재 드래그 중인 카드 가져오기
+        //     if (draggedCard != null) {
+        //         targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.GetComponent<Card>()
+        //         .GetCardData().GetCardNum(), mouseOnField);
+        //     }
+        //}
+
+        Vector3 PointSetting(Vector3 origin){
+            float x, y;
+            x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
+            y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
+    
+            return new Vector3(x, y);
+        }
+        Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
+        {
+            Vector3 M0 = Vector3.Lerp(P0, P1, t);
+            Vector3 M1 = Vector3.Lerp(P1, P2, t);
+            Vector3 M2 = Vector3.Lerp(P2, P3, t);
+
+            Vector3 B0 = Vector3.Lerp(M0, M1, t);
+            Vector3 B1 = Vector3.Lerp(M1, M2, t);
+
+            return Vector3.Lerp(B0, B1, t);
+        }
     }
 
 
@@ -1564,12 +1716,12 @@ public class BattleManagerAlt : MonoBehaviour
         Vector3[] point = new Vector3[lineCount];
         float posA = 10f;
         float posB = 10f;
-        dragLine.positionCount = lineCount;
+        cardDragLine.positionCount = lineCount;
 
         if(isUsuable)
-        {dragLine.endColor = Color.blue;}
+        {cardDragLine.endColor = Color.blue;}
         else
-        {dragLine.endColor = Color.red;}
+        {cardDragLine.endColor = Color.red;}
         
         Vector3 targetPoint = new Vector3();
 
@@ -1640,7 +1792,7 @@ public class BattleManagerAlt : MonoBehaviour
             PointSetting(targetPoint),targetPoint, t);
             point[i].z = 0;
         }
-        dragLine.SetPositions(point);
+        cardDragLine.SetPositions(point);
         
 
         // if (mouseOnField != null) {

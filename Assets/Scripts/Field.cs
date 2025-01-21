@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Field : MonoBehaviour
 {
@@ -145,10 +145,6 @@ public class Field : MonoBehaviour
     void OnMouseDown()
     {BattleManagerAlt.Inst.SelectTarget(this.gameObject);}
 
-    void OnMouseEnter()
-    {}
 
-    void OnMouseExit()
-    {}
 
 }

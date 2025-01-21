@@ -63,12 +63,14 @@ public class  DataController : MonoBehaviour
 
         List<CardData> cardDatas = new();
 
-        cardDatas.Add(new CrescentLancer());
-        cardDatas.Add(new Duplicate());
-        cardDatas.Add(new ElementalBoost());
-        cardDatas.Add(new GloriousLight());
-        cardDatas.Add(new VioletLichLord());
-        cardDatas.Add(new NoPainNoGain());
+        cardDatas.Add(new CrescentLancer()); //0
+        cardDatas.Add(new Duplicate()); //1
+        cardDatas.Add(new ElementalBoost());//2
+        cardDatas.Add(new GloriousLight());//3
+        cardDatas.Add(new VioletLichLord());//4
+        cardDatas.Add(new NoPainNoGain());//5
+        cardDatas.Add(new OnlySilence());//6
+        cardDatas.Add(new Stew());//7
         return cardDatas;
     }
 
