@@ -57,18 +57,7 @@ public class Field : MonoBehaviour
 
     public void UpdateHealth()
     {
-        // if(fieldNum == 0 && currentForce <= 0){BattleManager.Inst.Notification("패배");}
-        // else if(fieldNum == 7 && currentForce <= 0){BattleManager.Inst.Notification("승리");}
-        // else if(currentForce <= 0)
-        // {
-        //     Destroy(monsterEntity.gameObject);
-        //     healthTMP.text = "";
-        //     currentForce = 0;
-        //     filled = false;
-        //     attacked = false;
-        //     return;
-        // }
-        // healthTMP.text = currentForce.ToString();
+        forceTMP.text = currentForce.ToString();
     }
 
     public void Summon(CardData cardData)
