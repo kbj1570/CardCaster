@@ -556,6 +556,13 @@ public class BattleManagerAlt : MonoBehaviour
 
         playerHealthText.text = "PCHealth: "+ playerHealth.ToString();
         enemyHealthText.text = "EnemyHealth: "+ enemyHealth.ToString();
+
+        field_1.UpdateHealth();
+        field_2.UpdateHealth();
+        field_3.UpdateHealth();
+        field_4.UpdateHealth();
+        field_5.UpdateHealth();
+        field_6.UpdateHealth();
     }
 
     IEnumerator StartTurnCo()
@@ -710,9 +717,15 @@ public class BattleManagerAlt : MonoBehaviour
                 {dumb.Remove(gameObject);}
 
                 int randomNum = Random.Range(0, dumb.Count);
+                if(dumb.Count != 0)
+                {
+                    Field field = dumb[randomNum];
+                    field.Summon(new CrescentLancer(), Instantiate(serventPrefabList[0], field.transform.position , Utils.QI));
+                    SummonServent(0, dumb[randomNum]);
+                }else{Debug.Log("저는 굴러다닐거예요");}
+                
+                
 
-                // dumb[randomNum].GetComponent<Field>().Summon(null);
-                SummonServent(0, dumb[randomNum]);
 
 
             }//몬스터 소환
@@ -802,6 +815,36 @@ public class BattleManagerAlt : MonoBehaviour
 
         justGuard = false;
     }
+    public Field ReturnMouseOnField(EMouseOnArea value)
+    {
+         switch(value)
+        {
+            case EMouseOnArea.Field_1:
+            return field_1;
+
+            case EMouseOnArea.Field_2:
+            return field_2;
+
+            case EMouseOnArea.Field_3:
+            return field_3;
+
+            case EMouseOnArea.Field_4:
+            return field_4;
+
+            case EMouseOnArea.Field_5:
+            return field_5;
+
+            case EMouseOnArea.Field_6:
+            return field_6;
+
+            case EMouseOnArea.AnyWhere:
+            return field_1;
+
+            default:
+            return null;
+        }
+    }
+
 
     public Field ReturnMouseOnField()
     {
@@ -1264,6 +1307,14 @@ public class BattleManagerAlt : MonoBehaviour
     public void CardOnDrag(GameObject cardObject)
     {DrawDragLine(cardObject.transform.position, CheckCardUsable(cardObject.GetComponent<Card>().GetCardData()));}
 
+    public bool CheckAttackable(EMouseOnArea start)
+    {
+        if(ReturnMouseOnField() == null)
+        return false;
+
+        return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
+    }
+
     public void CardEndDrag(Card card)
     {
         foreach(GameObject gameObject in anyWhereAreas)
@@ -1340,8 +1391,9 @@ public class BattleManagerAlt : MonoBehaviour
                     //ServentPrefab 생성
 
                     SummonServent(0, targetField);
+                    
                     //field에 ServentData넣기
-                    targetField.Summon(card.GetCardData());
+                    targetField.Summon(card.GetCardData(), Instantiate(serventPrefabList[0], targetField.transform.position , Utils.QI));
 
                     if(CheckCardUsable(card.GetCardData()))
                     {ActivateSummonAbility(card.GetCardData(), targetField);}
@@ -1399,7 +1451,7 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void SummonServent(int serventID, Field field)
     {
-        GameObject serventObject = Instantiate(serventPrefabList[0], field.transform.position , Utils.QI);
+    //    GameObject serventObject = Instantiate(serventPrefabList[0], field.transform.position , Utils.QI);
 //      serventObject.transform.SetParent(field.transform);
     }
 
@@ -1604,13 +1656,32 @@ public class BattleManagerAlt : MonoBehaviour
         cardDragLine.endColor = Color.blue;
     }
 
-    public void DrawAttackLine(Vector2 startPoint, Boolean isUsuable)
+    public void EndAttackLine(EMouseOnArea mouseOnArea, Boolean isUsuable)
+    {
+        if(isUsuable)
+        {
+            int x = ReturnMouseOnField(mouseOnArea).GetForce();
+            int y = ReturnMouseOnField().GetForce();
+
+            ReturnMouseOnField(mouseOnArea).SetForce(x - y);
+            ReturnMouseOnField().SetForce(y - x);
+        }
+
+        attackDragLine.positionCount = 0;
+    }
+
+    public void DrawAttackLine(Vector2 startPoint, bool isUsuable)
     {
         Vector3[] point = new Vector3[lineCount];
         float posA = 10f;
         float posB = 10f;
         attackDragLine.positionCount = lineCount;
         Vector3 targetPoint = new Vector3();
+
+        if(isUsuable)
+        {attackDragLine.endColor = Color.blue;}
+        else
+        {attackDragLine.endColor = Color.red;}
 
         switch(mouseOnArea)
         {
@@ -1644,9 +1715,9 @@ public class BattleManagerAlt : MonoBehaviour
 
 
 
-            case EMouseOnArea.Hole:
-            targetPoint = holeDetectArea.position;
-            break;
+            // case EMouseOnArea.Hole:
+            // targetPoint = holeDetectArea.position;
+            // break;
 
             case EMouseOnArea.Player:
             targetPoint = playerDetectArea.position;
@@ -1665,6 +1736,8 @@ public class BattleManagerAlt : MonoBehaviour
             targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
         }
+
+        startPoint = camera.ScreenToWorldPoint(startPoint);
 
         for(int i = 0; i < lineCount; ++i)
         {

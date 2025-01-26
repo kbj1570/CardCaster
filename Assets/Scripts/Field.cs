@@ -4,6 +4,8 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
+using UnityEngine.ProBuilder;
 
 public class Field : MonoBehaviour
 {
@@ -38,6 +40,8 @@ public class Field : MonoBehaviour
     
     public int currentForce;
     public int fieldNum;
+
+    private GameObject summonedServent;
     
 
     public void SetForce(int value){ currentForce = value;}
@@ -58,9 +62,20 @@ public class Field : MonoBehaviour
     public void UpdateHealth()
     {
         forceTMP.text = currentForce.ToString();
+
+        if(!filled)
+        {return;}
+
+        if(currentForce <= 0)
+        {
+            forceTMP.gameObject.SetActive(false);
+            filled = false;
+            attacked = false;
+            Destroy(summonedServent);
+        }
     }
 
-    public void Summon(CardData cardData)
+    public void Summon(CardData cardData, GameObject gameObject)
     {
         this.cardData = cardData;
         currentForce = cardData.GetForce();
@@ -69,6 +84,7 @@ public class Field : MonoBehaviour
         filled = true;
         attacked = false;
         serventAttribute = cardData.serventAttribute;
+        summonedServent = gameObject;
     }
 
     public void UpdateCondition()
