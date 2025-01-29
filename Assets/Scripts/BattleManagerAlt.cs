@@ -1720,11 +1720,11 @@ public class BattleManagerAlt : MonoBehaviour
             // break;
 
             case EMouseOnArea.Player:
-            targetPoint = playerDetectArea.position;
+            targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
             break;
 
             case EMouseOnArea.Enemy:
-            targetPoint = enemyDetectArea.position;
+            targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
             break;
             
             case EMouseOnArea.AnyWhere:

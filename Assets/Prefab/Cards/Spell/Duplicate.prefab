@@ -598,7 +598,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -301.69446, y: -59.148804}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 480, y: 680}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8357732725725720320
@@ -627,6 +627,7 @@ MonoBehaviour:
   costTMP: {fileID: 2613131898252423914}
   cardBack: {fileID: 0}
   cardHighlightBorder: {fileID: 3175887538747503087}
+  forceAttribute: {fileID: 0}
   cardOrder: 0
   originPRS:
     pos: {x: 0, y: 0, z: 0}
