@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using DG.Tweening;
+using Unity.VisualScripting;
 
 public enum ECardType{Servent, Spell}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Darkness, Lightness}
@@ -115,6 +116,12 @@ public class BattleManagerAlt : MonoBehaviour
     private int playerHealth;
     private int enemyHealth;
 
+    public List<CardData> selectedCards;
+
+    public GridLayoutGroup layoutGroup;
+
+    public GameObject cardSelectFrame;
+
 
 
 
@@ -125,10 +132,24 @@ public class BattleManagerAlt : MonoBehaviour
 
         handList = new();
         mouseOnArea = EMouseOnArea.None;
+    }
+
+    public void AddSelectedCards(CardData cardData)
+    {selectedCards.Add(cardData);}
+
+    public void RemoveSelectedCards(CardData cardData)
+    {selectedCards.Remove(cardData);}
+
+    public void ShowSelectedCards()
+    {
+        selectedCards = trashList;
+        foreach(CardData cardData in selectedCards)
+        {
+            GameObject cardFrameObject = Instantiate(cardSelectFrame, layoutGroup.transform);
+            GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], cardFrameObject.transform);
+            cardObject.transform.position = new Vector3(240, -340, 0);
+        }
         
-        // effectSystem = gameObject.AddComponent<CardEffectSystem>();
-        // effectSystem.Initialize();
-        // StartCoroutine(StartTurnCo());
     }
 
     void ActivateSummonAbility(CardData cardData, Field field)
