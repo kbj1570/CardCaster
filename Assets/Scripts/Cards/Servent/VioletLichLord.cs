@@ -18,7 +18,7 @@ public class VioletLichLord : CardData
         preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.TrashCountOver;
-        preRequisite.count = 1;
+        preRequisite.count = 0;
         preRequisite.cardType = ECardType.Spell;
         preRequisites.Add(preRequisite);
     }

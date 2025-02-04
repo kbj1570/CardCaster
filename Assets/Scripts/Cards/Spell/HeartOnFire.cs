@@ -2,7 +2,7 @@ public class HeartOnFire : CardData
 {
     public HeartOnFire()
     {
-        cardNum = 3;
+        cardNum = 12;
         spellNum = 3;
         cardName = "타오르는 심장";
         cardCost = 1;

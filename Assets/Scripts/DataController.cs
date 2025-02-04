@@ -71,6 +71,11 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new NoPainNoGain());//5
         cardDatas.Add(new OnlySilence());//6
         cardDatas.Add(new Stew());//7
+        cardDatas.Add(new PriceOfBlood());//8
+        cardDatas.Add(new CookOfDarkness());//9
+        cardDatas.Add(new FlameLizard());//10
+        cardDatas.Add(new BrokenDeal());//11
+        cardDatas.Add(new HeartOnFire());//12
         return cardDatas;
     }
 

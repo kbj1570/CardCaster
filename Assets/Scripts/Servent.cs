@@ -9,7 +9,6 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 {
     private ESequence sequence;
     private string serventName;
-    private string serventNum;
     private string serventOriginForce;
     private string serventAbility;
 
@@ -19,6 +18,8 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public GameObject infoWindow;
     public TMP_Text serventForceText;
     public Button activationButton;
+
+    public int serventNum;
 
     public bool mouseOn;
 
@@ -72,6 +73,9 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {}
     public void OnDrag(PointerEventData eventData)
     {Debug.Log("Dragging");}
+
+    public int GetServentNum()
+    {return serventNum;}
 
 
 }

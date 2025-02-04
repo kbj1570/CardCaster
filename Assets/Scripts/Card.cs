@@ -48,21 +48,15 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public ECardType GetCardType()
     {return cardType;}
 
-    public void UpdateCardCost(int monsterCost, int spellCost)
+    public void UpdateCardCost(int cost)
     {
-        if(cardData.GetCardType() == ECardType.Servent)
-        {
-            currentCost = this.cardData.GetCardCost() - monsterCost;
-            if(currentCost < 0){currentCost = 0;}
-            costTMP.text = currentCost.ToString();
-        }
-        else
-        {
-            currentCost = this.cardData.GetCardCost() - spellCost;
-            if(currentCost < 0){currentCost = 0;}
-            costTMP.text = currentCost.ToString();
-        }
+        currentCost = this.cardData.GetCardCost() - cost;
+        if(currentCost < 0){currentCost = 0;}
+        costTMP.text = currentCost.ToString();
     }
+
+    public int GetCurrentCost()
+    {return currentCost;}
     public void UpdateIsUsable()
     {isUsable = (currentCost == 0);}
 
@@ -142,13 +136,24 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     }
 
     public void OnBeginDrag(PointerEventData eventData)
-    {BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);}
+    {
+        if(locked)
+        {return;}
+
+        BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);
+    }
 
     public void OnEndDrag(PointerEventData eventData)
-    {BattleManagerAlt.Inst.CardEndDrag(this);}
+    {
+        if(locked)
+        {return;}
+        BattleManagerAlt.Inst.CardEndDrag(this);
+    }
 
     public void OnDrag(PointerEventData eventData)
     {
+        if(locked)
+        {return;}
         // this.transform.position = eventData.delta;
         // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
 

@@ -1976,7 +1976,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0.00006904508}
-  m_SizeDelta: {x: 0, y: 2419.3926}
+  m_SizeDelta: {x: 0, y: 933.748}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &297678795
 MonoBehaviour:
@@ -2085,8 +2085,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1058900532}
   m_HandleRect: {fileID: 1058900531}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.2289335
+  m_Value: 0.9999998
+  m_Size: 0.59317935
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2682,8 +2682,10 @@ MonoBehaviour:
   cardPrefab: {fileID: 8357732725725720325, guid: 03a09a3e6bb8afb4b9d81b2d954827da, type: 3}
   serventPrefabList:
   - {fileID: 7468473442354731412, guid: 4518288d303de3e479d81f0096a8d79c, type: 3}
+  - {fileID: 7468473442354731412, guid: f3260aec6fcb74c4ea9de9d7ccf97dc6, type: 3}
   serventInfoList:
   - {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
+  - {fileID: 415667162582626545, guid: 80eb52105a3321b46ae749ae3e8c06ae, type: 3}
   draggedCard: {fileID: 0}
   monsterAbilityButton: {fileID: 0}
   monsterDetailButton: {fileID: 0}
@@ -2710,6 +2712,7 @@ MonoBehaviour:
   - {fileID: 8357732725725720325, guid: 8481ad91ee9947241a44cb71888b0c27, type: 3}
   - {fileID: 8357732725725720325, guid: 697d5e0bd37ea194dae1b600d32cb4e5, type: 3}
   - {fileID: 8357732725725720325, guid: f693ec89ec274814aabef34c1fd1beaa, type: 3}
+  - {fileID: 8357732725725720325, guid: 30b87b5e01dafbc4595c2652f0b65ebe, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0
@@ -2725,6 +2728,8 @@ MonoBehaviour:
   enemyHealthText: {fileID: 212281319}
   layoutGroup: {fileID: 297678795}
   cardSelectFrame: {fileID: 998229576266326815, guid: 4eeb01c5375bb454193bd7acb965f033, type: 3}
+  cardSelectWindow: {fileID: 2070016067}
+  scrollbar: {fileID: 312100376}
 --- !u!1 &367677215
 GameObject:
   m_ObjectHideFlags: 0
@@ -3055,7 +3060,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 385550912}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 362111776}
+        m_TargetAssemblyTypeName: BattleManagerAlt, Assembly-CSharp
+        m_MethodName: CloseSelectedCards
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &385550912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10498,6 +10515,7 @@ GameObject:
   - component: {fileID: 2070016068}
   - component: {fileID: 2070016070}
   - component: {fileID: 2070016069}
+  - component: {fileID: 2070016071}
   m_Layer: 5
   m_Name: CardSelectWindow
   m_TagString: Untagged
@@ -10566,6 +10584,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2070016067}
   m_CullTransparentMesh: 1
+--- !u!114 &2070016071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070016067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b012cd6c47851744ca31a91fb081fbba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2096244170
 GameObject:
   m_ObjectHideFlags: 0

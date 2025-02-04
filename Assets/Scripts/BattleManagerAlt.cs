@@ -6,9 +6,8 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using DG.Tweening;
-using Unity.VisualScripting;
 
-public enum ECardType{Servent, Spell}
+public enum ECardType{None ,Servent, Spell}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Darkness, Lightness}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
@@ -82,7 +81,6 @@ public class BattleManagerAlt : MonoBehaviour
     public List<GameObject> conditionMarkList;
     public List<GameObject> cardPrefabList;
 
-    private int currentCost;
     // 현재 지불해놓은 코스트의 수
 
     private int turn;
@@ -121,6 +119,13 @@ public class BattleManagerAlt : MonoBehaviour
     public GridLayoutGroup layoutGroup;
 
     public GameObject cardSelectFrame;
+    public GameObject cardSelectWindow;
+
+
+    public Scrollbar scrollbar;
+
+    private int selectedLimit;
+    private bool isActionDone = false;
 
 
 
@@ -131,33 +136,99 @@ public class BattleManagerAlt : MonoBehaviour
         isLoading = true;
 
         handList = new();
+        selectedCards = new();
         mouseOnArea = EMouseOnArea.None;
     }
 
-    public void AddSelectedCards(CardData cardData)
-    {selectedCards.Add(cardData);}
+    public bool AddSelectedCards(CardData cardData)
+    {
+        bool foo = selectedCards.Count < selectedLimit;
+
+        if(foo)
+        {selectedCards.Add(cardData);}
+
+        return foo;
+    }
 
     public void RemoveSelectedCards(CardData cardData)
-    {selectedCards.Remove(cardData);}
-
-    public void ShowSelectedCards()
     {
-        selectedCards = trashList;
-        foreach(CardData cardData in selectedCards)
+
+        selectedCards.Remove(cardData);
+    }
+
+    public void CloseSelectedCards()
+    {
+        if(selectedCards.Count == selectedLimit)
         {
-            GameObject cardFrameObject = Instantiate(cardSelectFrame, layoutGroup.transform);
-            GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], cardFrameObject.transform);
-            cardObject.transform.position = new Vector3(240, -340, 0);
+            isActionDone = true;
+            cardSelectWindow.GetComponent<Window>().OnOff();
+
+            for( int i = layoutGroup.transform.childCount - 1; i >= 0 ; --i )
+            {
+                Destroy( layoutGroup.transform.GetChild(i).gameObject );
+            }
         }
+        else
+        {
+            Debug.Log("카드를 선택하세요.");
+        }
+    }
+
+    public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
+    {
+        selectedLimit = limit;
+        foreach(CardData cardData in targetList)
+        {
+            if(cardType == null ||cardData.GetCardType() == cardType)
+            {
+                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], layoutGroup.transform);
+                GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+                
+                cardObject.GetComponent<Card>().SetLock(true);
+                cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+                cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+                cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+            }
+
+            
+        }
+
+        cardSelectWindow.GetComponent<Window>().OnOff();
+        
         
     }
 
-    void ActivateSummonAbility(CardData cardData, Field field)
+
+
+
+    IEnumerator ActivateSummonAbility(CardData cardData, Field field)
     {
         switch(cardData.GetServentNum())
         {
             case 1: //바이올렛 리치 로드
 
+            ShowSelectedCards(trashList, ECardType.Spell, 1);
+            yield return new WaitUntil(() => isActionDone);
+            
+            CardData card = selectedCards[0];
+
+            trashList.Remove(card);
+            cardPrefab = cardPrefabList[card.GetCardNum()];
+
+            GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+            cardObject.transform.SetParent(canvas.transform);
+            cardObjectList.Add(cardObject);
+            
+            cardObject.GetComponent<Card>().Setup(card);
+            
+            cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+            handList.Add(card);
+
+            selectedCards = new();
+
+            isActionDone = false;
+
+            CardAlignmentAlt();
             break;
 
             case 2: //암흑요리사
@@ -400,7 +471,7 @@ public class BattleManagerAlt : MonoBehaviour
 
         public IEnumerator ShowServentInfo(Servent servent)
     {
-        clickedServentInfo = Instantiate(serventInfoList[0], Input.mousePosition, Utils.QI);
+        clickedServentInfo = Instantiate(serventInfoList[servent.GetServentNum()], Input.mousePosition, Utils.QI);
         Vector3 vector = clickedServentInfo.transform.position;
         vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
         clickedServentInfo.transform.position = vector;
@@ -589,7 +660,6 @@ public class BattleManagerAlt : MonoBehaviour
     IEnumerator StartTurnCo()
     {        
         isLoading = true;
-        ResetCost();
 
         player.GetComponent<Field>().UpdateHealth();
         enemy.GetComponent<Field>().UpdateHealth();
@@ -902,21 +972,18 @@ public class BattleManagerAlt : MonoBehaviour
         myTurn = !myTurn;
         StartCoroutine(StartTurnCo());
     }
-    public bool CheckCardUsable(CardData cardData)
+    public bool CheckCardUsable(CardData cardData, int currentCost)
     {
 
         if(mouseOnArea == EMouseOnArea.Hole)
         {return true;}
 
+        if(currentCost != 0)
+        {return false;}
+
         if(ReturnMouseOnField() == null)
         {return false;}
 
-        if(cardData.cardType == ECardType.Servent)
-        {
-            if(ReturnMouseOnField() != null)
-            {return!ReturnMouseOnField().GetFilled();}
-        }
-        else
         {
             List<PreRequisite> preRequisites = cardData.GetPreRequisites();
 
@@ -933,6 +1000,7 @@ public class BattleManagerAlt : MonoBehaviour
                 count = 0;
                 switch(value.preRequisite)
                 {
+                    
                     case EPreRequisite.None:
                     return true;
 
@@ -1285,7 +1353,36 @@ public class BattleManagerAlt : MonoBehaviour
                     break;
 
                     case EPreRequisite.TrashCountOver:
-                    flag = trashCount > value.count;
+                                        
+                    if(value.cardType == ECardType.None)
+                    {flag = trashCount > value.count;}
+
+                    if(value.cardType == ECardType.Servent)
+                    {
+                        int serventCardCount = 0;
+
+                        foreach(CardData card in trashList)
+                        {
+                            if(card.GetCardType() == ECardType.Servent)
+                            {serventCardCount++;}
+                        }
+                        flag = serventCardCount > value.count;
+                    }
+
+                    if(value.cardType == ECardType.Spell)
+                    {
+                        int spellCardCount = 0;
+
+                        foreach(CardData card in trashList)
+                        {
+                            if(card.GetCardType() == ECardType.Spell)
+                            {spellCardCount++;}
+                        }
+                        flag = spellCardCount > value.count;
+
+                        
+                    }
+                    
                     break;
 
                     case EPreRequisite.PlayerHPCount:
@@ -1326,7 +1423,38 @@ public class BattleManagerAlt : MonoBehaviour
     }
 
     public void CardOnDrag(GameObject cardObject)
-    {DrawDragLine(cardObject.transform.position, CheckCardUsable(cardObject.GetComponent<Card>().GetCardData()));}
+    {
+        if(cardObject.GetComponent<Card>().GetCardData().GetCardType() == ECardType.Servent)
+        {
+            DrawDragLine(cardObject.transform.position,
+            CheckServentSummonable(cardObject.GetComponent<Card>().GetCardData(),
+            cardObject.GetComponent<Card>().GetCurrentCost()));
+        }
+        else{
+            DrawDragLine(cardObject.transform.position,
+            CheckCardUsable(cardObject.GetComponent<Card>().GetCardData(),
+            cardObject.GetComponent<Card>().GetCurrentCost()));
+        }
+        
+    
+    }
+
+    public bool CheckServentSummonable(CardData cardData, int currentCost)
+    {
+        if(mouseOnArea == EMouseOnArea.Hole)
+        {return true;}
+
+        if(currentCost != 0)
+        {return false;}
+
+        if(ReturnMouseOnField() == null)
+        {return false;}
+
+        if(ReturnMouseOnField().GetFilled())
+        {return false;}
+        return true;
+
+    }
 
     public bool CheckAttackable(EMouseOnArea start)
     {
@@ -1340,6 +1468,11 @@ public class BattleManagerAlt : MonoBehaviour
     {
         foreach(GameObject gameObject in anyWhereAreas)
         {gameObject.SetActive(false);}
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(false);}
+
+
         DeleteDragLine();
         bool foo = true;
         bool mouseOnHole = false;
@@ -1398,43 +1531,56 @@ public class BattleManagerAlt : MonoBehaviour
             CardAlignmentAlt();
         }
 
-
-        if(CheckCardUsable(card.GetCardData()))
+        if(card.GetCardType() == ECardType.Servent)
         {
+            if( foo && CheckServentSummonable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost()))
+            {
+                costCount -= card.GetCardData().GetCardCost();
+                handList.RemoveAt(card.GetCardOrder());
+                cardObjectList.Remove(card.gameObject);
+                Destroy(card.gameObject);
+                //ServentPrefab 생성
+
+                SummonServent(card.GetCardData().GetServentNum(), targetField);
+                
+                //field에 ServentData넣기
+                targetField.Summon(card.GetCardData(), Instantiate(serventPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
+
+                if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost()))
+                {
+                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), targetField));
+                }
+
+                List<CardData> newHandList = new List<CardData>();
+
+                foreach(CardData cardData in handList)
+                {newHandList.Add(cardData);}
+
+                for(int i = 0; i < cardObjectList.Count; ++i)
+                {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                handList = newHandList;
+                CardAlignmentAlt();
+            }
+        }
+
+
+        if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost()))
+        {
+            
             switch(card.GetCardType())
             {
                 case ECardType.Servent:
                 if(foo)
                 {
-                    handList.RemoveAt(card.GetCardOrder());
-                    cardObjectList.Remove(card.gameObject);
-                    Destroy(card.gameObject);
-                    //ServentPrefab 생성
-
-                    SummonServent(0, targetField);
                     
-                    //field에 ServentData넣기
-                    targetField.Summon(card.GetCardData(), Instantiate(serventPrefabList[0], targetField.transform.position , Utils.QI));
-
-                    if(CheckCardUsable(card.GetCardData()))
-                    {ActivateSummonAbility(card.GetCardData(), targetField);}
-
-                    List<CardData> newHandList = new List<CardData>();
-
-                    foreach(CardData cardData in handList)
-                    {newHandList.Add(cardData);}
-
-                    for(int i = 0; i < cardObjectList.Count; ++i)
-                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
-
-                    handList = newHandList;
-                    CardAlignmentAlt();
                 }
                 break;
 
                 case ECardType.Spell:
                 if(foo)
                 {
+                    costCount -= card.GetCardData().GetCardCost();
                     ActivateSpell(card.GetCardData());
                     trashList.Add(card.GetCardData());
                     handList.RemoveAt(card.GetCardOrder());
@@ -1463,6 +1609,8 @@ public class BattleManagerAlt : MonoBehaviour
             foreach(GameObject cardObject in cardObjectList)
             {cardObject.GetComponent<Card>().SetLock(false);}
         }
+
+
         
 
 
@@ -1544,8 +1692,6 @@ public class BattleManagerAlt : MonoBehaviour
     //     CardAlignment();
     // }
 
-    public void ResetCost()
-    {currentCost = 0;}
 
     public void SetMouseOnField(EMouseOnArea mouseOnArea)
     {this.mouseOnArea = mouseOnArea;}
@@ -1569,6 +1715,7 @@ public class BattleManagerAlt : MonoBehaviour
             var targetCard = cardObjectList[i];
             targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
             targetCard.transform.position = originCardPRSs[i].pos;
+            targetCard.GetComponent<Card>().UpdateCardCost(costCount);
         }
 
     }

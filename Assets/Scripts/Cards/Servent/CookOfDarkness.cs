@@ -2,7 +2,7 @@ public class CookOfDarkness : CardData
 {
     public CookOfDarkness()
     {
-        cardNum = 0;
+        cardNum = 9;
         serventNum = 2;
         cardName = "암흑요리사";
         cardCost = 0;

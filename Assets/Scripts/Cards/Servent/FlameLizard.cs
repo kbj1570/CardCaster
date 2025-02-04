@@ -2,7 +2,7 @@ public class FlameLizard : CardData
 {
     public FlameLizard()
     {
-        cardNum = 0;
+        cardNum = 10;
         serventNum = 3;
         cardName = "플레임리자드";
         cardCost = 0;

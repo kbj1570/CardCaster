@@ -4,7 +4,7 @@ public class BannedOne : CardData
 {
     public BannedOne()
     {
-        cardNum = 2;
+        cardNum = -1;
         cardName = "금지된 자";
         cardCost = 99;
         spellNum = -1;
