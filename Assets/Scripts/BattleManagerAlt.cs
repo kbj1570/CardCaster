@@ -116,10 +116,12 @@ public class BattleManagerAlt : MonoBehaviour
 
     public List<CardData> selectedCards;
 
-    public GridLayoutGroup layoutGroup;
+    public GridLayoutGroup selectedCardLayoutGroup;
+    public GridLayoutGroup trashLayoutGroup;
 
     public GameObject cardSelectFrame;
     public GameObject cardSelectWindow;
+    public GameObject trashWindow;
 
 
     public Scrollbar scrollbar;
@@ -163,9 +165,9 @@ public class BattleManagerAlt : MonoBehaviour
             isActionDone = true;
             cardSelectWindow.GetComponent<Window>().OnOff();
 
-            for( int i = layoutGroup.transform.childCount - 1; i >= 0 ; --i )
+            for( int i = selectedCardLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
             {
-                Destroy( layoutGroup.transform.GetChild(i).gameObject );
+                Destroy( selectedCardLayoutGroup.transform.GetChild(i).gameObject );
             }
         }
         else
@@ -181,7 +183,7 @@ public class BattleManagerAlt : MonoBehaviour
         {
             if(cardType == null ||cardData.GetCardType() == cardType)
             {
-                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], layoutGroup.transform);
+                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], selectedCardLayoutGroup.transform);
                 GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
                 
                 cardObject.GetComponent<Card>().SetLock(true);
@@ -211,8 +213,7 @@ public class BattleManagerAlt : MonoBehaviour
             yield return new WaitUntil(() => isActionDone);
             
             CardData card = selectedCards[0];
-
-            trashList.Remove(card);
+            RemoveTrash(card);
             cardPrefab = cardPrefabList[card.GetCardNum()];
 
             GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
@@ -338,6 +339,19 @@ public class BattleManagerAlt : MonoBehaviour
 
             case 6: // 스튜
             playerHealth += 1; 
+            break;
+
+            case 7: // 피의 대가
+            playerHealth -= 1; 
+            DrawCard();
+            break;
+
+            case 8: // 무너진 계약
+            DrawCard();
+            DrawCard();
+            DrawCard();
+
+
             break;
 
         }
@@ -1353,7 +1367,7 @@ public class BattleManagerAlt : MonoBehaviour
                     break;
 
                     case EPreRequisite.TrashCountOver:
-                                        
+
                     if(value.cardType == ECardType.None)
                     {flag = trashCount > value.count;}
 
@@ -1515,7 +1529,7 @@ public class BattleManagerAlt : MonoBehaviour
         {
             handList.RemoveAt(card.GetCardOrder());
             cardObjectList.Remove(card.gameObject);
-            trashList.Add(card.GetCardData());
+            AddTrash(card.GetCardData());
             Destroy(card.gameObject);
             costCount++;
 
@@ -1582,7 +1596,7 @@ public class BattleManagerAlt : MonoBehaviour
                 {
                     costCount -= card.GetCardData().GetCardCost();
                     ActivateSpell(card.GetCardData());
-                    trashList.Add(card.GetCardData());
+                    AddTrash(card.GetCardData());
                     handList.RemoveAt(card.GetCardOrder());
                     cardObjectList.Remove(card.gameObject);
                     Destroy(card.gameObject);
@@ -1826,6 +1840,8 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void EndAttackLine(EMouseOnArea mouseOnArea, Boolean isUsuable)
     {
+        
+
         if(isUsuable)
         {
             int x = ReturnMouseOnField(mouseOnArea).GetForce();
@@ -1948,6 +1964,39 @@ public class BattleManagerAlt : MonoBehaviour
 
             return Vector3.Lerp(B0, B1, t);
         }
+    }
+
+    public void ShowTrashCards()
+    {
+        if(trashCount != 0)
+        {
+
+            for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
+            {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+
+            foreach(CardData cardData in trashList)
+            {
+                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
+                GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+                
+                cardObject.GetComponent<Card>().SetLock(true);
+                cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+                cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+                cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+
+            }
+        }
+        trashWindow.GetComponent<Window>().OnOff();
+    }
+
+    private void AddTrash(CardData cardData)
+    {    
+        trashList.Add(cardData);
+    }
+
+    private void RemoveTrash(CardData cardData)
+    {
+        trashList.Remove(cardData);
     }
 
 

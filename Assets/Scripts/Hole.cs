@@ -1,28 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-using DG.Tweening;
 
 public class Hole : MonoBehaviour
 {
-    void OnMouseOver()
+    private bool mouseOn;
+
+    
+    public void OnMouseUp()
     {
-        FieldManager.Inst.HoleMouseOver();
+        if(mouseOn)
+        {BattleManagerAlt.Inst.ShowTrashCards();}
     }
 
-    void OnMouseExit()
-    {
-        FieldManager.Inst.HoleMouseExit();
-    }
+    public void OnMouseEnter()
+    {mouseOn = true;}
 
-    void OnMouseDown()
-    {
-        FieldManager.Inst.HoleMouseDown();
-    }
-    void OnMouseUp()
-    {
-        FieldManager.Inst.HoleMouseUp();
-    }
+    public void OnMouseExit()
+    {mouseOn = false;}
 
 }

@@ -10,6 +10,12 @@ public class Stew : CardData
         cardGuideDescription = "";
         cardAbility = "자신의 HP를 1 회복한다.";
         cardTargetType = ECardTargetType.Selected;
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.None;
+
+        preRequisites.Add(preRequisite);
     }
 
 }

@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class Servent: MonoBehaviour
 {
     private ESequence sequence;
     private string serventName;
@@ -21,7 +21,7 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     public int serventNum;
 
-    public bool mouseOn;
+    private bool mouseOn;
 
 
     public void Attack()
@@ -66,14 +66,6 @@ public class Servent: MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     // {
     //     Debug.Log("Dragging");
     // }
-    public void OnBeginDrag(PointerEventData eventData)
-    {Debug.Log("Dragging");}
-
-    public void OnEndDrag(PointerEventData eventData)
-    {}
-    public void OnDrag(PointerEventData eventData)
-    {Debug.Log("Dragging");}
-
     public int GetServentNum()
     {return serventNum;}
 

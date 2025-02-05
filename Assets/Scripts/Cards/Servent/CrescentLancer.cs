@@ -5,7 +5,7 @@ public class CrescentLancer : CardData
         cardNum = 0;
         serventNum = 0;
         cardName = "크레센트 랜서";
-        cardCost = 5;
+        cardCost = 1;
         cardType = ECardType.Servent;
         force = 3;
         cardGuideDescription = "누명을 쓰고 달에서 추방당했다는 전설 속의 기사, 언젠간 다시 달로 돌아갈 날을 기다리며 지상을 떠돌고 있다.";

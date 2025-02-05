@@ -17,16 +17,16 @@ public class FieldArea : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
         
     }
     public void OnBeginDrag(PointerEventData eventData)
-    {Debug.Log("드래그 시작");}
+    {}
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Debug.Log("드래그 끝");
+        if(mouseOnArea != EMouseOnArea.Hole)
         BattleManagerAlt.Inst.EndAttackLine(mouseOnArea, BattleManagerAlt.Inst.CheckAttackable(mouseOnArea));
     }
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log("클릭? 드래그?");
+        if(mouseOnArea != EMouseOnArea.Hole)
         BattleManagerAlt.Inst.DrawAttackLine(this.transform.position, BattleManagerAlt.Inst.CheckAttackable(mouseOnArea));
     }
 
