@@ -2,10 +2,10 @@ public class FireCrimson : CardData
 {
     public FireCrimson()
     {
-        cardNum = 14;
+        cardNum = 13;
         serventNum = 4;
         cardName = "불의 정령 크림슨";
-        cardCost = 2;
+        cardCost = 0;
         cardType = ECardType.Servent;
         force = 1;
         cardGuideDescription = "장난치는 것을 좋아하는 붉은 색의 정령. 물을 좋아하는 친구와 항상 같이 붙어다닌다.";
@@ -13,5 +13,15 @@ public class FireCrimson : CardData
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Fire;
+
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.DeckCountOver;
+        preRequisite.count = 0;
+        preRequisite.cardType = ECardType.None;
+        preRequisite.cardNum = 14;
+
+        preRequisites.Add(preRequisite);
     }
 }

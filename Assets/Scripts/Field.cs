@@ -41,6 +41,14 @@ public class Field : MonoBehaviour
     public int currentForce;
     public int fieldNum;
 
+    bool penetrate;
+
+    bool damageBlock;
+    int damageDecrease;
+    int damageIncrease;
+
+    int additionalDamage;
+
     private GameObject summonedServent;
     
 
@@ -55,6 +63,10 @@ public class Field : MonoBehaviour
     {
         if(!filled)
             return;
+
+        if(damageBlock)
+            return;
+
         currentForce -= value;
     }
     public void Kill(){currentForce = 0;}
@@ -71,6 +83,8 @@ public class Field : MonoBehaviour
             forceTMP.gameObject.SetActive(false);
             filled = false;
             attacked = false;
+
+            BattleManagerAlt.Inst.AddTrash(cardData);
             Destroy(summonedServent);
         }
     }
@@ -83,6 +97,7 @@ public class Field : MonoBehaviour
         forceTMP.text = currentForce.ToString();
         filled = true;
         attacked = false;
+        penetrate = cardData.GetPenetrate();
         serventAttribute = cardData.serventAttribute;
         summonedServent = gameObject;
     }
@@ -125,6 +140,12 @@ public class Field : MonoBehaviour
     {this.attacked = value;}
     public CardData GetCardData()
     {return cardData;}
+
+    public bool GetPenetrate()
+    {return penetrate;}
+
+    public int GetAdditionalDamage()
+    {return additionalDamage;}
 
 
     public Transform GetLinePoint()

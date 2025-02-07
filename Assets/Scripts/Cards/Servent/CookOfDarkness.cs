@@ -13,5 +13,14 @@ public class CookOfDarkness : CardData
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Darkness;
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.DeckCountOver;
+        preRequisite.count = 0;
+        preRequisite.cardType = ECardType.None;
+        preRequisite.cardNum = 7;
+
+        preRequisites.Add(preRequisite);
     }
 }

@@ -15,6 +15,7 @@ public class CardData
     public EServentAttribute serventAttribute;
     public EServentSize serventSize;
     public List<PreRequisite> preRequisites;
+    public bool penetrate;
 
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}
@@ -28,6 +29,7 @@ public class CardData
     public ECardType GetCardType(){return cardType;}
     public ECardTargetType GetCardTargetType(){return cardTargetType;}
     public List<PreRequisite> GetPreRequisites(){return preRequisites;}
+    public bool GetPenetrate(){return penetrate;}
 
 
 }
@@ -37,5 +39,5 @@ public struct PreRequisite
     public EServentAttribute serventAttribute;
     public ECardType cardType;
     public int count;
-    public string name;
+    public int cardNum;
 }

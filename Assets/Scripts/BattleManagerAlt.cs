@@ -17,6 +17,14 @@ public enum EServentSize{Small, Middle, Big}
 
 public class BattleManagerAlt : MonoBehaviour
 {
+    bool playerDamageBlock;
+    bool enemyDamageBlock;
+    int playerDamageDecrease;
+    int enemyDamageDecrease;
+    int playerDamageIncrease;
+    int enemyDamageIncrease;
+
+
     public static BattleManagerAlt Inst{get; private set;}
     void Awake() => Inst = this;
     public Canvas canvas;
@@ -195,8 +203,6 @@ public class BattleManagerAlt : MonoBehaviour
         }
 
         cardSelectWindow.GetComponent<Window>().OnOff();
-        
-        
     }
 
 
@@ -234,13 +240,55 @@ public class BattleManagerAlt : MonoBehaviour
             }
 
             case 2: //암흑요리사
+            {
+                CardData card = new Stew();
+                CardData targetCard = new();
+                int count = 0;
 
-            break;
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 7)
+                    {
+                        targetCard = value;
+                        count++;
+                    }
+                }
+
+                if(count > 3)
+                {count = 2;}
+
+                for(int i = 0; i < count; ++i)
+                {
+                    deckList.Remove(targetCard);
+                    cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                    GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                    cardObject.transform.SetParent(canvas.transform);
+                    cardObjectList.Add(cardObject);
+                    
+                    cardObject.GetComponent<Card>().Setup(card);
+                    
+                    cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                    handList.Add(card);
+                }
+                
+
+                CardAlignmentAlt();
+                break;
+            }
 
             case 4: //불의 정령 크림슨
             {
                 CardData card = new WaterHeize();
-                deckList.Remove(new WaterHeize());
+                CardData targetCard = new();
+
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 14)
+                    targetCard = value;
+                    
+                }
+                deckList.Remove(targetCard);
                 cardPrefab = cardPrefabList[card.GetCardNum()];
 
                 GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
@@ -263,7 +311,15 @@ public class BattleManagerAlt : MonoBehaviour
             case 5: //물의 정령 헤이즈
             {
                 CardData card = new FireCrimson();
-                deckList.Remove(new FireCrimson());
+                CardData targetCard = new();
+
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 13)
+                    targetCard = value;
+                    
+                }
+                deckList.Remove(targetCard);
                 cardPrefab = cardPrefabList[card.GetCardNum()];
 
                 GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
@@ -1465,6 +1521,57 @@ public class BattleManagerAlt : MonoBehaviour
                     case EPreRequisite.PlayerHPCountUnder:
                     flag = playerHealth < value.count;
                     break;
+
+                    case EPreRequisite.DeckCountOver:
+                    {
+
+                        switch(value.cardType)
+                        {
+                            case ECardType.None:
+                            {
+                                if(value.cardNum == 0)
+                                {flag = deckCount > value.count;}
+                                else
+                                {
+                                    int cardCount = 0;
+                                    foreach(CardData card in deckList)
+                                    {
+                                        if(card.GetCardNum() == value.cardNum)
+                                        cardCount++;
+                                    }
+                                    flag = cardCount > value.count;
+                                }  
+                                break;
+                            }
+
+                            case ECardType.Servent:
+                            {
+                                int serventCardCount = 0;
+
+                                foreach(CardData card in deckList)
+                                {
+                                    if(card.GetCardType() == ECardType.Servent)
+                                    {serventCardCount++;}
+                                }
+                                flag = serventCardCount > value.count;
+                                break;
+                            }
+
+                            case ECardType.Spell:
+                            {
+                                int spellCardCount = 0;
+
+                                foreach(CardData card in deckList)
+                                {
+                                    if(card.GetCardType() == ECardType.Spell)
+                                    {spellCardCount++;}
+                                }
+                                flag = spellCardCount > value.count;
+                                break;
+                            }
+                        }
+                        break;
+                    }
                 }
 
                 if(!flag)
@@ -1518,6 +1625,10 @@ public class BattleManagerAlt : MonoBehaviour
 
         if(ReturnMouseOnField() == null)
         {return false;}
+
+        if(ReturnMouseOnField() == player || ReturnMouseOnField() == enemy)
+        {return false;}
+
 
         if(ReturnMouseOnField().GetFilled())
         {return false;}
@@ -1908,17 +2019,40 @@ public class BattleManagerAlt : MonoBehaviour
 
         if(ReturnMouseOnField() == enemy)
         {
-            enemyHealth -= ReturnMouseOnField(mouseOnArea).GetForce();
+            int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
+
+            attackerForce += enemyDamageIncrease;
+            attackerForce -= enemyDamageDecrease;
+
+            if(enemyDamageBlock)
+            {attackerForce = 0;}
+            
+            enemyHealth -= attackerForce;
+
             
         }else
         {
             if(isUsuable)
             {
-                int x = ReturnMouseOnField(mouseOnArea).GetForce();
-                int y = ReturnMouseOnField().GetForce();
+                int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
+                int defenderForce = ReturnMouseOnField().GetForce();
 
-                ReturnMouseOnField(mouseOnArea).SetForce(x - y);
-                ReturnMouseOnField().SetForce(y - x);
+                int attackerDamage = Math.Abs(defenderForce);
+                int defenderDamage = Math.Abs(attackerForce);
+
+                ReturnMouseOnField(mouseOnArea).LoseForce(attackerDamage);
+                ReturnMouseOnField().LoseForce(defenderDamage);
+
+                if(ReturnMouseOnField(mouseOnArea).GetPenetrate())
+                {
+                    defenderDamage = Math.Abs(defenderForce - attackerForce);
+                    if(enemyDamageBlock)
+                    {defenderDamage = 0;}
+                    
+                    
+                    enemyHealth -= defenderDamage;
+                }
+
             }
         }
         attackDragLine.positionCount = 0;
@@ -2038,33 +2172,29 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void ShowTrashCards()
     {
-        if(trashCount != 0)
+        for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
+        {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+
+        foreach(CardData cardData in trashList)
         {
+            GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
+            GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+            
+            cardObject.GetComponent<Card>().SetLock(true);
+            cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+            cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+            cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
 
-            for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
-            {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
-
-            foreach(CardData cardData in trashList)
-            {
-                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
-                GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
-                
-                cardObject.GetComponent<Card>().SetLock(true);
-                cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
-                cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
-                cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
-
-            }
         }
         trashWindow.GetComponent<Window>().OnOff();
     }
 
-    private void AddTrash(CardData cardData)
+    public void AddTrash(CardData cardData)
     {    
         trashList.Add(cardData);
     }
 
-    private void RemoveTrash(CardData cardData)
+    public void RemoveTrash(CardData cardData)
     {
         trashList.Remove(cardData);
     }
@@ -2122,11 +2252,11 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case EMouseOnArea.Player:
-            targetPoint = playerDetectArea.position;
+            targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
             break;
 
             case EMouseOnArea.Enemy:
-            targetPoint = enemyDetectArea.position;
+            targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
             break;
             
             case EMouseOnArea.AnyWhere:
