@@ -31,9 +31,8 @@ public class BattleManagerAlt : MonoBehaviour
     public RectTransform fieldDetectArea_4;
     public RectTransform fieldDetectArea_5;
     public RectTransform fieldDetectArea_6;
-    public GameObject player;
-    public GameObject enemy;
-    public GameObject testField;
+    public Field player;
+    public Field enemy;
     public Field field_1;
     public Field field_2;
     public Field field_3;
@@ -208,33 +207,77 @@ public class BattleManagerAlt : MonoBehaviour
         switch(cardData.GetServentNum())
         {
             case 1: //바이올렛 리치 로드
+            {
 
-            ShowSelectedCards(trashList, ECardType.Spell, 1);
-            yield return new WaitUntil(() => isActionDone);
-            
-            CardData card = selectedCards[0];
-            RemoveTrash(card);
-            cardPrefab = cardPrefabList[card.GetCardNum()];
+                ShowSelectedCards(trashList, ECardType.Spell, 1);
+                yield return new WaitUntil(() => isActionDone);
+                
+                CardData card = selectedCards[0];
+                RemoveTrash(card);
+                cardPrefab = cardPrefabList[card.GetCardNum()];
 
-            GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-            cardObject.transform.SetParent(canvas.transform);
-            cardObjectList.Add(cardObject);
-            
-            cardObject.GetComponent<Card>().Setup(card);
-            
-            cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
-            handList.Add(card);
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
 
-            selectedCards = new();
+                selectedCards = new();
 
-            isActionDone = false;
+                isActionDone = false;
 
-            CardAlignmentAlt();
-            break;
+                CardAlignmentAlt();
+                break;
+            }
 
             case 2: //암흑요리사
 
             break;
+
+            case 4: //불의 정령 크림슨
+            {
+                CardData card = new WaterHeize();
+                deckList.Remove(new WaterHeize());
+                cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
+
+                CardAlignmentAlt();
+                break;
+            }
+
+            
+
+            
+
+            case 5: //물의 정령 헤이즈
+            {
+                CardData card = new FireCrimson();
+                deckList.Remove(new FireCrimson());
+                cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
+
+                CardAlignmentAlt();
+                break;
+            }
         }
     }
 
@@ -942,8 +985,14 @@ public class BattleManagerAlt : MonoBehaviour
             case EMouseOnArea.Field_6:
             return field_6;
 
+            case EMouseOnArea.Enemy:
+            return enemy;
+
+            case EMouseOnArea.Player:
+            return player;
+
             case EMouseOnArea.AnyWhere:
-            return field_1;
+            return null;
 
             default:
             return null;
@@ -972,6 +1021,12 @@ public class BattleManagerAlt : MonoBehaviour
 
             case EMouseOnArea.Field_6:
             return field_6;
+
+            case EMouseOnArea.Enemy:
+            return enemy;
+
+            case EMouseOnArea.Player:
+            return player;
 
             case EMouseOnArea.AnyWhere:
             return field_1;
@@ -1474,6 +1529,14 @@ public class BattleManagerAlt : MonoBehaviour
     {
         if(ReturnMouseOnField() == null)
         return false;
+        if(ReturnMouseOnField() == ReturnMouseOnField(EMouseOnArea.Enemy))
+        return true;
+
+        if(ReturnMouseOnField() == ReturnMouseOnField(EMouseOnArea.Player))
+        return false;
+
+        if(ReturnMouseOnField() == ReturnMouseOnField(start))
+        return false;
 
         return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
     }
@@ -1838,19 +1901,26 @@ public class BattleManagerAlt : MonoBehaviour
         cardDragLine.endColor = Color.blue;
     }
 
-    public void EndAttackLine(EMouseOnArea mouseOnArea, Boolean isUsuable)
+    public void EndAttackLine(EMouseOnArea mouseOnArea, bool isUsuable)
     {
-        
+        if(ReturnMouseOnField() == ReturnMouseOnField(mouseOnArea))
+        {return;}
 
-        if(isUsuable)
+        if(ReturnMouseOnField() == enemy)
         {
-            int x = ReturnMouseOnField(mouseOnArea).GetForce();
-            int y = ReturnMouseOnField().GetForce();
+            enemyHealth -= ReturnMouseOnField(mouseOnArea).GetForce();
+            
+        }else
+        {
+            if(isUsuable)
+            {
+                int x = ReturnMouseOnField(mouseOnArea).GetForce();
+                int y = ReturnMouseOnField().GetForce();
 
-            ReturnMouseOnField(mouseOnArea).SetForce(x - y);
-            ReturnMouseOnField().SetForce(y - x);
+                ReturnMouseOnField(mouseOnArea).SetForce(x - y);
+                ReturnMouseOnField().SetForce(y - x);
+            }
         }
-
         attackDragLine.positionCount = 0;
     }
 

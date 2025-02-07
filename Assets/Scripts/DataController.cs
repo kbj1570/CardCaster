@@ -76,6 +76,9 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new FlameLizard());//10
         cardDatas.Add(new BrokenDeal());//11
         cardDatas.Add(new HeartOnFire());//12
+        cardDatas.Add(new FireCrimson());//13
+        cardDatas.Add(new WaterHeize());//14
+        
         return cardDatas;
     }
 

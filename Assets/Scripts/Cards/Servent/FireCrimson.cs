@@ -1,0 +1,17 @@
+public class FireCrimson : CardData
+{
+    public FireCrimson()
+    {
+        cardNum = 14;
+        serventNum = 4;
+        cardName = "불의 정령 크림슨";
+        cardCost = 2;
+        cardType = ECardType.Servent;
+        force = 1;
+        cardGuideDescription = "장난치는 것을 좋아하는 붉은 색의 정령. 물을 좋아하는 친구와 항상 같이 붙어다닌다.";
+        cardAbility = "소환시 덱에서 [물의 정령 헤이즈]를 1장 가져온다.";
+        serventSize = EServentSize.Small;
+        cardTargetType = ECardTargetType.Select;
+        serventAttribute = EServentAttribute.Fire;
+    }
+}

@@ -2737,9 +2737,8 @@ MonoBehaviour:
   fieldDetectArea_4: {fileID: 0}
   fieldDetectArea_5: {fileID: 0}
   fieldDetectArea_6: {fileID: 0}
-  player: {fileID: 832985388}
-  enemy: {fileID: 1123072096}
-  testField: {fileID: 1506467353}
+  player: {fileID: 832985391}
+  enemy: {fileID: 1123072099}
   field_1: {fileID: 2137806023}
   field_2: {fileID: 6152694}
   field_3: {fileID: 1831404027}
@@ -2759,11 +2758,15 @@ MonoBehaviour:
   - {fileID: 7468473442354731412, guid: f3260aec6fcb74c4ea9de9d7ccf97dc6, type: 3}
   - {fileID: 7468473442354731412, guid: 233183d459f130a43a1bb3b4d8f3f574, type: 3}
   - {fileID: 7468473442354731412, guid: 9282bdb026c026448b96441d098b87b0, type: 3}
+  - {fileID: 7468473442354731412, guid: ff215925c8860714390f4a55a1592de0, type: 3}
+  - {fileID: 7468473442354731412, guid: a59465bd8a3cc404ba872f5f54d431f7, type: 3}
   serventInfoList:
   - {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
   - {fileID: 415667162582626545, guid: 80eb52105a3321b46ae749ae3e8c06ae, type: 3}
   - {fileID: 415667162582626545, guid: f5fdc1b175825fa44bf3b1ea16b18bd0, type: 3}
   - {fileID: 415667162582626545, guid: 9486237c09c2e2f4d9bd13030ac0cbd8, type: 3}
+  - {fileID: 415667162582626545, guid: f21c7cfbf15282b46ac0d00c4938900d, type: 3}
+  - {fileID: 415667162582626545, guid: 9a3163fe158e3ca4a9a0844ffa6bf55d, type: 3}
   draggedCard: {fileID: 0}
   monsterAbilityButton: {fileID: 0}
   monsterDetailButton: {fileID: 0}
@@ -2795,6 +2798,8 @@ MonoBehaviour:
   - {fileID: 8357732725725720325, guid: a5960e7203298624eb45048c45b0d435, type: 3}
   - {fileID: 8357732725725720325, guid: 30b87b5e01dafbc4595c2652f0b65ebe, type: 3}
   - {fileID: 8357732725725720325, guid: fd091619af395634d8d71bd199856a1d, type: 3}
+  - {fileID: 8357732725725720325, guid: 8e25f8b227c9050488a94296162b3113, type: 3}
+  - {fileID: 8357732725725720325, guid: 461973b1da8657b4d8b870a43628fe83, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0
