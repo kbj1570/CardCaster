@@ -168,37 +168,37 @@ public class FieldManager : MonoBehaviour
 
             if(field1.filled)
             {
-                if(field1.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field1.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field1.Kill();}
             }
 
             if(field2.filled)
             {
-                if(field2.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field2.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field2.Kill();}
             }
 
             if(field3.filled)
             {
-                if(field3.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field3.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field3.Kill();}
             }
 
             if(field4.filled)
             {
-                if(field4.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field4.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field4.Kill();}
             }
 
             if(field5.filled)
             {
-                if(field5.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field5.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field5.Kill();}
             }
 
             if(field6.filled)
             {
-                if(field6.GetServentAttribute().Equals(EServentAttribute.Darkness))
+                if(field6.GetServentAttribute().Equals(EServentAttribute.Dark))
                 {field6.Kill();}
             }
             

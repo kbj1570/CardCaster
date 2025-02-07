@@ -50,17 +50,17 @@ public enum EPreRequisite
     DeckCountUnder, //덱의 매수 ~이하
     PlayerServentCount,//나의 소환수의 수
     PlayerServentCountUnder, //나의 소환수의 수 ~이하
-    PlayerServentCountOver, //나의 소환수의 수 ~이상
+    PlayerServentCountOver, //나의 소환수의 수 ~초과
     EnemyServentCount,//상대의 소환수의 수
     EnemyServentCountUnder, //상대의 소환수의 수 ~이하
     EnemyServentCountOver, //상대의 소환수의 수 ~이상
     EnemyHP, //상대의 체력
-    EnemyHPOver, //상대의 체력 ~이상
-    EnemyHPUnder, //상대의 체력 ~이하
+    EnemyHPOver, //상대의 체력 ~초과
+    EnemyHPUnder, //상대의 체력 ~미만
     AllServentCount, // 소환수의 수
-    AllServentCountOver, //소환수의 수 ~이상
-    AllServentCountUnder, //소환수의 수 ~이하
-    SelectedServent // 내가 선택한 소환수
+    AllServentCountOver, //소환수의 수 ~초과
+    AllServentCountUnder, //소환수의 수 ~미만
+    SelectedServent, // 내가 선택한 소환수
 }
 
 public struct AbilityPreRequisite

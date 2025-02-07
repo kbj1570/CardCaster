@@ -13,6 +13,6 @@ public class CrescentLancer : CardData
         penetrate = true;
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Lightness;
+        serventAttribute = EServentAttribute.Light;
     }
 }

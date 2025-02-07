@@ -17,6 +17,16 @@ public class OnlySilence : CardData
         preRequisite.count = 1;
 
         preRequisites.Add(preRequisite);
+
+
+        preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.AllServentCountOver;
+        preRequisite.count = 0;
+
+        preRequisite.serventAttribute = EServentAttribute.None;
+
+        preRequisites.Add(preRequisite);
+
     }
 
 }

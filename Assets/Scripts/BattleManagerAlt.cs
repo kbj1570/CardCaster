@@ -8,11 +8,11 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 public enum ECardType{None ,Servent, Spell}
-public enum EServentAttribute{None, Fire, Water, Earth, Wind, Darkness, Lightness}
+public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
 public enum ECardTargetType{Selected, Select}
-public enum EServentCondition{Void, Oblivion, Poison}
+public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
 public enum EServentSize{Small, Middle, Big}
 
 public class BattleManagerAlt : MonoBehaviour
@@ -48,12 +48,10 @@ public class BattleManagerAlt : MonoBehaviour
     public Field field_5;
     public Field field_6;
     public GameObject hole;
-
     public GameObject aura;
 
+
     public List<GameObject> anyWhereAreas;
-    
-    
     //Prefab
     public GameObject cardPrefab;
     public List<GameObject> serventPrefabList;
@@ -205,6 +203,16 @@ public class BattleManagerAlt : MonoBehaviour
         cardSelectWindow.GetComponent<Window>().OnOff();
     }
 
+    IEnumerator ActivateTreatmentAbility(CardData cardData, Field field)
+    {
+        switch(cardData.GetServentNum())
+        {
+
+        }
+        yield return new WaitUntil(() => isActionDone);
+    }
+
+
 
 
 
@@ -334,6 +342,29 @@ public class BattleManagerAlt : MonoBehaviour
                 CardAlignmentAlt();
                 break;
             }
+
+            case 6: //바람의 정령 크래스트
+            {
+                if(field_1.GetFilled())
+                {
+                    if(field_1.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_1.GainForce(1);}
+                }
+
+                if(field_2.GetFilled())
+                {
+                    if(field_2.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_2.GainForce(1);}
+                }
+
+                if(field_3.GetFilled())
+                {
+                    if(field_3.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_3.GainForce(1);}
+                }
+
+                break;
+            }
         }
     }
 
@@ -351,51 +382,57 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case 1: //엘리멘탈 부스트
-            List<EServentAttribute> attributes = new();
-            if(field_1.GetComponent<Field>().GetFilled())
             {
-                if(!attributes.Contains(field_1.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_1.GetComponent<Field>().GetServentAttribute());}
+                 List<EServentAttribute> attributes = new();
+                if(field_1.GetFilled())
+                {
+                    if(!attributes.Contains(field_1.GetServentAttribute()))
+                    {attributes.Add(field_1.GetServentAttribute());}
+                }
+
+                if(field_2.GetFilled())
+                {
+                    if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
+                    {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
+                }
+
+                if(field_3.GetFilled())
+                {
+                    if(!attributes.Contains(field_3.GetServentAttribute()))
+                    {attributes.Add(field_3.GetServentAttribute());}
+                }
+
+                int value = attributes.Count;
+
+                if(field_1.GetFilled())
+                {field_1.GainForce(value);}
+
+                if(field_2.GetFilled())
+                {field_2.GainForce(value);}
+
+                if(field_3.GetFilled())
+                {field_3.GainForce(value);}
+                break;
             }
-
-            if(field_2.GetComponent<Field>().GetFilled())
-            {
-                if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
-            }
-
-            if(field_3.GetComponent<Field>().GetFilled())
-            {
-                if(!attributes.Contains(field_3.GetComponent<Field>().GetServentAttribute()))
-                {attributes.Add(field_3.GetComponent<Field>().GetServentAttribute());}
-            }
-
-            int value = attributes.Count;
-
-            field_1.GetComponent<Field>().GainForce(value);
-            field_2.GetComponent<Field>().GainForce(value);
-            field_3.GetComponent<Field>().GainForce(value);
-
-            Debug.Log(cardData.GetCardName() + " 발동");
-            break;
+           
 
             case 2: //악을 멸하는 등불
-            if(field_1.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-            {field_1.GetComponent<Field>().Kill();}
+            if(field_1.GetServentAttribute() == EServentAttribute.Dark)
+            {field_1.Kill();}
 
-            if(field_2.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-            {field_2.GetComponent<Field>().Kill();}
+            if(field_2.GetServentAttribute() == EServentAttribute.Dark)
+            {field_2.Kill();}
 
-            if(field_3.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
-            {field_3.GetComponent<Field>().Kill();}
+            if(field_3.GetServentAttribute() == EServentAttribute.Dark)
+            {field_3.Kill();}
 
-            if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
             {field_4.GetComponent<Field>().Kill();}
 
-            if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
             {field_5.GetComponent<Field>().Kill();}
 
-            if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Darkness)
+            if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
             {field_6.GetComponent<Field>().Kill();}
 
             break;
@@ -450,8 +487,47 @@ public class BattleManagerAlt : MonoBehaviour
             DrawCard();
             DrawCard();
 
-
+            enemyDamageBlock = true;
             break;
+
+            case 9: // 마스크월드
+            {
+                if(field_1.GetFilled())
+                {field_1.GainForce(1);}
+
+                if(field_2.GetFilled())
+                {field_2.GainForce(1);}
+
+                if(field_3.GetFilled())
+                {field_3.GainForce(1);}
+
+                if(field_4.GetFilled())
+                {field_4.GainForce(1);}
+
+                if(field_5.GetFilled())
+                {field_5.GainForce(1);}
+
+                if(field_6.GetFilled())
+                {field_6.GainForce(1);}
+                
+                break;
+            }
+
+            case 10: // 투사의 의지
+            {
+                ReturnMouseOnField().GainForce(ReturnMouseOnField().GetForce());
+                ReturnMouseOnField().SetSuicide(true);
+                break;
+            }
+
+            case 11: // 절규하는 투사
+            {
+                ReturnMouseOnField().GainForce(ReturnMouseOnField().GetForce());
+                ReturnMouseOnField().AddCondition(EServentCondition.Madness);
+                break;
+            }
+            
+
 
         }
 
@@ -828,19 +904,19 @@ public class BattleManagerAlt : MonoBehaviour
             List<Field> filledField = new();
 
             int probability = 0;
-            if(field_4.GetComponent<Field>().GetFilled())
+            if(field_4.GetFilled())
             {
                 filledField.Add(field_4);
                 probability += 3;
             }
 
-            if(field_5.GetComponent<Field>().GetFilled())
+            if(field_5.GetFilled())
             {
                 filledField.Add(field_5);
                 probability += 3;
             }
 
-            if(field_6.GetComponent<Field>().GetFilled())
+            if(field_6.GetFilled())
             {
                 filledField.Add(field_6);
                 probability += 3;
@@ -860,28 +936,28 @@ public class BattleManagerAlt : MonoBehaviour
                 List<Field> dumb = new();
 
                 if
-                (field_1.GetComponent<Field>().GetFilled()
-                && field_2.GetComponent<Field>().GetFilled()
-                && field_3.GetComponent<Field>().GetFilled())
+                (field_1.GetFilled()
+                && field_2.GetFilled()
+                && field_3.GetFilled())
                 {
                     dumb.Add(field_4);
                     dumb.Add(field_5);
                     dumb.Add(field_6);
                 }
                 else if
-                (!field_1.GetComponent<Field>().GetFilled()
-                && field_2.GetComponent<Field>().GetFilled()
-                && field_3.GetComponent<Field>().GetFilled())
+                (!field_1.GetFilled()
+                && field_2.GetFilled()
+                && field_3.GetFilled())
                 {dumb.Add(field_4);}
                 else if
-                (field_1.GetComponent<Field>().GetFilled()
-                && !field_2.GetComponent<Field>().GetFilled()
-                && field_3.GetComponent<Field>().GetFilled())
+                (field_1.GetFilled()
+                && !field_2.GetFilled()
+                && field_3.GetFilled())
                 {dumb.Add(field_5);}
                 else if
-                (field_1.GetComponent<Field>().GetFilled()
-                && field_2.GetComponent<Field>().GetFilled()
-                && !field_3.GetComponent<Field>().GetFilled())
+                (field_1.GetFilled()
+                && field_2.GetFilled()
+                && !field_3.GetFilled())
                 {dumb.Add(field_6);}
                 else if
                 (!field_1.GetComponent<Field>().GetFilled()
@@ -1285,7 +1361,7 @@ public class BattleManagerAlt : MonoBehaviour
                         
                     }
 
-                    flag = count >= value.count;
+                    flag = count > value.count;
                     break;
 
                     case EPreRequisite.AllServentCountUnder:
@@ -1358,7 +1434,7 @@ public class BattleManagerAlt : MonoBehaviour
                         
                     }
 
-                    flag = count <= value.count;
+                    flag = count < value.count;
                     break;
 
                     case EPreRequisite.PlayerServentCount:
@@ -1434,7 +1510,7 @@ public class BattleManagerAlt : MonoBehaviour
                         
                     }
 
-                    flag = count >= value.count;
+                    flag = count > value.count;
                     break;
 
                     case EPreRequisite.PlayerServentCountUnder:
@@ -1474,7 +1550,7 @@ public class BattleManagerAlt : MonoBehaviour
                         
                     }
 
-                    flag = count <= value.count;
+                    flag = count < value.count;
                     break;
 
                     case EPreRequisite.TrashCountOver:
@@ -2040,8 +2116,8 @@ public class BattleManagerAlt : MonoBehaviour
                 int attackerDamage = Math.Abs(defenderForce);
                 int defenderDamage = Math.Abs(attackerForce);
 
-                ReturnMouseOnField(mouseOnArea).LoseForce(attackerDamage);
-                ReturnMouseOnField().LoseForce(defenderDamage);
+                ReturnMouseOnField(mouseOnArea).TakeDamage(attackerDamage);
+                ReturnMouseOnField().TakeDamage(defenderDamage);
 
                 if(ReturnMouseOnField(mouseOnArea).GetPenetrate())
                 {

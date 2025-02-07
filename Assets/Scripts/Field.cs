@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using DG.Tweening;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using Unity.VisualScripting;
-using UnityEngine.ProBuilder;
 
 public class Field : MonoBehaviour
 {
@@ -21,6 +16,8 @@ public class Field : MonoBehaviour
 
     public GameObject conditionPanel;
     public GameObject conditionPanelButton;
+
+    public GameObject floatingTextPrefab;
 
     public GameObject monsterPrefab;
     public GameObject summonEffectPrefab;
@@ -42,6 +39,9 @@ public class Field : MonoBehaviour
     public int fieldNum;
 
     bool penetrate;
+    bool suicide;
+
+    bool voidWalker;
 
     bool damageBlock;
     int damageDecrease;
@@ -52,14 +52,40 @@ public class Field : MonoBehaviour
     private GameObject summonedServent;
     
 
-    public void SetForce(int value){ currentForce = value;}
+    public void SetForce(int value)
+    {
+        if(voidWalker)
+        return;
+
+        currentForce = value;
+    }
     public int GetForce(){return currentForce;}
 
     public int GetFieldNum(){return fieldNum;}
 
-    public void GainForce(int value){currentForce += value;}
+    public void GainForce(int value)
+    {
+        if(voidWalker)
+        return;
+
+        currentForce += value;
+    }
     public EServentAttribute GetServentAttribute(){return serventAttribute;}
     public void LoseForce(int value)
+    {
+        if(voidWalker)
+        return;
+
+        if(!filled)
+        return;
+
+        if(damageBlock)
+        return;
+
+        currentForce -= value;
+    }
+
+    public void TakeDamage(int value)
     {
         if(!filled)
             return;
@@ -67,9 +93,21 @@ public class Field : MonoBehaviour
         if(damageBlock)
             return;
 
+
+        // 피해 숫자 표시
+        GameObject damageText = Instantiate(floatingTextPrefab, fieldArea.transform);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
+
         currentForce -= value;
     }
-    public void Kill(){currentForce = 0;}
+
+    public void Kill()
+    {
+        if(voidWalker)
+        {return;}
+
+        currentForce = 0;
+    }
 
     public void UpdateHealth()
     {
@@ -98,8 +136,11 @@ public class Field : MonoBehaviour
         filled = true;
         attacked = false;
         penetrate = cardData.GetPenetrate();
+        voidWalker = cardData.GetVoidWalker();
         serventAttribute = cardData.serventAttribute;
         summonedServent = gameObject;
+
+        EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
     }
 
     public void UpdateCondition()
@@ -118,17 +159,43 @@ public class Field : MonoBehaviour
         {conditionPanelButton.SetActive(true);}
         else
         {conditionPanelButton.SetActive(false);}
+    }
+
+    public void ActivateTurnEnd()
+    {
+        if(voidWalker)
+        return;
+
+        if(suicide)
+        {currentForce = 0;}
+
 
     }
 
     public void ResetCondition()
-    {conditions.Clear();}
+    {
+        if(voidWalker)
+        return;
+
+
+        conditions.Clear();
+    }
     
     public void AddCondition(EServentCondition value)
-    {conditions.Add(value);}
+    {
+        if(voidWalker)
+        return;
+
+        conditions.Add(value);
+    }
 
     public void RemoveCondition(EServentCondition value)
-    {conditions.Remove(value);}
+    {
+        if(voidWalker)
+        return;
+
+        conditions.Remove(value);
+    }
 
     public bool GetFilled()
     {return filled;}
@@ -140,6 +207,14 @@ public class Field : MonoBehaviour
     {this.attacked = value;}
     public CardData GetCardData()
     {return cardData;}
+
+    public void SetSuicide(bool value)
+    {
+        if(voidWalker)
+        return;
+
+        suicide = value;
+    }
 
     public bool GetPenetrate()
     {return penetrate;}

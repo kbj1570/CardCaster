@@ -16,6 +16,7 @@ public class CardData
     public EServentSize serventSize;
     public List<PreRequisite> preRequisites;
     public bool penetrate;
+    public bool voidWalker;
 
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}
@@ -30,7 +31,7 @@ public class CardData
     public ECardTargetType GetCardTargetType(){return cardTargetType;}
     public List<PreRequisite> GetPreRequisites(){return preRequisites;}
     public bool GetPenetrate(){return penetrate;}
-
+    public bool GetVoidWalker(){return voidWalker;}
 
 }
 public struct PreRequisite

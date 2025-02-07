@@ -78,7 +78,11 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new HeartOnFire());//12
         cardDatas.Add(new FireCrimson());//13
         cardDatas.Add(new WaterHeize());//14
-        cardDatas.Add(new MaskedWorld());//14
+        cardDatas.Add(new MaskedWorld());//15
+        cardDatas.Add(new WindCrest());//16
+        cardDatas.Add(new WillOfBerserker());//17
+        cardDatas.Add(new AbyssSeeker());//18
+        cardDatas.Add(new DespairOfBerserker());//19
         
         return cardDatas;
     }

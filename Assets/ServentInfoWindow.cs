@@ -47,11 +47,11 @@ public class ServentInfoWindow : MonoBehaviour
             serventAttribute.sprite = earthAttribute;
             break;
 
-            case EServentAttribute.Darkness:
+            case EServentAttribute.Dark:
             serventAttribute.sprite = darknessAttribute;
             break;
 
-            case EServentAttribute.Lightness:
+            case EServentAttribute.Light:
             serventAttribute.sprite = lightnessAttribute;
             break;
         }

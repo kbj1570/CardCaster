@@ -9,7 +9,15 @@ public class MaskedWorld : CardData
         cardType = ECardType.Spell;
         cardGuideDescription = ""; 
         cardAbility = "모든 소환수들의 포스를 1 증가시킨다.";
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Selected;
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.AllServentCountOver;
+        preRequisite.count = 0;
+        preRequisite.cardType = ECardType.None;
+
+        preRequisites.Add(preRequisite);
     }
 
 }

@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 6152695}
   - component: {fileID: 6152694}
   m_Layer: 0
-  m_Name: ServentField (2)
+  m_Name: ServentField_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 367677215}
+  fieldArea: {fileID: 1345509517}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   forceTMP: {fileID: 28044545}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -1147,6 +1148,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &144476643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 144476645}
+  - component: {fileID: 144476644}
+  m_Layer: 0
+  m_Name: EffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &144476644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144476643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f42bcaa3c250d649af81b95c49afea0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  waterEffect: {fileID: 1450882587246704900, guid: da880c1d03240b145881f2938017c37e, type: 3}
+  fireEffect: {fileID: 1450882587246704900, guid: e3856748409526b4babf8ee7f8d2bbdf, type: 3}
+  earthEffect: {fileID: 1450882587246704900, guid: 46e3411a4256d9d49afa450b698a0cfb, type: 3}
+  windEffect: {fileID: 1450882587246704900, guid: 6231708a1db20cd4f91eef0e9c191f05, type: 3}
+  lightEffect: {fileID: 1450882587246704900, guid: e775ffbba31c7fa478677885f01769a7, type: 3}
+  darkEffect: {fileID: 1450882587246704900, guid: 196ecc0d5b4a3144badb36ba556a080e, type: 3}
+--- !u!4 &144476645
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144476643}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 33
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &145884859
 GameObject:
   m_ObjectHideFlags: 0
@@ -2760,6 +2811,8 @@ MonoBehaviour:
   - {fileID: 7468473442354731412, guid: 9282bdb026c026448b96441d098b87b0, type: 3}
   - {fileID: 7468473442354731412, guid: ff215925c8860714390f4a55a1592de0, type: 3}
   - {fileID: 7468473442354731412, guid: a59465bd8a3cc404ba872f5f54d431f7, type: 3}
+  - {fileID: 7468473442354731412, guid: 2982dfef198a866429430e5fbf45436e, type: 3}
+  - {fileID: 7468473442354731412, guid: 2baea2515ae3a854d8cdf8f02533960e, type: 3}
   serventInfoList:
   - {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
   - {fileID: 415667162582626545, guid: 80eb52105a3321b46ae749ae3e8c06ae, type: 3}
@@ -2767,6 +2820,8 @@ MonoBehaviour:
   - {fileID: 415667162582626545, guid: 9486237c09c2e2f4d9bd13030ac0cbd8, type: 3}
   - {fileID: 415667162582626545, guid: f21c7cfbf15282b46ac0d00c4938900d, type: 3}
   - {fileID: 415667162582626545, guid: 9a3163fe158e3ca4a9a0844ffa6bf55d, type: 3}
+  - {fileID: 415667162582626545, guid: 002e09d72a88a2f49aa400472e79249f, type: 3}
+  - {fileID: 415667162582626545, guid: b646b8e30db3f1343bcbcf0823c8070a, type: 3}
   draggedCard: {fileID: 0}
   monsterAbilityButton: {fileID: 0}
   monsterDetailButton: {fileID: 0}
@@ -2800,6 +2855,11 @@ MonoBehaviour:
   - {fileID: 8357732725725720325, guid: fd091619af395634d8d71bd199856a1d, type: 3}
   - {fileID: 8357732725725720325, guid: 8e25f8b227c9050488a94296162b3113, type: 3}
   - {fileID: 8357732725725720325, guid: 461973b1da8657b4d8b870a43628fe83, type: 3}
+  - {fileID: 8357732725725720325, guid: 31dca380f2e8e3848ad9ab8ed63b7cab, type: 3}
+  - {fileID: 8357732725725720325, guid: b4ab22fa27086c04789eab99637466fd, type: 3}
+  - {fileID: 8357732725725720325, guid: a3e42ab088e8b20498422bf84fa2cad5, type: 3}
+  - {fileID: 8357732725725720325, guid: 39fe3d3469dfdb842819d9a3a54a00ae, type: 3}
+  - {fileID: 8357732725725720325, guid: 281681584854ba245a368c87d34b444d, type: 3}
   isLoading: 0
   startCardCount: 5
   fastMode: 0
@@ -2963,7 +3023,7 @@ GameObject:
   - component: {fileID: 369971641}
   - component: {fileID: 369971640}
   m_Layer: 5
-  m_Name: FieldArea_1 (4)
+  m_Name: FieldArea_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3517,7 +3577,7 @@ GameObject:
   - component: {fileID: 500225224}
   - component: {fileID: 500225223}
   m_Layer: 0
-  m_Name: ServentField (6)
+  m_Name: ServentField_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3535,7 +3595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 449842596}
+  fieldArea: {fileID: 1415058992}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -3543,6 +3603,7 @@ MonoBehaviour:
   forceTMP: {fileID: 1043710179}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -4684,7 +4745,7 @@ GameObject:
   - component: {fileID: 804764784}
   - component: {fileID: 804764783}
   m_Layer: 5
-  m_Name: FieldArea_1 (6)
+  m_Name: FieldArea_Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4983,6 +5044,7 @@ MonoBehaviour:
   forceTMP: {fileID: 0}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -5663,7 +5725,7 @@ GameObject:
   - component: {fileID: 1052650495}
   - component: {fileID: 1052650494}
   m_Layer: 5
-  m_Name: FieldArea_1 (3)
+  m_Name: FieldArea_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6230,6 +6292,7 @@ MonoBehaviour:
   forceTMP: {fileID: 0}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -6351,7 +6414,7 @@ GameObject:
   - component: {fileID: 1154436941}
   - component: {fileID: 1154436940}
   m_Layer: 5
-  m_Name: FieldArea_1 (2)
+  m_Name: FieldArea_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7190,7 +7253,7 @@ GameObject:
   - component: {fileID: 1294761301}
   - component: {fileID: 1294761300}
   m_Layer: 0
-  m_Name: ServentField (4)
+  m_Name: ServentField_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7208,7 +7271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 978967226}
+  fieldArea: {fileID: 1052650496}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -7216,6 +7279,7 @@ MonoBehaviour:
   forceTMP: {fileID: 2128747508}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -7480,7 +7544,7 @@ GameObject:
   - component: {fileID: 1345509516}
   - component: {fileID: 1345509515}
   m_Layer: 5
-  m_Name: FieldArea_1 (1)
+  m_Name: FieldArea_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7959,7 +8023,7 @@ GameObject:
   - component: {fileID: 1415058991}
   - component: {fileID: 1415058990}
   m_Layer: 5
-  m_Name: FieldArea_1 (5)
+  m_Name: FieldArea_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8546,6 +8610,7 @@ MonoBehaviour:
   forceTMP: {fileID: 0}
   conditionPanel: {fileID: 78309855}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 0}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -8819,7 +8884,7 @@ GameObject:
   - component: {fileID: 1563926377}
   - component: {fileID: 1563926376}
   m_Layer: 5
-  m_Name: FieldArea_1 (7)
+  m_Name: FieldArea_Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9732,6 +9797,104 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1716411680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1716411684}
+  - component: {fileID: 1716411683}
+  - component: {fileID: 1716411682}
+  - component: {fileID: 1716411681}
+  m_Layer: 0
+  m_Name: Quad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!64 &1716411681
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716411680}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1716411682
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716411680}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1716411683
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716411680}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1716411684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716411680}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -34.3, y: -2.7152, z: 0}
+  m_LocalScale: {x: 9.01371, y: 6.4301977, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 34
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1724889882
 GameObject:
   m_ObjectHideFlags: 0
@@ -10212,7 +10375,7 @@ GameObject:
   - component: {fileID: 1831404028}
   - component: {fileID: 1831404027}
   m_Layer: 0
-  m_Name: ServentField (3)
+  m_Name: ServentField_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10230,7 +10393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 651365308}
+  fieldArea: {fileID: 1154436942}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -10238,6 +10401,7 @@ MonoBehaviour:
   forceTMP: {fileID: 285807865}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -11589,7 +11753,7 @@ GameObject:
   - component: {fileID: 2117561947}
   - component: {fileID: 2117561946}
   m_Layer: 0
-  m_Name: ServentField (5)
+  m_Name: ServentField_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11607,7 +11771,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 1460397883}
+  fieldArea: {fileID: 369971642}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -11615,6 +11779,7 @@ MonoBehaviour:
   forceTMP: {fileID: 1335894635}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}
@@ -12011,7 +12176,7 @@ GameObject:
   - component: {fileID: 2137806024}
   - component: {fileID: 2137806023}
   m_Layer: 0
-  m_Name: ServentField (1)
+  m_Name: ServentField_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12029,7 +12194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5478b6b20503bfb4294cef495849b658, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fieldArea: {fileID: 1518759739}
+  fieldArea: {fileID: 116321800}
   conditions: 
   serventAttribute: 0
   filled: 0
@@ -12037,6 +12202,7 @@ MonoBehaviour:
   forceTMP: {fileID: 1246661340}
   conditionPanel: {fileID: 0}
   conditionPanelButton: {fileID: 0}
+  floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   monsterPrefab: {fileID: 0}
   summonEffectPrefab: {fileID: 0}
   summonEffectObject: {fileID: 0}

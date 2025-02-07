@@ -89,7 +89,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
                 image = earthElement;
                 break;
 
-                case EServentAttribute.Darkness:
+                case EServentAttribute.Dark:
                 image = darknessElement;
                 break;
 
@@ -97,7 +97,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
                 image = windElement;
                 break;
 
-                case EServentAttribute.Lightness:
+                case EServentAttribute.Light:
                 image = lightElement;
                 break;
 

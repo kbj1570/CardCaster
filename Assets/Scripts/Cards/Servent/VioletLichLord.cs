@@ -9,7 +9,7 @@ public class VioletLichLord : CardData
         cardName = "바이올렛 리치로드";
         cardCost = 2;
         cardType = ECardType.Servent;
-        serventAttribute = EServentAttribute.Darkness;
+        serventAttribute = EServentAttribute.Dark;
         force = 1;
         cardGuideDescription = "";
         cardAbility = "소환시 묘지에서 원하는 마법카드를 1장 가져온다";
