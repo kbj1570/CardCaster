@@ -123,7 +123,7 @@ public class Field : MonoBehaviour
             attacked = false;
 
             BattleManagerAlt.Inst.AddTrash(cardData);
-            Destroy(summonedServent);
+            summonedServent.GetComponent<Servent>().Dead();
         }
     }
 

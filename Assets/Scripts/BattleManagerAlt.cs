@@ -134,6 +134,12 @@ public class BattleManagerAlt : MonoBehaviour
     private int selectedLimit;
     private bool isActionDone = false;
 
+    // public void StartAction()
+    // {isActionDone = false;}
+
+    // public void ActionDone()
+    // {isActionDone = true;}
+
 
 
 
@@ -183,6 +189,7 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
     {
+        isActionDone = false;
         selectedLimit = limit;
         foreach(CardData cardData in targetList)
         {
@@ -222,7 +229,6 @@ public class BattleManagerAlt : MonoBehaviour
         {
             case 1: //바이올렛 리치 로드
             {
-
                 ShowSelectedCards(trashList, ECardType.Spell, 1);
                 yield return new WaitUntil(() => isActionDone);
                 
@@ -366,6 +372,7 @@ public class BattleManagerAlt : MonoBehaviour
                 break;
             }
         }
+        isActionDone = false;
     }
 
         
@@ -896,189 +903,225 @@ public class BattleManagerAlt : MonoBehaviour
 
     public IEnumerator EnemyTurnCo()
     {
-        int enemyTokens = 2;
-
-        //소환 확률 배정
-        for(int i = 0; i < enemyTokens; ++i)
-        {
-            List<Field> filledField = new();
-
-            int probability = 0;
-            if(field_4.GetFilled())
-            {
-                filledField.Add(field_4);
-                probability += 3;
-            }
-
-            if(field_5.GetFilled())
-            {
-                filledField.Add(field_5);
-                probability += 3;
-            }
-
-            if(field_6.GetFilled())
-            {
-                filledField.Add(field_6);
-                probability += 3;
-            }
-
-            int p = Random.Range(1, 10);
-            
-            /*
-                적의 성향에 따라서 행동의 우선 순위를 정할 수 있음
-                공격적인 성향. 플레이어의 비어있는 필드에 우선적으로 소환해서 플레이어를 공격함
-                방어적인 성향. 플레이어가 소환수를 소환한 필드에 마주보게 소환해서 플레이어의 소환수를 우선적으로 제거함
-                중간. 플레이어 필드 상황에 상관없이 랜덤으로 소환하고 공격
-            */
-
-            if(p > probability)
-            {
-                List<Field> dumb = new();
-
-                if
-                (field_1.GetFilled()
-                && field_2.GetFilled()
-                && field_3.GetFilled())
-                {
-                    dumb.Add(field_4);
-                    dumb.Add(field_5);
-                    dumb.Add(field_6);
-                }
-                else if
-                (!field_1.GetFilled()
-                && field_2.GetFilled()
-                && field_3.GetFilled())
-                {dumb.Add(field_4);}
-                else if
-                (field_1.GetFilled()
-                && !field_2.GetFilled()
-                && field_3.GetFilled())
-                {dumb.Add(field_5);}
-                else if
-                (field_1.GetFilled()
-                && field_2.GetFilled()
-                && !field_3.GetFilled())
-                {dumb.Add(field_6);}
-                else if
-                (!field_1.GetComponent<Field>().GetFilled()
-                && !field_2.GetComponent<Field>().GetFilled()
-                && field_3.GetComponent<Field>().GetFilled())
-                {
-                    dumb.Add(field_4);
-                    dumb.Add(field_5);
-                }
-                else if
-                (!field_1.GetComponent<Field>().GetFilled()
-                && field_2.GetComponent<Field>().GetFilled()
-                && !field_3.GetComponent<Field>().GetFilled())
-                {
-                    dumb.Add(field_4);
-                    dumb.Add(field_6);
-                }
-                else if
-                (field_1.GetComponent<Field>().GetFilled()
-                && !field_2.GetComponent<Field>().GetFilled()
-                && !field_3.GetComponent<Field>().GetFilled())
-                {
-                    dumb.Add(field_5);
-                    dumb.Add(field_6);
-                }
-                else if
-                (!field_1.GetComponent<Field>().GetFilled()
-                && !field_2.GetComponent<Field>().GetFilled()
-                && !field_3.GetComponent<Field>().GetFilled())
-                {
-                    dumb.Add(field_4);
-                    dumb.Add(field_5);
-                    dumb.Add(field_6);
-                }
-
-                foreach(Field gameObject in filledField)
-                {dumb.Remove(gameObject);}
-
-                int randomNum = Random.Range(0, dumb.Count);
-                if(dumb.Count != 0)
-                {
-                    Field field = dumb[randomNum];
-                    field.Summon(new CrescentLancer(), Instantiate(serventPrefabList[0], field.transform.position , Utils.QI));
-                    SummonServent(0, dumb[randomNum]);
-                }else{Debug.Log("저는 굴러다닐거예요");}
-                
-                
+        int actionToken = 0;
 
 
-
-            }//몬스터 소환
-            else
-            {
-                int foo;
-                int randomNum = Random.Range(0, 6);
-                List<Field> filledPlayerFields = new();
-                List<Field> filledEnemyFields = new();
-
-                if(field_1.GetComponent<Field>().GetFilled())
-                {filledPlayerFields.Add(field_1);}
-
-                if(field_2.GetComponent<Field>().GetFilled())
-                {filledPlayerFields.Add(field_2);}
-
-                if(field_3.GetComponent<Field>().GetFilled())
-                {filledPlayerFields.Add(field_3);}
-
-                if(field_4.GetComponent<Field>().GetFilled())
-                {filledEnemyFields.Add(field_4);}
-
-                if(field_5.GetComponent<Field>().GetFilled())
-                {filledEnemyFields.Add(field_5);}
-
-                if(field_6.GetComponent<Field>().GetFilled())
-                {filledEnemyFields.Add(field_6);}
+        Debug.Log("적이 동료를 부릅니다.");
+        yield return 1f;
 
 
-
-                
-
-                switch(randomNum)
-                {
-                    case 0: // Gain Force
-                    foo = Random.Range(0, filledEnemyFields.Count);
-                    filledEnemyFields[foo].GetComponent<Field>().GainForce(1);
-                    break;
-
-                    case 1: // Positive Ability
-                    foo = Random.Range(0, filledEnemyFields.Count);
-                    break;
-
-                    case 2: // Lose Force
-                    break;
-
-                    case 3: // Negative Ability
-                    break;
-                }
-            }
-
-            /*
-                포스 상승 버프
-                포스 저하 디버프
-                소환된 몬스터를 제물로 바치고 그 포스만큼 회복
-                버프 특성 부여
-                적에게 디버프 특성 부여
-            */
-        }
-
-        yield return delay07;
-
-        // 그 후 모든 몬스터 공격
-
-        /*
-            직공
-            가로막는 적 공격
-            공격 안함
-            가로막지않는 적 공격
-        */
+        Debug.Log("적이 이상한 주술을 사용합니다.");
 
 
+        yield return 1f;
     }
+
+    public void CalcAlign(float cardIndex, int cardCount, GameObject card)
+    {
+        float maxRotation = 10; //The absolute value of the rotation for the leftmost and rightmost cards (in degrees)
+        float xOffset = 0; //The horizontal center of the card fan (in worldspace units)
+        float xRange = 10; //The horizontal range of the card fan (in worldspace units)
+        float yOffset = -10; //The vertical center of the card fan (in worldspace units)
+        float yRange = 10f; //The vertical range of the card fan (in worldspace units)
+
+        float alignResult = 0.5f;
+        if(cardCount >= 2) alignResult = cardIndex / (cardCount - 1.0f);
+        float rotZ = Mathf.Lerp(-maxRotation, maxRotation, alignResult);
+        float xPos = Mathf.Lerp(xOffset-xRange, xOffset+xRange, alignResult);
+
+        if(alignResult > 0.5) alignResult = 1 - alignResult;
+        alignResult *= 2;
+        float yPos = Mathf.Lerp(yOffset - yRange, yOffset + yRange, alignResult);
+
+        card.transform.position = camera.WorldToScreenPoint(new Vector3(xPos, yPos, 0));
+        card.transform.eulerAngles = new Vector3(0, 0, rotZ);
+    }
+
+    // public IEnumerator EnemyTurnCo()
+    // {
+    //     int enemyTokens = 0;
+
+    //     //소환 확률 배정
+    //     for(int i = 0; i < enemyTokens; ++i)
+    //     {
+    //         List<Field> filledField = new();
+
+    //         int probability = 0;
+    //         if(field_4.GetFilled())
+    //         {
+    //             filledField.Add(field_4);
+    //             probability += 3;
+    //         }
+
+    //         if(field_5.GetFilled())
+    //         {
+    //             filledField.Add(field_5);
+    //             probability += 3;
+    //         }
+
+    //         if(field_6.GetFilled())
+    //         {
+    //             filledField.Add(field_6);
+    //             probability += 3;
+    //         }
+
+    //         int p = Random.Range(1, 10);
+            
+    //         /*
+    //             적의 성향에 따라서 행동의 우선 순위를 정할 수 있음
+    //             공격적인 성향. 플레이어의 비어있는 필드에 우선적으로 소환해서 플레이어를 공격함
+    //             방어적인 성향. 플레이어가 소환수를 소환한 필드에 마주보게 소환해서 플레이어의 소환수를 우선적으로 제거함
+    //             중간. 플레이어 필드 상황에 상관없이 랜덤으로 소환하고 공격
+    //         */
+
+    //         if(p > probability)
+    //         {
+    //             List<Field> dumb = new();
+
+    //             if
+    //             (field_1.GetFilled()
+    //             && field_2.GetFilled()
+    //             && field_3.GetFilled())
+    //             {
+    //                 dumb.Add(field_4);
+    //                 dumb.Add(field_5);
+    //                 dumb.Add(field_6);
+    //             }
+    //             else if
+    //             (!field_1.GetFilled()
+    //             && field_2.GetFilled()
+    //             && field_3.GetFilled())
+    //             {dumb.Add(field_4);}
+    //             else if
+    //             (field_1.GetFilled()
+    //             && !field_2.GetFilled()
+    //             && field_3.GetFilled())
+    //             {dumb.Add(field_5);}
+    //             else if
+    //             (field_1.GetFilled()
+    //             && field_2.GetFilled()
+    //             && !field_3.GetFilled())
+    //             {dumb.Add(field_6);}
+    //             else if
+    //             (!field_1.GetComponent<Field>().GetFilled()
+    //             && !field_2.GetComponent<Field>().GetFilled()
+    //             && field_3.GetComponent<Field>().GetFilled())
+    //             {
+    //                 dumb.Add(field_4);
+    //                 dumb.Add(field_5);
+    //             }
+    //             else if
+    //             (!field_1.GetComponent<Field>().GetFilled()
+    //             && field_2.GetComponent<Field>().GetFilled()
+    //             && !field_3.GetComponent<Field>().GetFilled())
+    //             {
+    //                 dumb.Add(field_4);
+    //                 dumb.Add(field_6);
+    //             }
+    //             else if
+    //             (field_1.GetComponent<Field>().GetFilled()
+    //             && !field_2.GetComponent<Field>().GetFilled()
+    //             && !field_3.GetComponent<Field>().GetFilled())
+    //             {
+    //                 dumb.Add(field_5);
+    //                 dumb.Add(field_6);
+    //             }
+    //             else if
+    //             (!field_1.GetComponent<Field>().GetFilled()
+    //             && !field_2.GetComponent<Field>().GetFilled()
+    //             && !field_3.GetComponent<Field>().GetFilled())
+    //             {
+    //                 dumb.Add(field_4);
+    //                 dumb.Add(field_5);
+    //                 dumb.Add(field_6);
+    //             }
+
+    //             foreach(Field gameObject in filledField)
+    //             {dumb.Remove(gameObject);}
+
+    //             int randomNum = Random.Range(0, dumb.Count);
+    //             if(dumb.Count != 0)
+    //             {
+    //                 Field field = dumb[randomNum];
+    //                 field.Summon(new CrescentLancer(), Instantiate(serventPrefabList[0], field.transform.position , Utils.QI));
+    //                 SummonServent(0, dumb[randomNum]);
+    //             }else{}
+                
+                
+
+
+
+    //         }//몬스터 소환
+    //         else
+    //         {
+    //             int foo;
+    //             int randomNum = Random.Range(0, 6);
+    //             List<Field> filledPlayerFields = new();
+    //             List<Field> filledEnemyFields = new();
+
+    //             if(field_1.GetComponent<Field>().GetFilled())
+    //             {filledPlayerFields.Add(field_1);}
+
+    //             if(field_2.GetComponent<Field>().GetFilled())
+    //             {filledPlayerFields.Add(field_2);}
+
+    //             if(field_3.GetComponent<Field>().GetFilled())
+    //             {filledPlayerFields.Add(field_3);}
+
+    //             if(field_4.GetComponent<Field>().GetFilled())
+    //             {filledEnemyFields.Add(field_4);}
+
+    //             if(field_5.GetComponent<Field>().GetFilled())
+    //             {filledEnemyFields.Add(field_5);}
+
+    //             if(field_6.GetComponent<Field>().GetFilled())
+    //             {filledEnemyFields.Add(field_6);}
+
+
+
+                
+
+    //             switch(randomNum)
+    //             {
+    //                 case 0: // Gain Force
+    //                 foo = Random.Range(0, filledEnemyFields.Count);
+    //                 filledEnemyFields[foo].GetComponent<Field>().GainForce(1);
+    //                 break;
+
+    //                 case 1: // Positive Ability
+    //                 foo = Random.Range(0, filledEnemyFields.Count);
+    //                 break;
+
+    //                 case 2: // Lose Force
+    //                 break;
+
+    //                 case 3: // Negative Ability
+    //                 break;
+    //             }
+    //         }
+
+    //         /*
+    //             포스 상승 버프
+    //             포스 저하 디버프
+    //             소환된 몬스터를 제물로 바치고 그 포스만큼 회복
+    //             버프 특성 부여
+    //             적에게 디버프 특성 부여
+    //         */
+    //     }
+
+    //     yield return delay07;
+
+    //     // 그 후 모든 몬스터 공격
+
+    //     /*
+    //         직공
+    //         가로막는 적 공격
+    //         공격 안함
+    //         가로막지않는 적 공격
+    //     */
+
+
+    // }
 
     public IEnumerator EnemyAttack(GameObject start, GameObject target)
     {
@@ -1971,14 +2014,20 @@ public class BattleManagerAlt : MonoBehaviour
         if(handList.Count == 0)
         {return;}
 
-        List<PRS> originCardPRSs = new List<PRS>();
+        // List<PRS> originCardPRSs = new List<PRS>();
 
-        originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
+        // originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
         for(int i = 0; i < cardObjectList.Count; ++i)
         {
             var targetCard = cardObjectList[i];
-            targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
-            targetCard.transform.position = originCardPRSs[i].pos;
+            // targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
+            // targetCard.transform.position = originCardPRSs[i].pos;
+
+
+            CalcAlign(cardObjectList.Count, i, targetCard);
+            targetCard.GetComponent<Card>().originPRS = new PRS(targetCard.transform.position,
+                                                                targetCard.transform.rotation,
+                                                                targetCard.transform.localScale);
             targetCard.GetComponent<Card>().UpdateCardCost(costCount);
         }
 

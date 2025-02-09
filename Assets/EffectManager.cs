@@ -31,20 +31,20 @@ public class EffectManager : MonoBehaviour
 
     public void SpawnSummonEffect(EServentAttribute element, Vector3 position)
     {
-        if (effectDict.TryGetValue(element, out GameObject effectPrefab))
-        {
-            GameObject effectInstance = Instantiate(effectPrefab, position - new UnityEngine.Vector3(0,2,0), Quaternion.identity);
-            float delay = 0.3f; // 파티클이 0.5초 동안 유지된 후 멈추게 함
-            StartCoroutine(StopAndDestroyParticle(effectInstance.GetComponent<ParticleSystem>(), delay));
-        }
+        // if (effectDict.TryGetValue(element, out GameObject effectPrefab))
+        // {
+        //     GameObject effectInstance = Instantiate(effectPrefab, position - new UnityEngine.Vector3(0,2,0), Quaternion.identity);
+        //     float delay = 0.3f; // 파티클이 0.5초 동안 유지된 후 멈추게 함
+        //     StartCoroutine(StopAndDestroyParticle(effectInstance.GetComponent<ParticleSystem>(), delay));
+        // }
     }
 
-    IEnumerator StopAndDestroyParticle(ParticleSystem ps, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ps.Stop(true, ParticleSystemStopBehavior.StopEmitting); // 파티클 방출 중단
+    // IEnumerator StopAndDestroyParticle(ParticleSystem ps, float delay)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     ps.Stop(true, ParticleSystemStopBehavior.StopEmitting); // 파티클 방출 중단
 
-        // 파티클이 완전히 사라진 후 삭제
-        yield return new WaitForSeconds(ps.main.startLifetime.constantMax);
-    }
+    //     // 파티클이 완전히 사라진 후 삭제
+    //     yield return new WaitForSeconds(ps.main.startLifetime.constantMax);
+    // }
 }

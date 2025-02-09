@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 7468473441850001520}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.19764534}
-  m_LocalScale: {x: 1, y: 1, z: 0.92923796}
+  m_LocalScale: {x: -1, y: 1, z: 0.92923796}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7468473442354731414}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 7468473442354731413}
   - component: {fileID: 7468473442354731415}
   m_Layer: 0
-  m_Name: CrescentLancer
+  m_Name: Stranger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
