@@ -93,8 +93,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 150
+  m_fontSizeBase: 150
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -187,4 +187,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textMesh: {fileID: 4986798275167993331}
   floatDistance: 100
+  scaleUpSize: 1.5
+  scaleDownSize: 0.1
   duration: 1

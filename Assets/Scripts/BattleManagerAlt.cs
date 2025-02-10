@@ -152,6 +152,8 @@ public class BattleManagerAlt : MonoBehaviour
         handList = new();
         selectedCards = new();
         mouseOnArea = EMouseOnArea.None;
+
+        StartCoroutine(StartGameCo());
     }
 
     public bool AddSelectedCards(CardData cardData)
@@ -224,8 +226,10 @@ public class BattleManagerAlt : MonoBehaviour
 
 
 
-    IEnumerator ActivateSummonAbility(CardData cardData, Field field)
+    IEnumerator ActivateSummonAbility(CardData cardData, int currentCost, Field field)
     {
+        yield return new WaitForSeconds(.3f);
+        if(CheckCardUsable(cardData, currentCost, field))
         switch(cardData.GetServentNum())
         {
             case 1: //바이올렛 리치 로드
@@ -251,6 +255,8 @@ public class BattleManagerAlt : MonoBehaviour
                 isActionDone = false;
 
                 CardAlignmentAlt();
+                
+                ShotDrawMissile(cardObject.transform);
                 break;
             }
 
@@ -301,7 +307,6 @@ public class BattleManagerAlt : MonoBehaviour
                 {
                     if(value.GetCardNum() == 14)
                     targetCard = value;
-                    
                 }
                 deckList.Remove(targetCard);
                 cardPrefab = cardPrefabList[card.GetCardNum()];
@@ -316,6 +321,8 @@ public class BattleManagerAlt : MonoBehaviour
                 handList.Add(card);
 
                 CardAlignmentAlt();
+
+                ShotDrawMissile(cardObject.transform);
                 break;
             }
 
@@ -347,6 +354,8 @@ public class BattleManagerAlt : MonoBehaviour
                 handList.Add(card);
 
                 CardAlignmentAlt();
+                
+                ShotDrawMissile(cardObject.transform);
                 break;
             }
 
@@ -377,8 +386,9 @@ public class BattleManagerAlt : MonoBehaviour
     }
 
         
-    void ActivateSpell(CardData cardData)
+    IEnumerator ActivateSpell(CardData cardData)
     {
+        yield return new WaitForSeconds(.5f);
         switch(cardData.GetSpellNum())
         {
             case 0: //듀플리케이트
@@ -446,7 +456,7 @@ public class BattleManagerAlt : MonoBehaviour
             break;
 
             case 3: //타오르는 심장
-            ReturnMouseOnField().SetForce(ReturnMouseOnField().GetForce() * 2);
+            ReturnMouseOnField().GainForce(ReturnMouseOnField().GetForce());
             break;
 
             case 4: //작은 것을 위한 희생
@@ -549,17 +559,6 @@ public class BattleManagerAlt : MonoBehaviour
             CloseServentInfo();
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            DrawCard();
-            
-            // if(parryState.Equals(EParryState.Parry))
-            // {justGuard = true;}
-
-            
-            // StartCoroutine(CreateMissile(player, enemy));
-        }
-
         // if(Input.GetKeyDown(KeyCode.Z))
         // {ShowAura();}
 
@@ -649,6 +648,16 @@ public class BattleManagerAlt : MonoBehaviour
         missileScript.enemy = targetPoint.position;
     }
 
+    public void ShotDrawMissile(Transform targetPoint)
+    {
+        GameObject bullet = Instantiate(missile, hole.transform.position, Utils.QI);
+        BezierMissile missileScript = bullet.GetComponent<BezierMissile>();
+
+        missileScript.master = hole.transform.position;
+        missileScript.enemy = camera.ScreenToWorldPoint(targetPoint.position);
+
+    }
+
     public void ShotMissile(Transform startPoint)
     {
         GameObject bullet = Instantiate(missile, startPoint.position, Utils.QI);
@@ -700,15 +709,15 @@ public class BattleManagerAlt : MonoBehaviour
 
     public IEnumerator StartGameCo()
     {
-        GameSetup();
+        //GameSetup();
         isLoading = true;
 
-        for(int i = 0; i < startCardCount; ++i)
+        for(int i = 0; i < 5; ++i)
         {
-            yield return delay05;
+            yield return new WaitForSeconds(0.35f);
             DrawCard();
         }
-        StartCoroutine(StartTurnCo());
+        //StartCoroutine(StartTurnCo());
     }
 
     // void ActivateSpell(CardData cardData)
@@ -1755,6 +1764,12 @@ public class BattleManagerAlt : MonoBehaviour
         if(targetField == null)
         {return false;}
 
+        if(targetField.locked)
+        {return false;}
+
+        if(targetField == field_4)
+        {return false;}
+
         if(targetField == field_4)
         {return false;}
 
@@ -1832,6 +1847,7 @@ public class BattleManagerAlt : MonoBehaviour
             {
                 if(CheckServentSummonable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
                 {
+                    targetField.locked = true;
                     costCount -= card.GetCardData().GetCardCost();
                     
                     cardObjectList.Remove(card.gameObject);
@@ -1841,10 +1857,8 @@ public class BattleManagerAlt : MonoBehaviour
                     //field에 ServentData넣기
                     targetField.Summon(card.GetCardData(), Instantiate(serventPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
 
-                    if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
-                    {
-                        StartCoroutine(ActivateSummonAbility(card.GetCardData(), targetField));
-                    }
+                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(),targetField));
+                    
                     handList.RemoveAt(card.GetCardOrder());
                     List<CardData> newHandList = new List<CardData>();
 
@@ -1867,7 +1881,8 @@ public class BattleManagerAlt : MonoBehaviour
                 {
                     case ECardType.Spell:
                     costCount -= card.GetCardData().GetCardCost();
-                    ActivateSpell(card.GetCardData());
+                    StartCoroutine(ActivateSpell(card.GetCardData()));
+                    
                     AddTrash(card.GetCardData());
                     handList.RemoveAt(card.GetCardOrder());
                     cardObjectList.Remove(card.gameObject);
@@ -1938,10 +1953,11 @@ public class BattleManagerAlt : MonoBehaviour
         
 
         targetList.RemoveAt(targetList.Count - 1);
+        
 
         CardAlignmentAlt();
+        ShotDrawMissile(cardObject.transform);
         // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
-        cardObject.SetActive(true);
         
         // CardAlignment();
     }
@@ -2268,8 +2284,7 @@ public class BattleManagerAlt : MonoBehaviour
 
     public void ShowTrashCards()
     {
-        for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
-        {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+        
 
         foreach(CardData cardData in trashList)
         {
@@ -2282,6 +2297,22 @@ public class BattleManagerAlt : MonoBehaviour
             cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
 
         }
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(true);}
+
+        trashWindow.GetComponent<Window>().OnOff();
+    }
+
+    public void CloseTrashCards()
+    {
+        for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
+        {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(false);}
+
         trashWindow.GetComponent<Window>().OnOff();
     }
 

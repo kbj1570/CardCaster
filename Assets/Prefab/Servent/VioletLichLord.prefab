@@ -137,7 +137,7 @@ MonoBehaviour:
   serventForceText: {fileID: 3965241541678656265}
   activationButton: {fileID: 0}
   spriteRenderer: {fileID: 7468473441850001522}
-  fadeColor: {r: 0.7068628, g: 0.025418244, b: 0.7924528, a: 0}
+  fadeColor: {r: 0.25490198, g: 0.023529412, b: 0.36862746, a: 0}
   serventNum: 1
   texture2D: {fileID: 2800000, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
 --- !u!61 &7468473442354731415

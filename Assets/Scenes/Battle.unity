@@ -9537,9 +9537,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 583445635}
-        m_TargetAssemblyTypeName: Window, Assembly-CSharp
-        m_MethodName: OnOff
+      - m_Target: {fileID: 362111776}
+        m_TargetAssemblyTypeName: BattleManagerAlt, Assembly-CSharp
+        m_MethodName: CloseTrashCards
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

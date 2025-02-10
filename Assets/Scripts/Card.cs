@@ -4,6 +4,7 @@ using DG.Tweening;
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.UI;
+using System.Collections;
 
 
 
@@ -33,8 +34,27 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     public Image darknessElement;
     public Image lightElement;
 
-    public bool locked;
+    public bool locked = false;
     private Sequence currentSequence;
+
+    void Start()
+    {
+        this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
+        StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
+    }
+
+    IEnumerator AppearAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay); // 0.3초 기다림
+
+        if (!locked)
+        {
+            locked = true;
+            Sequence seq = DOTween.Sequence();
+            seq.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.2f).SetEase(Ease.InOutQuad));
+            seq.AppendCallback(() => locked = false);
+        }
+    }
 
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}

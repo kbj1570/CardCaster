@@ -9,7 +9,13 @@ public class PriceOfBlood : CardData
         cardType = ECardType.Spell;
         cardGuideDescription = ""; 
         cardAbility = "자신의 HP를 4 잃는다. 1장 드로우한다.";
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Selected;
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.None;
+
+        preRequisites.Add(preRequisite);
     }
 
 }

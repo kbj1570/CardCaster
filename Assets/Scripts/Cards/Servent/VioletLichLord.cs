@@ -7,7 +7,7 @@ public class VioletLichLord : CardData
         cardNum = 4;
         serventNum = 1;
         cardName = "바이올렛 리치로드";
-        cardCost = 2;
+        cardCost = 1;
         cardType = ECardType.Servent;
         serventAttribute = EServentAttribute.Dark;
         force = 1;

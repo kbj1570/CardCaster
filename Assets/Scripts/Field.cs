@@ -10,6 +10,7 @@ public class Field : MonoBehaviour
     public EServentAttribute serventAttribute;
     
     public bool filled;
+    public bool locked;
     public bool isDragable;
     private bool attacked;
     public TMP_Text forceTMP;
@@ -67,7 +68,9 @@ public class Field : MonoBehaviour
     {
         if(voidWalker)
         return;
+
         GameObject damageText = Instantiate(floatingTextPrefab, fieldArea.transform);
+        damageText.GetComponent<FloatingDamageText>().SetFont(100);
         damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
 
@@ -100,6 +103,7 @@ public class Field : MonoBehaviour
         // 피해 숫자 표시
         GameObject damageText = Instantiate(floatingTextPrefab, fieldArea.transform);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
         currentForce -= value;
     }
@@ -132,6 +136,7 @@ public class Field : MonoBehaviour
 
     public void Summon(CardData cardData, GameObject gameObject)
     {
+
         filled = true;
         this.cardData = cardData;
         currentForce = cardData.GetForce();
@@ -145,6 +150,7 @@ public class Field : MonoBehaviour
         summonedServent = gameObject;
 
         // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
+        locked = false;
     }
 
     public void UpdateCondition()
@@ -167,6 +173,7 @@ public class Field : MonoBehaviour
 
     public void ActivateTurnEnd()
     {
+
         if(voidWalker)
         return;
 
@@ -178,6 +185,7 @@ public class Field : MonoBehaviour
 
     public void ResetCondition()
     {
+
         if(voidWalker)
         return;
 
@@ -195,6 +203,8 @@ public class Field : MonoBehaviour
 
     public void RemoveCondition(EServentCondition value)
     {
+
+
         if(voidWalker)
         return;
 

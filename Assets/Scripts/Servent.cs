@@ -50,7 +50,7 @@ public class Servent: MonoBehaviour
     {
         if(isDissolving)
         {
-            fade += Time.deltaTime * 1.3f;
+            fade += Time.deltaTime * 1.1f;
 
             if(fade >= 1f)
             {
@@ -63,7 +63,7 @@ public class Servent: MonoBehaviour
 
         if(isDying)
         {
-            fade -= Time.deltaTime * 1.3f;
+            fade -= Time.deltaTime * 1.1f;
 
 
             if(fade <= 0.1f)
