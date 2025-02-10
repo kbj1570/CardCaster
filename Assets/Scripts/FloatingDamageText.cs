@@ -15,6 +15,9 @@ public class FloatingDamageText : MonoBehaviour
         AnimateFloatingText();
     }
 
+    public void SetColor(Color color)
+    {textMesh.color = color;}
+
     private void AnimateFloatingText()
     {
         // 시작 위치 저장

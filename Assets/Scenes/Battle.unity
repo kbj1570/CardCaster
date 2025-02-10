@@ -2898,6 +2898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c20bd58ad890e434684519739fd1347d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  alertPoint: {fileID: 681909812}
   canvas: {fileID: 1219245616}
   camera: {fileID: 2096244172}
   backgroundDetectArea: {fileID: 2005151608}
@@ -2985,7 +2986,7 @@ MonoBehaviour:
   isLoading: 0
   startCardCount: 5
   fastMode: 0
-  missile: {fileID: 8787487120450646052, guid: 84f7ad744831c9740a61aef6e64d0612, type: 3}
+  missile: {fileID: 2746533435020599578, guid: ac652c9407e53ef4d9eeff62b429b5fe, type: 3}
   missileTarget: {fileID: 1506467353}
   clickedServent: {fileID: 0}
   clickedServentInfo: {fileID: 0}
@@ -4347,7 +4348,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -79, y: 318}
+  m_AnchoredPosition: {x: 0, y: 212}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &710731399

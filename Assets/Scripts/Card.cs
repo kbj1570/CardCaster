@@ -55,6 +55,23 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         costTMP.text = currentCost.ToString();
     }
 
+    public void SendMissile(Transform alertPoint, Transform targetPoint)
+    {
+        locked = true;
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(transform.DOMove(alertPoint.position, 0.3f).SetEase(Ease.OutQuad))
+        .Append(transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.5f).SetEase(Ease.InOutQuad));
+
+        seq.Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack));
+
+        seq.AppendCallback(() => BattleManagerAlt.Inst.ShotMissile(alertPoint, targetPoint));
+
+        // 3. 일정 시간 대기 후 오브젝트 삭제
+        seq.AppendInterval(0.5f); // 0.5초 기다리기
+        seq.AppendCallback(() => Destroy(gameObject));
+    }
+
     public int GetCurrentCost()
     {return currentCost;}
     public void UpdateIsUsable()
@@ -147,7 +164,8 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     {
         if(locked)
         {return;}
-        BattleManagerAlt.Inst.CardEndDrag(this);
+
+        StartCoroutine(BattleManagerAlt.Inst.CardEndDrag(this, BattleManagerAlt.Inst.ReturnMouseOnField()));
     }
 
     public void OnDrag(PointerEventData eventData)

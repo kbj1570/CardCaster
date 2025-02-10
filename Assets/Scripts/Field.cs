@@ -67,6 +67,9 @@ public class Field : MonoBehaviour
     {
         if(voidWalker)
         return;
+        GameObject damageText = Instantiate(floatingTextPrefab, fieldArea.transform);
+        damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
 
         currentForce += value;
     }
@@ -129,18 +132,19 @@ public class Field : MonoBehaviour
 
     public void Summon(CardData cardData, GameObject gameObject)
     {
+        filled = true;
         this.cardData = cardData;
         currentForce = cardData.GetForce();
         forceTMP.gameObject.SetActive(true);
         forceTMP.text = currentForce.ToString();
-        filled = true;
+        
         attacked = false;
         penetrate = cardData.GetPenetrate();
         voidWalker = cardData.GetVoidWalker();
         serventAttribute = cardData.serventAttribute;
         summonedServent = gameObject;
 
-        EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
+        // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
     }
 
     public void UpdateCondition()

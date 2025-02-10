@@ -55,7 +55,7 @@ public class Servent: MonoBehaviour
             if(fade >= 1f)
             {
                 fade = 1f;
-                // isDissolving = false;
+                isDissolving = false;
                 // BattleManagerAlt.Inst.ActionDone();
             }
             monsterMaterial.SetFloat("_Fade", fade);
@@ -65,10 +65,12 @@ public class Servent: MonoBehaviour
         {
             fade -= Time.deltaTime * 1.3f;
 
-            if(fade <= 0f)
+
+            if(fade <= 0.1f)
             {
                 fade = 0f;
                 isDying = false;
+                BattleManagerAlt.Inst.ShotMissile(transform);
                 Destroy(this.gameObject);
             }
             monsterMaterial.SetFloat("_Fade", fade);
