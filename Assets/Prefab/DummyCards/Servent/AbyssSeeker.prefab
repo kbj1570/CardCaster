@@ -549,7 +549,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameTMP: {fileID: 664345565945116137}
-  forceTMP: {fileID: 0}
+  forceTMP: {fileID: 367451032921137738}
   descriptionTMP: {fileID: 8221799803271859746}
   costTMP: {fileID: 367451032921137738}
   cardBack: {fileID: 0}

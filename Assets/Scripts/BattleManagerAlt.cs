@@ -86,6 +86,7 @@ public class BattleManagerAlt : MonoBehaviour
     enum EParryState{Idle, Parry}
     public List<GameObject> conditionMarkList;
     public List<GameObject> cardPrefabList;
+    public List<GameObject> dummyCardPrefabList;
 
     // 현재 지불해놓은 코스트의 수
 
