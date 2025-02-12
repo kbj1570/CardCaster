@@ -199,10 +199,10 @@ public class BattleManagerAlt : MonoBehaviour
         {
             if(cardType == null ||cardData.GetCardType() == cardType)
             {
-                GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], selectedCardLayoutGroup.transform);
+                GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], selectedCardLayoutGroup.transform);
                 GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
                 
-                cardObject.GetComponent<Card>().SetLock(true);
+                cardObject.GetComponent<DummyCard>().SetLock(true);
                 cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
                 cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
                 cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
@@ -2289,10 +2289,10 @@ public class BattleManagerAlt : MonoBehaviour
 
         foreach(CardData cardData in trashList)
         {
-            GameObject cardObject = Instantiate(cardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
+            GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
             GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
             
-            cardObject.GetComponent<Card>().SetLock(true);
+            cardObject.GetComponent<DummyCard>().SetLock(true);
             cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
             cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
             cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
