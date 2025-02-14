@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
 public class DeckManager : MonoBehaviour
 {
     public List<Transform> cardLocation;
@@ -12,24 +13,27 @@ public class DeckManager : MonoBehaviour
     private Dictionary<CardData, int> myCardList;
     private Dictionary<CardData, int> myDeckList;
     private List<CardData> cardDatabase;
-
-    public List<GameObject> deckSettingCardObjectList;
-    public List<GameObject> deckCardObjectList;
+    private List<CardData> currentPageCardList;
+    public List<GameObject> dummyCardObjectList;
+    public List<GameObject> dummyCardPrefabList;
+    private List<GameObject> deckCardObjectList;
 
     private Dictionary<CardData, int> currentCardList;
     private int currentPage;
     private int pageLimit;
     public static DeckManager Inst{get; private set;}
+    public TMP_Text pageNumber; 
     void Awake() => Inst = this;
 
     void Start()
     {
         currentPage = 0;
         cardDatabase = DataController.Inst.LoadCardDatabase();
+        myCardList = new();
 
-        // LoadCardList();
-        // LoadDeck();
-        // CreatePage();
+        LoadCardList();
+        LoadDeck();
+        CreatePage();
     }
 
     public void SaveDeck()
@@ -62,34 +66,33 @@ public class DeckManager : MonoBehaviour
     }
     public void LoadCardList()
     {
-        Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();
-
         foreach(KeyValuePair<string, int> value in DataController.Inst.LoadCardList())
-        {dumb.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
-
-        myCardList = dumb;
+        {myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
     }
     public void CreatePage()
     {
         // for(int i = 0; i < cardLocation.Count; ++i)
         // {
-        //     deckSettingCardObjectList.Add(Instantiate(cardPrefab, new Vector3(0,0,0) , Utils.QI));
-        //     deckSettingCardObjectList[i].transform.SetParent(cardLocation[i].transform);
-        //     deckSettingCardObjectList[i].transform.localScale = new Vector3(1,1,1);
+        //     dummyCardObjectList.Add(Instantiate(cardPrefab, new Vector3(0,0,0) , Utils.QI));
+        //     dummyCardObjectList[i].transform.SetParent(cardLocation[i].transform);
+        //     dummyCardObjectList[i].transform.localScale = new Vector3(1,1,1);
         // }
         currentCardList = new Dictionary<CardData, int>();
 
         UpdatePage();
-        UpdateDeckPage();
+        // UpdateDeckPage();
     }
 
     public void UpdatePage()
     {
+        int count = 0;
 
         pageLimit = myCardList.Count / 6;
         int remainder = myCardList.Count % 6;
 
         currentCardList.Clear();
+        foreach(GameObject gameObject in dummyCardObjectList)
+        {Destroy(gameObject);}
 
         List<CardData> cardList = new List<CardData>(myCardList.Keys);
 
@@ -99,21 +102,34 @@ public class DeckManager : MonoBehaviour
         for(int i = 0; i < remainder; ++i)
         {currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);}
 
+        foreach(KeyValuePair<CardData, int> item in currentCardList)
+        {
+            GameObject gameObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
+            new Vector3(0,0,0) , Utils.QI);
+            gameObject.transform.SetParent(cardLocation[count].transform);
+            gameObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+            gameObject.transform.localPosition = new Vector3(0,0,0);
+            
+            dummyCardObjectList.Add(gameObject);
+            count++;
+        }
+
+        pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);
+
         // foreach(KeyValuePair<CardData, int> value in myCardList)
         // {currentCardList.Add(value.Key, value.Value);}
 
 
-        foreach(GameObject gameObject in deckSettingCardObjectList)
-        {gameObject.SetActive(true);}
 
-        for(int i = 0; i < currentCardList.Count; ++i)
-        {deckSettingCardObjectList[i].GetComponent<DeckSettingCard>().UpdateCard(currentCardList.ToList()[i].Key, currentCardList.ToList()[i].Value);}
 
-        if(currentCardList.Count != 6)
-        {
-            for(int i = 5; i > currentCardList.Count - 1; --i)
-            {deckSettingCardObjectList[i].SetActive(false);}
-        }
+        // for(int i = 0; i < currentCardList.Count; ++i)
+        // {dummyCardObjectList[i].GetComponent<DummyCard>().UpdateCard(currentCardList.ToList()[i].Key, currentCardList.ToList()[i].Value);}
+
+        // if(currentCardList.Count != 6)
+        // {
+        //     for(int i = 5; i > currentCardList.Count - 1; --i)
+        //     {dummyCardObjectList[i].SetActive(false);}
+        // }
 
         
     }

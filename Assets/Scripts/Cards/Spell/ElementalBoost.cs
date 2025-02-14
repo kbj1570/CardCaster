@@ -17,7 +17,7 @@ public class ElementalBoost : CardData
         preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.PlayerServentCountOver;
-        preRequisite.count = 1;
+        preRequisite.count = 0;
         preRequisite.serventAttribute = EServentAttribute.None;
 
         preRequisites.Add(preRequisite);
