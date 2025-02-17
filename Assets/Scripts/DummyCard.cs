@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 
 
 
@@ -31,6 +32,26 @@ public class DummyCard : MonoBehaviour
     public Image lightElement;
 
     public bool locked = false;
+
+    float duration = 0.35f; // 전체 이동 시간
+    float scaleFactor = 0.7f; // 최대 커지는 배율
+
+    public void StartMoveAndScale(Vector3 targetPosition)
+    {
+        Vector3 startPosition = transform.position;
+        float growTime = duration * 0.2f;
+        float shrinkTime = duration * 0.8f;
+
+        Sequence sequence = DOTween.Sequence();
+
+        // 1. 처음 20% 동안 크기가 커짐
+        sequence.Append(transform.DOScale(scaleFactor, growTime));
+
+        // 2. 크기 작아지면서 목표 위치로 이동
+        sequence.Append(transform.DOScale(0, shrinkTime).SetEase(Ease.InQuad));
+        sequence.Join(transform.DOMove(targetPosition, shrinkTime).SetEase(Ease.InOutQuad));
+        sequence.AppendCallback(() => Destroy(gameObject));
+    }
 
 
     public CardData GetCardData(){return cardData;}

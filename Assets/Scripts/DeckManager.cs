@@ -2,13 +2,17 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using DG.Tweening;
 using System.Linq;
 using TMPro;
 public class DeckManager : MonoBehaviour
 {
+    public Transform gridlayoutPosition;
     public List<Transform> cardLocation;
+    public GameObject window;
     public GameObject cardPrefab;
     public GameObject smallCardPrefab;
+    public GameObject cardFrame;
     public GridLayoutGroup gridLayout;
     private Dictionary<CardData, int> myCardList;
     private Dictionary<CardData, int> myDeckList;
@@ -22,7 +26,8 @@ public class DeckManager : MonoBehaviour
     private int currentPage;
     private int pageLimit;
     public static DeckManager Inst{get; private set;}
-    public TMP_Text pageNumber; 
+    public TMP_Text pageNumber;
+    public TMP_Text searchText;
     void Awake() => Inst = this;
 
     void Start()
@@ -30,10 +35,16 @@ public class DeckManager : MonoBehaviour
         currentPage = 0;
         cardDatabase = DataController.Inst.LoadCardDatabase();
         myCardList = new();
+        deckCardObjectList = new();
 
         LoadCardList();
         LoadDeck();
         CreatePage();
+    }
+
+    public void ResetCardList()
+    {
+
     }
 
     public void SaveDeck()
@@ -80,7 +91,7 @@ public class DeckManager : MonoBehaviour
         currentCardList = new Dictionary<CardData, int>();
 
         UpdatePage();
-        // UpdateDeckPage();
+        UpdateDeckPage();
     }
 
     public void UpdatePage()
@@ -104,13 +115,23 @@ public class DeckManager : MonoBehaviour
 
         foreach(KeyValuePair<CardData, int> item in currentCardList)
         {
-            GameObject gameObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
+            GameObject cardObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
             new Vector3(0,0,0) , Utils.QI);
-            gameObject.transform.SetParent(cardLocation[count].transform);
-            gameObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
-            gameObject.transform.localPosition = new Vector3(0,0,0);
+            cardObject.transform.SetParent(cardLocation[count].transform);
+            cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+            cardObject.transform.localPosition = new Vector3(0,0,0);
             
-            dummyCardObjectList.Add(gameObject);
+            dummyCardObjectList.Add(cardObject);
+
+            GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
+            cardFrameObject.transform.SetParent(cardLocation[count].transform);
+            cardFrameObject.transform.localPosition = new Vector3(0,0,0);
+            cardFrameObject.GetComponent<CardFrame>().
+            SetCardData(item.Key, item.Value, count);
+
+            dummyCardObjectList.Add(cardFrameObject);
+
+
             count++;
         }
 
@@ -166,7 +187,7 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    public void AddCard(CardData value)
+    public void AddCard(CardData value, int order)
     {
         if(!myDeckList.ContainsKey(value))
         {myDeckList.Add(value, 1);}
@@ -178,6 +199,9 @@ public class DeckManager : MonoBehaviour
         if(myCardList[value] == 0)
         {myCardList.Remove(value);}
 
+        GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], cardLocation[order].position , Utils.QI);
+        gameObject.transform.SetParent(window.transform);
+        gameObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
         UpdatePage();
         UpdateDeckPage();
     }
@@ -193,6 +217,10 @@ public class DeckManager : MonoBehaviour
         {myCardList.Add(value, 1);}
         else
         {myCardList[value]++;}
+
+        GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], gridlayoutPosition.position , Utils.QI);
+        gameObject.transform.SetParent(window.transform);
+        gameObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
 
         UpdatePage();
         UpdateDeckPage();

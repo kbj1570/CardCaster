@@ -46,9 +46,9 @@ public class DeckSettingCard : MonoBehaviour
         cardCount.text = count.ToString();
     }
 
-    public void CountUp()
-    {DeckManager.Inst.AddCard(cardData);}
+    // public void CountUp()
+    // {DeckManager.Inst.AddCard(cardData);}
 
-    public void CountDown()
-    {DeckManager.Inst.DeleteCard(cardData);}
+    // public void CountDown()
+    // {DeckManager.Inst.DeleteCard(cardData);}
 }
