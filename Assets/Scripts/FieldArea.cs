@@ -22,20 +22,20 @@ public class FieldArea : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     public void OnEndDrag(PointerEventData eventData)
     {
         if(mouseOnArea != EMouseOnArea.Hole)
-        BattleManagerAlt.Inst.EndAttackLine(mouseOnArea, BattleManagerAlt.Inst.CheckAttackable(mouseOnArea));
+        BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea));
     }
     public void OnDrag(PointerEventData eventData)
     {
         if(mouseOnArea != EMouseOnArea.Hole)
-        BattleManagerAlt.Inst.DrawAttackLine(this.transform.position, BattleManagerAlt.Inst.CheckAttackable(mouseOnArea));
+        BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(mouseOnArea));
     }
 
      public void OnPointerEnter(PointerEventData eventData)
     {
-        BattleManagerAlt.Inst.SetMouseOnField(mouseOnArea);
+        BattleManager.Inst.SetMouseOnField(mouseOnArea);
     }
      public void OnPointerExit(PointerEventData eventData)
     {
-        BattleManagerAlt.Inst.ResetMouseOnField();
+        BattleManager.Inst.ResetMouseOnField();
     }
 }

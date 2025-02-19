@@ -9,6 +9,7 @@ public class VioletLichLord : CardData
         cardName = "바이올렛 리치로드";
         cardCost = 1;
         cardType = ECardType.Servent;
+        serventType = EServentType.Player;
         serventAttribute = EServentAttribute.Dark;
         force = 1;
         cardGuideDescription = "";

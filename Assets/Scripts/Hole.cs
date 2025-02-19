@@ -8,7 +8,7 @@ public class Hole : MonoBehaviour
     public void OnMouseUp()
     {
         if(mouseOn)
-        {BattleManagerAlt.Inst.ShowTrashCards();}
+        {BattleManager.Inst.ShowTrashCards();}
     }
 
     public void OnMouseEnter()

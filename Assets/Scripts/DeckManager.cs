@@ -2,17 +2,17 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using DG.Tweening;
-using System.Linq;
 using TMPro;
 public class DeckManager : MonoBehaviour
 {
+    public Transform focusOnCardPosition;
     public Transform gridlayoutPosition;
     public List<Transform> cardLocation;
     public GameObject window;
     public GameObject cardPrefab;
     public GameObject smallCardPrefab;
     public GameObject cardFrame;
+    private GameObject focusOnCard;
     public GridLayoutGroup gridLayout;
     private Dictionary<CardData, int> myCardList;
     private Dictionary<CardData, int> myDeckList;
@@ -42,11 +42,20 @@ public class DeckManager : MonoBehaviour
         CreatePage();
     }
 
-    public void ResetCardList()
+    public void FocusOnCard(CardData cardData)
     {
-
+        focusOnCard = Instantiate(dummyCardPrefabList[cardData.GetCardNum()],
+            new Vector3(0,0,0) , Utils.QI);
+            focusOnCard.transform.SetParent(focusOnCardPosition);
+            focusOnCard.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+            focusOnCard.transform.localPosition = new Vector3(0,0,0);
     }
 
+    public void UnFocusCard()
+    {
+        if(focusOnCard != null)
+        Destroy(focusOnCard);
+    }
     public void SaveDeck()
     {
         Dictionary<string, int> dumb = new Dictionary<string, int>();
@@ -130,35 +139,14 @@ public class DeckManager : MonoBehaviour
             SetCardData(item.Key, item.Value, count);
 
             dummyCardObjectList.Add(cardFrameObject);
-
-
             count++;
         }
 
-        pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);
-
-        // foreach(KeyValuePair<CardData, int> value in myCardList)
-        // {currentCardList.Add(value.Key, value.Value);}
-
-
-
-
-        // for(int i = 0; i < currentCardList.Count; ++i)
-        // {dummyCardObjectList[i].GetComponent<DummyCard>().UpdateCard(currentCardList.ToList()[i].Key, currentCardList.ToList()[i].Value);}
-
-        // if(currentCardList.Count != 6)
-        // {
-        //     for(int i = 5; i > currentCardList.Count - 1; --i)
-        //     {dummyCardObjectList[i].SetActive(false);}
-        // }
-
-        
+        pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
     }
 
     public void ChangePage(bool value)
     {
-        
-
         if(value)
         {currentPage++;}
         else{currentPage--;}

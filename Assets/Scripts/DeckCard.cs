@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
-public class DeckCard : MonoBehaviour, IPointerClickHandler
+public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandler,  IPointerExitHandler
 {
     private CardData cardData;
     private string cardName;
@@ -53,5 +53,12 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         DeckManager.Inst.DeleteCard(cardData);
+        DeckManager.Inst.UnFocusCard();
     }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {DeckManager.Inst.FocusOnCard(cardData);}
+
+    public void OnPointerExit(PointerEventData eventData)
+    {DeckManager.Inst.UnFocusCard();}
 }

@@ -61,7 +61,7 @@ public class CardEffectSystem : MonoBehaviour {
         }
     }
 
-    public void ExecuteCardEffect(int cardId, BattleManagerAlt battleManager) {
+    public void ExecuteCardEffect(int cardId, BattleManager battleManager) {
         if (!cardRules.TryGetValue(cardId, out ExtendedCardRule rule)) {
             Debug.LogError($"Card rule not found for ID: {cardId}");
             return;
@@ -72,7 +72,7 @@ public class CardEffectSystem : MonoBehaviour {
         }
     }
 
-    private void ExecuteEffect(CardEffect effect, BattleManagerAlt battleManager) {
+    private void ExecuteEffect(CardEffect effect, BattleManager battleManager) {
         switch (effect.type) {
             case EffectType.AttributeBased:
                 if (effect.effectFunction == "ElementalBoost") {
@@ -83,7 +83,7 @@ public class CardEffectSystem : MonoBehaviour {
         }
     }
 
-    private void ExecuteElementalBoost(BattleManagerAlt battleManager) {
+    private void ExecuteElementalBoost(BattleManager battleManager) {
         // 속성 종류 수 계산
         HashSet<EServentAttribute> attributes = new HashSet<EServentAttribute>();
         

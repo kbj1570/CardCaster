@@ -1,146 +1,2269 @@
-// using UnityEngine;
-// using System;
-// using System.Collections;
-// using Random = UnityEngine.Random;
-// using System.Collections.Generic;
+using System.Collections;
+using UnityEngine;
+using TMPro;
+using System;
+using Random = UnityEngine.Random;
+using System.Collections.Generic;
+using UnityEngine.UI;
+using DG.Tweening;
 
-// public class  BattleManager : MonoBehaviour
-// {
-//     public static BattleManager Inst{get; private set;}
-//     void Awake() => Inst = this;
-//     public NotificationPanel notificationPanel;
-//     WaitForSeconds delay07 = new WaitForSeconds(0.7f);
+public enum EEnemyAction{None, Summon, Attack, Ability}
+public enum EServentType{None, Player, Enemy}
+public enum ETurnState{None, Player, Enemy}
+public enum ECardType{None ,Servent, Spell}
+public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
+public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
+public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
+public enum ECardTargetType{Selected, Select}
+public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
+public enum EServentSize{Small, Middle, Big}
 
-//     private int spellCost;
-//     private int monsterCost;
-//     private List<CardData> deck;
-//     private List<CardData> trash;
-//     void Start()
-//     {StartGame();}
+public class BattleManager : MonoBehaviour
+{
+    bool playerDamageBlock;
+    bool enemyDamageBlock;
+    int playerDamageDecrease;
+    int enemyDamageDecrease;
+    int playerDamageIncrease;
+    int enemyDamageIncrease;
 
-//     void Update()
-//     {
-//         #if UNITY_EDITOR
-//             InputCheatKey();
-//         #endif
-//     }
 
-//     public void ResetMonsterCost(){monsterCost = 0;}
-//     public void ResetSpellCost(){spellCost = 0;}
+    public Transform alertPoint; 
+    public static BattleManager Inst{get; private set;}
+    void Awake() => Inst = this;
+    public Canvas canvas;
+    public Camera camera;
+    public RectTransform backgroundDetectArea;
+    public RectTransform playerDetectArea;
+    public RectTransform enemyDetectArea;
+    public RectTransform holeDetectArea;
+    public RectTransform fieldDetectArea_1;
+    public RectTransform fieldDetectArea_2;
+    public RectTransform fieldDetectArea_3;
+    public RectTransform fieldDetectArea_4;
+    public RectTransform fieldDetectArea_5;
+    public RectTransform fieldDetectArea_6;
+    public Field player;
+    public Field enemy;
+    public Field field_1;
+    public Field field_2;
+    public Field field_3;
+    public Field field_4;
+    public Field field_5;
+    public Field field_6;
+    public GameObject hole;
+    public List<GameObject> anyWhereAreas;
+    //Prefab
+    public GameObject cardPrefab;
+    public GameObject enemyPrefab;
+    public List<GameObject> playerServentPrefabList;
+    public List<GameObject> playerServentInfoList;
+    public List<GameObject> enemyServentPrefabList;
+    public List<GameObject> enemyServentInfoList;
+    public GameObject draggedCard;
+    public Button monsterAbilityButton;
+    public Button monsterDetailButton;
+    public GameObject monsterConditionPanel;
+    public GameObject monsterDetailPanel;
+    public Transform cardSpawnPoint;
+    public Transform cardAreaBorderLeft;
+    public Transform cardAreaBorderRight;
+    public Transform selectedTargetLineEnd;
 
-//     public void UpdateAllStatus()
-//     {
-//         FieldManager.Inst.UpdateAllFieldStatus();
-//         CardManager.Inst.UpdateCardStatus(monsterCost, spellCost);
-//     }
+    public EMouseOnArea mouseOnArea;
+    public TMP_Text parryText;
+    private List<CardData> deckList;
+    private List<CardData> trashList;
+    private List<CardData> handList;
+    private List<GameObject> cardObjectList;
+    private Dictionary<ItemSO, int> inventory;
+    WaitForSeconds delay05 = new WaitForSeconds(0.5f);
+    WaitForSeconds delay07 = new WaitForSeconds(0.7f);
+    public LineRenderer cardDragLine;
+    public LineRenderer attackDragLine;
+    public int lineCount;
+    private CardTargetingSystem targetingSystem;
+    enum EParryState{Idle, Parry}
+    public List<GameObject> conditionMarkList;
+    public List<GameObject> cardPrefabList;
+    public List<GameObject> dummyCardPrefabList;
 
-//     public void Battle(Field start, Field target)
-//     {
+    // 현재 지불해놓은 코스트의 수
 
-//         if(!start.filled || !target.filled){return;}
-//         int startHealth = start.GetForce();
-//         int targetHealth = target.GetForce();
+    private int turn;
+    //진행된 턴의 수
 
-//         if((target.GetFieldNum() == 7) ||
-//         (target.GetFieldNum() == 0))
-//         {
-//             target.SetForce(targetHealth - startHealth);
-//             start.SetAttacked(true);
-//             UpdateAllStatus();
-//             return;
-//         }
-//         start.SetAttacked(true);
-//         start.SetForce(startHealth - targetHealth);
-//         target.SetForce(targetHealth - startHealth);
-//         UpdateAllStatus();
-//     }
+    private bool myTurn;
+    public bool isLoading;
+    public int startCardCount;
+    public bool fastMode;
+    private EParryState parryState;
+    private bool justGuard;
 
-//     public IEnumerator EnemyAutoAttack()
-//     {
-//         foreach(Field field in FieldManager.Inst.GetOpponentFields())
-//         {
-//             if(field.filled)
-//             {
-//                 Field facingField = FieldManager.Inst.ReturnFacingField(field.GetFieldNum());
+    public GameObject missile;
+    public GameObject missileTarget;
+    public Servent clickedServent;
+    public GameObject clickedServentInfo;
+    public int shot = 1;
+    private CardEffectSystem effectSystem;
 
-//                 if(!facingField.filled){facingField = FieldManager.Inst.ReturnField(0);}
+    public TMP_Text costCountText;
+    public TMP_Text deckCountText;
+    public TMP_Text trashCountText;
+    public TMP_Text playerHealthText;
+    public TMP_Text enemyHealthText;
+
+
+    private int costCount;
+    private int deckCount;
+    private int trashCount;
+
+    private int playerHealth;
+    private int enemyHealth;
+
+    public List<CardData> selectedCards;
+
+    public GridLayoutGroup selectedCardLayoutGroup;
+    public GridLayoutGroup trashLayoutGroup;
+
+    public GameObject cardSelectFrame;
+    public GameObject cardSelectWindow;
+    public GameObject trashWindow;
+
+
+    public Scrollbar scrollbar;
+
+    private int selectedLimit;
+    private bool isActionDone = false;
+
+    // public void StartAction()
+    // {isActionDone = false;}
+
+    public void ActionDone()
+    {isActionDone = true;}
+
+
+
+
+    void Start()
+    {
+        GameSetup();
+        isLoading = true;
+
+        handList = new();
+        selectedCards = new();
+        mouseOnArea = EMouseOnArea.None;
+
+        StartCoroutine(StartGameCo());
+    }
+
+    public bool AddSelectedCards(CardData cardData)
+    {
+        bool foo = selectedCards.Count < selectedLimit;
+
+        if(foo)
+        {selectedCards.Add(cardData);}
+
+        return foo;
+    }
+
+    public void RemoveSelectedCards(CardData cardData)
+    {
+
+        selectedCards.Remove(cardData);
+    }
+
+    public void CloseSelectedCards()
+    {
+        if(selectedCards.Count == selectedLimit)
+        {
+            isActionDone = true;
+            cardSelectWindow.GetComponent<Window>().OnOff();
+
+            for( int i = selectedCardLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
+            {
+                Destroy( selectedCardLayoutGroup.transform.GetChild(i).gameObject );
+            }
+        }
+        else
+        {
+            Debug.Log("카드를 선택하세요.");
+        }
+    }
+
+    public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
+    {
+        isActionDone = false;
+        selectedLimit = limit;
+        foreach(CardData cardData in targetList)
+        {
+            if(cardType == null ||cardData.GetCardType() == cardType)
+            {
+                GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], selectedCardLayoutGroup.transform);
+                GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
                 
-//                 Battle(field, facingField);
-//                  yield return delay07;
-//             }
-//         }
-//     }
+                cardObject.GetComponent<DummyCard>().SetLock(true);
+                cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+                cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+                cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+            }
 
-//     public bool Summon(CardData cardData)
-//     {
-
-//         if(FieldManager.Inst.mouseOnField == null)
-//         {
-//             UpdateAllStatus();
-//             return false;
-//         }
             
-//         if(!FieldManager.Inst.mouseOnField.filled &&
-//         CardManager.Inst.selectCard != null)
-//         {
-//             if(cardData.GetCardCost() > 0){ResetMonsterCost();}
+        }
 
-//             FieldManager.Inst.SummonMonster(cardData);
-//             UpdateAllStatus();
-//             return true;
-//         }
-//         UpdateAllStatus();
-//         return false;
-//     }
+        cardSelectWindow.GetComponent<Window>().OnOff();
+    }
 
-//     public bool ActivateSpell(CardData cardData)
-//     {
-//         if(FieldManager.Inst.mouseOnField != null && CardManager.Inst.selectCard != null)
-//         {
-//             if(cardData.GetCardCost() > 0){ResetSpellCost();}
-//             FieldManager.Inst.ActivateSpell(cardData);
-//             UpdateAllStatus();
-//             return true;
-//         }
-//         UpdateAllStatus();
-//         return false;
-//     }
+    IEnumerator ActivateTreatmentAbility(CardData cardData, Field field)
+    {
+        switch(cardData.GetServentNum())
+        {
 
-//     public bool Sacrifice(CardData cardData)
-//     {
-//         if(FieldManager.Inst.isOnHole && CardManager.Inst.selectCard != null)
-//         {
-//             if(cardData.GetCardType() == ECardType.Servent)
-//             {
-//                 monsterCost++;
-//             }
-//             else if(cardData.GetCardType() == ECardType.Spell)
-//             {
-//                 spellCost++;
-//             }
-//             Destroy(CardManager.Inst.selectCard.gameObject);
-//             UpdateAllStatus();
-//             return true;
-//         }
-//         UpdateAllStatus();
-//         return false;
-//     }
+        }
+        yield return new WaitUntil(() => isActionDone);
+    }
 
-//     void InputCheatKey()
-//     {
-//         if(Input.GetKeyDown(KeyCode.A))
-//         {TurnManager.OnAddCard?.Invoke(true);}
-//         if(Input.GetKeyDown(KeyCode.S))
-//         {TurnManager.OnAddCard?.Invoke(false);}
-//         if(Input.GetKeyDown(KeyCode.D))
-//         {TurnManager.Inst.EndTurn();}
+
+
+
+
+    IEnumerator ActivateSummonAbility(CardData cardData, int currentCost, Field field)
+    {
+        yield return new WaitForSeconds(.3f);
+        if(CheckCardUsable(cardData, currentCost, field))
+        switch(cardData.GetServentNum())
+        {
+            case 1: //바이올렛 리치 로드
+            {
+                ShowSelectedCards(trashList, ECardType.Spell, 1);
+                yield return new WaitUntil(() => isActionDone);
+                
+                CardData card = selectedCards[0];
+                RemoveTrash(card);
+                cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
+
+                selectedCards = new();
+
+                isActionDone = false;
+
+                CardAlignmentAlt();
+                
+                ShotDrawMissile(cardObject.transform);
+                break;
+            }
+
+            case 2: //암흑요리사
+            {
+                CardData card = new Stew();
+                CardData targetCard = new();
+                int count = 0;
+
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 7)
+                    {
+                        targetCard = value;
+                        count++;
+                    }
+                }
+
+                if(count > 3)
+                {count = 2;}
+
+                for(int i = 0; i < count; ++i)
+                {
+                    deckList.Remove(targetCard);
+                    cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                    GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                    cardObject.transform.SetParent(canvas.transform);
+                    cardObjectList.Add(cardObject);
+                    
+                    cardObject.GetComponent<Card>().Setup(card);
+                    
+                    cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                    handList.Add(card);
+                }
+                
+
+                CardAlignmentAlt();
+                break;
+            }
+
+            case 4: //불의 정령 크림슨
+            {
+                CardData card = new WaterHeize();
+                CardData targetCard = new();
+
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 14)
+                    targetCard = value;
+                }
+                deckList.Remove(targetCard);
+                cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
+
+                CardAlignmentAlt();
+
+                ShotDrawMissile(cardObject.transform);
+                break;
+            }
+
             
-//     }
 
-//     public void StartGame()
-//     {StartCoroutine(TurnManager.Inst.StartGameCo());}
+            
 
-//     public void Notification(string message)
-//     {notificationPanel.Show(message);}
+            case 5: //물의 정령 헤이즈
+            {
+                CardData card = new FireCrimson();
+                CardData targetCard = new();
 
-// }
+                foreach(CardData value in deckList)
+                {
+                    if(value.GetCardNum() == 13)
+                    targetCard = value;
+                    
+                }
+                deckList.Remove(targetCard);
+                cardPrefab = cardPrefabList[card.GetCardNum()];
+
+                GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+                cardObject.transform.SetParent(canvas.transform);
+                cardObjectList.Add(cardObject);
+                
+                cardObject.GetComponent<Card>().Setup(card);
+                
+                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                handList.Add(card);
+
+                CardAlignmentAlt();
+                
+                ShotDrawMissile(cardObject.transform);
+                break;
+            }
+
+            case 6: //바람의 정령 크래스트
+            {
+                if(field_1.GetFilled())
+                {
+                    if(field_1.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_1.GainForce(1);}
+                }
+
+                if(field_2.GetFilled())
+                {
+                    if(field_2.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_2.GainForce(1);}
+                }
+
+                if(field_3.GetFilled())
+                {
+                    if(field_3.GetServentAttribute() == EServentAttribute.Wind)
+                    {field_3.GainForce(1);}
+                }
+
+                break;
+            }
+        }
+        isActionDone = false;
+    }
+
+        
+    IEnumerator ActivateSpell(CardData cardData, Field selectedField)
+    {
+        yield return new WaitForSeconds(.5f);
+        switch(cardData.GetSpellNum())
+        {
+            case 0: //듀플리케이트
+
+            deckList.Add(selectedField.GetCardData());
+            deckList.Add(selectedField.GetCardData());
+            Shuffle();
+
+            break;
+
+            case 1: //엘리멘탈 부스트
+            {
+                 List<EServentAttribute> attributes = new();
+                if(field_1.GetFilled())
+                {
+                    if(!attributes.Contains(field_1.GetServentAttribute()))
+                    {attributes.Add(field_1.GetServentAttribute());}
+                }
+
+                if(field_2.GetFilled())
+                {
+                    if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
+                    {attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
+                }
+
+                if(field_3.GetFilled())
+                {
+                    if(!attributes.Contains(field_3.GetServentAttribute()))
+                    {attributes.Add(field_3.GetServentAttribute());}
+                }
+
+                int value = attributes.Count;
+
+                if(field_1.GetFilled())
+                {field_1.GainForce(value);}
+
+                if(field_2.GetFilled())
+                {field_2.GainForce(value);}
+
+                if(field_3.GetFilled())
+                {field_3.GainForce(value);}
+                break;
+            }
+           
+
+            case 2: //악을 멸하는 등불
+            if(field_1.GetServentAttribute() == EServentAttribute.Dark)
+            {field_1.Kill();}
+
+            if(field_2.GetServentAttribute() == EServentAttribute.Dark)
+            {field_2.Kill();}
+
+            if(field_3.GetServentAttribute() == EServentAttribute.Dark)
+            {field_3.Kill();}
+
+            if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
+            {field_4.GetComponent<Field>().Kill();}
+
+            if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
+            {field_5.GetComponent<Field>().Kill();}
+
+            if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
+            {field_6.GetComponent<Field>().Kill();}
+
+            break;
+
+            case 3: //타오르는 심장
+            selectedField.GainForce(selectedField.GetForce());
+            break;
+
+            case 4: //작은 것을 위한 희생
+            
+            int x = trashCount;
+            
+            foreach(CardData card in trashList)
+            {deckList.Add(card);}
+            trashList.Clear();
+
+            playerHealth -= x;
+            break;
+
+            case 5: //오직 침묵만이
+
+            if(field_1.GetComponent<Field>().GetFilled())
+            {field_1.GetComponent<Field>().Kill();}
+
+            if(field_2.GetComponent<Field>().GetFilled())
+            {field_2.GetComponent<Field>().Kill();}
+
+            if(field_3.GetComponent<Field>().GetFilled())
+            {field_3.GetComponent<Field>().Kill();}
+
+            if(field_4.GetComponent<Field>().GetFilled())
+            {field_4.GetComponent<Field>().Kill();}
+
+            if(field_5.GetComponent<Field>().GetFilled())
+            {field_5.GetComponent<Field>().Kill();}
+
+            if(field_6.GetComponent<Field>().GetFilled())
+            {field_6.GetComponent<Field>().Kill();}
+            break;
+
+            case 6: // 스튜
+            playerHealth += 1; 
+            break;
+
+            case 7: // 피의 대가
+            playerHealth -= 1; 
+            DrawCard();
+            break;
+
+            case 8: // 무너진 계약
+            DrawCard();
+            DrawCard();
+            DrawCard();
+
+            enemyDamageBlock = true;
+            break;
+
+            case 9: // 마스크월드
+            {
+                if(field_1.GetFilled())
+                {field_1.GainForce(1);}
+
+                if(field_2.GetFilled())
+                {field_2.GainForce(1);}
+
+                if(field_3.GetFilled())
+                {field_3.GainForce(1);}
+
+                if(field_4.GetFilled())
+                {field_4.GainForce(1);}
+
+                if(field_5.GetFilled())
+                {field_5.GainForce(1);}
+
+                if(field_6.GetFilled())
+                {field_6.GainForce(1);}
+                
+                break;
+            }
+
+            case 10: // 투사의 의지
+            {
+                selectedField.GainForce(selectedField.GetForce());
+                selectedField.SetSuicide(true);
+                break;
+            }
+
+            case 11: // 절규하는 투사
+            {
+                selectedField.GainForce(selectedField.GetForce());
+                selectedField.AddCondition(EServentCondition.Madness);
+                break;
+            }
+            
+
+
+        }
+
+    }
+
+    void Update()
+    {
+        UpdateCondition();
+        
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        {CloseServentInfo();}
+
+    }
+
+    public void UpdateAllFieldStatus()
+    {
+        player.GetComponent<Field>().UpdateHealth();
+        enemy.GetComponent<Field>().UpdateHealth();
+
+        field_1.GetComponent<Field>().UpdateHealth();
+        field_2.GetComponent<Field>().UpdateHealth();
+        field_3.GetComponent<Field>().UpdateHealth();
+        field_4.GetComponent<Field>().UpdateHealth();
+        field_5.GetComponent<Field>().UpdateHealth();
+        field_6.GetComponent<Field>().UpdateHealth();
+
+        player.GetComponent<Field>().UpdateCondition();
+        enemy.GetComponent<Field>().UpdateCondition();
+
+        field_1.GetComponent<Field>().UpdateCondition();
+        field_2.GetComponent<Field>().UpdateCondition();
+        field_3.GetComponent<Field>().UpdateCondition();
+        field_4.GetComponent<Field>().UpdateCondition();
+        field_5.GetComponent<Field>().UpdateCondition();
+        field_6.GetComponent<Field>().UpdateCondition();
+    }
+
+    public GameObject ReturnConditionMark(EServentCondition value)
+    {
+        switch(value)
+        {
+            case EServentCondition.Void:
+            return conditionMarkList[0];
+
+            case EServentCondition.Oblivion:
+            return conditionMarkList[1];
+        }
+        return null;
+    }
+
+    public void ShotMissile(Transform startPoint, Transform targetPoint)
+    {
+        GameObject bullet = Instantiate(missile, camera.ScreenToWorldPoint(startPoint.position), Utils.QI);
+        BezierMissile missileScript = bullet.GetComponent<BezierMissile>();
+
+        missileScript.master = camera.ScreenToWorldPoint(startPoint.position);
+        missileScript.enemy = targetPoint.position;
+    }
+
+    public void ShotDrawMissile(Transform targetPoint)
+    {
+        GameObject bullet = Instantiate(missile, hole.transform.position, Utils.QI);
+        BezierMissile missileScript = bullet.GetComponent<BezierMissile>();
+
+        missileScript.master = hole.transform.position;
+        missileScript.enemy = camera.ScreenToWorldPoint(targetPoint.position);
+    }
+
+
+
+    public void ShotMissile(Transform startPoint)
+    {
+        GameObject bullet = Instantiate(missile, startPoint.position, Utils.QI);
+        BezierMissile missileScript = bullet.GetComponent<BezierMissile>();
+        missileScript.master = startPoint.position;
+        missileScript.enemy = hole.transform.position;
+    }
+
+    public IEnumerator ShowServentInfo(Servent servent)
+    {
+        if(servent.GetServentType() == EServentType.Player)
+        {clickedServentInfo = Instantiate(playerServentInfoList[servent.GetServentNum()], Input.mousePosition, Utils.QI);}
+        else if(servent.GetServentType() == EServentType.Enemy)
+        {clickedServentInfo = Instantiate(enemyServentInfoList[servent.GetServentNum()], Input.mousePosition, Utils.QI);}
+        
+        Vector3 vector = clickedServentInfo.transform.position;
+        vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
+        clickedServentInfo.transform.position = vector;
+        yield return new WaitForSeconds(0.1f);
+        clickedServentInfo.GetComponent<ServentInfoWindow>().OnOff(true);
+        clickedServentInfo.transform.SetParent(canvas.transform);
+        clickedServent = servent;
+        
+    }
+    public void CloseServentInfo()
+    {
+        if(clickedServent == null)
+        {return;}
+
+        if(clickedServent != null)
+        {
+            clickedServent = null;
+            Destroy(clickedServentInfo.gameObject);
+        }
+    }
+
+    public IEnumerator StartGameCo()
+    {
+        //GameSetup();
+        isLoading = true;
+
+        yield return new WaitForSeconds(0.35f);
+        StartCoroutine(StartTurnCo());
+    }
+
+     void GameSetup()
+    {
+        trashCount = 0;
+        deckCount = 0;
+        costCount = 0;
+        playerHealth = 30;
+        enemyHealth = 30;
+
+
+        Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
+        List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
+        Dictionary<string, int> myDeck = DataController.Inst.LoadDeck();
+
+        foreach(KeyValuePair<string, int> value in myDeck)
+        {deck.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
+        deckList = new();
+        cardObjectList = new();
+        trashList = new();
+        
+        foreach(KeyValuePair<CardData, int> value in deck)
+        {
+            for(int i = 0; i < value.Value; ++i)
+            {deckList.Add(value.Key);}
+        };
+
+        // Deck Shuffle
+        Shuffle();
+
+
+
+        myTurn = true;
+    }
+
+    private void Shuffle()
+    {
+        for(int i = 0; i < 100; ++i)
+        {
+            int a = Random.Range(0, deckList.Count);
+            int b = Random.Range(0, deckList.Count);
+            CardData c = deckList[a];
+            deckList[a] = deckList[b];
+            deckList[b] = c;
+        }
+    }
+
+    public void UpdateCondition()
+    {
+        deckCount = deckList.Count;
+        trashCount = trashList.Count;
+
+        costCountText.text = "Cost: " + costCount.ToString();
+        deckCountText.text = "Deck: " + deckCount.ToString();
+        trashCountText.text = "Trash: " + trashCount.ToString();
+
+        playerHealthText.text = "PCHealth: "+ playerHealth.ToString();
+        enemyHealthText.text = "EnemyHealth: "+ enemyHealth.ToString();
+
+        field_1.UpdateHealth();
+        field_2.UpdateHealth();
+        field_3.UpdateHealth();
+        field_4.UpdateHealth();
+        field_5.UpdateHealth();
+        field_6.UpdateHealth();
+    }
+
+    IEnumerator StartTurnCo()
+    {        
+        isLoading = true;
+
+        // player.GetComponent<Field>().UpdateHealth();
+        // enemy.GetComponent<Field>().UpdateHealth();
+
+        // field_1.GetComponent<Field>().UpdateHealth();
+        // field_2.GetComponent<Field>().UpdateHealth();
+        // field_3.GetComponent<Field>().UpdateHealth();
+        // field_4.GetComponent<Field>().UpdateHealth();
+        // field_5.GetComponent<Field>().UpdateHealth();
+        // field_6.GetComponent<Field>().UpdateHealth();
+
+        player.GetComponent<Field>().SetAttacked(false);
+        enemy.GetComponent<Field>().SetAttacked(false);
+
+        field_1.GetComponent<Field>().SetAttacked(false);
+        field_2.GetComponent<Field>().SetAttacked(false);
+        field_3.GetComponent<Field>().SetAttacked(false);
+        field_4.GetComponent<Field>().SetAttacked(false);
+        field_5.GetComponent<Field>().SetAttacked(false);
+        field_6.GetComponent<Field>().SetAttacked(false);
+
+        if(myTurn)
+        {
+            if(handList.Count < 5)
+            {
+                int p = 5 - handList.Count;
+                for(int i = 0; i < p; ++i)
+                {
+                    yield return new WaitForSeconds(0.35f);
+                    DrawCard();
+                }
+            }
+            else
+            {DrawCard();}
+        }
+
+
+        yield return delay07;
+        isLoading = false;
+    }
+
+    public void StartEnemyTurn()
+    {
+        StartCoroutine(EnemyTurnCo());
+    }
+
+    public IEnumerator EnemyTurnCo()
+    {
+        int actionToken = 3;
+
+        for(int i = 0; i < actionToken; ++i)
+        {
+            List<Field> filledField = new();
+            if(field_4.GetFilled())
+            {filledField.Add(field_4);}
+
+            if(field_5.GetFilled())
+            {filledField.Add(field_5);}
+
+            if(field_6.GetFilled())
+            {filledField.Add(field_6);}
+
+            switch(SelectEnemyAction())
+            {
+                case EEnemyAction.Summon:
+                {
+                    Debug.Log("적이 동료를 부릅니다.");
+                    List<Field> unfilledField = new();
+
+                    if(!field_4.GetFilled())
+                    unfilledField.Add(field_4);
+
+                    if(!field_5.GetFilled())
+                    unfilledField.Add(field_5);
+
+                    if(!field_6.GetFilled())
+                    unfilledField.Add(field_6);
+                    int randomNum = Random.Range(0, unfilledField.Count);
+
+                    Field field = unfilledField[randomNum];
+                    field.locked = true;
+                    field.Summon(new ChaoticCorvus(),
+                    Instantiate(enemyServentPrefabList[new ChaoticCorvus().GetServentNum()],
+                    field.transform.position , Utils.QI));
+
+                    yield return new WaitForSeconds(1f);
+                    field.locked = false;
+                    break;
+                }
+                case EEnemyAction.Attack:
+                {
+                    Debug.Log("적이 공격합니다.");
+                    
+
+                    List<Field> fields = new();
+
+                    fields.Add(player);
+
+                    if(field_1.GetFilled())
+                    fields.Add(field_1);
+
+                    if(field_2.GetFilled())
+                    fields.Add(field_2);
+
+                    if(field_3.GetFilled())
+                    fields.Add(field_3);
+
+                    List<Field> unAttackedField = new();
+
+                    foreach(Field field in filledField)
+                    {
+                        if(!field.GetAttacked())
+                        unAttackedField.Add(field);
+                    }
+
+                    int randomNum = Random.Range(0, unAttackedField.Count);
+                    Field startField = unAttackedField[randomNum];
+                    randomNum = Random.Range(0, fields.Count);
+                    Field targetField = fields[randomNum];
+
+
+
+                    StartCoroutine(EnemyAttack(startField, targetField));
+                    break;
+                }
+                case EEnemyAction.Ability:
+                {
+                    Debug.Log("적이 능력을 사용합니다.");
+                    break;
+                }
+                case EEnemyAction.None:
+                {
+                    break;
+                }
+            }
+            
+
+
+            // Debug.Log("적이 공격합니다.");
+
+            
+            yield return new WaitForSeconds(1f);
+        }
+
+        StartCoroutine(StartTurnCo());
+        
+    }
+
+    private EEnemyAction SelectEnemyAction()
+    {
+        List<Field> filledField = new();
+
+        int probability = 0;
+        if(field_4.GetFilled())
+        {
+            filledField.Add(field_4);
+            probability += 3;
+        }
+
+        if(field_5.GetFilled())
+        {
+            filledField.Add(field_5);
+            probability += 3;
+        }
+
+        if(field_6.GetFilled())
+        {
+            filledField.Add(field_6);
+            probability += 3;
+        }
+
+
+
+        int p = Random.Range(1, 10);
+        if(p > probability)
+        return EEnemyAction.Summon;
+
+        p = Random.Range(0, 1);
+        if(p == 0)
+        return EEnemyAction.Attack;
+        else
+        return EEnemyAction.Ability;
+
+
+        return EEnemyAction.None;
+    } 
+
+    IEnumerator EnemyAttack(Field startField,Field targetField)
+    {
+        StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
+        ,targetField.GetLinePoint().position, 1f));
+
+        yield return new WaitForSeconds(1f);
+        if(targetField == player)
+        {
+            int attackerForce = startField.GetForce();
+
+            attackerForce += playerDamageIncrease;
+            attackerForce -= playerDamageDecrease;
+
+            if(playerDamageBlock)
+            {attackerForce = 0;}
+            
+            playerHealth -= attackerForce;
+            startField.SetAttacked(true);
+        }else
+        {
+            int attackerForce = startField.GetForce();
+            int defenderForce = targetField.GetForce();
+
+            int attackerDamage = Math.Abs(defenderForce);
+            int defenderDamage = Math.Abs(attackerForce);
+
+            startField.TakeDamage(attackerDamage);
+            targetField.TakeDamage(defenderDamage);
+
+            if(startField.GetPenetrate())
+            {
+                defenderDamage = Math.Abs(defenderForce - attackerForce);
+                
+                if(playerDamageBlock)
+                {defenderDamage = 0;}
+                
+                playerHealth -= defenderDamage;
+            }
+            startField.SetAttacked(true);
+        }
+        attackDragLine.positionCount = 0;
+    }
+
+    public Field ReturnMouseOnField(EMouseOnArea value)
+    {
+         switch(value)
+        {
+            case EMouseOnArea.Field_1:
+            return field_1;
+
+            case EMouseOnArea.Field_2:
+            return field_2;
+
+            case EMouseOnArea.Field_3:
+            return field_3;
+
+            case EMouseOnArea.Field_4:
+            return field_4;
+
+            case EMouseOnArea.Field_5:
+            return field_5;
+
+            case EMouseOnArea.Field_6:
+            return field_6;
+
+            case EMouseOnArea.Enemy:
+            return enemy;
+
+            case EMouseOnArea.Player:
+            return player;
+
+            case EMouseOnArea.AnyWhere:
+            return null;
+
+            default:
+            return null;
+        }
+    }
+
+
+    public Field ReturnMouseOnField()
+    {
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.Field_1:
+            return field_1;
+
+            case EMouseOnArea.Field_2:
+            return field_2;
+
+            case EMouseOnArea.Field_3:
+            return field_3;
+
+            case EMouseOnArea.Field_4:
+            return field_4;
+
+            case EMouseOnArea.Field_5:
+            return field_5;
+
+            case EMouseOnArea.Field_6:
+            return field_6;
+            case EMouseOnArea.Hole:
+            return null;
+
+            case EMouseOnArea.Enemy:
+            return enemy;
+
+            case EMouseOnArea.Player:
+            return player;
+
+            case EMouseOnArea.AnyWhere:
+            return field_1;
+
+            default:
+            return null;
+        }
+    }
+
+    public void EndTurn()
+    {
+        myTurn = !myTurn;
+        StartCoroutine(StartTurnCo());
+    }
+    public bool CheckCardUsable(CardData cardData, int currentCost, Field targetField)
+    {
+        if(mouseOnArea == EMouseOnArea.Hole)
+        {return true;}
+
+        if(currentCost != 0)
+        {return false;}
+
+        if(targetField == null)
+        {return false;}
+
+        {
+            List<PreRequisite> preRequisites = cardData.GetPreRequisites();
+
+            if(preRequisites == null)
+            return true;
+
+            bool flag = false;
+
+            int count;
+
+
+            foreach(PreRequisite value in preRequisites)
+            {
+                count = 0;
+                switch(value.preRequisite)
+                {
+                    
+                    case EPreRequisite.None:
+                    return true;
+
+                    case EPreRequisite.SelectedServent:
+                    if(ReturnMouseOnField().GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {return true;}
+                        else
+                        {
+                            if(value.serventAttribute == ReturnMouseOnField().GetServentAttribute())
+                            {return true;}
+                        }
+                        
+                    }
+                    return false;
+                    
+
+                    case EPreRequisite.AllServentCount:
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count == value.count;
+                    break;
+
+                    case EPreRequisite.AllServentCountOver:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count > value.count;
+                    break;
+
+                    case EPreRequisite.AllServentCountUnder:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_4.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_4.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_5.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_5.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_6.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count < value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCount:
+                    count = 0;
+                    
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count == value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCountOver:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == field_1.GetServentAttribute() ||
+                         value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count > value.count;
+                    break;
+
+                    case EPreRequisite.PlayerServentCountUnder:
+                    count = 0;
+
+                    if(field_1.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_1.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_2.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_2.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+                    if(field_3.GetFilled())
+                    {
+                        if(value.serventAttribute == EServentAttribute.None)
+                        {count++;}
+                        else
+                        {
+                            if(value.serventAttribute == field_3.GetServentAttribute())
+                            {count++;}
+                        }
+                        
+                    }
+
+                    flag = count < value.count;
+                    break;
+
+                    case EPreRequisite.TrashCountOver:
+
+                    if(value.cardType == ECardType.None)
+                    {flag = trashCount > value.count;}
+
+                    if(value.cardType == ECardType.Servent)
+                    {
+                        int serventCardCount = 0;
+
+                        foreach(CardData card in trashList)
+                        {
+                            if(card.GetCardType() == ECardType.Servent)
+                            {serventCardCount++;}
+                        }
+                        flag = serventCardCount > value.count;
+                    }
+
+                    if(value.cardType == ECardType.Spell)
+                    {
+                        int spellCardCount = 0;
+
+                        foreach(CardData card in trashList)
+                        {
+                            if(card.GetCardType() == ECardType.Spell)
+                            {spellCardCount++;}
+                        }
+                        flag = spellCardCount > value.count;
+
+                        
+                    }
+                    
+                    break;
+
+                    case EPreRequisite.PlayerHPCount:
+                    flag = playerHealth == value.count;
+                    break;
+
+                    case EPreRequisite.PlayerHPCountOver:
+                    flag = playerHealth > value.count;
+                    break;
+
+                    case EPreRequisite.PlayerHPCountUnder:
+                    flag = playerHealth < value.count;
+                    break;
+
+                    case EPreRequisite.DeckCountOver:
+                    {
+
+                        switch(value.cardType)
+                        {
+                            case ECardType.None:
+                            {
+                                if(value.cardNum == 0)
+                                {flag = deckCount > value.count;}
+                                else
+                                {
+                                    int cardCount = 0;
+                                    foreach(CardData card in deckList)
+                                    {
+                                        if(card.GetCardNum() == value.cardNum)
+                                        cardCount++;
+                                    }
+                                    flag = cardCount > value.count;
+                                }  
+                                break;
+                            }
+
+                            case ECardType.Servent:
+                            {
+                                int serventCardCount = 0;
+
+                                foreach(CardData card in deckList)
+                                {
+                                    if(card.GetCardType() == ECardType.Servent)
+                                    {serventCardCount++;}
+                                }
+                                flag = serventCardCount > value.count;
+                                break;
+                            }
+
+                            case ECardType.Spell:
+                            {
+                                int spellCardCount = 0;
+
+                                foreach(CardData card in deckList)
+                                {
+                                    if(card.GetCardType() == ECardType.Spell)
+                                    {spellCardCount++;}
+                                }
+                                flag = spellCardCount > value.count;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if(!flag)
+                {return flag;}
+            }
+            return flag;
+
+            
+        }
+
+        return false;
+    }
+
+    public void CardBeginDrag(GameObject cardObject)
+    {
+        if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
+        {
+            foreach(GameObject gameObject in anyWhereAreas)
+            {gameObject.SetActive(true);}
+        }
+
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<Card>().SetLock(true);}
+        cardObject.GetComponent<Card>().SetLock(false);
+    }
+
+    public void CardOnDrag(GameObject cardObject)
+    {
+        if(cardObject.GetComponent<Card>().GetCardData().GetCardType() == ECardType.Servent)
+        {
+            DrawDragLine(cardObject.transform.position,
+            CheckServentSummonable(cardObject.GetComponent<Card>().GetCardData(),
+            cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField())
+            );
+        }
+        else{
+            DrawDragLine(cardObject.transform.position,
+            CheckCardUsable(cardObject.GetComponent<Card>().GetCardData(),
+            cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField())
+            );
+        }
+        
+    
+    }
+
+    public bool CheckServentSummonable(CardData cardData, int currentCost, Field targetField)
+    {
+        if(mouseOnArea == EMouseOnArea.Hole)
+        {return true;}
+
+        if(currentCost != 0)
+        {return false;}
+
+        if(targetField == null)
+        {return false;}
+
+        if(targetField.locked)
+        {return false;}
+
+        if(targetField == field_4)
+        {return false;}
+
+        if(targetField == field_4)
+        {return false;}
+
+        if(targetField == field_5)
+        {return false;}
+
+        if(targetField == field_6)
+        {return false;}
+
+        if(targetField == player || targetField == enemy)
+        {return false;}
+
+
+        if(targetField.GetFilled())
+        {return false;}
+        return true;
+
+    }
+
+    public bool CheckAttackable(EMouseOnArea start)
+    {
+        if(ReturnMouseOnField() == null)
+        return false;
+
+        if(ReturnMouseOnField(start).GetAttacked())
+        return false;
+
+        if(ReturnMouseOnField() == ReturnMouseOnField(EMouseOnArea.Enemy))
+        return true;
+
+        if(ReturnMouseOnField() == ReturnMouseOnField(EMouseOnArea.Player))
+        return false;
+
+        if(ReturnMouseOnField() == ReturnMouseOnField(start))
+        return false;
+
+        return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
+    }
+
+    public IEnumerator CardEndDrag(Card card, Field targetField)
+    {
+        foreach(GameObject gameObject in anyWhereAreas)
+        {gameObject.SetActive(false);}
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(false);}
+
+
+        DeleteDragLine();
+
+        isActionDone = false;
+
+        if(mouseOnArea == EMouseOnArea.Hole)
+        {
+            handList.RemoveAt(card.GetCardOrder());
+            cardObjectList.Remove(card.gameObject);
+            AddTrash(card.GetCardData());
+            card.SendMissile(alertPoint, hole.transform);
+            costCount++;
+
+            List<CardData> newHandList = new List<CardData>();
+
+            foreach(CardData cardData in handList)
+            {newHandList.Add(cardData);}
+
+            for(int i = 0; i < cardObjectList.Count; ++i)
+            {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+            handList = newHandList;
+            CardAlignmentAlt();
+        }
+        else
+        {
+            if(card.GetCardType() == ECardType.Servent)
+            {
+                if(CheckServentSummonable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
+                {
+                    targetField.locked = true;
+                    costCount -= card.GetCardData().GetCardCost();
+                    
+                    cardObjectList.Remove(card.gameObject);
+                    card.SendMissile(alertPoint, ReturnMouseOnField().transform);
+                    //ServentPrefab 생성
+                    yield return new WaitForSeconds(1.5f);  
+                    //field에 ServentData넣기
+                    targetField.Summon(card.GetCardData(), Instantiate(playerServentPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
+
+                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(),targetField));
+                    
+                    handList.RemoveAt(card.GetCardOrder());
+                    List<CardData> newHandList = new List<CardData>();
+
+                    foreach(CardData cardData in handList)
+                    {newHandList.Add(cardData);}
+
+                    for(int i = 0; i < cardObjectList.Count; ++i)
+                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                    handList = newHandList;
+                    CardAlignmentAlt();
+                }
+            }
+
+
+            if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
+            {
+                
+                switch(card.GetCardType())
+                {
+                    case ECardType.Spell:
+                    costCount -= card.GetCardData().GetCardCost();
+                    StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
+                    
+                    AddTrash(card.GetCardData());
+                    handList.RemoveAt(card.GetCardOrder());
+                    cardObjectList.Remove(card.gameObject);
+                    card.SendMissile(alertPoint, hole.transform);
+
+                    List<CardData> newHandList = new List<CardData>();
+
+                    foreach(CardData cardData in handList)
+                    {newHandList.Add(cardData);}
+
+                    for(int i = 0; i < cardObjectList.Count; ++i)
+                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+
+                    handList = newHandList;
+                    CardAlignmentAlt();
+                    break;
+
+                    default:
+                    break;
+                }
+            }
+            else
+            {
+                foreach(GameObject cardObject in cardObjectList)
+                {cardObject.GetComponent<Card>().SetLock(false);}
+            }
+        }
+
+        
+
+
+        
+
+
+
+
+    }
+    public void DrawCard()
+    {
+
+        if(deckList.Count == 0 && trashList.Count == 0)
+        {return;}
+
+        List<CardData> targetList;
+
+        if(deckList.Count != 0)
+        {targetList = deckList;}
+        else
+        {targetList = trashList;}
+
+        CardData cardData = targetList[targetList.Count - 1];
+
+        cardPrefab = cardPrefabList[cardData.GetCardNum()];
+
+
+
+        
+        GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+        cardObject.transform.SetParent(canvas.transform);
+        cardObjectList.Add(cardObject);
+        
+        cardObject.GetComponent<Card>().Setup(cardData);
+        
+        cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+        handList.Add(cardData);
+
+
+        
+
+        targetList.RemoveAt(targetList.Count - 1);
+        
+
+        CardAlignmentAlt();
+        ShotDrawMissile(cardObject.transform);
+        // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
+        
+        // CardAlignment();
+    }
+
+    // public void DrawCard()
+    // {
+
+    //     if(deckList.Count == 0 && trashList.Count == 0)
+    //     {return;}
+
+    //     GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
+    //     cardObject.SetActive(false);
+    //     CardData cardData = deckList[deckList.Count - 1];
+
+    //     cardObjectList.Add(cardObject);
+    //     handList.Add(cardData);
+
+    //     deckList.RemoveAt(deckList.Count - 1);
+
+    //     CardAlignmentAlt();
+
+    //     StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
+    //     cardObject.SetActive(true);
+    //     CardAlignment();
+    // }
+
+
+    public void SetMouseOnField(EMouseOnArea mouseOnArea)
+    {this.mouseOnArea = mouseOnArea;}
+
+    public void ResetMouseOnField()
+    {mouseOnArea = EMouseOnArea.None;}
+
+    public void SelectTarget(GameObject field)
+    {missileTarget = field;}
+
+    public void CardAlignmentAlt()
+    {
+        if(handList.Count == 0)
+        {return;}
+
+        List<PRS> originCardPRSs = new List<PRS>();
+
+        originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
+        for(int i = 0; i < cardObjectList.Count; ++i)
+        {
+            var targetCard = cardObjectList[i];
+            targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
+            targetCard.transform.position = originCardPRSs[i].pos;
+
+            targetCard.GetComponent<Card>().UpdateCardCost(costCount);
+        }
+
+    }
+    List<PRS> GetCardAlignment(Vector3 leftBoundary, Vector3 rightBoundary, int cardCount, float spacing)
+    {
+        
+        List<PRS> result = new List<PRS>();
+
+        for (int i = 0; i < cardCount; ++i)
+        {
+            float t = (float)i / (cardCount - 1); // Normalize index
+            Vector3 position = Vector3.Lerp(leftBoundary, rightBoundary, t);
+            Quaternion rotation = Quaternion.identity;
+            Vector3 scale = Vector3.one; // Default scale
+            result.Add(new PRS(position, rotation, scale));
+        }
+
+        return result;
+    }
+
+
+    List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int objectCount, float height, Vector3 scale)
+    {
+        float[] objLerps = new float[objectCount];
+        List<PRS> results = new List<PRS>(objectCount);
+
+        switch(objectCount)
+        {
+            case 1: objLerps = new float[] {0.5f}; break;
+            case 2: objLerps = new float[] {0.27f, 0.73f}; break;
+            case 3: objLerps = new float[] {0.1f, 0.5f, 0.9f}; break;
+            default:
+                float interval = 1f/ (objectCount - 1);
+                for(int i = 0; i < objectCount; ++i)
+                    objLerps[i] = interval * i;
+                break;
+        }
+
+        for(int i = 0; i < objectCount; ++i)
+        {
+            var targetPos = Vector3.Lerp(leftTr.position, rightTr.position, objLerps[i]);
+            var targetRot = Quaternion.identity;
+            if(objectCount >= 4)
+            {
+                float curve = Mathf.Sqrt(Mathf.Pow(height,2) - Mathf.Pow(objLerps[i] - 0.5f, 2));
+                curve = height >= 0 ? curve : - curve;
+                targetPos.y += curve;
+                targetRot = Quaternion.Slerp(leftTr.rotation, rightTr.rotation, objLerps[i]);
+            }
+            results.Add(new PRS(targetPos, targetRot, scale));
+        }
+        return results;
+    }
+
+
+    public void CardAlignment()
+    {
+        List<PRS> originCardPRSs = new List<PRS>();
+
+        originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
+        for(int i = 0; i < cardObjectList.Count; ++i)
+        {
+            var targetCard = cardObjectList[i];
+            targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
+            targetCard.GetComponent<Card>().MoveTransform(targetCard.GetComponent<Card>().originPRS, true, 0.7f);
+
+        }
+    }
+    public void DeleteDragLine()
+    {
+        cardDragLine.positionCount = 0;
+        cardDragLine.endColor = Color.blue;
+    }
+
+    public void EndAttackLine(EMouseOnArea mouseOnArea, bool isUsuable)
+    {
+        if(ReturnMouseOnField() == ReturnMouseOnField(mouseOnArea))
+        {return;}
+
+        if(ReturnMouseOnField() == enemy)
+        {
+            int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
+
+            attackerForce += enemyDamageIncrease;
+            attackerForce -= enemyDamageDecrease;
+
+            if(enemyDamageBlock)
+            {attackerForce = 0;}
+            
+            enemyHealth -= attackerForce;
+            
+            ReturnMouseOnField(mouseOnArea).SetAttacked(true);
+
+            
+        }else
+        {
+            if(isUsuable)
+            {
+                int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
+                int defenderForce = ReturnMouseOnField().GetForce();
+
+                int attackerDamage = Math.Abs(defenderForce);
+                int defenderDamage = Math.Abs(attackerForce);
+
+                ReturnMouseOnField(mouseOnArea).TakeDamage(attackerDamage);
+                ReturnMouseOnField().TakeDamage(defenderDamage);
+
+                if(ReturnMouseOnField(mouseOnArea).GetPenetrate())
+                {
+                    defenderDamage = Math.Abs(defenderForce - attackerForce);
+                    if(enemyDamageBlock)
+                    {defenderDamage = 0;}
+                    
+                    
+                    enemyHealth -= defenderDamage;
+                }
+                
+                ReturnMouseOnField(mouseOnArea).SetAttacked(true);
+
+            }
+        }
+        attackDragLine.positionCount = 0;
+        
+    }
+
+    public IEnumerator DrawAttackLine(Vector2 startPoint, Vector2 targetPoint, float duration)
+    {
+        Vector3[] point = new Vector3[lineCount];
+        float posA = 10f;
+        float posB = 10f;
+        attackDragLine.positionCount = lineCount;
+
+
+        
+        for(int i = 0; i < lineCount; ++i)
+        {
+            float t;
+            if (i == 0)
+            {t = 0;}
+            else
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = Bezier(startPoint,
+            PointSetting(startPoint),
+            PointSetting(targetPoint),
+            targetPoint, t);
+            point[i].z = 0;
+        }
+        attackDragLine.SetPositions(point);
+
+        
+        yield return new WaitForSeconds(duration);
+
+        
+
+        Vector3 PointSetting(Vector3 origin){
+            float x, y;
+            x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
+            y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
+    
+            return new Vector3(x, y);
+        }
+        Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
+        {
+            Vector3 M0 = Vector3.Lerp(P0, P1, t);
+            Vector3 M1 = Vector3.Lerp(P1, P2, t);
+            Vector3 M2 = Vector3.Lerp(P2, P3, t);
+
+            Vector3 B0 = Vector3.Lerp(M0, M1, t);
+            Vector3 B1 = Vector3.Lerp(M1, M2, t);
+
+            return Vector3.Lerp(B0, B1, t);
+        }
+
+    }
+
+    // private IEnumerator DrawLineCoroutine(Vector3 start, Vector3 end, float duration)
+    // {
+    //     // 선 활성화 및 위치 설정
+    //     lineRenderer.enabled = true;
+    //     lineRenderer.SetPosition(0, start);
+    //     lineRenderer.SetPosition(1, end);
+
+    //     // 지정된 시간(duration) 동안 대기
+
+
+    //     // 선 비활성화
+    //     lineRenderer.enabled = false;
+    // }
+
+    public void DrawAttackLine(Vector2 startPoint, bool isUsuable)
+    {
+        Vector3[] point = new Vector3[lineCount];
+        float posA = 10f;
+        float posB = 10f;
+        attackDragLine.positionCount = lineCount;
+        Vector3 targetPoint = new Vector3();
+
+        if(isUsuable)
+        {attackDragLine.endColor = Color.blue;}
+        else
+        {attackDragLine.endColor = Color.red;}
+
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.None:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+
+            case EMouseOnArea.Field_1:
+            targetPoint = field_1.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_2:
+            targetPoint = field_2.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_3:
+            targetPoint = field_3.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_4:
+            targetPoint = field_4.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_5:
+            targetPoint = field_5.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_6:
+            targetPoint = field_6.GetLinePoint().position;
+            break;
+
+
+
+            // case EMouseOnArea.Hole:
+            // targetPoint = holeDetectArea.position;
+            // break;
+
+            case EMouseOnArea.Player:
+            targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
+            break;
+
+            case EMouseOnArea.Enemy:
+            targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
+            break;
+            
+            case EMouseOnArea.AnyWhere:
+            //targetPoint = selectedTargetLineEnd.position;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+            
+            default:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+        }
+
+        startPoint = camera.ScreenToWorldPoint(startPoint);
+
+        for(int i = 0; i < lineCount; ++i)
+        {
+            float t;
+            if (i == 0)
+            {t = 0;}
+            else
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(targetPoint),targetPoint, t);
+            point[i].z = 0;
+        }
+        attackDragLine.SetPositions(point);
+
+        Vector3 PointSetting(Vector3 origin){
+            float x, y;
+            x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
+            y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
+    
+            return new Vector3(x, y);
+        }
+        Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
+        {
+            Vector3 M0 = Vector3.Lerp(P0, P1, t);
+            Vector3 M1 = Vector3.Lerp(P1, P2, t);
+            Vector3 M2 = Vector3.Lerp(P2, P3, t);
+
+            Vector3 B0 = Vector3.Lerp(M0, M1, t);
+            Vector3 B1 = Vector3.Lerp(M1, M2, t);
+
+            return Vector3.Lerp(B0, B1, t);
+        }
+    }
+
+    public void ShowTrashCards()
+    {
+        
+
+        foreach(CardData cardData in trashList)
+        {
+            GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
+            GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+            
+            cardObject.GetComponent<DummyCard>().SetLock(true);
+            cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+            cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+            cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+
+        }
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(true);}
+
+        trashWindow.GetComponent<Window>().OnOff();
+    }
+
+    public void CloseTrashCards()
+    {
+        for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
+        {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<Card>().SetLock(false);}
+
+        trashWindow.GetComponent<Window>().OnOff();
+    }
+
+    public void AddTrash(CardData cardData)
+    {    
+        trashList.Add(cardData);
+    }
+
+    public void RemoveTrash(CardData cardData)
+    {
+        trashList.Remove(cardData);
+    }
+
+
+
+    public void DrawDragLine(Vector2 startPoint, Boolean isUsuable)
+    {
+        Vector3[] point = new Vector3[lineCount];
+        float posA = 10f;
+        float posB = 10f;
+        cardDragLine.positionCount = lineCount;
+
+        if(isUsuable)
+        {cardDragLine.endColor = Color.blue;}
+        else
+        {cardDragLine.endColor = Color.red;}
+        
+        Vector3 targetPoint = new Vector3();
+
+        switch(mouseOnArea)
+        {
+            case EMouseOnArea.None:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+
+            case EMouseOnArea.Field_1:
+            targetPoint = field_1.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_2:
+            targetPoint = field_2.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_3:
+            targetPoint = field_3.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_4:
+            targetPoint = field_4.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_5:
+            targetPoint = field_5.GetLinePoint().position;
+            break;
+
+            case EMouseOnArea.Field_6:
+            targetPoint = field_6.GetLinePoint().position;
+            break;
+
+
+
+            case EMouseOnArea.Hole:
+            targetPoint = holeDetectArea.position;
+            break;
+
+            case EMouseOnArea.Player:
+            targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
+            break;
+
+            case EMouseOnArea.Enemy:
+            targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
+            break;
+            
+            case EMouseOnArea.AnyWhere:
+            //targetPoint = selectedTargetLineEnd.position;
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+            
+            default:
+            targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+            break;
+        }
+        startPoint = camera.ScreenToWorldPoint(startPoint);
+
+        for(int i = 0; i < lineCount; ++i)
+        {
+            float t;
+            if (i == 0)
+            {t = 0;}
+            else
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(targetPoint),targetPoint, t);
+            point[i].z = 0;
+        }
+        cardDragLine.SetPositions(point);
+        
+
+        // if (mouseOnField != null) {
+        //      // 현재 드래그 중인 카드 가져오기
+        //     if (draggedCard != null) {
+        //         targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.GetComponent<Card>()
+        //         .GetCardData().GetCardNum(), mouseOnField);
+        //     }
+        //}
+
+        Vector3 PointSetting(Vector3 origin){
+            float x, y;
+            x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
+            y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
+    
+            return new Vector3(x, y);
+        }
+        Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
+        {
+            Vector3 M0 = Vector3.Lerp(P0, P1, t);
+            Vector3 M1 = Vector3.Lerp(P1, P2, t);
+            Vector3 M2 = Vector3.Lerp(P2, P3, t);
+
+            Vector3 B0 = Vector3.Lerp(M0, M1, t);
+            Vector3 B1 = Vector3.Lerp(M1, M2, t);
+
+            return Vector3.Lerp(B0, B1, t);
+        }
+    }
+}

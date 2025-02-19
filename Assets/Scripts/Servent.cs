@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 
 public class Servent: MonoBehaviour
 {
+    private EServentType serventType;
     private ESequence sequence;
     private string serventName;
     private string serventOriginForce;
@@ -70,7 +71,7 @@ public class Servent: MonoBehaviour
             {
                 fade = 0f;
                 isDying = false;
-                BattleManagerAlt.Inst.ShotMissile(transform);
+                BattleManager.Inst.ShotMissile(transform);
                 Destroy(this.gameObject);
             }
             monsterMaterial.SetFloat("_Fade", fade);
@@ -96,7 +97,7 @@ public class Servent: MonoBehaviour
     public void OnMouseUp()
     {
         if(mouseOn)
-        {StartCoroutine(BattleManagerAlt.Inst.ShowServentInfo(this));}
+        {StartCoroutine(BattleManager.Inst.ShowServentInfo(this));}
     }
 
     public void OnMouseEnter()
@@ -127,6 +128,11 @@ public class Servent: MonoBehaviour
     // }
     public int GetServentNum()
     {return serventNum;}
+    public EServentType GetServentType()
+    {return serventType;}
+
+    public void SetServentType(EServentType serventType)
+    {this.serventType = serventType;}
 
 
 }

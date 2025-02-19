@@ -85,7 +85,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
         seq.Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack));
 
-        seq.AppendCallback(() => BattleManagerAlt.Inst.ShotMissile(alertPoint, targetPoint));
+        seq.AppendCallback(() => BattleManager.Inst.ShotMissile(alertPoint, targetPoint));
 
         // 3. 일정 시간 대기 후 오브젝트 삭제
         seq.AppendInterval(0.5f); // 0.5초 기다리기
@@ -177,7 +177,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         if(locked)
         {return;}
 
-        BattleManagerAlt.Inst.CardBeginDrag(this.gameObject);
+        BattleManager.Inst.CardBeginDrag(this.gameObject);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -185,7 +185,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         if(locked)
         {return;}
 
-        StartCoroutine(BattleManagerAlt.Inst.CardEndDrag(this, BattleManagerAlt.Inst.ReturnMouseOnField()));
+        StartCoroutine(BattleManager.Inst.CardEndDrag(this, BattleManager.Inst.ReturnMouseOnField()));
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -214,7 +214,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
         this.transform.localScale = new Vector3(0.4f, 0.4f, 1);
         this.transform.position = originPRS.pos;
-        BattleManagerAlt.Inst.CardOnDrag(this.gameObject);
+        BattleManager.Inst.CardOnDrag(this.gameObject);
     }
     public void OnPointerEnter(PointerEventData eventData)
     {

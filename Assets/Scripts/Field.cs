@@ -129,8 +129,12 @@ public class Field : MonoBehaviour
             filled = false;
             attacked = false;
 
-            BattleManagerAlt.Inst.AddTrash(cardData);
+            if(summonedServent.GetComponent<Servent>().GetServentType() == EServentType.Player)
+            BattleManager.Inst.AddTrash(cardData);
+
+            
             summonedServent.GetComponent<Servent>().Dead();
+            currentForce = 0;
         }
     }
 
@@ -149,6 +153,9 @@ public class Field : MonoBehaviour
         serventAttribute = cardData.serventAttribute;
         summonedServent = gameObject;
 
+        gameObject.GetComponent<Servent>().SetServentType(cardData.serventType);
+
+
         // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
         locked = false;
     }
@@ -160,7 +167,7 @@ public class Field : MonoBehaviour
 
         foreach(EServentCondition condition in conditions)
         {
-            GameObject gameObject = Instantiate(BattleManagerAlt.Inst.ReturnConditionMark(condition),
+            GameObject gameObject = Instantiate(BattleManager.Inst.ReturnConditionMark(condition),
             conditionPanel.transform.position, Utils.QI);
             gameObject.transform.SetParent(conditionPanel.transform);
         }
@@ -258,7 +265,7 @@ public class Field : MonoBehaviour
         }
     }
     void OnMouseDown()
-    {BattleManagerAlt.Inst.SelectTarget(this.gameObject);}
+    {BattleManager.Inst.SelectTarget(this.gameObject);}
 
 
 

@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Shop.unity
     guid: d90d13ad8ac776144a333dbc70b5cfec
+  - enabled: 1
+    path: Assets/Scenes/DeckCustom.unity
+    guid: 2393535d2f10e4b4f9b246e2b4837086
+  - enabled: 1
+    path: Assets/Scenes/Battle.unity
+    guid: 81e42075b1757634da23cfbb5dae31f0
   m_configObjects: {}

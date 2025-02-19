@@ -7,6 +7,7 @@ public class CookOfDarkness : CardData
         cardName = "암흑요리사";
         cardCost = 0;
         cardType = ECardType.Servent;
+        serventType = EServentType.Player;
         force = 1;
         cardGuideDescription = "";
         cardAbility = "소환시 자신의 덱에서 [스튜]를 2장 가져온다.";

@@ -14,6 +14,7 @@ public class CardData
     public ECardTargetType cardTargetType;
     public EServentAttribute serventAttribute;
     public EServentSize serventSize;
+    public EServentType serventType;
     public List<PreRequisite> preRequisites;
     public bool penetrate;
     public bool voidWalker;
@@ -32,6 +33,7 @@ public class CardData
     public List<PreRequisite> GetPreRequisites(){return preRequisites;}
     public bool GetPenetrate(){return penetrate;}
     public bool GetVoidWalker(){return voidWalker;}
+    public EServentType GetServentType(){return serventType;}
 
 }
 public struct PreRequisite

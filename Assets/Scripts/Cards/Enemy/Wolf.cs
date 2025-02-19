@@ -1,13 +1,13 @@
-public class AbyssSeeker : CardData
+public class Wolf : CardData
 {
-    public AbyssSeeker()
+    public Wolf()
     {
-        cardNum = 18;
+        cardNum = 100;
         serventNum = 7;
         cardName = "심연의 탐구자";
         cardCost = 2;
         cardType = ECardType.Servent;
-        serventType = EServentType.Player;
+        serventType = EServentType.Enemy;
         force = 3;
         cardGuideDescription = "";
         voidWalker = true;

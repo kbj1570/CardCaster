@@ -7,6 +7,7 @@ public class WindCrest : CardData
         cardName = "바람의 정령 크래스트";
         cardCost = 0;
         cardType = ECardType.Servent;
+        serventType = EServentType.Player;
         force = 1;
         cardGuideDescription = "";
         cardAbility = "소환시 자신의 바람 속성 소환수들의 포스를 1 상승시킨다";

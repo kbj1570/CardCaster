@@ -22,13 +22,13 @@ public class CardSelectFrame : MonoBehaviour, IPointerClickHandler
         if(clicked)
         {
             
-            BattleManagerAlt.Inst.RemoveSelectedCards(cardData);
+            BattleManager.Inst.RemoveSelectedCards(cardData);
             color.a = 0;
             this.clicked = !clicked;
         }
         else
         {
-            if(BattleManagerAlt.Inst.AddSelectedCards(cardData))
+            if(BattleManager.Inst.AddSelectedCards(cardData))
             {
                 color = Color.red;
                 color.a = 0.32f;

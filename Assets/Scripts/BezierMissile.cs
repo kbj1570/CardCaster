@@ -29,7 +29,7 @@ public class BezierMissile : MonoBehaviour {
         if (Vector2.Distance(transform.position, enemy) < 0.5f)
         {
             hit = true;
-            BattleManagerAlt.Inst.ActionDone();
+            BattleManager.Inst.ActionDone();
             Destroy(gameObject, 0.1f);
         }
 
