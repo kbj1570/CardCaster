@@ -5,17 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public static SceneChanger Inst{get; private set;}
+    void Awake() => Inst = this;
 
     public void LoadBattle()
     {SceneManager.LoadScene("Battle");}

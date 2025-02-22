@@ -865,12 +865,6 @@ public class BattleManager : MonoBehaviour
                     break;
                 }
             }
-            
-
-
-            // Debug.Log("적이 공격합니다.");
-
-            
             yield return new WaitForSeconds(1f);
         }
 
