@@ -150,10 +150,10 @@ public class Field : MonoBehaviour
         attacked = false;
         penetrate = cardData.GetPenetrate();
         voidWalker = cardData.GetVoidWalker();
-        serventAttribute = cardData.serventAttribute;
+        serventAttribute = cardData.GetAttribute();
         summonedServent = gameObject;
 
-        gameObject.GetComponent<Servent>().SetServentType(cardData.serventType);
+        gameObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
 
 
         // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);

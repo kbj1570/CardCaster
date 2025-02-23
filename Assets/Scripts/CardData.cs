@@ -2,22 +2,22 @@ using System.Collections.Generic;
 
 public class CardData
 {
-    public int cardNum;
-    public int serventNum;
-    public int spellNum;
-    public string cardName;
-    public string cardAbility;
-    public string cardGuideDescription;
-    public int force;
-    public int cardCost;
-    public ECardType cardType;
-    public ECardTargetType cardTargetType;
-    public EServentAttribute serventAttribute;
-    public EServentSize serventSize;
-    public EServentType serventType;
-    public List<PreRequisite> preRequisites;
-    public bool penetrate;
-    public bool voidWalker;
+    protected int cardNum;
+    protected int serventNum;
+    protected int spellNum;
+    protected string cardName;
+    protected string cardAbility;
+    protected string cardGuideDescription;
+    protected int force;
+    protected int cardCost;
+    protected ECardType cardType;
+    protected ECardTargetType cardTargetType;
+    protected EServentAttribute serventAttribute;
+    protected EServentSize serventSize;
+    protected EServentType serventType;
+    protected List<PreRequisite> preRequisites;
+    protected bool penetrate;
+    protected bool voidWalker;
 
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}

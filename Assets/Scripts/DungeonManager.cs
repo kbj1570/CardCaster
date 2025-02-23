@@ -539,61 +539,61 @@ public class DungeonManager : MonoBehaviour
     public void OpenStairAlert()
     {stairAlert.GetComponent<Window>().OnOff();}
 
-    public void ShowEncounter()
-    {
-        buttonList[0].SetActive(true);
-        buttonList[1].SetActive(false);
-        buttonList[2].SetActive(false);
-        buttonList[3].SetActive(true);
+    // public void ShowEncounter()
+    // {
+    //     buttonList[0].SetActive(true);
+    //     buttonList[1].SetActive(false);
+    //     buttonList[2].SetActive(false);
+    //     buttonList[3].SetActive(true);
 
-        encounterName.text = currentEncounter.GetEncounterName();
-        encounterDescription.text = currentEncounter.GetEncounterDescription();
+    //     encounterName.text = currentEncounter.GetEncounterName();
+    //     encounterDescription.text = currentEncounter.GetEncounterDescription();
 
-        List<string> select = currentEncounter.GetSelect();
+    //     List<string> select = currentEncounter.GetSelect();
 
-        buttonList[0].GetComponent<MyButton>().SetText(select[0]);
+    //     buttonList[0].GetComponent<MyButton>().SetText(select[0]);
 
-        switch(select.Count)
-        {
-            case 2:
-            buttonList[1].SetActive(true);
-            buttonList[1].GetComponent<MyButton>().SetText(select[1]);
-            break;
+    //     switch(select.Count)
+    //     {
+    //         case 2:
+    //         buttonList[1].SetActive(true);
+    //         buttonList[1].GetComponent<MyButton>().SetText(select[1]);
+    //         break;
 
-            case 3:
-            buttonList[1].SetActive(true);
-            buttonList[1].GetComponent<MyButton>().SetText(select[1]);
+    //         case 3:
+    //         buttonList[1].SetActive(true);
+    //         buttonList[1].GetComponent<MyButton>().SetText(select[1]);
 
-            buttonList[2].SetActive(true);
-            buttonList[2].GetComponent<MyButton>().SetText(select[2]);
-            break;
-        }
-    }
+    //         buttonList[2].SetActive(true);
+    //         buttonList[2].GetComponent<MyButton>().SetText(select[2]);
+    //         break;
+    //     }
+    // }
 
-    public void ShowResult(int value)
-    {
-        buttonList[0].SetActive(false);
-        buttonList[1].SetActive(false);
-        buttonList[2].SetActive(false);
-        buttonList[3].SetActive(false);
+    // public void ShowResult(int value)
+    // {
+    //     buttonList[0].SetActive(false);
+    //     buttonList[1].SetActive(false);
+    //     buttonList[2].SetActive(false);
+    //     buttonList[3].SetActive(false);
 
-        encounterDescription.text = currentEncounter.GetResult()[value];
+    //     encounterDescription.text = currentEncounter.GetResult()[value];
 
-        ApplyEncountResult(currentEncounter.GetEncounterNum(), value);
+    //     ApplyEncountResult(currentEncounter.GetEncounterNum(), value);
 
-    }
-    public void LoadEncounter()
-    {
-        List<Encounter> a = DataController.Inst.LoadEncounterList();
+    // }
+    // public void LoadEncounter()
+    // {
+    //     List<Encounter> a = DataController.Inst.LoadEncounterList();
         
-        int p = 0;
-        foreach(Encounter value in a)
-        {
-            value.SetEncounterNum(p);
-            ++p;
-        }
-        currentEncounter = a[0];
-    }
+    //     int p = 0;
+    //     foreach(Encounter value in a)
+    //     {
+    //         value.SetEncounterNum(p);
+    //         ++p;
+    //     }
+    //     currentEncounter = a[0];
+    // }
 
     private void ApplyEncountResult(int encounterNum, int value)
     {
