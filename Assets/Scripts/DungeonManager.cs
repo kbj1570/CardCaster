@@ -5,7 +5,6 @@ using Random = UnityEngine.Random;
 
 public class DungeonManager : MonoBehaviour
 {
-
     public Camera camera;
     public Sprite stairSprite;
     public Sprite encounterSprite;

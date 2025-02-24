@@ -27,7 +27,13 @@ public class BattleManager : MonoBehaviour
     int playerDamageIncrease;
     int enemyDamageIncrease;
 
+    bool enemySummonable;
+    bool enemyAttackable;
 
+    ETurnState turnState;
+    
+    public GameObject floatingTextPrefab;
+    public Transform enemyTransform;
     public Transform alertPoint; 
     public static BattleManager Inst{get; private set;}
     void Awake() => Inst = this;
@@ -210,6 +216,11 @@ public class BattleManager : MonoBehaviour
 
             
         }
+
+        RectTransform rectTransform = selectedCardLayoutGroup.GetComponent<RectTransform>();
+
+        int height = ((selectedCardLayoutGroup.transform.childCount / 2) * 680) +  550;
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
 
         cardSelectWindow.GetComponent<Window>().OnOff();
     }
@@ -497,14 +508,16 @@ public class BattleManager : MonoBehaviour
             break;
 
             case 7: // 피의 대가
-            playerHealth -= 1; 
+            PlayerTakeDamage(1);
             DrawCard();
             break;
 
             case 8: // 무너진 계약
-            DrawCard();
-            DrawCard();
-            DrawCard();
+            for(int i = 0; i < 3; ++i)
+            {
+                yield return new WaitForSeconds(0.35f);
+                DrawCard();
+            }
 
             enemyDamageBlock = true;
             break;
@@ -716,8 +729,8 @@ public class BattleManager : MonoBehaviour
         deckCountText.text = "Deck: " + deckCount.ToString();
         trashCountText.text = "Trash: " + trashCount.ToString();
 
-        playerHealthText.text = "PCHealth: "+ playerHealth.ToString();
-        enemyHealthText.text = "EnemyHealth: "+ enemyHealth.ToString();
+        playerHealthText.text = "PC: "+ playerHealth.ToString();
+        enemyHealthText.text = "Enemy: "+ enemyHealth.ToString();
 
         field_1.UpdateHealth();
         field_2.UpdateHealth();
@@ -730,6 +743,8 @@ public class BattleManager : MonoBehaviour
     IEnumerator StartTurnCo()
     {        
         isLoading = true;
+        turnState = ETurnState.None;
+        
 
         // player.GetComponent<Field>().UpdateHealth();
         // enemy.GetComponent<Field>().UpdateHealth();
@@ -751,6 +766,14 @@ public class BattleManager : MonoBehaviour
         field_5.GetComponent<Field>().SetAttacked(false);
         field_6.GetComponent<Field>().SetAttacked(false);
 
+        enemyDamageBlock = false;
+
+
+        yield return new WaitForSeconds(0.4f);
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<Card>().HideAndReveal(false);}
+        yield return new WaitForSeconds(0.4f);
+
         if(myTurn)
         {
             if(handList.Count < 5)
@@ -765,6 +788,8 @@ public class BattleManager : MonoBehaviour
             else
             {DrawCard();}
         }
+        yield return new WaitForSeconds(0.3f);
+        turnState = ETurnState.Player;
 
 
         yield return delay07;
@@ -773,11 +798,17 @@ public class BattleManager : MonoBehaviour
 
     public void StartEnemyTurn()
     {
+        if(turnState == ETurnState.Player)
         StartCoroutine(EnemyTurnCo());
     }
 
     public IEnumerator EnemyTurnCo()
     {
+        turnState = ETurnState.Enemy;
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<Card>().HideAndReveal(true);}
+
+        yield return new WaitForSeconds(0.3f);
         int actionToken = 3;
 
         for(int i = 0; i < actionToken; ++i)
@@ -862,6 +893,7 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.None:
                 {
+                    Debug.Log("아무것도 할 수 없습니다.");
                     break;
                 }
             }
@@ -875,40 +907,48 @@ public class BattleManager : MonoBehaviour
     private EEnemyAction SelectEnemyAction()
     {
         List<Field> filledField = new();
+        List<Field> attackedField = new();
+
+        enemyAttackable = true;
+        enemySummonable = true;
 
         int probability = 0;
+        
         if(field_4.GetFilled())
-        {
-            filledField.Add(field_4);
-            probability += 3;
-        }
+        {filledField.Add(field_4);}
 
         if(field_5.GetFilled())
-        {
-            filledField.Add(field_5);
-            probability += 3;
-        }
+        {filledField.Add(field_5);}
 
         if(field_6.GetFilled())
-        {
-            filledField.Add(field_6);
-            probability += 3;
-        }
+        {filledField.Add(field_6);}
 
+        if(filledField.Count == 3)
+        {enemySummonable = false;}
 
+        probability += filledField.Count * 3;
 
-        int p = Random.Range(1, 10);
-        if(p > probability)
+        if(field_4.GetAttacked())
+        {attackedField.Add(field_4);}
+
+        if(field_5.GetAttacked())
+        {attackedField.Add(field_5);}
+
+        if(field_6.GetAttacked())
+        {attackedField.Add(field_6);}
+
+        if(attackedField.Count == filledField.Count || filledField.Count == 0)
+        {enemyAttackable = false;}
+
+        int randomNum = Random.Range(1,10);
+
+        if(enemySummonable && probability < randomNum)
         return EEnemyAction.Summon;
 
-        p = Random.Range(0, 1);
-        if(p == 0)
+        if(enemyAttackable)
         return EEnemyAction.Attack;
-        else
+
         return EEnemyAction.Ability;
-
-
-        return EEnemyAction.None;
     } 
 
     IEnumerator EnemyAttack(Field startField,Field targetField)
@@ -924,10 +964,13 @@ public class BattleManager : MonoBehaviour
             attackerForce += playerDamageIncrease;
             attackerForce -= playerDamageDecrease;
 
+            if(attackerForce < 0)
+            {attackerForce = 0;}
+
             if(playerDamageBlock)
             {attackerForce = 0;}
-            
-            playerHealth -= attackerForce;
+
+            PlayerTakeDamage(attackerForce);
             startField.SetAttacked(true);
         }else
         {
@@ -947,7 +990,7 @@ public class BattleManager : MonoBehaviour
                 if(playerDamageBlock)
                 {defenderDamage = 0;}
                 
-                playerHealth -= defenderDamage;
+                PlayerTakeDamage(defenderDamage);
             }
             startField.SetAttacked(true);
         }
@@ -1650,17 +1693,18 @@ public class BattleManager : MonoBehaviour
                 {
                     targetField.locked = true;
                     costCount -= card.GetCardData().GetCardCost();
-                    
+
                     cardObjectList.Remove(card.gameObject);
                     card.SendMissile(alertPoint, ReturnMouseOnField().transform);
-                    //ServentPrefab 생성
-                    yield return new WaitForSeconds(1.5f);  
-                    //field에 ServentData넣기
+
+                    yield return new WaitForSeconds(1.5f);
+
                     targetField.Summon(card.GetCardData(), Instantiate(playerServentPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
 
                     StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(),targetField));
                     
                     handList.RemoveAt(card.GetCardOrder());
+                    
                     List<CardData> newHandList = new List<CardData>();
 
                     foreach(CardData cardData in handList)
@@ -1670,14 +1714,13 @@ public class BattleManager : MonoBehaviour
                     {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
 
                     handList = newHandList;
+
                     CardAlignmentAlt();
                 }
             }
 
-
             if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
             {
-                
                 switch(card.GetCardType())
                 {
                     case ECardType.Spell:
@@ -1685,6 +1728,7 @@ public class BattleManager : MonoBehaviour
                     StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
                     
                     AddTrash(card.GetCardData());
+                    ////////////////////////버그가 왜 터질깡맇ㄷㅈㄱㄷㅈㅎㅈㅅㅎㄱㅎㅈㄷ혻ㅈ섣홀ㅈ더ㅑㅎ숮류ㅕㅓ
                     handList.RemoveAt(card.GetCardOrder());
                     cardObjectList.Remove(card.gameObject);
                     card.SendMissile(alertPoint, hole.transform);
@@ -1884,6 +1928,52 @@ public class BattleManager : MonoBehaviour
         cardDragLine.endColor = Color.blue;
     }
 
+    public void EnemyTakeDamage(int damage)
+    {
+
+        GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        enemyHealth -= damage;
+
+    }
+
+    public void PlayerTakeDamage(int damage)
+    {
+
+        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        playerHealth -= damage;
+
+    }
+
+    public void EnemyLoseHP(int damage)
+    {
+
+        GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        enemyHealth -= damage;
+
+    }
+
+    public void PlayerLoseHP(int damage)
+    {
+
+        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        playerHealth -= damage;
+
+    }
+
+    
+
     public void EndAttackLine(EMouseOnArea mouseOnArea, bool isUsuable)
     {
         if(ReturnMouseOnField() == ReturnMouseOnField(mouseOnArea))
@@ -1896,10 +1986,14 @@ public class BattleManager : MonoBehaviour
             attackerForce += enemyDamageIncrease;
             attackerForce -= enemyDamageDecrease;
 
+            if(attackerForce < 0)
+            {attackerForce = 0;}
+
             if(enemyDamageBlock)
             {attackerForce = 0;}
             
-            enemyHealth -= attackerForce;
+
+            EnemyTakeDamage(attackerForce);
             
             ReturnMouseOnField(mouseOnArea).SetAttacked(true);
 
@@ -1923,8 +2017,7 @@ public class BattleManager : MonoBehaviour
                     if(enemyDamageBlock)
                     {defenderDamage = 0;}
                     
-                    
-                    enemyHealth -= defenderDamage;
+                    EnemyTakeDamage(defenderDamage);
                 }
                 
                 ReturnMouseOnField(mouseOnArea).SetAttacked(true);
@@ -2121,6 +2214,11 @@ public class BattleManager : MonoBehaviour
 
         foreach(GameObject cardObject in cardObjectList)
         {cardObject.GetComponent<Card>().SetLock(true);}
+
+        RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
+
+        int height = ((trashLayoutGroup.transform.childCount / 2) * 480) +  550;
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
 
         trashWindow.GetComponent<Window>().OnOff();
     }

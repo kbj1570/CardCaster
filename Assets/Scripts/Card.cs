@@ -43,6 +43,28 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
     }
 
+    public void HideAndReveal(bool flag)
+    {
+        if (currentSequence != null && currentSequence.IsActive())
+            currentSequence.Kill();
+        
+        if (flag)
+        {
+            // 숨기기: 더 빠르게 사라지도록 Ease.InBack 사용
+            currentSequence = DOTween.Sequence()
+            .Append(transform.DOMoveY(originPRS.pos.y - 330, 0.5f).SetEase(Ease.InBack));
+        }
+        else
+        {
+            // 나타나기: 목표 위치를 살짝 넘었다가 돌아오는 효과
+            currentSequence = DOTween.Sequence()
+            .Append(transform.DOMoveY(originPRS.pos.y + 30, 0.3f).SetEase(Ease.OutQuad)) // 살짝 위로 넘기기
+            .Append(transform.DOMoveY(originPRS.pos.y, 0.2f).SetEase(Ease.OutBack)); // 부드럽게 착지
+        }
+    }
+
+    
+
     IEnumerator AppearAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay); // 0.3초 기다림

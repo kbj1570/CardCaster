@@ -19,6 +19,13 @@ public class CardData
     protected bool penetrate;
     protected bool voidWalker;
 
+    protected bool fireImmune;
+    protected bool waterImmune;
+    protected bool windImmune;
+    protected bool darkImmune;
+    protected bool lightImmune;
+    
+
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}
     public int GetSpellNum(){return spellNum;}
