@@ -31,6 +31,9 @@ public class BattleManager : MonoBehaviour
     bool enemyAttackable;
 
     ETurnState turnState;
+
+    Enemy enemy;
+    Player player;
     
     public GameObject floatingTextPrefab;
     public Transform enemyTransform;
@@ -49,8 +52,8 @@ public class BattleManager : MonoBehaviour
     public RectTransform fieldDetectArea_4;
     public RectTransform fieldDetectArea_5;
     public RectTransform fieldDetectArea_6;
-    public Field player;
-    public Field enemy;
+    public Field playerField;
+    public Field enemyField;
     public Field field_1;
     public Field field_2;
     public Field field_3;
@@ -576,8 +579,8 @@ public class BattleManager : MonoBehaviour
 
     public void UpdateAllFieldStatus()
     {
-        player.GetComponent<Field>().UpdateHealth();
-        enemy.GetComponent<Field>().UpdateHealth();
+        playerField.GetComponent<Field>().UpdateHealth();
+        enemyField.GetComponent<Field>().UpdateHealth();
 
         field_1.GetComponent<Field>().UpdateHealth();
         field_2.GetComponent<Field>().UpdateHealth();
@@ -586,8 +589,8 @@ public class BattleManager : MonoBehaviour
         field_5.GetComponent<Field>().UpdateHealth();
         field_6.GetComponent<Field>().UpdateHealth();
 
-        player.GetComponent<Field>().UpdateCondition();
-        enemy.GetComponent<Field>().UpdateCondition();
+        playerField.GetComponent<Field>().UpdateCondition();
+        enemyField.GetComponent<Field>().UpdateCondition();
 
         field_1.GetComponent<Field>().UpdateCondition();
         field_2.GetComponent<Field>().UpdateCondition();
@@ -681,7 +684,9 @@ public class BattleManager : MonoBehaviour
         deckCount = 0;
         costCount = 0;
         playerHealth = 30;
-        enemyHealth = 30;
+
+        enemy = new UnknownMonster();
+        enemyHealth = enemy.GetHealth();
 
 
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
@@ -756,8 +761,8 @@ public class BattleManager : MonoBehaviour
         // field_5.GetComponent<Field>().UpdateHealth();
         // field_6.GetComponent<Field>().UpdateHealth();
 
-        player.GetComponent<Field>().SetAttacked(false);
-        enemy.GetComponent<Field>().SetAttacked(false);
+        playerField.GetComponent<Field>().SetAttacked(false);
+        enemyField.GetComponent<Field>().SetAttacked(false);
 
         field_1.GetComponent<Field>().SetAttacked(false);
         field_2.GetComponent<Field>().SetAttacked(false);
@@ -857,7 +862,7 @@ public class BattleManager : MonoBehaviour
 
                     List<Field> fields = new();
 
-                    fields.Add(player);
+                    fields.Add(playerField);
 
                     if(field_1.GetFilled())
                     fields.Add(field_1);
@@ -957,7 +962,7 @@ public class BattleManager : MonoBehaviour
         ,targetField.GetLinePoint().position, 1f));
 
         yield return new WaitForSeconds(1f);
-        if(targetField == player)
+        if(targetField == playerField)
         {
             int attackerForce = startField.GetForce();
 
@@ -1020,10 +1025,10 @@ public class BattleManager : MonoBehaviour
             return field_6;
 
             case EMouseOnArea.Enemy:
-            return enemy;
+            return enemyField;
 
             case EMouseOnArea.Player:
-            return player;
+            return playerField;
 
             case EMouseOnArea.AnyWhere:
             return null;
@@ -1059,10 +1064,10 @@ public class BattleManager : MonoBehaviour
             return null;
 
             case EMouseOnArea.Enemy:
-            return enemy;
+            return enemyField;
 
             case EMouseOnArea.Player:
-            return player;
+            return playerField;
 
             case EMouseOnArea.AnyWhere:
             return field_1;
@@ -1623,7 +1628,7 @@ public class BattleManager : MonoBehaviour
         if(targetField == field_6)
         {return false;}
 
-        if(targetField == player || targetField == enemy)
+        if(targetField == playerField || targetField == enemyField)
         {return false;}
 
 
@@ -1979,7 +1984,7 @@ public class BattleManager : MonoBehaviour
         if(ReturnMouseOnField() == ReturnMouseOnField(mouseOnArea))
         {return;}
 
-        if(ReturnMouseOnField() == enemy)
+        if(ReturnMouseOnField() == enemyField)
         {
             int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
 

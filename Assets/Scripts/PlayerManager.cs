@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerManager : MonoBehaviour
 {
+
+    Player player;
     public EItemCategory selectedCategory;
-    public int gold;
     public int additionalHealth;
     public int maxHealth;
 
@@ -43,7 +44,7 @@ public class PlayerManager : MonoBehaviour
     
     public void ClassifyItems()
     {
-        goldText.text = gold.ToString();
+        goldText.text = player.GetGold().ToString();
 
         importantItem.Clear();
         usableItem.Clear();
@@ -145,7 +146,7 @@ public class PlayerManager : MonoBehaviour
 
     public void GainGold(int value)
     {
-        gold += value;
+        player.SetGold(player.GetGold() + value);
         ClassifyItems();
         ShowInventory();
     }
@@ -161,7 +162,7 @@ public class PlayerManager : MonoBehaviour
 
     public void LoseGold(int value)
     {
-        gold -= value;
+        player.SetGold(player.GetGold() - value);
 
         ClassifyItems();
         ShowInventory();
@@ -184,8 +185,6 @@ public class PlayerManager : MonoBehaviour
         return itemData;
     }
 
-    public int GetGold()
-    {return gold;}
 
     public int GetHealth()
     {return health;}
@@ -197,5 +196,8 @@ public class PlayerManager : MonoBehaviour
 
     public void SetHealth(int value)
     {health = value;}
+
+     public int GetGold()
+    {return player.GetGold();}
 }
 
