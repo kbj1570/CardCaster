@@ -50,7 +50,6 @@ public class  DataController : MonoBehaviour
         JsonData info = JsonMapper.ToJson(value);
 
         File.WriteAllText(Path.Combine(Application.dataPath , "CardList.json"), info.ToString());
-        Debug.Log("Yes");
     }
 
      public List<CardData> LoadCardDatabase()

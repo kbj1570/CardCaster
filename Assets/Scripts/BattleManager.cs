@@ -859,10 +859,7 @@ public class BattleManager : MonoBehaviour
                 {
                     Debug.Log("적이 공격합니다.");
                     
-
-                    List<Field> fields = new();
-
-                    fields.Add(playerField);
+                    List<Field> fields = new List<Field>(){playerField};
 
                     if(field_1.GetFilled())
                     fields.Add(field_1);
@@ -881,12 +878,8 @@ public class BattleManager : MonoBehaviour
                         unAttackedField.Add(field);
                     }
 
-                    int randomNum = Random.Range(0, unAttackedField.Count);
-                    Field startField = unAttackedField[randomNum];
-                    randomNum = Random.Range(0, fields.Count);
-                    Field targetField = fields[randomNum];
-
-
+                    Field startField = unAttackedField[Random.Range(0, unAttackedField.Count)];
+                    Field targetField = fields[Random.Range(0, fields.Count)];
 
                     StartCoroutine(EnemyAttack(startField, targetField));
                     break;
@@ -898,7 +891,7 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.None:
                 {
-                    Debug.Log("아무것도 할 수 없습니다.");
+                    Debug.Log("적이 아무것도 할 수 없습니다.");
                     break;
                 }
             }

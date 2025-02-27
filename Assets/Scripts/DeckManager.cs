@@ -7,6 +7,7 @@ public class DeckManager : MonoBehaviour
 {
     public Transform focusOnCardPosition;
     public Transform gridlayoutPosition;
+    public Transform popUpPosition;
     public List<Transform> cardLocation;
     public GameObject window;
     public GameObject cardPrefab;
@@ -28,6 +29,8 @@ public class DeckManager : MonoBehaviour
     public static DeckManager Inst{get; private set;}
     public TMP_Text pageNumber;
     public TMP_Text searchText;
+    public GameObject popUpMessage;
+    private GameObject onMessage;
     void Awake() => Inst = this;
 
     void Start()
@@ -103,6 +106,19 @@ public class DeckManager : MonoBehaviour
         UpdateDeckPage();
     }
 
+    public void AlertError()
+    {
+        if(onMessage == null)
+        {
+            onMessage = Instantiate(popUpMessage, popUpPosition);
+        }
+        else
+        {
+            Destroy(onMessage.gameObject);
+            onMessage = Instantiate(popUpMessage, popUpPosition);
+        }
+    }
+
     public void UpdatePage()
     {
         int count = 0;
@@ -132,11 +148,27 @@ public class DeckManager : MonoBehaviour
             
             dummyCardObjectList.Add(cardObject);
 
+            bool locked = false;
+
+            if(item.Value == 0)
+            {locked = true;}
+
+            if(myDeckList.ContainsKey(item.Key))
+            {
+                if(myDeckList[item.Key]  == item.Value)
+                {locked = true;}
+
+                if(myDeckList[item.Key]  == 3)
+                {locked = true;}
+            }
+
+            
+
             GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
             cardFrameObject.transform.SetParent(cardLocation[count].transform);
             cardFrameObject.transform.localPosition = new Vector3(0,0,0);
             cardFrameObject.GetComponent<CardFrame>().
-            SetCardData(item.Key, item.Value, count);
+            SetCardData(item.Key, item.Value, count, locked);
 
             dummyCardObjectList.Add(cardFrameObject);
             count++;
@@ -182,10 +214,10 @@ public class DeckManager : MonoBehaviour
         else
         {myDeckList[value]++;}
 
-        myCardList[value]--;
+        // myCardList[value]--;
 
-        if(myCardList[value] == 0)
-        {myCardList.Remove(value);}
+        // if(myCardList[value] == 0)
+        // {myCardList.Remove(value);}
 
         GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], cardLocation[order].position , Utils.QI);
         gameObject.transform.SetParent(window.transform);
@@ -201,10 +233,10 @@ public class DeckManager : MonoBehaviour
         if(myDeckList[value] == 0)
         {myDeckList.Remove(value);}
 
-        if(!myCardList.ContainsKey(value))
-        {myCardList.Add(value, 1);}
-        else
-        {myCardList[value]++;}
+        // if(!myCardList.ContainsKey(value))
+        // {myCardList.Add(value, 1);}
+        // else
+        // {myCardList[value]++;}
 
         GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], gridlayoutPosition.position , Utils.QI);
         gameObject.transform.SetParent(window.transform);

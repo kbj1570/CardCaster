@@ -7,32 +7,26 @@ using TMPro;
 
 public class CardFrame : MonoBehaviour, IPointerClickHandler
 {
-    bool clicked;
+    bool locked;
     int order;
     CardData cardData;
     public Image image;
     public TMP_Text cardCountText;
 
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void SetCardData(CardData cardData, int cardCount, int order)
+    public void SetCardData(CardData cardData, int cardCount, int order, bool locked)
     {
         this.cardData = cardData;
         cardCountText.text = cardCount.ToString();
         this.order = order;
+        this.locked = locked;
     }
     
     public void OnPointerClick(PointerEventData eventData)
     {
-       DeckManager.Inst.AddCard(cardData, order); 
+        if(!locked)
+        DeckManager.Inst.AddCard(cardData, order);
+        else
+        DeckManager.Inst.AlertError();
     }
 }
