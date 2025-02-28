@@ -92,7 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   message: {fileID: 5263348566391386456}
   textbox: {fileID: 5263348565243779577}
-  fadeDuration: 0.7
+  fadeDuration: 0.5
 --- !u!1 &5263348566391386406
 GameObject:
   m_ObjectHideFlags: 0

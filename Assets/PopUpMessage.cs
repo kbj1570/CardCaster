@@ -19,6 +19,9 @@ public class PopUpMessage : MonoBehaviour
         
         StartCoroutine(FadeAway());
     }
+    
+    public void SetText(string value)
+    {message.text = value;}
 
     IEnumerator FadeAway()
     {

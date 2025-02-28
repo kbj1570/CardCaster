@@ -32,12 +32,12 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        importantItem = new Dictionary<ItemSO, int>();
-        usableItem = new Dictionary<ItemSO, int>();
-        unusableItem = new Dictionary<ItemSO, int>();
-        selectedCategory = EItemCategory.EImportantItem;
-        ClassifyItems();
-        ShowInventory();
+        // importantItem = new Dictionary<ItemSO, int>();
+        // usableItem = new Dictionary<ItemSO, int>();
+        // unusableItem = new Dictionary<ItemSO, int>();
+        // selectedCategory = EItemCategory.EImportantItem;
+        // ClassifyItems();
+        // ShowInventory();
 
         DontDestroyOnLoad(this);
     }
@@ -141,23 +141,21 @@ public class PlayerManager : MonoBehaviour
         {inventory.Add(value);}
 
         ClassifyItems();
-        ShowInventory();
     }
 
     public void GainGold(int value)
     {
         player.SetGold(player.GetGold() + value);
+        
         ClassifyItems();
-        ShowInventory();
     }
 
-    public void DeleteItem(ItemSO value, int count)
+    public void LoseItem(ItemSO value, int count)
     {     
         for(int i = 0; i < count; ++i)
         {inventory.Remove(value);}
 
         ClassifyItems();
-        ShowInventory();
     }
 
     public void LoseGold(int value)
@@ -165,7 +163,6 @@ public class PlayerManager : MonoBehaviour
         player.SetGold(player.GetGold() - value);
 
         ClassifyItems();
-        ShowInventory();
     }
 
     public void AddAdditionalHealth(int value)

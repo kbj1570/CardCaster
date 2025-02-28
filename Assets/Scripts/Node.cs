@@ -1,6 +1,11 @@
 public class Node
 {
-    public ERoomType roomType;
+    private ERoomType roomType;
+    private int gold;
+    private Item item;
+    private int itemCount;
+
+
     public Node()
     {this.roomType = ERoomType.None;}
 
@@ -8,4 +13,19 @@ public class Node
     {return roomType;}
     public void SetRoomType(ERoomType value)
     {this.roomType = value;}
+
+    public Item GetItem()
+    {return item;}
+
+    public int GetGold()
+    {return gold;}
+
+    public void SetItem(Item item, int count)
+    {
+        this.item = item;
+        this.itemCount = count;
+    }
+
+    public void SetGold(int value)
+    {this.gold = value;}
 }

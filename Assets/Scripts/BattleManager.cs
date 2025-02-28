@@ -761,8 +761,8 @@ public class BattleManager : MonoBehaviour
         // field_5.GetComponent<Field>().UpdateHealth();
         // field_6.GetComponent<Field>().UpdateHealth();
 
-        playerField.GetComponent<Field>().SetAttacked(false);
-        enemyField.GetComponent<Field>().SetAttacked(false);
+        // playerField.GetComponent<Field>().SetAttacked(false);
+        // enemyField.GetComponent<Field>().SetAttacked(false);
 
         field_1.GetComponent<Field>().SetAttacked(false);
         field_2.GetComponent<Field>().SetAttacked(false);

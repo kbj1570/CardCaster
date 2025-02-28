@@ -6,6 +6,8 @@ public class RoomNode : MonoBehaviour
 {
     Node nodeData;
     public int roomNum;
+
+    
     public ERoomType roomType;
     public GameObject roomMark;
     public Renderer renderer;
@@ -56,10 +58,19 @@ public class RoomNode : MonoBehaviour
         UpdateNodeFrame();
     }
 
+    public void SetRoomType(ERoomType roomType)
+    {this.roomType = roomType;}
+
     public void SetVisited()
     {
         visited = true;
         renderer.GetComponent<SpriteRenderer>().color = Color.white;
+
+        if(roomType != ERoomType.EStair)
+        {
+            roomMark.SetActive(false);
+            roomType = ERoomType.None;
+        }
     }
 
     public void UpdateNodeFrame()

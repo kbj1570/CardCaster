@@ -134,7 +134,7 @@ public class MerchantMannager : MonoBehaviour
 
     public void SellItem()
     {
-        PlayerManager.Inst.DeleteItem(selectedItem, countWindow.GetComponent<CountWindow>().GetCount());
+        PlayerManager.Inst.LoseItem(selectedItem, countWindow.GetComponent<CountWindow>().GetCount());
         PlayerManager.Inst.GainGold(countWindow.GetComponent<CountWindow>().GetCount() * selectedItem.GetPrice());
     }
 

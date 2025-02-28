@@ -19,12 +19,19 @@ public class DungeonManager : MonoBehaviour
     List<GameObject> nodeMap;
     List<int> nodeNumList;
 
-    public GameObject nodePrefab;
+    public GameObject roomNodePrefab;
+    public GameObject itemNodePrefab;
+    public GameObject encounterNodePrefab;
+    public GameObject monsterNodePrefab;
+    public GameObject stairNodePrefab;
     public GameObject mapObject;
     public GameObject buttonPrefab;
     public GameObject player;
     public GameObject stairAlert;
     public GameObject wayPointWindow;
+
+    public GameObject popUpMessageWindow;
+    public GameObject popUpMessage;
 
     public List<GameObject> buttonList;
 
@@ -77,6 +84,11 @@ public class DungeonManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.A))
         {
+
+            if(currentPlayerLocation % width == 0)
+            return;
+
+
             if(CheckOutOfIndex(currentPlayerLocation - 1))
             {
                 if(nodeMap[currentPlayerLocation - 1] != null)
@@ -105,6 +117,9 @@ public class DungeonManager : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.D))
         {
+            if(currentPlayerLocation % width == width - 1)
+            return;
+
             if(CheckOutOfIndex(currentPlayerLocation + 1))
             {
                 if(nodeMap[currentPlayerLocation + 1] != null)
@@ -136,7 +151,22 @@ public class DungeonManager : MonoBehaviour
         map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
         nodeNumList.Remove(nodeNumList[x]);
 
-        MovePlayer(currentPlayerLocation);
+        for(int i = 0; i < 5; ++i)
+        {
+            x = Random.Range(0, nodeNumList.Count);
+
+            if(Random.Range(0, 2) == 0)
+            {
+                map[nodeNumList[x]].SetRoomType(ERoomType.EItem);
+                map[nodeNumList[x]].SetItem(new RedPotion(), 2);
+
+            }else
+            {
+                map[nodeNumList[x]].SetRoomType(ERoomType.EGold);
+                map[nodeNumList[x]].SetGold(100);
+            }
+            nodeNumList.Remove(nodeNumList[x]);
+        }
     }
 
     public void CreateFloor()
@@ -153,12 +183,11 @@ public class DungeonManager : MonoBehaviour
 
         floorText.text = floor.ToString() + "F";
         AddLoopCorridor();
+        CreateNodeNumList();
+        SetNodeRoom();
         InstantiateNode();
         
-        CreateNodeNumList();
-        // UpdateNodeBlocked();
-        SetNodeRoom();
-        UpdateNode();
+        MovePlayer(currentPlayerLocation);
     }
 
     public void DestroyFloor()
@@ -216,30 +245,6 @@ public class DungeonManager : MonoBehaviour
 
     }
 
-    private void UpdateNode()
-    {
-        for(int i = 0; i < nodeNumList.Count; ++i)
-        {
-            switch(map[nodeNumList[i]].GetRoomType())
-            {
-                case ERoomType.EStair:
-                nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(stairSprite);
-                break;
-
-                case ERoomType.EMonster:
-                nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(monsterSprite);
-                break;
-
-                case ERoomType.EEncount:
-                nodeMap[nodeNumList[i]].GetComponent<RoomNode>().UpdateNodeImage(encounterSprite);
-                break;
-
-                default:
-                break;
-            }
-        }
-    }
-
     private void InstantiateNode()
     {
         nodeMap = new();
@@ -251,10 +256,39 @@ public class DungeonManager : MonoBehaviour
         {
             if(map[i] != null)
             {
-                GameObject gameObject = Instantiate(nodePrefab,new UnityEngine.Vector3(), Utils.QI);
+                GameObject prefab = null;
+                switch(map[i].GetRoomType())
+                {
+                    case ERoomType.EStair:
+                    prefab = stairNodePrefab;
+                    break;
+
+                    case ERoomType.EEncount:
+                    prefab = encounterNodePrefab;
+                    break;
+
+                    case ERoomType.EGold:
+                    prefab = itemNodePrefab;
+                    break;
+
+                    case ERoomType.EItem:
+                    prefab = itemNodePrefab;
+                    break;
+
+                    case ERoomType.EMonster:
+                    prefab = monsterNodePrefab;
+                    break;
+
+                    case ERoomType.None:
+                    prefab = roomNodePrefab;
+                    break;
+
+                }
+                GameObject gameObject = Instantiate(prefab,new UnityEngine.Vector3(), Utils.QI);
                 gameObject.transform.SetParent(mapObject.transform);
                 gameObject.transform.position = mapObject.transform.position;
                 gameObject.GetComponent<RoomNode>().SetNodeNum(i);
+                gameObject.GetComponent<RoomNode>().SetRoomType(map[i].GetRoomType());
                 gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
                 gameObject.SetActive(false);
 
@@ -311,8 +345,8 @@ public class DungeonManager : MonoBehaviour
         if(map[roomNum] != null)
         {return;}
 
-        if(roomNum / width == 0)
-        {return;}
+        // if(roomNum / width == 0)
+        // {return;}
 
         if(TrueOrFalse())
         {return;}
@@ -374,8 +408,8 @@ public class DungeonManager : MonoBehaviour
         if(roomNum < 0)
         {return false;}
 
-        if(roomNum % width == 0)
-        {return false;}
+        // if(roomNum % width == 0)
+        // {return false;}
 
         if(roomNum > floorSize - 1)
         {return false;}
@@ -391,9 +425,6 @@ public class DungeonManager : MonoBehaviour
             if(!CheckCorridor(i))
             {nodeNumList.Add(i);}
         }
-
-
-
     }
 
     private bool CheckCorridor(int value)
@@ -474,7 +505,7 @@ public class DungeonManager : MonoBehaviour
         nodeMap[roomNum].SetActive(true);
         nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
-        if(CheckOutOfIndex(roomNum + 1))
+        if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
         {
             if(nodeMap[roomNum + 1] != null)
             {
@@ -482,7 +513,6 @@ public class DungeonManager : MonoBehaviour
                 {
                     nodeMap[roomNum + 1].SetActive(true);
                     StartCoroutine(nodeMap[roomNum + 1].GetComponent<RoomNode>().FadeOut());
-
                 }
                 
             }
@@ -497,11 +527,10 @@ public class DungeonManager : MonoBehaviour
                     nodeMap[roomNum + width].SetActive(true);
                     StartCoroutine(nodeMap[roomNum + width].GetComponent<RoomNode>().FadeOut());
                 }
-                
             }
         }
 
-        if(CheckOutOfIndex(roomNum - 1))
+        if(CheckOutOfIndex(roomNum - 1) && roomNum % width != 0)
         {
             if(nodeMap[roomNum - 1] != null)
             {
@@ -530,9 +559,35 @@ public class DungeonManager : MonoBehaviour
         if(map[roomNum].GetRoomType() == ERoomType.EStair)
         {OpenStairAlert();}
         else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
-        {SceneChanger.Inst.LoadBattle();}
+        {
+            map[roomNum].SetRoomType(ERoomType.None);
+        }
         else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
-        {}
+        {
+            map[roomNum].SetRoomType(ERoomType.None);
+        }
+        else if(map[roomNum].GetRoomType() == ERoomType.EGold)
+        {
+            GainGold(map[roomNum]);
+            map[roomNum].SetRoomType(ERoomType.None);
+        }
+        else if(map[roomNum].GetRoomType() == ERoomType.EItem)
+        {
+            GainItem(map[roomNum]);
+            map[roomNum].SetRoomType(ERoomType.None);
+        }
+    }
+
+    
+
+    private void GainGold(Node node)
+    {
+        Debug.Log(node.GetGold().ToString() + " " +"골드를 얻었다");
+    }
+
+    private void GainItem(Node node)
+    {
+        Debug.Log(node.GetItem().GetName() + " " +" 를 얻었다");
     }
 
     public void OpenStairAlert()
@@ -631,6 +686,6 @@ public class DungeonManager : MonoBehaviour
 }
 
 public enum ERoomType
-{None, EStair, ESafe, EMonster, EEncount}
+{None, EStair, ESafe, EMonster, EEncount, EItem, EGold}
 public enum EDirection
 {North,South,West,East}

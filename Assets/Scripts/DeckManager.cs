@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 public class DeckManager : MonoBehaviour
 {
+    private int deckCount;
     public Transform focusOnCardPosition;
     public Transform gridlayoutPosition;
     public Transform popUpPosition;
@@ -29,9 +30,15 @@ public class DeckManager : MonoBehaviour
     public static DeckManager Inst{get; private set;}
     public TMP_Text pageNumber;
     public TMP_Text searchText;
+    public TMP_Text deckCountText;
     public GameObject popUpMessage;
     private GameObject onMessage;
+    public GameObject backButton;
+    public GameObject nextButton;
     void Awake() => Inst = this;
+
+    public ScrollRect scrollRect; // ScrollRect 컴포넌트
+
 
     void Start()
     {
@@ -39,6 +46,7 @@ public class DeckManager : MonoBehaviour
         cardDatabase = DataController.Inst.LoadCardDatabase();
         myCardList = new();
         deckCardObjectList = new();
+        scrollRect.normalizedPosition = new Vector2(1, 1);
 
         LoadCardList();
         LoadDeck();
@@ -61,6 +69,7 @@ public class DeckManager : MonoBehaviour
     }
     public void SaveDeck()
     {
+        AlertPopUpMessage("해당 덱을 저장했습니다");
         Dictionary<string, int> dumb = new Dictionary<string, int>();
         foreach(KeyValuePair<CardData, int> value in myDeckList)
         {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
@@ -106,17 +115,16 @@ public class DeckManager : MonoBehaviour
         UpdateDeckPage();
     }
 
-    public void AlertError()
+    public void AlertPopUpMessage(string value)
     {
         if(onMessage == null)
-        {
-            onMessage = Instantiate(popUpMessage, popUpPosition);
-        }
+        {onMessage = Instantiate(popUpMessage, popUpPosition);}
         else
         {
             Destroy(onMessage.gameObject);
             onMessage = Instantiate(popUpMessage, popUpPosition);
         }
+        onMessage.GetComponent<PopUpMessage>().SetText(value);
     }
 
     public void UpdatePage()
@@ -172,7 +180,18 @@ public class DeckManager : MonoBehaviour
 
             dummyCardObjectList.Add(cardFrameObject);
             count++;
+
+            
         }
+        if(currentPage == 0)
+        backButton.SetActive(false);
+        else
+        backButton.SetActive(true);
+
+        if(currentPage == pageLimit)
+        nextButton.SetActive(false);
+        else
+        nextButton.SetActive(true);
 
         pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
     }
@@ -194,6 +213,7 @@ public class DeckManager : MonoBehaviour
 
     public void UpdateDeckPage()
     {
+        deckCount = 0;
         foreach(GameObject gameObject in deckCardObjectList)
         {Destroy(gameObject);}
 
@@ -204,11 +224,21 @@ public class DeckManager : MonoBehaviour
 
             gameObject.transform.SetParent(gridLayout.transform);
             gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
+
+            deckCount += value.Value;
         }
+
+        deckCountText.text = deckCount.ToString() + "  /  30"; 
     }
 
     public void AddCard(CardData value, int order)
     {
+        if(deckCount == 30)
+        {
+            AlertPopUpMessage("덱이 가득 차서 더 이상 카드를 추가할 수 없습니다");
+            return;
+        }
+
         if(!myDeckList.ContainsKey(value))
         {myDeckList.Add(value, 1);}
         else

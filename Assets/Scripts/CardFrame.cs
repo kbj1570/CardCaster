@@ -10,7 +10,7 @@ public class CardFrame : MonoBehaviour, IPointerClickHandler
     bool locked;
     int order;
     CardData cardData;
-    public Image image;
+    public Image lockMark;
     public TMP_Text cardCountText;
 
 
@@ -20,6 +20,8 @@ public class CardFrame : MonoBehaviour, IPointerClickHandler
         cardCountText.text = cardCount.ToString();
         this.order = order;
         this.locked = locked;
+
+        lockMark.gameObject.SetActive(locked);
     }
     
     public void OnPointerClick(PointerEventData eventData)
@@ -27,6 +29,6 @@ public class CardFrame : MonoBehaviour, IPointerClickHandler
         if(!locked)
         DeckManager.Inst.AddCard(cardData, order);
         else
-        DeckManager.Inst.AlertError();
+        DeckManager.Inst.AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
     }
 }
