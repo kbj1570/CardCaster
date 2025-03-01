@@ -5,6 +5,8 @@ public class Node
     private Item item;
     private int itemCount;
 
+    private Enemy enemy;
+
 
     public Node()
     {this.roomType = ERoomType.None;}
@@ -28,4 +30,10 @@ public class Node
 
     public void SetGold(int value)
     {this.gold = value;}
+
+    public void SetEnemy(Enemy enemy)
+    {this.enemy = enemy;}
+
+    public Enemy GetEnemy()
+    {return enemy;}
 }

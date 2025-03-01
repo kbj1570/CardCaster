@@ -62,6 +62,8 @@ public class DeckManager : MonoBehaviour
             focusOnCard.transform.localPosition = new Vector3(0,0,0);
     }
 
+    
+
     public void UnFocusCard()
     {
         if(focusOnCard != null)

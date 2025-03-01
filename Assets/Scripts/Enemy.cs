@@ -9,6 +9,7 @@ public class Enemy
     protected Dictionary<Item, int> enemyRewards;
     protected int enemyGold;
     protected List<CardData> setventList;
+    protected List<EnemyAbility> enemyAbilities;
 
     public string GetName()
     {return enemyName;}
@@ -26,4 +27,6 @@ public class Enemy
     {return enemyGold;}
     public List<CardData> GetServentList()
     {return setventList;}
+    public List<EnemyAbility> GetEnemyAbilities()
+    {return enemyAbilities;}
 }

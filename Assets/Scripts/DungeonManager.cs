@@ -6,10 +6,6 @@ using Random = UnityEngine.Random;
 public class DungeonManager : MonoBehaviour
 {
     public Camera camera;
-    public Sprite stairSprite;
-    public Sprite encounterSprite;
-    public Sprite monsterSprite;
-    
     public Node startNode;
     int width = 14;
     public int waypointFloor = 3;
@@ -18,6 +14,7 @@ public class DungeonManager : MonoBehaviour
     List<Node> map;
     List<GameObject> nodeMap;
     List<int> nodeNumList;
+    List<string> messageList;
 
     public GameObject roomNodePrefab;
     public GameObject itemNodePrefab;
@@ -61,12 +58,26 @@ public class DungeonManager : MonoBehaviour
         CreateFloor();
         camera.transform.position = player.transform.position;
         camera.transform.position += new Vector3(0,0,-1);
+        messageList = new();
         
+    }
+
+    void AlertPopUpMessage(string message)
+    {
+        GameObject onMessage = Instantiate(popUpMessage, popUpMessageWindow.transform);
+        onMessage.GetComponent<PopUpMessage>().SetText(message);
+    }
+    public void ShowMessage()
+    {
+        if(messageList.Count == 0)
+        return;
     }
 
 
     void Update()
     {
+        ShowMessage();
+
         if(Input.GetKeyDown(KeyCode.W))
         {
             if(CheckOutOfIndex(currentPlayerLocation - width))
@@ -75,7 +86,6 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation -= width;
                     MovePlayer(currentPlayerLocation);
-                    
                 }
             }
             camera.transform.position = player.transform.position;
@@ -582,12 +592,12 @@ public class DungeonManager : MonoBehaviour
 
     private void GainGold(Node node)
     {
-        Debug.Log(node.GetGold().ToString() + " " +"골드를 얻었다");
+        AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");
     }
 
     private void GainItem(Node node)
     {
-        Debug.Log(node.GetItem().GetName() + " " +" 를 얻었다");
+        AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
     }
 
     public void OpenStairAlert()
