@@ -142,24 +142,41 @@ public class DungeonManager : MonoBehaviour
             }
         }
     }
+
+    
     private void SetNodeRoom()
     {
+        // int x = Random.Range(0, nodeNumList.Count);
+        // currentPlayerLocation = nodeNumList[x];
+        
+        // nodeNumList.Remove(nodeNumList[x]);
+
+        // x = Random.Range(0, nodeNumList.Count);
+        // map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
+        // nodeNumList.Remove(nodeNumList[x]);
+
+        // x = Random.Range(0, nodeNumList.Count);
+        // map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
+        // nodeNumList.Remove(nodeNumList[x]);
+
+        // x = Random.Range(0, nodeNumList.Count);
+        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
+        // nodeNumList.Remove(nodeNumList[x]);
+
+
         int x = Random.Range(0, nodeNumList.Count);
         currentPlayerLocation = nodeNumList[x];
-        
-        nodeNumList.Remove(nodeNumList[x]);
-
-        x = Random.Range(0, nodeNumList.Count);
-        map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
-        nodeNumList.Remove(nodeNumList[x]);
 
         x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
-        nodeNumList.Remove(nodeNumList[x]);
 
         x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        nodeNumList.Remove(nodeNumList[x]);
+
+        x = Random.Range(0, nodeNumList.Count);
+        map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
+
+        // 중복되지 않는 랜덤숫자 생성성
 
         for(int i = 0; i < 5; ++i)
         {
@@ -252,7 +269,6 @@ public class DungeonManager : MonoBehaviour
 
             Debug.Log(nodeNumList[i]);
         }
-
     }
 
     private void InstantiateNode()
@@ -294,7 +310,8 @@ public class DungeonManager : MonoBehaviour
                     break;
 
                 }
-                GameObject gameObject = Instantiate(prefab,new UnityEngine.Vector3(), Utils.QI);
+
+                GameObject gameObject = Instantiate(prefab,new Vector3(), Utils.QI);
                 gameObject.transform.SetParent(mapObject.transform);
                 gameObject.transform.position = mapObject.transform.position;
                 gameObject.GetComponent<RoomNode>().SetNodeNum(i);

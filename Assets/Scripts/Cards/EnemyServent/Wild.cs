@@ -1,19 +1,19 @@
-public class Wolf : CardData
+public class Wild : CardData
 {
-    public Wolf()
+    public Wild()
     {
         cardNum = 100;
         serventNum = 7;
-        cardName = "심연의 탐구자";
-        cardCost = 2;
+        cardName = "야생동물";
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Enemy;
-        force = 3;
+        force = 2;
         cardGuideDescription = "";
         voidWalker = true;
-        cardAbility = "이 소환수는 다른 소환수나 마법의 효과를 받지 않는다";
+        cardAbility = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Dark;
+        serventAttribute = EServentAttribute.Earth;
     }
 }

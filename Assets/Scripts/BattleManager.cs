@@ -2243,9 +2243,19 @@ public class BattleManager : MonoBehaviour
         trashList.Remove(cardData);
     }
 
+    public void GetRewards()
+    {
+        player.SetGold(enemy.GetGold() + player.GetGold());
+
+        for(int i = 0; i < enemy.GetReward().Value; ++i)
+        player.GainItem(enemy.GetReward().Key);
+
+        
+    }
 
 
-    public void DrawDragLine(Vector2 startPoint, Boolean isUsuable)
+
+    public void DrawDragLine(Vector2 startPoint, bool isUsuable)
     {
         Vector3[] point = new Vector3[lineCount];
         float posA = 10f;

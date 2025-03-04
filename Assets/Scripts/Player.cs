@@ -15,4 +15,7 @@ public class Player
 
     public void SetGold(int value)
     {gold = value;}
+
+    public void GainItem(Item item)
+    {}
 }
