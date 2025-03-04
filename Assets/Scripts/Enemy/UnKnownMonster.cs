@@ -4,15 +4,17 @@ public class UnknownMonster : Enemy
 {
     public UnknownMonster()
     {
-        enemyName = "정체불명의 자객";
+        enemyName = "정체불명의 괴물";
         enemyNum = "0";
         enemyHealth = 40;
         enemyGold = 300;
-        enemyRewards = new Dictionary<Item, int>
+
+        enemyRewards = new Dictionary<Item, int>()
         {{new OldStick(), 4},
-         {new DirtyPatch(), 4},
-         {new SharpFang(), 2},
-         {new ShardOfStarlight(), 1}};
+        {new DirtyPatch(), 4},
+        {new SharpFang(), 4},
+        {new ShardOfStarlight(), 2}};
+
         
         serventList = new List<CardData>
         {
@@ -21,9 +23,7 @@ public class UnknownMonster : Enemy
         };
 
         enemyAbilities = new List<EnemyAbility>
-        {
-            new MysteriousFog()
-        };
+        {new MysteriousFog()};
 
         SetRewards();
     }

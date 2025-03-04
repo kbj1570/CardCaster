@@ -164,6 +164,8 @@ public class BattleManager : MonoBehaviour
         mouseOnArea = EMouseOnArea.None;
 
         StartCoroutine(StartGameCo());
+        Debug.Log(enemy.GetGold());
+        Debug.Log(enemy.GetReward());
     }
 
     public bool AddSelectedCards(CardData cardData)
@@ -727,6 +729,9 @@ public class BattleManager : MonoBehaviour
 
     public void UpdateCondition()
     {
+        if(deckList == null)
+        return;
+        
         deckCount = deckList.Count;
         trashCount = trashList.Count;
 
@@ -2134,12 +2139,6 @@ public class BattleManager : MonoBehaviour
             targetPoint = field_6.GetLinePoint().position;
             break;
 
-
-
-            // case EMouseOnArea.Hole:
-            // targetPoint = holeDetectArea.position;
-            // break;
-
             case EMouseOnArea.Player:
             targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
             break;
@@ -2149,7 +2148,6 @@ public class BattleManager : MonoBehaviour
             break;
             
             case EMouseOnArea.AnyWhere:
-            //targetPoint = selectedTargetLineEnd.position;
             targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
             break;
             
@@ -2172,6 +2170,7 @@ public class BattleManager : MonoBehaviour
             PointSetting(targetPoint),targetPoint, t);
             point[i].z = 0;
         }
+
         attackDragLine.SetPositions(point);
 
         Vector3 PointSetting(Vector3 origin){
@@ -2196,8 +2195,6 @@ public class BattleManager : MonoBehaviour
 
     public void ShowTrashCards()
     {
-        
-
         foreach(CardData cardData in trashList)
         {
             GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
@@ -2207,7 +2204,6 @@ public class BattleManager : MonoBehaviour
             cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
             cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
             cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
-
         }
 
         foreach(GameObject cardObject in cardObjectList)
@@ -2249,8 +2245,6 @@ public class BattleManager : MonoBehaviour
 
         for(int i = 0; i < enemy.GetReward().Value; ++i)
         player.GainItem(enemy.GetReward().Key);
-
-        
     }
 
 

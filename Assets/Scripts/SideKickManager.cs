@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using DG.Tweening;
-
 public class SideKickManager : MonoBehaviour
 {
 
-    [SerializeField]List<DialogueNodeSO> dialogueList;
+    [SerializeField]List<DialogueNode> dialogueList;
     [SerializeField]List<CardData> fullCardList;
     [SerializeField]List<CardData> enrolledCardList;
     [SerializeField]List<CardData> sideCardList;
@@ -23,7 +20,6 @@ public class SideKickManager : MonoBehaviour
 
     void Start()
     {
-        ShowTradingMenu();
     }
 
     void Update()

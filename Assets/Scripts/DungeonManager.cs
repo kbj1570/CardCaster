@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
@@ -51,16 +52,75 @@ public class DungeonManager : MonoBehaviour
     void Awake() => Inst = this;
 
 
-    void Start()
+    // public float moveSpeed = 2f; // 이동 속도
+    // private Vector2Int currentPos; // 현재 좌표
+    // private Vector2Int targetPos; // 목표 좌표
+    // private Queue<Vector2Int> pathQueue = new Queue<Vector2Int>(); // 이동 경로 큐
+
+    // public Dictionary<Vector2Int, GameObject> gridMap; // 생성된 칸을 저장하는 딕셔너리
+
+    private void Start()
     {
+
         // LoadEncounter();
         // ShowEncounter();
         CreateFloor();
         camera.transform.position = player.transform.position;
         camera.transform.position += new Vector3(0,0,-1);
         messageList = new();
-        
+
+
+        // currentPos = new Vector2Int(0, 0); // 초기 위치
+        // targetPos = currentPos;
+        // transform.position = new Vector3(currentPos.x, currentPos.y, 0);
     }
+
+
+    // public void OnTileClicked(Vector2Int clickedPos)
+    // {
+    //     if (!gridMap.ContainsKey(clickedPos)) return; // 이동할 칸이 없으면 무시
+
+    //     // 이동 경로를 계산 (직선 이동)
+    //     pathQueue.Clear();
+    //     Vector2Int pos = currentPos;
+
+    //     while (pos != clickedPos)
+    //     {
+    //         if (pos.x < clickedPos.x) pos.x++;
+    //         else if (pos.x > clickedPos.x) pos.x--;
+    //         else if (pos.y < clickedPos.y) pos.y++;
+    //         else if (pos.y > clickedPos.y) pos.y--;
+
+    //         pathQueue.Enqueue(pos);
+    //     }
+    // }
+
+    // private void MoveToNextTile()
+    // {
+    //     if (pathQueue.Count == 0) return;
+
+    //     Vector2Int nextPos = pathQueue.Dequeue();
+    //     targetPos = nextPos;
+
+    //     StartCoroutine(MoveSmoothly(nextPos));
+    // }
+
+    // IEnumerator MoveSmoothly(Vector2Int nextPos)
+    // {
+    //     Vector3 start = transform.position;
+    //     Vector3 end = new Vector3(nextPos.x, nextPos.y, 0);
+    //     float elapsedTime = 0f;
+
+    //     while (elapsedTime < 1f / moveSpeed)
+    //     {
+    //         transform.position = Vector3.Lerp(start, end, elapsedTime * moveSpeed);
+    //         elapsedTime += Time.deltaTime;
+    //         yield return null;
+    //     }
+
+    //     transform.position = end;
+    //     currentPos = nextPos;
+    // }
 
     void AlertPopUpMessage(string message)
     {
@@ -77,6 +137,11 @@ public class DungeonManager : MonoBehaviour
     void Update()
     {
         ShowMessage();
+
+        // if (pathQueue.Count > 0)
+        // {
+        //     MoveToNextTile();
+        // }
 
         if(Input.GetKeyDown(KeyCode.W))
         {
@@ -172,11 +237,16 @@ public class DungeonManager : MonoBehaviour
 
         x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
+        SetEnemyInNode(map[nodeNumList[x]]);
+
+        x = Random.Range(0, nodeNumList.Count);
+        map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
+        SetEnemyInNode(map[nodeNumList[x]]);
 
         x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
 
-        // 중복되지 않는 랜덤숫자 생성성
+        // 중복되지 않는 랜덤숫자 생성
 
         for(int i = 0; i < 5; ++i)
         {
@@ -194,6 +264,11 @@ public class DungeonManager : MonoBehaviour
             }
             nodeNumList.Remove(nodeNumList[x]);
         }
+    }
+
+    public void SetEnemyInNode(Node node)
+    {
+        node.SetEnemy(new UnknownMonster());
     }
 
     public void CreateFloor()

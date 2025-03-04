@@ -40,7 +40,7 @@ public class Enemy
     public void SetRewards()
     {
         Random random = new Random();
-        int randomNum = random.Next(0, enemyGold / 10);
+        int randomNum = random.Next(0, enemyGold / 5);
 
         if(random.Next(0, 2) == 0)
         {enemyGold += randomNum;}
@@ -50,16 +50,17 @@ public class Enemy
         if(enemyRewards != null)
         {   
             int count = 0;
+            Dictionary<Item, int> rewardRoullet = new();
 
             foreach(KeyValuePair<Item, int> reward in enemyRewards)
             {
                 count += reward.Value;
-                enemyRewards[reward.Key] = count;
+                rewardRoullet.Add(reward.Key, count);
             }
 
             randomNum = random.Next(0, count + 1);
 
-            foreach(KeyValuePair<Item, int> reward in enemyRewards)
+            foreach(KeyValuePair<Item, int> reward in rewardRoullet)
             {
                 if(randomNum <= reward.Value)
                 {
