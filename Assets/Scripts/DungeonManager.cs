@@ -6,17 +6,23 @@ using Random = UnityEngine.Random;
 
 public class DungeonManager : MonoBehaviour
 {
+    Dungeon dungeon;
     public Camera camera;
     public Node startNode;
-    int width = 14;
-    public int waypointFloor = 3;
+    int width;
+    int height;
+    int maxGold;
+    int dungeonEndFloor;
+    List<int> safeFloorList;
     public int floor;
-    const int floorSize = 140;
+    int floorSize;
+    string dungeonName;
     List<Node> map;
     List<GameObject> nodeMap;
     List<int> nodeNumList;
     List<string> messageList;
-
+    Dictionary<Item, int> itemList;
+    Dictionary<Enemy, int> enemyList;
     public GameObject roomNodePrefab;
     public GameObject itemNodePrefab;
     public GameObject encounterNodePrefab;
@@ -39,7 +45,6 @@ public class DungeonManager : MonoBehaviour
 
     public TMP_Text healthText;
     public TMP_Text goldText;
-
     public TMP_Text textbox;
 
     private Encounter currentEncounter;
@@ -61,7 +66,8 @@ public class DungeonManager : MonoBehaviour
 
     private void Start()
     {
-
+        
+        DungeonSetUp();
         // LoadEncounter();
         // ShowEncounter();
         CreateFloor();
@@ -73,6 +79,22 @@ public class DungeonManager : MonoBehaviour
         // currentPos = new Vector2Int(0, 0); // 초기 위치
         // targetPos = currentPos;
         // transform.position = new Vector3(currentPos.x, currentPos.y, 0);
+    }
+    public void SetDungeon(Dungeon dungeon)
+    {this.dungeon = dungeon;}
+
+    private void DungeonSetUp()
+    {
+        dungeon = new Graveyard();
+
+        dungeonName = dungeon.GetDungeonName();
+        width = dungeon.GetDungeonWidth();
+        height = dungeon.GetDungeonHeight();
+        floorSize = dungeon.GetDungeonFloorSize();
+        maxGold = dungeon.GetMaxGold();
+        dungeonEndFloor = dungeon.GetDungeonEndFloor();
+        safeFloorList = dungeon.GetSafeFloorList();
+        itemList = dungeon.GetItemList();
     }
 
 
@@ -560,7 +582,7 @@ public class DungeonManager : MonoBehaviour
     {
         floor++;
 
-        if(floor == waypointFloor)
+        if(safeFloorList.Contains(floor))
         {
             wayPointWindow.GetComponent<Window>().OnOff();
             DestroyFloor();
@@ -570,7 +592,6 @@ public class DungeonManager : MonoBehaviour
             DestroyFloor();
             CreateFloor();
         }
-        
     }
 
     public void UseItem()

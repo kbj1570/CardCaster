@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 public class EnemyAbility
 {
+    protected string abilityNum;
     protected string abilityName;
     protected string abilityDescription;
     protected List<PreRequisite> preRequisites;

@@ -6,6 +6,7 @@ public class Enemy
     protected string enemyName;
     protected string enemyNum;
     protected int enemyHealth;
+    protected int actionToken;
 
     protected Dictionary<Item, int> enemyRewards;
     protected KeyValuePair<Item, int> rewards;

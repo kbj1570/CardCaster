@@ -8,6 +8,7 @@ public class UnknownMonster : Enemy
         enemyNum = "0";
         enemyHealth = 40;
         enemyGold = 300;
+        actionToken = 4;
 
         enemyRewards = new Dictionary<Item, int>()
         {{new OldStick(), 4},
