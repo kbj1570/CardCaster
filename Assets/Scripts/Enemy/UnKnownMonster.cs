@@ -11,10 +11,12 @@ public class UnknownMonster : Enemy
         actionToken = 4;
 
         enemyRewards = new Dictionary<Item, int>()
-        {{new OldStick(), 4},
-        {new DirtyPatch(), 4},
-        {new SharpFang(), 4},
-        {new ShardOfStarlight(), 2}};
+        {
+            {new OldStick(), 4},
+            {new DirtyPatch(), 4},
+            {new SharpFang(), 4},
+            {new ShardOfStarlight(), 2}
+        };
 
         
         serventList = new List<CardData>
@@ -24,7 +26,10 @@ public class UnknownMonster : Enemy
         };
 
         enemyAbilities = new List<EnemyAbility>
-        {new MysteriousFog()};
+        {
+            new MysteriousFog(),
+            new WildGrowl()
+        };
 
         SetRewards();
     }

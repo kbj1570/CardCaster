@@ -5,5 +5,4 @@ public class EnemyField : MonoBehaviour
 {
     Enemy enemy;
     int health;
-
 }

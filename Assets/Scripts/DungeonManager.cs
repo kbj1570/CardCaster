@@ -39,6 +39,7 @@ public class DungeonManager : MonoBehaviour
 
     public List<GameObject> buttonList;
 
+    public TMP_Text dungeonNameText;
     public TMP_Text floorText;
     public TMP_Text encounterName;
     public TMP_Text encounterDescription;
@@ -54,6 +55,8 @@ public class DungeonManager : MonoBehaviour
     private int goldMultiple;
     private bool isIgnorable;
     public static DungeonManager Inst{get; private set;}
+
+    private int selectionValue;
     void Awake() => Inst = this;
 
 
@@ -86,7 +89,6 @@ public class DungeonManager : MonoBehaviour
     private void DungeonSetUp()
     {
         dungeon = new Graveyard();
-
         dungeonName = dungeon.GetDungeonName();
         width = dungeon.GetDungeonWidth();
         height = dungeon.GetDungeonHeight();
@@ -277,15 +279,43 @@ public class DungeonManager : MonoBehaviour
             if(Random.Range(0, 2) == 0)
             {
                 map[nodeNumList[x]].SetRoomType(ERoomType.EItem);
-                map[nodeNumList[x]].SetItem(new RedPotion(), 2);
+                map[nodeNumList[x]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
 
             }else
             {
                 map[nodeNumList[x]].SetRoomType(ERoomType.EGold);
-                map[nodeNumList[x]].SetGold(100);
+                map[nodeNumList[x]].SetGold(Random.Range(1, maxGold + 1));
             }
             nodeNumList.Remove(nodeNumList[x]);
         }
+    }
+
+    private Item ReturnDungeonItem()
+    {
+        if(itemList != null)
+        {   
+            int count = 0;
+            Dictionary<Item, int> rewardRoullet = new();
+
+            foreach(KeyValuePair<Item, int> reward in itemList)
+            {
+                count += reward.Value;
+                rewardRoullet.Add(reward.Key, count);
+            }
+
+            int randomNum = Random.Range(0, count + 1);
+
+            foreach(KeyValuePair<Item, int> reward in rewardRoullet)
+            {
+                if(randomNum <= reward.Value)
+                {
+                    randomNum = Random.Range(1, 3);
+                    return reward.Key;
+                }
+            }
+        }
+
+        return null;
     }
 
     public void SetEnemyInNode(Node node)
@@ -324,12 +354,10 @@ public class DungeonManager : MonoBehaviour
     {
 
         int random = Random.Range(0,3);
-
         int first = nodeNumList[random];
         int last = nodeNumList[nodeNumList.Count - 1];
 
         int x = (last / width) - (first / width);
-
         int z = first;
 
         for(int p = 0; p < x; ++p)
@@ -363,7 +391,7 @@ public class DungeonManager : MonoBehaviour
                 !nodeNumList.Contains(nodeNumList[i] + width),
                 !nodeNumList.Contains(nodeNumList[i] - 1),
                 !nodeNumList.Contains(nodeNumList[i] + 1));
-
+            
             Debug.Log(nodeNumList[i]);
         }
     }
@@ -532,9 +560,6 @@ public class DungeonManager : MonoBehaviour
         if(roomNum < 0)
         {return false;}
 
-        // if(roomNum % width == 0)
-        // {return false;}
-
         if(roomNum > floorSize - 1)
         {return false;}
 
@@ -587,6 +612,8 @@ public class DungeonManager : MonoBehaviour
             wayPointWindow.GetComponent<Window>().OnOff();
             DestroyFloor();
         }
+        else if(dungeonEndFloor == floor)
+        {Debug.Log("던전을 클리어 했습니다");}
         else
         {
             DestroyFloor();
@@ -621,6 +648,14 @@ public class DungeonManager : MonoBehaviour
             break;
         }
     }
+
+    public void IncreaseSelectionValue()
+    {selectionValue++;}
+    public void DecreaseSelectionValue()
+    {selectionValue--;}
+    public int GetSelectionValue()
+    {return selectionValue;}
+    
 
     public void MovePlayer(int roomNum)
     {
@@ -716,8 +751,11 @@ public class DungeonManager : MonoBehaviour
     public void OpenStairAlert()
     {stairAlert.GetComponent<Window>().OnOff();}
 
+
+
     // public void ShowEncounter()
     // {
+    //     selectionValue = 0;
     //     buttonList[0].SetActive(true);
     //     buttonList[1].SetActive(false);
     //     buttonList[2].SetActive(false);

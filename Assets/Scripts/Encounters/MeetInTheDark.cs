@@ -1,19 +1,28 @@
+using System.Collections.Generic;
+
 public class MeetInTheDark : Encounter
 {
-    public MeetInTheDark()
-    {
-        encounterName = "어둠속의 대화";
-        encounterNum = "0";
-        encounterText = new()
-        {{"칠흑같은 어둠 속에서 어떤 목소리가 들려온다. 이렇게 또 뵙는군요? 여행자님! 저번에 주셨던 물건은 유용하게 잘 썼답니다. 실례가 안된다면 부탁드리고 싶은 것이 하나 더 있습니다."},
-        {"피를 너무 많이 흘려서 말이죠..."}};
+    // public MeetInTheDark()
+    // {
+    //     encounterName = "어둠속의 대화";
+    //     encounterNum = "0";
+    //     encounterText = new()
+    //     {"칠흑같은 어둠 속에서 어떤 목소리가 들려온다. 저기.. 혹시 괜찮으시면 저 좀 도와주시겠어요?",
+    //     "혹시 약을 갖고 계시면 좀 나눠주시겠어요?"};
 
-        encounterSelect.Add("");
-        encounterSelect.Add("");
-        encounterSelect.Add("무시하고 지나간다");
+    //     firstSelection = new();
+    //     secondSelection = new();
+    //     thirdSelection = new();
 
-        encounterRequire.Add(new RedPotion(), 1);
+    //     firstSelection.SetSelectionTitle("물품을 준다. (붉은포션 1개)");
+    //     secondSelection.SetSelectionTitle("왜 필요한건지 물어본다.");
+    //     thirdSelection.SetSelectionTitle("무시하고 지나간다.");
 
-    }
+    //     firstSelection.SetSelectionText(
+    //     new(){
+    //         "감사합니다! 복 받으실거예요!",
+    //         "어둠이 걷히고 금방 밝아졌다. 밝아진 주위를 둘러보니 주변에는 아무도 없었다."
+    //     });
+    // }
 
 }
