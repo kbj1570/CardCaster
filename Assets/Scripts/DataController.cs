@@ -35,6 +35,7 @@ public class  DataController : MonoBehaviour
         return null;
     }
 
+
     public Dictionary<string, int> LoadDeck()
     {
         if(File.Exists(Path.Combine(Application.dataPath , "Deck.json")))
@@ -44,6 +45,17 @@ public class  DataController : MonoBehaviour
         }
         return null;
     }
+
+    public Dictionary<string, int> LoadItemList()
+    {
+        if(File.Exists(Path.Combine(Application.dataPath , "Item.json")))
+        {
+            Dictionary<string, int> data = JsonMapper.ToObject<Dictionary<string, int>>(File.ReadAllText(Path.Combine(Application.dataPath , "Item.json")));
+            return data;
+        }
+        return null;
+    }
+
 
     public void SaveCardList(Dictionary<string, int> value)
     {
@@ -84,6 +96,25 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new DespairOfBerserker());//19
         
         return cardDatas;
+    }
+
+    public List<Item> LoadItemDatabase()
+    {
+        List<Item> items = new();
+
+        items.Add(new BigRedPotion());
+        items.Add(new BrokenCompass());
+        items.Add(new GoldenDice());
+        items.Add(new GuideLantern());
+        items.Add(new OminousCenser());
+        items.Add(new RedPotion());
+        items.Add(new RustyKnife());
+        items.Add(new TrickGlove());
+        items.Add(new DirtyPatch());
+        items.Add(new OldStick());
+        items.Add(new ShardOfStarlight());
+        items.Add(new SharpFang());
+        return items;
     }
 
     public Dictionary<string, int> LoadCardList()

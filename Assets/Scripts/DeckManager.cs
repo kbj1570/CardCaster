@@ -24,6 +24,7 @@ public class DeckManager : MonoBehaviour
     public List<GameObject> dummyCardPrefabList;
     private List<GameObject> deckCardObjectList;
 
+
     private Dictionary<CardData, int> currentCardList;
     private int currentPage;
     private int pageLimit;
@@ -90,8 +91,6 @@ public class DeckManager : MonoBehaviour
     public void SaveCardList()
     {
         Dictionary<string, int> dumb = new Dictionary<string, int>();
-
-        
 
         foreach(KeyValuePair<CardData, int> value in myCardList)
         {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}

@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
+using System;
+using UnityEngine.UI;
 
 public class DungeonManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class DungeonManager : MonoBehaviour
     int maxGold;
     int dungeonEndFloor;
     List<int> safeFloorList;
+    List<Item> itemDatabase;
     public int floor;
     int floorSize;
     string dungeonName;
@@ -34,8 +37,18 @@ public class DungeonManager : MonoBehaviour
     public GameObject stairAlert;
     public GameObject wayPointWindow;
 
+    public List<GameObject> itemPrefabList;
+
+    public List<Transform> itemLocation;
+
+    private Dictionary<Item, int> currentItemList;
+    private Dictionary<Item, int> myItemList;
+
     public GameObject popUpMessageWindow;
     public GameObject popUpMessage;
+
+    public GameObject nextButton;
+    public GameObject backButton;
 
     public List<GameObject> buttonList;
 
@@ -50,6 +63,8 @@ public class DungeonManager : MonoBehaviour
 
     private Encounter currentEncounter;
 
+    public Item selectedItem;
+
     private int currentPlayerLocation;
 
     private int goldMultiple;
@@ -57,7 +72,10 @@ public class DungeonManager : MonoBehaviour
     public static DungeonManager Inst{get; private set;}
 
     private int selectionValue;
+    int currentPage;
     void Awake() => Inst = this;
+
+    List<GameObject> itemObjectList;
 
 
     // public float moveSpeed = 2f; // 이동 속도
@@ -76,8 +94,19 @@ public class DungeonManager : MonoBehaviour
         CreateFloor();
         camera.transform.position = player.transform.position;
         camera.transform.position += new Vector3(0,0,-1);
+
+        itemObjectList = new();
         messageList = new();
 
+        myItemList = new();
+
+        currentItemList = new();
+        itemDatabase = DataController.Inst.LoadItemDatabase();
+        LoadItemList();
+
+        UpdateItemPage();
+
+        currentPage = 0;
 
         // currentPos = new Vector2Int(0, 0); // 초기 위치
         // targetPos = currentPos;
@@ -85,6 +114,85 @@ public class DungeonManager : MonoBehaviour
     }
     public void SetDungeon(Dungeon dungeon)
     {this.dungeon = dungeon;}
+
+    public void SetSelectedItem(int itemNum)
+    {selectedItem = itemDatabase[itemNum];}
+
+    public void LoadItemList()
+    {
+        foreach(KeyValuePair<string, int> value in DataController.Inst.LoadItemList())
+        {myItemList.Add(itemDatabase[Convert.ToInt32(value.Key)], value.Value);}
+    }
+
+     public void UpdateItemPage()
+    {
+        int count = 0;
+        int pageLimit = myItemList.Count / 8;
+        int remainder = myItemList.Count % 8;
+
+        currentItemList.Clear();
+        foreach(GameObject gameObject in itemObjectList)
+        {Destroy(gameObject);}
+
+        List<Item> cardList = new List<Item>(myItemList.Keys);
+
+        if(currentPage != pageLimit)
+        {remainder = 6;}
+
+        for(int i = 0; i < remainder; ++i)
+        {currentItemList.Add(cardList[(currentPage * 6) + i], myItemList[cardList[(currentPage * 6) + i]]);}
+
+        foreach(KeyValuePair<Item, int> item in currentItemList)
+        {
+            int x = Convert.ToInt32(item.Key.GetNum());
+            GameObject cardObject = Instantiate(itemPrefabList[x],
+            new Vector3(0,0,0) , Utils.QI);
+            cardObject.transform.SetParent(itemLocation[count].transform);
+            cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+            cardObject.transform.localPosition = new Vector3(0,0,0);
+            
+            itemObjectList.Add(cardObject);
+
+            bool locked = false;
+
+            if(item.Value == 0)
+            {locked = true;}
+
+            // if(myDeckList.ContainsKey(item.Key))
+            // {
+            //     if(myDeckList[item.Key]  == item.Value)
+            //     {locked = true;}
+
+            //     if(myDeckList[item.Key]  == 3)
+            //     {locked = true;}
+            // }
+
+            
+
+            // GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
+            // cardFrameObject.transform.SetParent(cardLocation[count].transform);
+            // cardFrameObject.transform.localPosition = new Vector3(0,0,0);
+            // cardFrameObject.GetComponent<CardFrame>().
+            // SetCardData(item.Key, item.Value, count, locked);
+
+            // dummyCardObjectList.Add(cardFrameObject);
+            count++;
+
+            
+        }
+        if(currentPage == 0)
+        backButton.SetActive(false);
+        else
+        backButton.SetActive(true);
+
+        if(currentPage == pageLimit)
+        nextButton.SetActive(false);
+        else
+        nextButton.SetActive(true);
+
+        // pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
+    }
+
 
     private void DungeonSetUp()
     {

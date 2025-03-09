@@ -10,7 +10,7 @@ public class Item
     {return itemName;}
 
     public string GetNum()
-    {return itemName;}
+    {return itemNum;}
 
 }
 public enum EItemCategory
