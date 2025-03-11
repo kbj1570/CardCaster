@@ -8,6 +8,10 @@ using UnityEngine.UI;
 
 public class DungeonManager : MonoBehaviour
 {
+    Item clickedItem;
+    GameObject clickedItemInfo;
+    public GameObject itemDescriptionWindow;
+    private int pageLimit;
     Dungeon dungeon;
     public Camera camera;
     public Node startNode;
@@ -41,8 +45,11 @@ public class DungeonManager : MonoBehaviour
 
     public List<Transform> itemLocation;
 
-    private Dictionary<Item, int> currentItemList;
-    private Dictionary<Item, int> myItemList;
+    // private Dictionary<Item, int> currentItemList;
+    // private Dictionary<Item, int> myItemList;
+
+    private List<Item> currentItemList;
+    private List<Item> myItemList;
 
     public GameObject popUpMessageWindow;
     public GameObject popUpMessage;
@@ -50,7 +57,7 @@ public class DungeonManager : MonoBehaviour
     public GameObject nextButton;
     public GameObject backButton;
 
-    public List<GameObject> buttonList;
+    public List<GameObject> itemInfoPrefab;
 
     public TMP_Text dungeonNameText;
     public TMP_Text floorText;
@@ -112,6 +119,7 @@ public class DungeonManager : MonoBehaviour
         // targetPos = currentPos;
         // transform.position = new Vector3(currentPos.x, currentPos.y, 0);
     }
+
     public void SetDungeon(Dungeon dungeon)
     {this.dungeon = dungeon;}
 
@@ -120,43 +128,57 @@ public class DungeonManager : MonoBehaviour
 
     public void LoadItemList()
     {
-        foreach(KeyValuePair<string, int> value in DataController.Inst.LoadItemList())
-        {myItemList.Add(itemDatabase[Convert.ToInt32(value.Key)], value.Value);}
+        foreach(string value in DataController.Inst.LoadItemList())
+        {myItemList.Add(itemDatabase[Convert.ToInt32(value)]);}
+    }
+
+    public void ChangePage(bool value)
+    {
+        if(value)
+        {currentPage++;}
+        else{currentPage--;}
+
+        if(currentPage < 0)
+        {currentPage = 0;}
+
+        if(currentPage >= pageLimit)
+        {currentPage = pageLimit;}
+
+        UpdateItemPage();
     }
 
      public void UpdateItemPage()
     {
         int count = 0;
-        int pageLimit = myItemList.Count / 8;
-        int remainder = myItemList.Count % 8;
+        int sum = myItemList.Count;
+        pageLimit = (sum / 8) - 1;
+        int remainder = sum % 8;
 
         currentItemList.Clear();
         foreach(GameObject gameObject in itemObjectList)
         {Destroy(gameObject);}
 
-        List<Item> cardList = new List<Item>(myItemList.Keys);
-
         if(currentPage != pageLimit)
-        {remainder = 6;}
+        {remainder = 8;}
+
+        if(remainder == 0)
+        {remainder = 8;}
 
         for(int i = 0; i < remainder; ++i)
-        {currentItemList.Add(cardList[(currentPage * 6) + i], myItemList[cardList[(currentPage * 6) + i]]);}
-
-        foreach(KeyValuePair<Item, int> item in currentItemList)
         {
-            int x = Convert.ToInt32(item.Key.GetNum());
+            currentItemList.Add(myItemList[(currentPage * 8) + i]);
+        }
+
+        foreach(Item item in currentItemList)
+        {
+            int x = Convert.ToInt32(item.GetNum());
             GameObject cardObject = Instantiate(itemPrefabList[x],
             new Vector3(0,0,0) , Utils.QI);
             cardObject.transform.SetParent(itemLocation[count].transform);
-            cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+            cardObject.transform.localScale = new Vector3(1f,1f,1f);
             cardObject.transform.localPosition = new Vector3(0,0,0);
             
             itemObjectList.Add(cardObject);
-
-            bool locked = false;
-
-            if(item.Value == 0)
-            {locked = true;}
 
             // if(myDeckList.ContainsKey(item.Key))
             // {
@@ -189,8 +211,18 @@ public class DungeonManager : MonoBehaviour
         nextButton.SetActive(false);
         else
         nextButton.SetActive(true);
+    }
 
-        // pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
+    public void ShowItemDescription(int itemNum)
+    {
+        itemDescriptionWindow.SetActive(true);
+        itemDescriptionWindow.GetComponent<DescriptionWindow>().SetUp(itemDatabase[itemNum].GetName(),
+        itemDatabase[itemNum].GetItemDescription());
+    }
+
+    public void HideItemDescription()
+    {
+        itemDescriptionWindow.SetActive(false);
     }
 
 
@@ -274,6 +306,8 @@ public class DungeonManager : MonoBehaviour
         // {
         //     MoveToNextTile();
         // }
+        if(Input.GetKeyDown(KeyCode.Mouse0))
+        {CloseItemInfo();}
 
         if(Input.GetKeyDown(KeyCode.W))
         {
@@ -337,6 +371,18 @@ public class DungeonManager : MonoBehaviour
                 camera.transform.position = player.transform.position;
                 camera.transform.position += new Vector3(0,0,-1);
             }
+        }
+    }
+
+    public void CloseItemInfo()
+    {
+        if(clickedItem == null)
+        {return;}
+
+        if(clickedItem != null)
+        {
+            clickedItem = null;
+            Destroy(clickedItemInfo.gameObject);
         }
     }
 
@@ -740,7 +786,7 @@ public class DungeonManager : MonoBehaviour
             break;
 
             case "1": // 거대한포션
-            PlayerManager.Inst.GainHealth(6);
+            PlayerManager.Inst.GainHealth(5);
             break;
 
             case "2": // 황금주사위
@@ -754,6 +800,14 @@ public class DungeonManager : MonoBehaviour
             case "4": // 불길한향로
             
             break;
+
+            case "5": // 불길한향로
+            
+            break;
+
+            case "6": // 불길한향로
+            
+            break;
         }
     }
 
@@ -763,6 +817,11 @@ public class DungeonManager : MonoBehaviour
     {selectionValue--;}
     public int GetSelectionValue()
     {return selectionValue;}
+
+    public void SelectUsingItem(int ItemNum)
+    {
+
+    }
     
 
     public void MovePlayer(int roomNum)

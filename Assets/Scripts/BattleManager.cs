@@ -656,8 +656,7 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         clickedServentInfo.GetComponent<ServentInfoWindow>().OnOff(true);
         clickedServentInfo.transform.SetParent(canvas.transform);
-        clickedServent = servent;
-        
+        clickedServent = servent; 
     }
     public void CloseServentInfo()
     {

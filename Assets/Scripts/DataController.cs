@@ -46,11 +46,11 @@ public class  DataController : MonoBehaviour
         return null;
     }
 
-    public Dictionary<string, int> LoadItemList()
+    public List<string> LoadItemList()
     {
         if(File.Exists(Path.Combine(Application.dataPath , "Item.json")))
         {
-            Dictionary<string, int> data = JsonMapper.ToObject<Dictionary<string, int>>(File.ReadAllText(Path.Combine(Application.dataPath , "Item.json")));
+            List<string> data = JsonMapper.ToObject<List<string>>(File.ReadAllText(Path.Combine(Application.dataPath , "Item.json")));
             return data;
         }
         return null;
