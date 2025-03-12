@@ -102,6 +102,7 @@ public class  DataController : MonoBehaviour
     {
         List<Item> items = new();
 
+        items.Add(new LetterFromKingdom());
         items.Add(new BigRedPotion());
         items.Add(new BrokenCompass());
         items.Add(new GoldenDice());

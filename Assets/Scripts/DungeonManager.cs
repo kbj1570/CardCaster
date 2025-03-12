@@ -8,7 +8,9 @@ using UnityEngine.UI;
 
 public class DungeonManager : MonoBehaviour
 {
+    bool moveLocked;
     Item clickedItem;
+    int clickedItemOrder;
     GameObject clickedItemInfo;
     public GameObject itemDescriptionWindow;
     private int pageLimit;
@@ -39,6 +41,7 @@ public class DungeonManager : MonoBehaviour
     public GameObject buttonPrefab;
     public GameObject player;
     public GameObject stairAlert;
+    public GameObject itemAlert;
     public GameObject wayPointWindow;
 
     public List<GameObject> itemPrefabList;
@@ -120,6 +123,11 @@ public class DungeonManager : MonoBehaviour
         // transform.position = new Vector3(currentPos.x, currentPos.y, 0);
     }
 
+    public void RevealMap()
+    {
+
+    }
+
     public void SetDungeon(Dungeon dungeon)
     {this.dungeon = dungeon;}
 
@@ -147,26 +155,42 @@ public class DungeonManager : MonoBehaviour
         UpdateItemPage();
     }
 
-     public void UpdateItemPage()
+    public void UpdateItemPage()
     {
         int count = 0;
         int sum = myItemList.Count;
-        pageLimit = (sum / 8) - 1;
+        pageLimit = (sum / 8);
         int remainder = sum % 8;
 
         currentItemList.Clear();
         foreach(GameObject gameObject in itemObjectList)
         {Destroy(gameObject);}
 
-        if(currentPage != pageLimit)
-        {remainder = 8;}
+        if(sum == 0)
+        {return;}
+
+        if(pageLimit < currentPage)
+        {currentPage--;}
+
+        // if(currentPage != pageLimit)
+        // {remainder = 8;}
 
         if(remainder == 0)
-        {remainder = 8;}
-
-        for(int i = 0; i < remainder; ++i)
         {
-            currentItemList.Add(myItemList[(currentPage * 8) + i]);
+            pageLimit--;
+            remainder = 8;
+        }
+
+        
+
+        if(currentPage != pageLimit)
+        {
+            for(int i = 0; i < 8; ++i)
+            {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
+        }else
+        {
+            for(int i = 0; i < remainder; ++i)
+            {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
         }
 
         foreach(Item item in currentItemList)
@@ -306,8 +330,6 @@ public class DungeonManager : MonoBehaviour
         // {
         //     MoveToNextTile();
         // }
-        if(Input.GetKeyDown(KeyCode.Mouse0))
-        {CloseItemInfo();}
 
         if(Input.GetKeyDown(KeyCode.W))
         {
@@ -775,16 +797,17 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
+    public void RemoveClickedItem()
+    {
+        myItemList.RemoveAt(clickedItemOrder);
+        UpdateItemPage();
+    }
+
     public void UseItem()
     {
-        Item item = new();
 
-        switch(item.GetNum())
+        switch(clickedItem.GetNum())
         {
-            case "0": // 빨간포션
-            PlayerManager.Inst.GainHealth(2);
-            break;
-
             case "1": // 거대한포션
             PlayerManager.Inst.GainHealth(5);
             break;
@@ -805,10 +828,12 @@ public class DungeonManager : MonoBehaviour
             
             break;
 
-            case "6": // 불길한향로
-            
+            case "6": // 빨간 포션
+            PlayerManager.Inst.GainHealth(2);
             break;
         }
+
+        AlertPopUpMessage(clickedItem.GetName() + "을(를) 사용하였습니다.");
     }
 
     public void IncreaseSelectionValue()
@@ -818,9 +843,12 @@ public class DungeonManager : MonoBehaviour
     public int GetSelectionValue()
     {return selectionValue;}
 
-    public void SelectUsingItem(int ItemNum)
+    public void SelectUsingItem(int itemNum, int itemOrder)
     {
-
+        clickedItemOrder = itemOrder + (currentPage * 8);
+        clickedItem = myItemList[clickedItemOrder];
+        itemAlert.GetComponent<Window>().OnOff();
+        itemAlert.GetComponent<ItemAlert>().SetText(clickedItem.GetName());
     }
     
 
@@ -829,6 +857,7 @@ public class DungeonManager : MonoBehaviour
         player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
         nodeMap[roomNum].SetActive(true);
         nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
+        Debug.Log("sss");
 
         if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
         {
@@ -908,11 +937,13 @@ public class DungeonManager : MonoBehaviour
     private void GainGold(Node node)
     {
         AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");
+
     }
 
     private void GainItem(Node node)
     {
         AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
+        myItemList.Add(node.GetItem());
     }
 
     public void OpenStairAlert()

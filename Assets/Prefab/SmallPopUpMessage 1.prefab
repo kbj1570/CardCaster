@@ -227,4 +227,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   message: {fileID: 4936627900973908845}
   textbox: {fileID: 4936627902108019660}
-  fadeDuration: 0.9
+  fadeDuration: 1

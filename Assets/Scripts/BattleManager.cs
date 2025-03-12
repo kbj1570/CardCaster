@@ -202,6 +202,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+
+    public void WinBattle()
+    {
+        
+    }
+
     public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
     {
         isActionDone = false;
