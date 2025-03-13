@@ -9,6 +9,7 @@ using DG.Tweening;
 
 public class DungeonManager : MonoBehaviour
 {
+    int mouseOnRoomNum;
     bool moveLocked;
     Item clickedItem;
     int clickedItemOrder;
@@ -48,6 +49,7 @@ public class DungeonManager : MonoBehaviour
     public List<GameObject> itemPrefabList;
 
     public List<Transform> itemLocation;
+    public LineRenderer cardDragLine;
 
     // private Dictionary<Item, int> currentItemList;
     // private Dictionary<Item, int> myItemList;
@@ -87,6 +89,7 @@ public class DungeonManager : MonoBehaviour
     void Awake() => Inst = this;
 
     List<GameObject> itemObjectList;
+    List<GameObject> cardObjectList;
 
 
     private float moveDistance = 2f; // 한 번에 이동할 거리
@@ -95,22 +98,11 @@ public class DungeonManager : MonoBehaviour
     private bool isMoving = false;
 
 
-    // public float moveSpeed = 2f; // 이동 속도
-    // private Vector2Int currentPos; // 현재 좌표
-    // private Vector2Int targetPos; // 목표 좌표
-    // private Queue<Vector2Int> pathQueue = new Queue<Vector2Int>(); // 이동 경로 큐
-
-    // public Dictionary<Vector2Int, GameObject> gridMap; // 생성된 칸을 저장하는 딕셔너리
-
     private void Start()
     {
         
         DungeonSetUp();
-        // LoadEncounter();
-        // ShowEncounter();
         CreateFloor();
-        // camera.transform.position = player.transform.position;
-        // camera.transform.position += new Vector3(0,0,-1);
 
         itemObjectList = new();
         messageList = new();
@@ -186,16 +178,11 @@ public class DungeonManager : MonoBehaviour
         if(pageLimit < currentPage)
         {currentPage--;}
 
-        // if(currentPage != pageLimit)
-        // {remainder = 8;}
-
         if(remainder == 0)
         {
             pageLimit--;
             remainder = 8;
         }
-
-        
 
         if(currentPage != pageLimit)
         {
@@ -343,7 +330,7 @@ public class DungeonManager : MonoBehaviour
         // if (pathQueue.Count > 0)
         // {MoveToNextTile();}
 
-        if(Input.GetKeyDown(KeyCode.W))
+        if(Input.GetKeyDown(KeyCode.W) && !moveLocked)
         {
             if(CheckOutOfIndex(currentPlayerLocation - width))
             {
@@ -358,7 +345,7 @@ public class DungeonManager : MonoBehaviour
         }
 
 
-        if(Input.GetKeyDown(KeyCode.A))
+        if(Input.GetKeyDown(KeyCode.A) && !moveLocked)
         {
             if(currentPlayerLocation % width == 0)
             return;
@@ -375,7 +362,7 @@ public class DungeonManager : MonoBehaviour
             CameraController.Inst.SetFollowing();
         }
 
-        if(Input.GetKeyDown(KeyCode.S))
+        if(Input.GetKeyDown(KeyCode.S) && !moveLocked)
         {
             if(CheckOutOfIndex(currentPlayerLocation + width))
             {
@@ -389,7 +376,7 @@ public class DungeonManager : MonoBehaviour
             CameraController.Inst.SetFollowing();
         }
 
-        if(Input.GetKeyDown(KeyCode.D))
+        if(Input.GetKeyDown(KeyCode.D) && !moveLocked)
         {
             if(currentPlayerLocation % width == width - 1)
             return;
@@ -449,10 +436,9 @@ public class DungeonManager : MonoBehaviour
     
     private void SetNodeRoom()
     {
-        int x = Random.Range(0, nodeNumList.Count);
-        currentPlayerLocation = nodeNumList[x];
+         
 
-        x = Random.Range(0, nodeNumList.Count);
+        int x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
 
         x = Random.Range(0, nodeNumList.Count);
@@ -484,6 +470,13 @@ public class DungeonManager : MonoBehaviour
             }
             nodeNumList.Remove(nodeNumList[x]);
         }
+
+        x = Random.Range(0, nodeNumList.Count);
+
+        while(map[nodeNumList[x]].GetRoomType() != ERoomType.None)
+        {x = Random.Range(0, nodeNumList.Count);}
+
+        currentPlayerLocation = nodeNumList[x];
     }
 
     private Item ReturnDungeonItem()
@@ -919,7 +912,7 @@ public class DungeonManager : MonoBehaviour
         }
 
         if(map[roomNum].GetRoomType() == ERoomType.EStair)
-        {OpenStairAlert();}
+        {ShowStairAlert();}
         else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
         {map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
@@ -949,8 +942,81 @@ public class DungeonManager : MonoBehaviour
         UpdateItemPage();
     }
 
-    public void OpenStairAlert()
-    {stairAlert.GetComponent<Window>().OnOff();}
+    public void ShowStairAlert()
+    {
+        moveLocked = true;
+        stairAlert.GetComponent<Window>().OnOff();
+    }
+
+    public void HideStairAlert()
+    {
+        moveLocked = false;
+        stairAlert.GetComponent<Window>().OnOff();
+    }
+
+    public void CardBeginDrag(GameObject gameObject)
+    {
+
+    }
+
+    public void CardOnDrag(GameObject gameObject)
+    {
+
+    }
+
+    IEnumerator ActivateSpell(CardData cardData, int nodeNum)
+    {
+
+        yield return new WaitForSeconds(1.5f);
+    }
+
+    public void DeleteDragLine()
+    {
+        cardDragLine.positionCount = 0;
+        cardDragLine.endColor = Color.blue;
+    }
+
+    public IEnumerator CardEndDrag(DungeonCard dungeonCard, int nodeNum)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<DungeonCard>().SetLock(false);}
+
+        DeleteDragLine();
+
+        if(CheckCardUsable(dungeonCard.GetCardData(), nodeNum))
+        {
+            StartCoroutine(ActivateSpell(dungeonCard.GetCardData(), nodeNum));
+            // card.SendMissile(alertPoint, hole.transform);
+
+            for(int i = 0; i < cardObjectList.Count; ++i)
+            {cardObjectList[i].GetComponent<DungeonCard>().SetCardOrder(i);}
+            // CardAlignmentAlt();
+        }
+        else
+        {
+            foreach(GameObject cardObject in cardObjectList)
+            {cardObject.GetComponent<DungeonCard>().SetLock(false);}
+        }
+    }
+
+    public bool CheckCardUsable(CardData cardData, int nodeNum)
+    {
+        if(mouseOnRoomNum == 0)
+        {return false;}
+
+        return true;
+    }
+
+    public int ReturnMouseOnNode()
+    {return mouseOnRoomNum;}
+
+    public void SetMouseOnNode(int roomNum)
+    {mouseOnRoomNum = roomNum;}
+
+    public void ResetMouseOnNode()
+    {mouseOnRoomNum = 0;}
 
     private void ApplyEncountResult(int encounterNum, int value)
     {
@@ -985,7 +1051,6 @@ public class DungeonManager : MonoBehaviour
         else
         {return false;}
     }
-
 }
 
 public enum ERoomType

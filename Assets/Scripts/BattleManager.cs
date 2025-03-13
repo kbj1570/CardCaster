@@ -10,7 +10,7 @@ using DG.Tweening;
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
-public enum ECardType{None ,Servent, Spell}
+public enum ECardType{None ,Servent, Spell, Explore}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
@@ -268,9 +268,9 @@ public class BattleManager : MonoBehaviour
                 cardObject.transform.SetParent(canvas.transform);
                 cardObjectList.Add(cardObject);
                 
-                cardObject.GetComponent<Card>().Setup(card);
+                cardObject.GetComponent<BattleCard>().Setup(card);
                 
-                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
                 handList.Add(card);
 
                 selectedCards = new();
@@ -310,9 +310,9 @@ public class BattleManager : MonoBehaviour
                     cardObject.transform.SetParent(canvas.transform);
                     cardObjectList.Add(cardObject);
                     
-                    cardObject.GetComponent<Card>().Setup(card);
+                    cardObject.GetComponent<BattleCard>().Setup(card);
                     
-                    cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                    cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
                     handList.Add(card);
                 }
                 
@@ -338,9 +338,9 @@ public class BattleManager : MonoBehaviour
                 cardObject.transform.SetParent(canvas.transform);
                 cardObjectList.Add(cardObject);
                 
-                cardObject.GetComponent<Card>().Setup(card);
+                cardObject.GetComponent<BattleCard>().Setup(card);
                 
-                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
                 handList.Add(card);
 
                 CardAlignmentAlt();
@@ -371,9 +371,9 @@ public class BattleManager : MonoBehaviour
                 cardObject.transform.SetParent(canvas.transform);
                 cardObjectList.Add(cardObject);
                 
-                cardObject.GetComponent<Card>().Setup(card);
+                cardObject.GetComponent<BattleCard>().Setup(card);
                 
-                cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+                cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
                 handList.Add(card);
 
                 CardAlignmentAlt();
@@ -786,7 +786,7 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.4f);
         foreach(GameObject card in cardObjectList)
-        {card.GetComponent<Card>().HideAndReveal(false);}
+        {card.GetComponent<BattleCard>().HideAndReveal(false);}
         yield return new WaitForSeconds(0.4f);
 
         if(myTurn)
@@ -821,7 +821,7 @@ public class BattleManager : MonoBehaviour
     {
         turnState = ETurnState.Enemy;
         foreach(GameObject card in cardObjectList)
-        {card.GetComponent<Card>().HideAndReveal(true);}
+        {card.GetComponent<BattleCard>().HideAndReveal(true);}
 
         yield return new WaitForSeconds(0.3f);
         int actionToken = 3;
@@ -1575,30 +1575,30 @@ public class BattleManager : MonoBehaviour
 
     public void CardBeginDrag(GameObject cardObject)
     {
-        if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
+        if(cardObject.GetComponent<BattleCard>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
         {
             foreach(GameObject gameObject in anyWhereAreas)
             {gameObject.SetActive(true);}
         }
 
         foreach(GameObject card in cardObjectList)
-        {card.GetComponent<Card>().SetLock(true);}
-        cardObject.GetComponent<Card>().SetLock(false);
+        {card.GetComponent<BattleCard>().SetLock(true);}
+        cardObject.GetComponent<BattleCard>().SetLock(false);
     }
 
     public void CardOnDrag(GameObject cardObject)
     {
-        if(cardObject.GetComponent<Card>().GetCardData().GetCardType() == ECardType.Servent)
+        if(cardObject.GetComponent<BattleCard>().GetCardData().GetCardType() == ECardType.Servent)
         {
             DrawDragLine(cardObject.transform.position,
-            CheckServentSummonable(cardObject.GetComponent<Card>().GetCardData(),
-            cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField())
+            CheckServentSummonable(cardObject.GetComponent<BattleCard>().GetCardData(),
+            cardObject.GetComponent<BattleCard>().GetCurrentCost(),ReturnMouseOnField())
             );
         }
         else{
             DrawDragLine(cardObject.transform.position,
-            CheckCardUsable(cardObject.GetComponent<Card>().GetCardData(),
-            cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField())
+            CheckCardUsable(cardObject.GetComponent<BattleCard>().GetCardData(),
+            cardObject.GetComponent<BattleCard>().GetCurrentCost(),ReturnMouseOnField())
             );
         }
         
@@ -1661,13 +1661,13 @@ public class BattleManager : MonoBehaviour
         return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
     }
 
-    public IEnumerator CardEndDrag(Card card, Field targetField)
+    public IEnumerator CardEndDrag(BattleCard card, Field targetField)
     {
         foreach(GameObject gameObject in anyWhereAreas)
         {gameObject.SetActive(false);}
 
         foreach(GameObject cardObject in cardObjectList)
-        {cardObject.GetComponent<Card>().SetLock(false);}
+        {cardObject.GetComponent<BattleCard>().SetLock(false);}
 
 
         DeleteDragLine();
@@ -1688,7 +1688,7 @@ public class BattleManager : MonoBehaviour
             {newHandList.Add(cardData);}
 
             for(int i = 0; i < cardObjectList.Count; ++i)
-            {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+            {cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
 
             handList = newHandList;
             CardAlignmentAlt();
@@ -1697,7 +1697,7 @@ public class BattleManager : MonoBehaviour
         {
             if(card.GetCardType() == ECardType.Servent)
             {
-                if(CheckServentSummonable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
+                if(CheckServentSummonable(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(), targetField))
                 {
                     targetField.locked = true;
                     costCount -= card.GetCardData().GetCardCost();
@@ -1709,7 +1709,7 @@ public class BattleManager : MonoBehaviour
 
                     targetField.Summon(card.GetCardData(), Instantiate(playerServentPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
 
-                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(),targetField));
+                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(),targetField));
                     
                     handList.RemoveAt(card.GetCardOrder());
                     
@@ -1719,7 +1719,7 @@ public class BattleManager : MonoBehaviour
                     {newHandList.Add(cardData);}
 
                     for(int i = 0; i < cardObjectList.Count; ++i)
-                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+                    {cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
 
                     handList = newHandList;
 
@@ -1727,7 +1727,7 @@ public class BattleManager : MonoBehaviour
                 }
             }
 
-            if(CheckCardUsable(card.GetCardData(), card.GetComponent<Card>().GetCurrentCost(), targetField))
+            if(CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(), targetField))
             {
                 switch(card.GetCardType())
                 {
@@ -1747,7 +1747,7 @@ public class BattleManager : MonoBehaviour
                     {newHandList.Add(cardData);}
 
                     for(int i = 0; i < cardObjectList.Count; ++i)
-                    {cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
+                    {cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
 
                     handList = newHandList;
                     CardAlignmentAlt();
@@ -1760,18 +1760,9 @@ public class BattleManager : MonoBehaviour
             else
             {
                 foreach(GameObject cardObject in cardObjectList)
-                {cardObject.GetComponent<Card>().SetLock(false);}
+                {cardObject.GetComponent<BattleCard>().SetLock(false);}
             }
         }
-
-        
-
-
-        
-
-
-
-
     }
     public void DrawCard()
     {
@@ -1797,9 +1788,9 @@ public class BattleManager : MonoBehaviour
         cardObject.transform.SetParent(canvas.transform);
         cardObjectList.Add(cardObject);
         
-        cardObject.GetComponent<Card>().Setup(cardData);
+        cardObject.GetComponent<BattleCard>().Setup(cardData);
         
-        cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+        cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
         handList.Add(cardData);
 
 
@@ -1858,10 +1849,10 @@ public class BattleManager : MonoBehaviour
         for(int i = 0; i < cardObjectList.Count; ++i)
         {
             var targetCard = cardObjectList[i];
-            targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
+            targetCard.GetComponent<BattleCard>().originPRS = originCardPRSs[i];
             targetCard.transform.position = originCardPRSs[i].pos;
 
-            targetCard.GetComponent<Card>().UpdateCardCost(costCount);
+            targetCard.GetComponent<BattleCard>().UpdateCardCost(costCount);
         }
 
     }
@@ -1925,8 +1916,8 @@ public class BattleManager : MonoBehaviour
         for(int i = 0; i < cardObjectList.Count; ++i)
         {
             var targetCard = cardObjectList[i];
-            targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
-            targetCard.GetComponent<Card>().MoveTransform(targetCard.GetComponent<Card>().originPRS, true, 0.7f);
+            targetCard.GetComponent<BattleCard>().originPRS = originCardPRSs[i];
+            targetCard.GetComponent<BattleCard>().MoveTransform(targetCard.GetComponent<BattleCard>().originPRS, true, 0.7f);
 
         }
     }
@@ -2212,7 +2203,7 @@ public class BattleManager : MonoBehaviour
         }
 
         foreach(GameObject cardObject in cardObjectList)
-        {cardObject.GetComponent<Card>().SetLock(true);}
+        {cardObject.GetComponent<BattleCard>().SetLock(true);}
 
         RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
 
@@ -2229,7 +2220,7 @@ public class BattleManager : MonoBehaviour
 
 
         foreach(GameObject cardObject in cardObjectList)
-        {cardObject.GetComponent<Card>().SetLock(false);}
+        {cardObject.GetComponent<BattleCard>().SetLock(false);}
 
         trashWindow.GetComponent<Window>().OnOff();
     }

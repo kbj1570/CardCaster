@@ -35,9 +35,7 @@ public class RoomNode : MonoBehaviour
     public Sprite upWall;
 
     void Start()
-    {
-        renderer.GetComponent<SpriteRenderer>().color = Color.gray;
-    }
+    {renderer.GetComponent<SpriteRenderer>().color = Color.gray;}
 
     public Node GetNodeData()
     {return nodeData;}
@@ -123,4 +121,12 @@ public class RoomNode : MonoBehaviour
             yield return new WaitForSeconds(0.03f);
         }
     }
+
+    void OnMouseEnter()
+    {
+        DungeonManager.Inst.SetMouseOnNode(roomNum);
+    }
+
+    void OnMouseExit()
+    {DungeonManager.Inst.ResetMouseOnNode();}
 }
