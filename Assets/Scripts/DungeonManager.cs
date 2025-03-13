@@ -5,6 +5,7 @@ using TMPro;
 using Random = UnityEngine.Random;
 using System;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class DungeonManager : MonoBehaviour
 {
@@ -88,6 +89,12 @@ public class DungeonManager : MonoBehaviour
     List<GameObject> itemObjectList;
 
 
+    private float moveDistance = 2f; // 한 번에 이동할 거리
+    private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
+    private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
+    private bool isMoving = false;
+
+
     // public float moveSpeed = 2f; // 이동 속도
     // private Vector2Int currentPos; // 현재 좌표
     // private Vector2Int targetPos; // 목표 좌표
@@ -102,8 +109,8 @@ public class DungeonManager : MonoBehaviour
         // LoadEncounter();
         // ShowEncounter();
         CreateFloor();
-        camera.transform.position = player.transform.position;
-        camera.transform.position += new Vector3(0,0,-1);
+        // camera.transform.position = player.transform.position;
+        // camera.transform.position += new Vector3(0,0,-1);
 
         itemObjectList = new();
         messageList = new();
@@ -125,7 +132,14 @@ public class DungeonManager : MonoBehaviour
 
     public void RevealMap()
     {
-
+        foreach(GameObject node in nodeMap)
+        {
+            if(node != null)
+            {
+                node.SetActive(true);
+                // node.GetComponent<RoomNode>().SetVisited();
+            }
+        }
     }
 
     public void SetDungeon(Dungeon dungeon)
@@ -327,9 +341,7 @@ public class DungeonManager : MonoBehaviour
         ShowMessage();
 
         // if (pathQueue.Count > 0)
-        // {
-        //     MoveToNextTile();
-        // }
+        // {MoveToNextTile();}
 
         if(Input.GetKeyDown(KeyCode.W))
         {
@@ -339,18 +351,17 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation -= width;
                     MovePlayer(currentPlayerLocation);
+                    EnqueueMove(Vector2.up);
                 }
             }
-            camera.transform.position = player.transform.position;
-            camera.transform.position += new Vector3(0,0,-1);
+            CameraController.Inst.SetFollowing();
         }
+
 
         if(Input.GetKeyDown(KeyCode.A))
         {
-
             if(currentPlayerLocation % width == 0)
             return;
-
 
             if(CheckOutOfIndex(currentPlayerLocation - 1))
             {
@@ -358,10 +369,10 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation -= 1;
                     MovePlayer(currentPlayerLocation);
+                    EnqueueMove(Vector2.left);
                 }
-                camera.transform.position = player.transform.position;
-                camera.transform.position += new Vector3(0,0,-1);
             }
+            CameraController.Inst.SetFollowing();
         }
 
         if(Input.GetKeyDown(KeyCode.S))
@@ -372,10 +383,10 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation += width;
                     MovePlayer(currentPlayerLocation);
+                    EnqueueMove(Vector2.down);
                 }
-                camera.transform.position = player.transform.position;
-                camera.transform.position += new Vector3(0,0,-1);
             }
+            CameraController.Inst.SetFollowing();
         }
 
         if(Input.GetKeyDown(KeyCode.D))
@@ -389,10 +400,37 @@ public class DungeonManager : MonoBehaviour
                 {
                     currentPlayerLocation += 1;
                     MovePlayer(currentPlayerLocation);
+                    
+                    EnqueueMove(Vector2.right);
                 }
-                camera.transform.position = player.transform.position;
-                camera.transform.position += new Vector3(0,0,-1);
             }
+            CameraController.Inst.SetFollowing();
+        }
+    }
+
+     void EnqueueMove(Vector2 direction)
+    {
+        moveQueue.Enqueue(direction);
+        if (!isMoving)
+        {
+            StartNextMove();
+        }
+    }
+
+    void StartNextMove()
+    {
+        if (moveQueue.Count > 0)
+        {
+            isMoving = true;
+            Vector2 direction = moveQueue.Dequeue();
+            Vector3 targetPosition = player.transform.position + (Vector3)direction * moveDistance;
+
+            player.transform.DOMove(targetPosition, moveDuration)
+                .SetEase(Ease.OutQuad) // 부드러운 감속 효과
+                .OnComplete(() => {
+                    isMoving = false;
+                    StartNextMove(); // 다음 이동 실행
+                });
         }
     }
 
@@ -411,24 +449,6 @@ public class DungeonManager : MonoBehaviour
     
     private void SetNodeRoom()
     {
-        // int x = Random.Range(0, nodeNumList.Count);
-        // currentPlayerLocation = nodeNumList[x];
-        
-        // nodeNumList.Remove(nodeNumList[x]);
-
-        // x = Random.Range(0, nodeNumList.Count);
-        // map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
-        // nodeNumList.Remove(nodeNumList[x]);
-
-        // x = Random.Range(0, nodeNumList.Count);
-        // map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
-        // nodeNumList.Remove(nodeNumList[x]);
-
-        // x = Random.Range(0, nodeNumList.Count);
-        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        // nodeNumList.Remove(nodeNumList[x]);
-
-
         int x = Random.Range(0, nodeNumList.Count);
         currentPlayerLocation = nodeNumList[x];
 
@@ -504,12 +524,13 @@ public class DungeonManager : MonoBehaviour
         nodeNumList = new List<int>();
         while(nodeNumList.Count < 20) // 생성된 층의 크기가 10보다 작으면 다시 만듬
         {
-            map = new();
+            map = new(); // Node들의 정보를 담은 map
             for(int i = 0; i < floorSize; ++i)
-            {map.Add(null);}
+            {map.Add(null);} // 플로어의 크기만큼 null로 채워넣음
             CreateFirstRoom();
             CreateNodeNumList();
         }
+
 
         floorText.text = floor.ToString() + "F";
         AddLoopCorridor();
@@ -518,6 +539,7 @@ public class DungeonManager : MonoBehaviour
         InstantiateNode();
         
         MovePlayer(currentPlayerLocation);
+        player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
     }
 
     public void DestroyFloor()
@@ -620,23 +642,15 @@ public class DungeonManager : MonoBehaviour
                 gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
                 gameObject.SetActive(false);
 
-                 
-                nodeMap.Insert(i, gameObject);
+                 nodeMap[i] =gameObject;
+                // nodeMap.Insert(i, gameObject);
             }
         }
     }
 
-    // private void SearchNodeRoute(int roomNum, int end)
-    // {
-    //     if(CheckOutOfIndex(roomNum - 1))
-    //     if(map[roomNum - 1] == null)
-    //     if(FindCloseNodes(new List<int>(), roomNum - 1, -1, end) == null)
-    //     {}
-    // }
-
     private void CreateFirstRoom()
     {
-        int roomNum = floorSize / 2;
+        int roomNum = floorSize / 2; //중간에서 첫번쨰 방 생성
         map[roomNum] = new Node();
         map[roomNum].SetRoomType(ERoomType.None);
 
@@ -646,24 +660,6 @@ public class DungeonManager : MonoBehaviour
         CreateRoomNode(roomNum - width);
     }
 
-    // private List<int> FindCloseNodes(List<int> list, int value, int direction, int target)
-    // {
-    //     if(!CheckOutOfIndex(value))
-    //     {return null;}
-
-    //     if(map[value] == null)
-    //     {return null;}
-
-    //     if(value)
-
-    //     if(nodeNumList.Contains(value))
-    //     {
-    //         Debug.Log(value);
-    //         list.Add(value);
-    //     }
-    
-    //     return FindCloseNodes(list, value + direction, direction, target);
-    // }
 
     private void CreateRoomNode(int roomNum)
     {
@@ -675,6 +671,15 @@ public class DungeonManager : MonoBehaviour
 
         // if(roomNum / width == 0)
         // {return;}
+
+        // if((roomNum + 1) / width != roomNum + 1 / width)
+        // return;
+
+        // if((roomNum - 1) / width != roomNum - 1 / width)
+        // return;
+
+        if(roomNum % width == width - 1)
+        return;
 
         if(TrueOrFalse())
         {return;}
@@ -747,7 +752,9 @@ public class DungeonManager : MonoBehaviour
         nodeNumList = new List<int>();
         for(int i = 0; i < map.Count; ++i)
         {
-            if(!CheckCorridor(i))
+            // if(!CheckCorridor(i))
+            // {nodeNumList.Add(i);}
+            if(map[i] != null)
             {nodeNumList.Add(i);}
         }
     }
@@ -794,6 +801,8 @@ public class DungeonManager : MonoBehaviour
         {
             DestroyFloor();
             CreateFloor();
+            // camera.transform.position = player.transform.position;
+            // camera.transform.position += new Vector3(0,0,-1);
         }
     }
 
@@ -854,10 +863,9 @@ public class DungeonManager : MonoBehaviour
 
     public void MovePlayer(int roomNum)
     {
-        player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
+        // player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
         nodeMap[roomNum].SetActive(true);
         nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
-        Debug.Log("sss");
 
         if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
         {
@@ -913,13 +921,10 @@ public class DungeonManager : MonoBehaviour
         if(map[roomNum].GetRoomType() == ERoomType.EStair)
         {OpenStairAlert();}
         else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
-        {
-            map[roomNum].SetRoomType(ERoomType.None);
-        }
+        {map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
         {
-            map[roomNum].SetRoomType(ERoomType.None);
-        }
+            map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EGold)
         {
             GainGold(map[roomNum]);
@@ -935,78 +940,17 @@ public class DungeonManager : MonoBehaviour
     
 
     private void GainGold(Node node)
-    {
-        AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");
-
-    }
+    {AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");}
 
     private void GainItem(Node node)
     {
         AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
         myItemList.Add(node.GetItem());
+        UpdateItemPage();
     }
 
     public void OpenStairAlert()
     {stairAlert.GetComponent<Window>().OnOff();}
-
-
-
-    // public void ShowEncounter()
-    // {
-    //     selectionValue = 0;
-    //     buttonList[0].SetActive(true);
-    //     buttonList[1].SetActive(false);
-    //     buttonList[2].SetActive(false);
-    //     buttonList[3].SetActive(true);
-
-    //     encounterName.text = currentEncounter.GetEncounterName();
-    //     encounterDescription.text = currentEncounter.GetEncounterDescription();
-
-    //     List<string> select = currentEncounter.GetSelect();
-
-    //     buttonList[0].GetComponent<MyButton>().SetText(select[0]);
-
-    //     switch(select.Count)
-    //     {
-    //         case 2:
-    //         buttonList[1].SetActive(true);
-    //         buttonList[1].GetComponent<MyButton>().SetText(select[1]);
-    //         break;
-
-    //         case 3:
-    //         buttonList[1].SetActive(true);
-    //         buttonList[1].GetComponent<MyButton>().SetText(select[1]);
-
-    //         buttonList[2].SetActive(true);
-    //         buttonList[2].GetComponent<MyButton>().SetText(select[2]);
-    //         break;
-    //     }
-    // }
-
-    // public void ShowResult(int value)
-    // {
-    //     buttonList[0].SetActive(false);
-    //     buttonList[1].SetActive(false);
-    //     buttonList[2].SetActive(false);
-    //     buttonList[3].SetActive(false);
-
-    //     encounterDescription.text = currentEncounter.GetResult()[value];
-
-    //     ApplyEncountResult(currentEncounter.GetEncounterNum(), value);
-
-    // }
-    // public void LoadEncounter()
-    // {
-    //     List<Encounter> a = DataController.Inst.LoadEncounterList();
-        
-    //     int p = 0;
-    //     foreach(Encounter value in a)
-    //     {
-    //         value.SetEncounterNum(p);
-    //         ++p;
-    //     }
-    //     currentEncounter = a[0];
-    // }
 
     private void ApplyEncountResult(int encounterNum, int value)
     {

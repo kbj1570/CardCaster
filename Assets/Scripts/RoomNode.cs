@@ -65,7 +65,6 @@ public class RoomNode : MonoBehaviour
     {
         visited = true;
         renderer.GetComponent<SpriteRenderer>().color = Color.white;
-        Debug.Log("sss");
 
         if(roomType != ERoomType.EStair)
         {

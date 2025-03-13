@@ -11,9 +11,7 @@ public class Graveyard : Dungeon
         itemList = new(){
             {new RedPotion(), 2},
             {new GoldenDice(), 2},
-            {new RustyKnife(), 2},
-            {new ShardOfStarlight(), 1},
-            {new OldStick(), 4}
+            {new RustyKnife(), 2}
         };
 
         safeFloorList = new(){
