@@ -55,10 +55,12 @@ public class CameraController : MonoBehaviour
     public static CameraController Inst{get; private set;}
     void Awake() => Inst = this;
 
+    private bool dragLocked = false;
+
     void Update()
     {
         // 마우스 드래그로 카메라 이동 감지
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !dragLocked)
         {
             isFollowing = false;
             lastDragTime = Time.time;
@@ -88,5 +90,8 @@ public class CameraController : MonoBehaviour
 
     public void SetFollowing()
     {isFollowing = true;}
+
+    public void SetDragLock(bool value)
+    {dragLocked = value;}
 }
 

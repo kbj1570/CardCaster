@@ -3792,7 +3792,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720322, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -307
+      value: -450
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720322, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3809,6 +3809,10 @@ PrefabInstance:
     - target: {fileID: 8357732725725720325, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: m_Name
       value: GoldRush
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405153592259396056, guid: c45994e50a73f564f825216343196359, type: 3}
+      propertyPath: maxEnergy
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c45994e50a73f564f825216343196359, type: 3}
@@ -4186,7 +4190,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.24604416
+        value: 0.15169907
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4194,8 +4198,8 @@ LineRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.4801365
-        value: 0.44444466
+        time: 0.49686015
+        value: 0.28092384
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4204,7 +4208,7 @@ LineRenderer:
         outWeight: 0
       - serializedVersion: 3
         time: 1
-        value: 0.22024977
+        value: 0.13849318
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4390,6 +4394,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   followSpeed: 0.3
+--- !u!1 &648859753 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8357732725725720325, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
+  m_PrefabInstance: {fileID: 1482572465}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &667425972
 GameObject:
   m_ObjectHideFlags: 0
@@ -7061,6 +7070,9 @@ MonoBehaviour:
   healthText: {fileID: 0}
   goldText: {fileID: 0}
   textbox: {fileID: 0}
+  cardObjectList:
+  - {fileID: 2048931240}
+  - {fileID: 648859753}
 --- !u!4 &1187038849
 Transform:
   m_ObjectHideFlags: 0
@@ -9665,7 +9677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720322, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -307
+      value: -450
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720322, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11093,7 +11105,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1187038848}
         m_TargetAssemblyTypeName: DungeonManager, Assembly-CSharp
-        m_MethodName: ArrangeCards
+        m_MethodName: GainEnergyToMax
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11704,6 +11716,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2048931240 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8357732725725720325, guid: c45994e50a73f564f825216343196359, type: 3}
+  m_PrefabInstance: {fileID: 614570453}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2059413162
 GameObject:
   m_ObjectHideFlags: 0

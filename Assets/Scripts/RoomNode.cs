@@ -56,6 +56,11 @@ public class RoomNode : MonoBehaviour
         UpdateNodeFrame();
     }
 
+    public void CheckUsuable()
+    {
+        
+    }
+
     public void SetRoomType(ERoomType roomType)
     {this.roomType = roomType;}
 

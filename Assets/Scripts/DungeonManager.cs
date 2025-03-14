@@ -9,6 +9,7 @@ using DG.Tweening;
 
 public class DungeonManager : MonoBehaviour
 {
+    int lineCount;
     int mouseOnRoomNum;
     bool moveLocked;
     Item clickedItem;
@@ -45,6 +46,7 @@ public class DungeonManager : MonoBehaviour
     public GameObject stairAlert;
     public GameObject itemAlert;
     public GameObject wayPointWindow;
+    public GameObject dungeonEnemy;
 
     public List<GameObject> itemPrefabList;
 
@@ -89,13 +91,17 @@ public class DungeonManager : MonoBehaviour
     void Awake() => Inst = this;
 
     List<GameObject> itemObjectList;
-    List<GameObject> cardObjectList;
+    public List<GameObject> cardObjectList;
 
 
     private float moveDistance = 2f; // 한 번에 이동할 거리
     private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
     private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
     private bool isMoving = false;
+
+    private float energyGainLimit = 40;
+
+    private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
 
     private void Start()
@@ -116,6 +122,7 @@ public class DungeonManager : MonoBehaviour
         UpdateItemPage();
 
         currentPage = 0;
+        lineCount = 30;
 
         // currentPos = new Vector2Int(0, 0); // 초기 위치
         // targetPos = currentPos;
@@ -159,6 +166,40 @@ public class DungeonManager : MonoBehaviour
         {currentPage = pageLimit;}
 
         UpdateItemPage();
+    }
+
+    public void SetEnemyCourse()
+    {
+
+        DungeonEnemy dungeonEnemy = new();
+
+        int i = dungeonEnemy.GetCurrentNodeNum();
+
+        List<EEnemyDirection> dummy = new();
+
+        if(nodeNumList.Contains(i + 1) && !dungeonEnemies.ContainsValue(i + 1))
+        {dummy.Add(EEnemyDirection.East);}
+
+        if(nodeNumList.Contains(i - 1) && !dungeonEnemies.ContainsValue(i - 1))
+        {dummy.Add(EEnemyDirection.West);}
+
+        if(nodeNumList.Contains(i + width) && !dungeonEnemies.ContainsValue(i + width))
+        {dummy.Add(EEnemyDirection.South);}
+
+        if(nodeNumList.Contains(i - width) && !dungeonEnemies.ContainsValue(i - width))
+        {dummy.Add(EEnemyDirection.North);}
+
+
+        if(dummy.Count == 0)
+        {dungeonEnemies[dungeonEnemy] = i;} // 갈 수 있는 방향이 아예 없을 경우
+        else if(dummy.Count == 1) // 갈 수 있는 곳이 1곳일 경우
+        {}
+        else if(dummy.Count == 2)
+        {}
+        else if(dummy.Count == 3)
+        {}
+        else if(dummy.Count == 4)
+        {}
     }
 
     public void UpdateItemPage()
@@ -449,8 +490,7 @@ public class DungeonManager : MonoBehaviour
         map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
         SetEnemyInNode(map[nodeNumList[x]]);
 
-        x = Random.Range(0, nodeNumList.Count);
-        map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
+        
 
         // 중복되지 않는 랜덤숫자 생성
 
@@ -470,6 +510,9 @@ public class DungeonManager : MonoBehaviour
             }
             nodeNumList.Remove(nodeNumList[x]);
         }
+
+        x = Random.Range(0, nodeNumList.Count);
+        map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
 
         x = Random.Range(0, nodeNumList.Count);
 
@@ -782,6 +825,7 @@ public class DungeonManager : MonoBehaviour
     public void GoToNextFloor()
     {
         floor++;
+        moveLocked = false;
 
         if(safeFloorList.Contains(floor))
         {
@@ -796,6 +840,7 @@ public class DungeonManager : MonoBehaviour
             CreateFloor();
             // camera.transform.position = player.transform.position;
             // camera.transform.position += new Vector3(0,0,-1);
+            CameraController.Inst.SetFollowing();
         }
     }
 
@@ -857,6 +902,10 @@ public class DungeonManager : MonoBehaviour
     public void MovePlayer(int roomNum)
     {
         // player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
+        foreach(GameObject card in cardObjectList)
+        {
+            card.GetComponent<DungeonCard>().AddEnergy(0.1f);
+        }
         nodeMap[roomNum].SetActive(true);
         nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
@@ -916,8 +965,7 @@ public class DungeonManager : MonoBehaviour
         else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
         {map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
-        {
-            map[roomNum].SetRoomType(ERoomType.None);}
+        {map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EGold)
         {
             GainGold(map[roomNum]);
@@ -954,14 +1002,69 @@ public class DungeonManager : MonoBehaviour
         stairAlert.GetComponent<Window>().OnOff();
     }
 
-    public void CardBeginDrag(GameObject gameObject)
+    public void CardBeginDrag(GameObject cardObject)
     {
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<DungeonCard>().SetLock(true);}
+        cardObject.GetComponent<DungeonCard>().SetLock(false);
+
+        CameraController.Inst.SetFollowing();
+        CameraController.Inst.SetDragLock(true);
 
     }
 
-    public void CardOnDrag(GameObject gameObject)
-    {
+    public void CardOnDrag(GameObject cardObject)
+    {DrawDragLine(cardObject.transform.position,CheckCardUsable(cardObject.GetComponent<DungeonCard>().GetCardData(),ReturnMouseOnNode()));}
 
+    public void DrawDragLine(Vector2 startPoint, bool isUsuable)
+    {
+         Vector3[] point = new Vector3[lineCount];
+        float posA = 3f;
+        float posB = 3f;
+        cardDragLine.positionCount = lineCount;
+
+        if(isUsuable)
+        {cardDragLine.endColor = Color.blue;}
+        else
+        {cardDragLine.endColor = Color.red;}
+        
+        Vector3 targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
+
+        startPoint = camera.ScreenToWorldPoint(startPoint);
+
+        for(int i = 0; i < lineCount; ++i)
+        {
+            float t;
+            if (i == 0)
+            {t = 0;}
+            else
+            {t = (float)i / (lineCount - 1);}
+            
+            point[i] = Bezier(startPoint, PointSetting(startPoint),
+            PointSetting(targetPoint),targetPoint, t);
+            point[i].z = 0;
+        }
+        cardDragLine.SetPositions(point);
+        
+
+        Vector3 PointSetting(Vector3 origin){
+            float x, y;
+            x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
+            y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
+    
+            return new Vector3(x, y);
+        }
+        Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
+        {
+            Vector3 M0 = Vector3.Lerp(P0, P1, t);
+            Vector3 M1 = Vector3.Lerp(P1, P2, t);
+            Vector3 M2 = Vector3.Lerp(P2, P3, t);
+
+            Vector3 B0 = Vector3.Lerp(M0, M1, t);
+            Vector3 B1 = Vector3.Lerp(M1, M2, t);
+
+            return Vector3.Lerp(B0, B1, t);
+        }
     }
 
     IEnumerator ActivateSpell(CardData cardData, int nodeNum)
@@ -978,7 +1081,6 @@ public class DungeonManager : MonoBehaviour
 
     public IEnumerator CardEndDrag(DungeonCard dungeonCard, int nodeNum)
     {
-        yield return new WaitForSeconds(0.5f);
 
         foreach(GameObject cardObject in cardObjectList)
         {cardObject.GetComponent<DungeonCard>().SetLock(false);}
@@ -999,6 +1101,12 @@ public class DungeonManager : MonoBehaviour
             foreach(GameObject cardObject in cardObjectList)
             {cardObject.GetComponent<DungeonCard>().SetLock(false);}
         }
+
+        
+        CameraController.Inst.SetDragLock(false);
+        
+        yield return new WaitForSeconds(0.5f);
+
     }
 
     public bool CheckCardUsable(CardData cardData, int nodeNum)
@@ -1007,6 +1115,14 @@ public class DungeonManager : MonoBehaviour
         {return false;}
 
         return true;
+    }
+
+    public void GainEnergyToMax()
+    {
+        foreach(GameObject card in cardObjectList)
+        {
+            card.GetComponent<DungeonCard>().AddEnergy(1000);
+        }
     }
 
     public int ReturnMouseOnNode()

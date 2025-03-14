@@ -11,7 +11,9 @@ using System.Collections;
 public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
-    int maxEnergy;
+    public Image energyFillImage; // 육각형 에너지 UI 이미지
+    public float maxEnergy = 10f; // 최대 에너지
+    private float currentEnergy = 1.5f; // 현재 에너지
     int energy;
     public TMP_Text nameTMP;
     public TMP_Text forceTMP;
@@ -20,7 +22,6 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public Sprite cardBack;
     public CardData cardData;
     public GameObject cardHighlightBorder;
-    bool isFront;
     bool isUsable;
     int currentCost;
     public int cardOrder;
@@ -32,10 +33,43 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     void Start()
     {
-        // this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
-        // StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
-
         originPRS.pos = this.transform.position;
+        UpdateEnergyUI(); // 시작할 때 UI 초기화
+    }
+
+
+    public void AddEnergy(float amount)
+    {
+        float previousEnergy = currentEnergy;
+        currentEnergy = Mathf.Min(currentEnergy + amount, maxEnergy); // 최대치를 넘지 않도록 제한
+
+        UpdateEnergyUI(); // UI 업데이트 호출
+    }
+
+    public void ResetEnergy()
+    {
+        currentEnergy = 0;
+        UpdateEnergyUI();
+    }
+
+    void UpdateEnergyUI()
+    {
+        // DOTween을 사용해 fillAmount를 부드럽게 변경
+        float targetFill = currentEnergy / maxEnergy;
+        energyFillImage.DOFillAmount(targetFill, 0.5f).SetEase(Ease.OutQuad);
+
+
+        // 에너지가 꽉 차면 색 변화를 줘서 강조 효과 추가 (선택 사항)
+        if (currentEnergy == maxEnergy)
+        {
+            energyFillImage.DOColor(Color.yellow, 0.2f).SetLoops(3, LoopType.Yoyo); // 색이 깜빡이는 효과
+            isUsable = true;
+
+        }
+        else
+        {
+            energyFillImage.DOColor(Color.white, 0.2f); // 기본 색상 유지
+        }
     }
 
     public void HideAndReveal(bool flag)
@@ -58,21 +92,6 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         }
     }
 
-    
-
-    IEnumerator AppearAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay); // 0.3초 기다림
-
-        if (!locked)
-        {
-            locked = true;
-            Sequence seq = DOTween.Sequence();
-            seq.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.2f).SetEase(Ease.InOutQuad));
-            seq.AppendCallback(() => locked = false);
-        }
-    }
-
     public CardData GetCardData(){return cardData;}
     public bool GetIsUsable(){return isUsable;}
 
@@ -90,24 +109,6 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         currentCost = this.cardData.GetCardCost() - cost;
         if(currentCost < 0){currentCost = 0;}
         costTMP.text = currentCost.ToString();
-    }
-
-    public int GetCurrentCost()
-    {return currentCost;}
-    public void UpdateIsUsable()
-    {isUsable = (currentCost == 0);}
-
-    public void Setup(CardData cardData)
-    {
-        this.cardData = cardData;
-        nameTMP.text = this.cardData.GetCardName();
-        // this.cardHighlightBorder.SetActive(true);
-        cardType = cardData.GetCardType();
-        if(cardType == ECardType.Servent)
-            forceTMP.text = this.cardData.GetForce().ToString();
-        
-        // descriptionTMP.text = this.cardData.GetCardAbility();
-        costTMP.text = this.cardData.GetCardCost().ToString();
     }
 
     public void SetLock(bool value)

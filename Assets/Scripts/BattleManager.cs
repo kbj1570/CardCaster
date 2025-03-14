@@ -2329,14 +2329,6 @@ public class BattleManager : MonoBehaviour
         cardDragLine.SetPositions(point);
         
 
-        // if (mouseOnField != null) {
-        //      // 현재 드래그 중인 카드 가져오기
-        //     if (draggedCard != null) {
-        //         targetingSystem.UpdateLineRendererColor(dragLine, draggedCard.GetComponent<Card>()
-        //         .GetCardData().GetCardNum(), mouseOnField);
-        //     }
-        //}
-
         Vector3 PointSetting(Vector3 origin){
             float x, y;
             x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;

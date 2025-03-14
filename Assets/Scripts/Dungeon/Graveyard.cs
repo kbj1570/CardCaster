@@ -3,7 +3,7 @@ public class Graveyard : Dungeon
     public Graveyard()
     {
         dungeonName = "옛 무덤";
-        dungeonEndFloor = 15;
+        dungeonEndFloor = 5;
         dungeonFloorSize = 140;
         dungeonHeight = 10;
         dungeonWidth = 14;
