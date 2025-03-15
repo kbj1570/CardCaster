@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using System;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Linq;
 
 public class DungeonManager : MonoBehaviour
 {
@@ -103,7 +104,6 @@ public class DungeonManager : MonoBehaviour
 
     private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
-
     private void Start()
     {
         
@@ -171,36 +171,161 @@ public class DungeonManager : MonoBehaviour
     public void SetEnemyCourse()
     {
 
-        DungeonEnemy dungeonEnemy = new();
+        // foreach(KeyValuePair<DungeonEnemy, int> dungeonEnemyPair in dungeonEnemies)
+        // {
+        //     int i = dungeonEnemyPair.Key.GetCurrentNodeNum();
 
-        int i = dungeonEnemy.GetCurrentNodeNum();
+        //     List<EEnemyDirection> dummy = new();
 
-        List<EEnemyDirection> dummy = new();
+        //     if(nodeNumList.Contains(i + 1) && !dungeonEnemies.ContainsValue(i + 1)) // 이동할 수 있는 곳이고 아무도 가지 않는 곳
+        //     {dummy.Add(EEnemyDirection.East);}
 
-        if(nodeNumList.Contains(i + 1) && !dungeonEnemies.ContainsValue(i + 1))
-        {dummy.Add(EEnemyDirection.East);}
+        //     if(nodeNumList.Contains(i - 1) && !dungeonEnemies.ContainsValue(i - 1))
+        //     {dummy.Add(EEnemyDirection.West);}
 
-        if(nodeNumList.Contains(i - 1) && !dungeonEnemies.ContainsValue(i - 1))
-        {dummy.Add(EEnemyDirection.West);}
+        //     if(nodeNumList.Contains(i + width) && !dungeonEnemies.ContainsValue(i + width))
+        //     {dummy.Add(EEnemyDirection.South);}
 
-        if(nodeNumList.Contains(i + width) && !dungeonEnemies.ContainsValue(i + width))
-        {dummy.Add(EEnemyDirection.South);}
+        //     if(nodeNumList.Contains(i - width) && !dungeonEnemies.ContainsValue(i - width))
+        //     {dummy.Add(EEnemyDirection.North);}
 
-        if(nodeNumList.Contains(i - width) && !dungeonEnemies.ContainsValue(i - width))
-        {dummy.Add(EEnemyDirection.North);}
+        //     if(dummy.Count == 0)
+        //     {dungeonEnemies[dungeonEnemyPair.Key] = i;} // 갈 수 있는 방향이 아예 없을 경우, 다른 적이 이미 점유하고 있음
+        //     else if(dummy.Count == 1) // 갈 수 있는 곳이 1곳일 경우
+        //     {
+        //         dungeonEnemyPair.Key.SetEnemyDirection(dummy[0]);
+        //         dungeonEnemies[dungeonEnemyPair.Key] = ReturnForwardNode(dummy[0], dungeonEnemyPair.Key.GetCurrentNodeNum());
+        //     }
+        //     else if(dummy.Count == 2)
+        //     {
+        //         dummy.Remove(ReturnReverseDirection(dungeonEnemyPair.Key.GetEnemyDirection()));
+        //         dungeonEnemyPair.Key.SetEnemyDirection(dummy[0]);
+        //         dungeonEnemies[dungeonEnemyPair.Key] = ReturnForwardNode(dummy[0], dungeonEnemyPair.Key.GetCurrentNodeNum());
+
+        //     }
+        //     else if(dummy.Count == 3)
+        //     {
+        //         dummy.Remove(ReturnReverseDirection(dungeonEnemyPair.Key.GetEnemyDirection()));
+        //         int randomNum = Random.Range(0, 2);
+        //         dungeonEnemyPair.Key.SetEnemyDirection(dummy[randomNum]);
+        //         dungeonEnemies[dungeonEnemyPair.Key] = ReturnForwardNode(dummy[randomNum], dungeonEnemyPair.Key.GetCurrentNodeNum());
+
+        //     }
+        //     else if(dummy.Count == 4)
+        //     {
+        //         dummy.Remove(ReturnReverseDirection(dungeonEnemyPair.Key.GetEnemyDirection()));
+        //         int randomNum = Random.Range(0, 3);
+        //         dungeonEnemyPair.Key.SetEnemyDirection(dummy[randomNum]);
+        //         dungeonEnemies[dungeonEnemyPair.Key] = ReturnForwardNode(dummy[randomNum], dungeonEnemyPair.Key.GetCurrentNodeNum());
+        //     }
+        // }
 
 
-        if(dummy.Count == 0)
-        {dungeonEnemies[dungeonEnemy] = i;} // 갈 수 있는 방향이 아예 없을 경우
-        else if(dummy.Count == 1) // 갈 수 있는 곳이 1곳일 경우
-        {}
-        else if(dummy.Count == 2)
-        {}
-        else if(dummy.Count == 3)
-        {}
-        else if(dummy.Count == 4)
-        {}
+
+
+        List<DungeonEnemy> keys = dungeonEnemies.Keys.ToList();
+
+        for (int index = 0; index < keys.Count; index++)
+        {
+            DungeonEnemy enemy = keys[index];
+            int i = enemy.GetCurrentNodeNum();
+
+            List<EEnemyDirection> dummy = new();
+
+            if(nodeNumList.Contains(i + 1) && !dungeonEnemies.ContainsValue(i + 1)) 
+                dummy.Add(EEnemyDirection.East);
+            
+            if(nodeNumList.Contains(i - 1) && !dungeonEnemies.ContainsValue(i - 1)) 
+                dummy.Add(EEnemyDirection.West);
+            
+            if(nodeNumList.Contains(i + width) && !dungeonEnemies.ContainsValue(i + width)) 
+                dummy.Add(EEnemyDirection.South);
+            
+            if(nodeNumList.Contains(i - width) && !dungeonEnemies.ContainsValue(i - width)) 
+                dummy.Add(EEnemyDirection.North);
+
+            if(dummy.Count == 0)
+            {
+                dungeonEnemies[enemy] = i; // 이동 불가
+            }
+            else if(dummy.Count == 1) 
+            {
+                enemy.SetEnemyDirection(dummy[0]);
+                dungeonEnemies[enemy] = ReturnForwardNode(dummy[0], i);
+            }
+            else 
+            {
+                dummy.Remove(ReturnReverseDirection(enemy.GetEnemyDirection()));
+                int randomNum = Random.Range(0, dummy.Count);
+                enemy.SetEnemyDirection(dummy[randomNum]);
+                dungeonEnemies[enemy] = ReturnForwardNode(dummy[randomNum], i);
+            }
+        }
+
     }
+
+
+    private int ReturnEnemyFootStep(DungeonEnemy dungeonEnemy)
+    {
+        switch(dungeonEnemy.GetEnemyDirection())
+        {
+            case EEnemyDirection.North:
+            return dungeonEnemy.GetCurrentNodeNum() + width;
+
+            case EEnemyDirection.South:
+            return dungeonEnemy.GetCurrentNodeNum() - width;
+
+            case EEnemyDirection.East:
+            return dungeonEnemy.GetCurrentNodeNum() - 1;
+
+            case EEnemyDirection.West:
+            return dungeonEnemy.GetCurrentNodeNum() + 1;
+        }
+
+        return -1;
+    }
+
+
+    private int ReturnForwardNode(EEnemyDirection enemyDirection, int nodeNum)
+    {
+        switch(enemyDirection)
+        {
+            case EEnemyDirection.North:
+            return nodeNum - width;
+
+            case EEnemyDirection.South:
+            return nodeNum + width;
+
+            case EEnemyDirection.East:
+            return nodeNum + 1;
+
+            case EEnemyDirection.West:
+            return nodeNum - 1;
+        }
+
+        return -1;
+
+    }
+
+    private EEnemyDirection ReturnReverseDirection(EEnemyDirection enemyDirection)
+    {
+        switch(enemyDirection)
+        {
+            case EEnemyDirection.North:
+            return EEnemyDirection.South;
+
+            case EEnemyDirection.South:
+            return EEnemyDirection.North;
+
+            case EEnemyDirection.East:
+            return EEnemyDirection.West;
+
+            case EEnemyDirection.West:
+            return EEnemyDirection.East;
+        }
+        return EEnemyDirection.None;
+    }
+
 
     public void UpdateItemPage()
     {
