@@ -6376,7 +6376,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1058466476
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7299,10 +7299,10 @@ MonoBehaviour:
   mapObject: {fileID: 2059413162}
   buttonPrefab: {fileID: 0}
   player: {fileID: 1624984907}
+  dungeonEnemyPrefab: {fileID: 6506548777204989005, guid: a46010afe11e0f148a88f1252e6e874d, type: 3}
   stairAlert: {fileID: 319354386}
   itemAlert: {fileID: 988157408}
   wayPointWindow: {fileID: 1341179390}
-  dungeonEnemy: {fileID: 0}
   itemPrefabList:
   - {fileID: 7612045987018875988, guid: 9746e16744cb1b248a2a8db23068f27a, type: 3}
   - {fileID: 7612045987018875988, guid: 97b92c5c430bad34abceaf49ebb9cca0, type: 3}

@@ -1,11 +1,7 @@
 using UnityEngine;
 using TMPro;
 using DG.Tweening;
-using UnityEngine.EventSystems;
-using System;
 using UnityEngine.UI;
-using System.Collections;
-
 
 
 public class DungeonEnemy : MonoBehaviour
@@ -17,9 +13,15 @@ public class DungeonEnemy : MonoBehaviour
 
     public Enemy GetEnemy()
     {return enemy;}
+    
+    public void SetEnemy(Enemy enemy)
+    {this.enemy = enemy;}
 
     public int GetCurrentNodeNum()
     {return currentNodeNum;}
+
+    public void SetCurrentNodeNum(int nodeNum)
+    {currentNodeNum = nodeNum;}
 
     public EEnemyDirection GetEnemyDirection()
     {return enemyDirection;}
@@ -28,7 +30,7 @@ public class DungeonEnemy : MonoBehaviour
     {return enemyState;}
 
     public void SetEnemyDirection(EEnemyDirection value)
-    {this.enemyDirection = value;}
+    {this.enemyDirection = value;}    
 }
 
 public enum EEnemyDirection
