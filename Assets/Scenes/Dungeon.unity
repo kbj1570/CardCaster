@@ -3945,6 +3945,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoldRush
       objectReference: {fileID: 0}
+    - target: {fileID: 8357732725725720325, guid: c45994e50a73f564f825216343196359, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8405153592259396056, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: maxEnergy
       value: 20
@@ -10101,6 +10105,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FastWind
       objectReference: {fileID: 0}
+    - target: {fileID: 8357732725725720325, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
 --- !u!224 &1482572466 stripped
@@ -12570,7 +12578,7 @@ Transform:
   m_GameObject: {fileID: 2059413162}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 2.6951, y: -1.6399, z: 0}
-  m_LocalScale: {x: 80.35306, y: 42.53036, z: 5.2741365}
+  m_LocalScale: {x: 60, y: 30, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

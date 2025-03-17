@@ -8,6 +8,7 @@ public class Dungeon
     protected int dungeonWidth;
     protected int dungeonHeight;
     protected int maxGold;
+    protected int enemyLimit;
 
     protected Dictionary<Enemy, int> enemyList;
     protected Dictionary<Item, int> itemList;
@@ -31,6 +32,9 @@ public class Dungeon
 
     public int GetMaxGold()
     {return maxGold;}
+
+    public int GetEnemyLimit()
+    {return enemyLimit;}
 
     public List<int> GetSafeFloorList()
     {return safeFloorList;}

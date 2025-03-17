@@ -64,6 +64,9 @@ public class RoomNode : MonoBehaviour
     public void SetRoomType(ERoomType roomType)
     {this.roomType = roomType;}
 
+    public void SetWhite()
+    {renderer.GetComponent<SpriteRenderer>().color = Color.white;}
+
     public void SetVisited()
     {
         visited = true;
@@ -75,6 +78,9 @@ public class RoomNode : MonoBehaviour
             roomType = ERoomType.None;
         }
     }
+
+    public bool GetVisited()
+    {return visited;}
 
     public void UpdateNodeFrame()
     {
@@ -126,6 +132,8 @@ public class RoomNode : MonoBehaviour
             yield return new WaitForSeconds(0.03f);
         }
     }
+
+
 
     void OnMouseEnter()
     {

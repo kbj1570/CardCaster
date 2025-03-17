@@ -2,14 +2,16 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
+using System.Collections;
 
 
 public class DungeonEnemy : MonoBehaviour
 {
     Enemy enemy;
-    int currentNodeNum;
-    EEnemyDirection enemyDirection;
-    EEnemyState enemyState;
+    public int currentNodeNum;
+    public EEnemyDirection enemyDirection;
+    public EEnemyState enemyState;
+    public Renderer renderer;
 
     public Enemy GetEnemy()
     {return enemy;}
@@ -30,7 +32,38 @@ public class DungeonEnemy : MonoBehaviour
     {return enemyState;}
 
     public void SetEnemyDirection(EEnemyDirection value)
-    {this.enemyDirection = value;}    
+    {this.enemyDirection = value;}
+
+    public void SetVisible(bool value)
+    {this.gameObject.SetActive(value);}
+
+    public IEnumerator FadeIn()
+    {
+        float f = 1;
+        while (f >= 0)
+        {
+            f -= 0.1f;
+            Color ColorAlhpa = renderer.material.color;
+            ColorAlhpa.a = f;
+            renderer.material.color = ColorAlhpa;
+            yield return new WaitForSeconds(0.02f);
+        }
+        this.gameObject.SetActive(false);
+    }
+
+    public IEnumerator FadeOut()
+    {
+        this.gameObject.SetActive(true);
+        float f = 0;
+        while (f <= 1)
+        {
+            f += 0.1f;
+            Color ColorAlhpa = renderer.material.color;
+            ColorAlhpa.a = f;
+            renderer.material.color = ColorAlhpa;
+            yield return new WaitForSeconds(0.02f);
+        }
+    }
 }
 
 public enum EEnemyDirection

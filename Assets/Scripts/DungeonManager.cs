@@ -24,6 +24,7 @@ public class DungeonManager : MonoBehaviour
     int width;
     int height;
     int maxGold;
+    int enemyLimit;
     int dungeonEndFloor;
     List<int> safeFloorList;
     List<Item> itemDatabase;
@@ -107,9 +108,6 @@ public class DungeonManager : MonoBehaviour
 
     private void Start()
     {
-        
-        
-
         itemObjectList = new();
         messageList = new();
 
@@ -204,20 +202,23 @@ public class DungeonManager : MonoBehaviour
             }
             else if(dummy.Count == 1) 
             {
-                enemy.SetEnemyDirection(dummy[0]);
                 enemy.SetCurrentNodeNum(ReturnForwardNode(dummy[0], enemy.GetCurrentNodeNum()));
                 dungeonEnemies[enemy] = ReturnForwardNode(dummy[0], enemy.GetCurrentNodeNum());
+                enemy.SetEnemyDirection(dummy[0]);
             }
             else 
             {
                 dummy.Remove(ReturnReverseDirection(enemy.GetEnemyDirection()));
                 int randomNum = Random.Range(0, dummy.Count);
-                enemy.SetEnemyDirection(dummy[randomNum]);
                 enemy.SetCurrentNodeNum(ReturnForwardNode(dummy[randomNum], enemy.GetCurrentNodeNum()));
                 dungeonEnemies[enemy] = ReturnForwardNode(dummy[randomNum], enemy.GetCurrentNodeNum());
+                enemy.SetEnemyDirection(dummy[randomNum]);
             }
 
+            // enemy.SetCurrentNodeNum(dungeonEnemies[enemy]);
+
             dungeonEnemies[enemy] = enemy.GetCurrentNodeNum();
+            
         }
 
         
@@ -232,7 +233,19 @@ public class DungeonManager : MonoBehaviour
             //enemyObjectList[count].transform.position = CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position;
 
             enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
-                .SetEase(Ease.OutQuad);
+                .SetEase(Ease.OutQuad)
+                .OnStart(() => {
+                    if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
+                    {StartCoroutine(dungeonEnemy.Key.FadeOut());}
+                }
+                )
+                .OnComplete(() => {
+                    //dungeonEnemy.Key.SetVisible(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited());
+                    if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
+                    {StartCoroutine(dungeonEnemy.Key.FadeIn());}
+                    // else
+                    // {dungeonEnemy.Key.SetVisible(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited());}
+                });
             count++;
         }
     }
@@ -380,6 +393,7 @@ public class DungeonManager : MonoBehaviour
         dungeonEndFloor = dungeon.GetDungeonEndFloor();
         safeFloorList = dungeon.GetSafeFloorList();
         itemList = dungeon.GetItemList();
+        enemyLimit = dungeon.GetEnemyLimit();
     }
 
 
@@ -572,22 +586,33 @@ public class DungeonManager : MonoBehaviour
 
         // 중복되지 않는 랜덤숫자 생성
 
+        List<int> usedNumbers = new List<int>();
+
         for(int i = 0; i < 5; ++i)
         {
-            x = Random.Range(0, nodeNumList.Count);
+            int num;
+            do {num = Random.Range(0, nodeNumList.Count);}
+            while (usedNumbers.Contains(num));
+            
+            usedNumbers.Add(nodeNumList[num]);
+        }
+
+        for(int i = 0; i < usedNumbers.Count; ++i)
+        {
 
             if(Random.Range(0, 2) == 0)
             {
-                map[nodeNumList[x]].SetRoomType(ERoomType.EItem);
-                map[nodeNumList[x]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
+                map[usedNumbers[i]].SetRoomType(ERoomType.EItem);
+                map[usedNumbers[i]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
 
             }else
             {
-                map[nodeNumList[x]].SetRoomType(ERoomType.EGold);
-                map[nodeNumList[x]].SetGold(Random.Range(1, maxGold + 1));
+                map[usedNumbers[i]].SetRoomType(ERoomType.EGold);
+                map[usedNumbers[i]].SetGold(Random.Range(1, maxGold + 1));
             }
-            nodeNumList.Remove(nodeNumList[x]);
         }
+
+
 
         x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
@@ -636,7 +661,7 @@ public class DungeonManager : MonoBehaviour
     public void CreateFloor()
     {
         nodeNumList = new List<int>();
-        while(nodeNumList.Count < 20) // 생성된 층의 크기가 10보다 작으면 다시 만듬
+        while(nodeNumList.Count < 40) // 생성된 층의 크기가 10보다 작으면 다시 만듬
         {
             map = new(); // Node들의 정보를 담은 map
             for(int i = 0; i < floorSize; ++i)
@@ -645,7 +670,6 @@ public class DungeonManager : MonoBehaviour
             CreateNodeNumList();
         }
 
-
         floorText.text = floor.ToString() + "F";
         AddLoopCorridor();
         CreateNodeNumList();
@@ -653,6 +677,8 @@ public class DungeonManager : MonoBehaviour
         InstantiateNode();
         
         MovePlayer(currentPlayerLocation);
+        nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetWhite();
+        nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
         player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
 
         CreateEnemy();
@@ -662,6 +688,7 @@ public class DungeonManager : MonoBehaviour
     {
         // 우선 랜덤으로 배치한다.
         List<int> usedNumbers = new List<int>();
+        dungeonEnemies.Clear();
         int enemyCount = 5;
 
         for(int i = 0; i < enemyCount; ++i)
@@ -701,6 +728,9 @@ public class DungeonManager : MonoBehaviour
 
             enemyObjectList.Add(enemyObject);
 
+            enemyObject.GetComponent<DungeonEnemy>().SetVisible(nodeMap[enemyObject.GetComponent<DungeonEnemy>().GetCurrentNodeNum()]
+            .GetComponent<RoomNode>().GetVisited());
+
         }
         MoveEnemy();        
     }
@@ -709,6 +739,13 @@ public class DungeonManager : MonoBehaviour
     {
         foreach(GameObject node in nodeMap)
         {Destroy(node);}
+
+        foreach(GameObject enemyObject in enemyObjectList)
+        {
+            Destroy(enemyObject);
+        }
+        enemyObjectList.Clear();
+
     }
 
     public void AddLoopCorridor()
