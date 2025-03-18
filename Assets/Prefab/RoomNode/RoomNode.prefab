@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 8866241803749357966}
   - component: {fileID: 8866241803749357967}
   - component: {fileID: 8866241803749357961}
+  - component: {fileID: 418526011778613946}
   m_Layer: 0
   m_Name: RoomNode
   m_TagString: Untagged
@@ -186,6 +187,11 @@ MonoBehaviour:
   roomType: 0
   roomMark: {fileID: 8866241802618016658}
   renderer: {fileID: 8866241803749357967}
+  upBlocked: 0
+  downBlocked: 0
+  leftBlocked: 0
+  rightBlocked: 0
+  visited: 0
   leftDownCorner: {fileID: 21300000, guid: 38877fb19e905d745b995faca254dfb6, type: 3}
   leftUpCorner: {fileID: 21300000, guid: b1018626530622449bc0f2ff9e22129e, type: 3}
   rightDownCorner: {fileID: 21300000, guid: 7c30971b8797f524c8e18d5da1bac681, type: 3}
@@ -200,3 +206,29 @@ MonoBehaviour:
   rightWall: {fileID: 21300000, guid: b00897aba4c50f64688ef446eda27489, type: 3}
   downWall: {fileID: 21300000, guid: 1835b0f82ce58c54a993d1342d35cbca, type: 3}
   upWall: {fileID: 21300000, guid: 8278e244cc2be964493a7a102f32d0c1, type: 3}
+--- !u!61 &418526011778613946
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866241803749357964}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 2, y: 2}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2}
+  m_EdgeRadius: 0

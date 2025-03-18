@@ -8,10 +8,11 @@ using System.Collections;
 public class DungeonEnemy : MonoBehaviour
 {
     Enemy enemy;
-    public int currentNodeNum;
+    protected int currentNodeNum;
     public EEnemyDirection enemyDirection;
     public EEnemyState enemyState;
     public Renderer renderer;
+    public bool visible;
 
     public Enemy GetEnemy()
     {return enemy;}
@@ -35,7 +36,25 @@ public class DungeonEnemy : MonoBehaviour
     {this.enemyDirection = value;}
 
     public void SetVisible(bool value)
-    {this.gameObject.SetActive(value);}
+    {
+        this.gameObject.SetActive(value);
+        visible = value;
+    }
+
+    public IEnumerator Kill()
+    {
+
+        float f = 1;
+        while (f >= 0)
+        {
+            f -= 0.1f;
+            Color ColorAlhpa = renderer.material.color;
+            ColorAlhpa.a = f;
+            renderer.material.color = ColorAlhpa;
+            yield return new WaitForSeconds(0.02f);
+        }
+        Destroy(this.gameObject);
+    }
 
     public IEnumerator FadeIn()
     {
@@ -49,6 +68,7 @@ public class DungeonEnemy : MonoBehaviour
             yield return new WaitForSeconds(0.02f);
         }
         this.gameObject.SetActive(false);
+        visible = false;
     }
 
     public IEnumerator FadeOut()
@@ -63,6 +83,7 @@ public class DungeonEnemy : MonoBehaviour
             renderer.material.color = ColorAlhpa;
             yield return new WaitForSeconds(0.02f);
         }
+        visible = true;
     }
 }
 

@@ -101,3 +101,4 @@ MonoBehaviour:
   enemyDirection: 0
   enemyState: 0
   renderer: {fileID: 4170784297575195933}
+  visible: 0

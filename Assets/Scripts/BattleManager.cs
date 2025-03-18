@@ -164,8 +164,7 @@ public class BattleManager : MonoBehaviour
         mouseOnArea = EMouseOnArea.None;
 
         StartCoroutine(StartGameCo());
-        Debug.Log(enemy.GetGold());
-        Debug.Log(enemy.GetReward());
+        DontDestroyOnLoad(this);
     }
 
     public bool AddSelectedCards(CardData cardData)

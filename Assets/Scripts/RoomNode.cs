@@ -140,6 +140,11 @@ public class RoomNode : MonoBehaviour
         DungeonManager.Inst.SetMouseOnNode(roomNum);
     }
 
+    void OnMouseDown()
+    {
+        StartCoroutine(DungeonManager.Inst.FindPath(roomNum));   
+    }
+
     void OnMouseExit()
     {DungeonManager.Inst.ResetMouseOnNode();}
 }

@@ -7345,6 +7345,8 @@ MonoBehaviour:
   healthText: {fileID: 0}
   goldText: {fileID: 0}
   textbox: {fileID: 0}
+  currentPlayerLocation: 0
+  previousPlayerLocation: 0
   cardObjectList:
   - {fileID: 2048931240}
   - {fileID: 648859753}
