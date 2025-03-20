@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 //  public class CameraController : MonoBehaviour
 //     {
@@ -79,6 +80,19 @@ public class CameraController : MonoBehaviour
             Vector3 targetPosition = new Vector3(player.position.x, player.position.y, camera.transform.position.z);
             camera.transform.DOMove(targetPosition, followSpeed).SetEase(Ease.OutSine);
         }
+    }
+
+    public IEnumerator  CameraZoomEffect()
+    {
+        float startSize = camera.GetComponent<Camera>().orthographicSize;
+        float targetSize = startSize * 0.7f; // 줌인
+
+        for (float t = 0; t < 1; t += Time.deltaTime)
+        {
+            camera.GetComponent<Camera>().orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+            yield return null;
+        }
+
     }
 
     void DragCamera()

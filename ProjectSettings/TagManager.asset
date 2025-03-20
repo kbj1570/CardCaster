@@ -11,16 +11,16 @@ TagManager:
   - 
   - Water
   - UI
-  - CardArea
-  - FieldArea1
-  - FieldArea2
-  - FieldArea3
-  - FieldArea4
-  - FieldArea5
-  - FieldArea6
-  - Hole
-  - Player
-  - Opponent
+  - Dungeon\
+  - Battle
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 
@@ -46,4 +46,10 @@ TagManager:
     locked: 0
   - name: Card
     uniqueID: 2332344293
+    locked: 0
+  - name: New Layer 3
+    uniqueID: 1132328231
+    locked: 0
+  - name: Dungeon
+    uniqueID: 1581865907
     locked: 0

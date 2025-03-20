@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
@@ -164,7 +165,6 @@ public class BattleManager : MonoBehaviour
         mouseOnArea = EMouseOnArea.None;
 
         StartCoroutine(StartGameCo());
-        DontDestroyOnLoad(this);
     }
 
     public bool AddSelectedCards(CardData cardData)
@@ -1785,6 +1785,7 @@ public class BattleManager : MonoBehaviour
         
         GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
         cardObject.transform.SetParent(canvas.transform);
+        cardObject.transform.localScale = new Vector3(0.5f, 0.5f, 1);
         cardObjectList.Add(cardObject);
         
         cardObject.GetComponent<BattleCard>().Setup(cardData);
@@ -2346,5 +2347,10 @@ public class BattleManager : MonoBehaviour
 
             return Vector3.Lerp(B0, B1, t);
         }
+    }
+
+    public void BackToDungeon()
+    {
+        SceneManager.LoadScene("Dungeon");
     }
 }

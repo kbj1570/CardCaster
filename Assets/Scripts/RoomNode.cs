@@ -35,7 +35,11 @@ public class RoomNode : MonoBehaviour
     public Sprite upWall;
 
     void Start()
-    {renderer.GetComponent<SpriteRenderer>().color = Color.gray;}
+    {}
+    void Awake()
+    {
+        renderer.GetComponent<SpriteRenderer>().color = Color.gray;
+    }
 
     public Node GetNodeData()
     {return nodeData;}
@@ -77,6 +81,13 @@ public class RoomNode : MonoBehaviour
             roomMark.SetActive(false);
             roomType = ERoomType.None;
         }
+    }
+
+    public void SetVisited(bool value)
+    {
+        visited = value;
+        if(value)
+        {renderer.GetComponent<SpriteRenderer>().color = Color.white;}
     }
 
     public bool GetVisited()
@@ -136,14 +147,10 @@ public class RoomNode : MonoBehaviour
 
 
     void OnMouseEnter()
-    {
-        DungeonManager.Inst.SetMouseOnNode(roomNum);
-    }
+    {DungeonManager.Inst.SetMouseOnNode(roomNum);}
 
     void OnMouseDown()
-    {
-        StartCoroutine(DungeonManager.Inst.FindPath(roomNum));   
-    }
+    {StartCoroutine(DungeonManager.Inst.FindPath(roomNum));}
 
     void OnMouseExit()
     {DungeonManager.Inst.ResetMouseOnNode();}

@@ -27,7 +27,18 @@ public class PlayerManager : MonoBehaviour
     public List<GameObject> itemObjectList;
 
     public static PlayerManager Inst{get; private set;}
-    void Awake() => Inst = this;
+
+    void Awake()
+    {
+        if (Inst != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Inst = this;
+        DontDestroyOnLoad(this);
+    }
 
 
     void Start()
@@ -39,7 +50,6 @@ public class PlayerManager : MonoBehaviour
         // ClassifyItems();
         // ShowInventory();
 
-        DontDestroyOnLoad(this);
     }
     
     public void ClassifyItems()
