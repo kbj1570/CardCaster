@@ -7,11 +7,11 @@ public class Graveyard : Dungeon
         dungeonFloorSize = 100;
         dungeonHeight = 10;
         dungeonWidth = 10;
-        enemyLimit = 2;
+        enemyLimit = 4;
 
         itemList = new(){
-            {new RedPotion(), 2},
-            {new GoldenDice(), 2},
+            {new RedPotion(), 1},
+            {new GoldenDice(), 3},
             {new RustyKnife(), 2}
         };
 

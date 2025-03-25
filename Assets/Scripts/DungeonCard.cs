@@ -4,7 +4,6 @@ using DG.Tweening;
 using UnityEngine.EventSystems;
 using System;
 using UnityEngine.UI;
-using System.Collections;
 
 
 
@@ -12,8 +11,8 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 {
 
     public Image energyFillImage; // 육각형 에너지 UI 이미지
-    public float maxEnergy = 10f; // 최대 에너지
-    private float currentEnergy = 1.5f; // 현재 에너지
+    public float maxEnergy = 100f; // 최대 에너지
+    private float currentEnergy = 15f; // 현재 에너지
     int energy;
     public TMP_Text nameTMP;
     public TMP_Text forceTMP;

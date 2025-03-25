@@ -39,4 +39,9 @@ public class FuckingCookingTime : Encounter
         {"괜히 이상한거 주워먹어서 탈나면 어쩌려고?"}});
     }
 
+    private void CreateSelectionNode()
+    {
+        
+    }
+
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public static class DungeonData
 {
@@ -14,6 +15,7 @@ public static class DungeonData
     public static Dictionary<int, bool> visitedNodes;
     public static Dictionary<DungeonEnemy, int> dungeonEnemies;
     public static int currentFloor;
+    
 
     public static void Reset()
     {
@@ -34,10 +36,29 @@ public static class DungeonClearData
 
 public class CampsiteManager : MonoBehaviour
 {
+    public Image fadeImage;
 
     
     public void GoToDungeon()
     {
+        fadeImage.gameObject.SetActive(true);
+        StartCoroutine(FadeOut());
+        
+    }
+
+    private IEnumerator FadeOut()
+    {
+        float time = 0;
+        Color color = fadeImage.color;
+
+        while (time < 0.6f)
+        {
+            time += Time.deltaTime;
+            color.a = Mathf.Lerp(0, 1, time / 0.6f); // 알파 값을 0 → 1로 변경
+            fadeImage.color = color;
+            yield return null;
+        }
+
         DungeonData.dungeon = new Graveyard();
         SceneManager.LoadScene("Dungeon");
     }

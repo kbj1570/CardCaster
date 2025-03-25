@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 
 public class DungeonManager : MonoBehaviour
 {
+    public Image fadeImage;
     int lineCount;
     int mouseOnRoomNum;
     bool moveLocked;
@@ -90,6 +91,7 @@ public class DungeonManager : MonoBehaviour
     int currentPage;
     void Awake()
     {
+        moveLocked = true;
         // 이미 존재하는 DungeonManager가 있으면, 새로 생성된 것은 제거
         if (Inst != null)
         {
@@ -124,8 +126,44 @@ public class DungeonManager : MonoBehaviour
         {
             ReCreateFloor();
         }
+
+        StartCoroutine(FadeIn()); //밝아짐짐
         
         //DontDestroyOnLoad(this);
+        
+    }
+
+    private IEnumerator FadeIn()
+    {
+        
+        float time = 0;
+        Color color = fadeImage.color;
+        
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            color.a = Mathf.Lerp(1, 0, time / 1f); // 알파 값을 1 → 0으로 변경
+            fadeImage.color = color;
+            yield return null;
+        }
+        fadeImage.gameObject.SetActive(false);
+        moveLocked = false;
+    }
+
+    private IEnumerator FadeOut()
+    {
+        fadeImage.gameObject.SetActive(true);
+        moveLocked = true;
+        float time = 0;
+        Color color = fadeImage.color;
+
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            color.a = Mathf.Lerp(0, 1, time / 1f); // 알파 값을 0 → 1로 변경
+            fadeImage.color = color;
+            yield return null;
+        }
     }
 
     List<GameObject> itemObjectList;
@@ -316,6 +354,10 @@ public class DungeonManager : MonoBehaviour
             {
 
             }
+            else if(enemy.GetMoveLock())
+            {
+                
+            }
             else if(dummy.Count == 1) 
             {
                 enemy.SetCurrentNodeNum(ReturnForwardNode(dummy[0], enemy.GetCurrentNodeNum()));
@@ -330,6 +372,11 @@ public class DungeonManager : MonoBehaviour
                 dungeonEnemies[enemy] = enemy.GetCurrentNodeNum();
                 enemy.SetEnemyDirection(dummy[randomNum]);
             }
+
+            enemy.SetMoveLock(enemy.GetCurrentNodeNum() + 1 == currentPlayerLocation
+            || enemy.GetCurrentNodeNum() - 1 == currentPlayerLocation
+            || enemy.GetCurrentNodeNum() + width == currentPlayerLocation
+            || enemy.GetCurrentNodeNum() - width == currentPlayerLocation);
         }
     }
 
@@ -406,7 +453,6 @@ public class DungeonManager : MonoBehaviour
         {
             enemyObjectList.Remove(selectedEnemy.gameObject);
             dungeonEnemies.Remove(selectedEnemy);
-            StartCoroutine(selectedEnemy.Kill());
         }
 
         DungeonData.map = map;
@@ -501,17 +547,29 @@ public class DungeonManager : MonoBehaviour
         {
             //enemyObjectList[count].transform.position = CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position;
 
-            enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
-                .SetEase(Ease.OutQuad)
-                .OnStart(() => {
-                    if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
-                    {StartCoroutine(dungeonEnemy.Key.FadeOut());}
+            // enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
+            //     .SetEase(Ease.OutQuad)
+            //     .OnStart(() => {
+            //         if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
+            //         {StartCoroutine(dungeonEnemy.Key.FadeOut());}
 
-                })
-                .OnComplete(() => {
-                    if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
-                    {StartCoroutine(dungeonEnemy.Key.FadeIn());}
-                    });
+            //     })
+            //     .OnComplete(() => {
+            //         if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
+            //         {StartCoroutine(dungeonEnemy.Key.FadeIn());}
+            //         });
+
+            enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
+            .SetEase(Ease.OutQuad)
+            .OnStart(() => {
+                if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
+                {StartCoroutine(dungeonEnemy.Key.FadeOut());}
+
+            })
+            .OnComplete(() => {
+                if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
+                {StartCoroutine(dungeonEnemy.Key.FadeIn());}
+                });
             
             count++;
         }
@@ -787,13 +845,13 @@ public class DungeonManager : MonoBehaviour
         int x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
 
-        x = Random.Range(0, nodeNumList.Count);
-        map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        SetEnemyInNode(map[nodeNumList[x]]);
+        // x = Random.Range(0, nodeNumList.Count);
+        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
+        // SetEnemyInNode(map[nodeNumList[x]]);
 
-        x = Random.Range(0, nodeNumList.Count);
-        map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        SetEnemyInNode(map[nodeNumList[x]]);
+        // x = Random.Range(0, nodeNumList.Count);
+        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
+        // SetEnemyInNode(map[nodeNumList[x]]);
 
         
 
@@ -896,7 +954,8 @@ public class DungeonManager : MonoBehaviour
         MovePlayer(currentPlayerLocation);
         nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
         player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
-
+        camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
+       
         LoadItemList();
         UpdateItemPage();
     }
@@ -928,7 +987,7 @@ public class DungeonManager : MonoBehaviour
         nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetWhite();
         nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
         player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
-
+        camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
         CreateEnemy();
     }
 
@@ -937,9 +996,8 @@ public class DungeonManager : MonoBehaviour
         // 우선 랜덤으로 배치한다.
         List<int> usedNumbers = new List<int>();
         dungeonEnemies.Clear();
-        int enemyCount = 5;
 
-        for(int i = 0; i < enemyCount; ++i)
+        for(int i = 0; i < enemyLimit; ++i)
         {
             int num;
             do {num = Random.Range(0, nodeNumList.Count);}
@@ -948,7 +1006,7 @@ public class DungeonManager : MonoBehaviour
             usedNumbers.Add(nodeNumList[num]);
         }
 
-        for(int i = 0; i < enemyCount; ++i)
+        for(int i = 0; i < enemyLimit; ++i)
         {
             GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
 
@@ -978,6 +1036,12 @@ public class DungeonManager : MonoBehaviour
 
             enemyObject.GetComponent<DungeonEnemy>().SetVisible(nodeMap[enemyObject.GetComponent<DungeonEnemy>().GetCurrentNodeNum()]
             .GetComponent<RoomNode>().GetVisited());
+            enemyObject.GetComponent<DungeonEnemy>().SetMoveLock(
+                dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + 1 == currentPlayerLocation
+            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - 1 == currentPlayerLocation
+            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + width == currentPlayerLocation
+            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - width == currentPlayerLocation
+            );
 
         }
         MoveEnemy();        
@@ -1207,7 +1271,14 @@ public class DungeonManager : MonoBehaviour
     {
         floor++;
         moveLocked = false;
+        StartCoroutine(ReadyNextFloor());
 
+    }
+
+    private IEnumerator ReadyNextFloor()
+    {
+        StartCoroutine(FadeOut());
+        yield return new WaitForSeconds(1f);
         if(safeFloorList.Contains(floor))
         {
             wayPointWindow.GetComponent<Window>().OnOff();
@@ -1225,6 +1296,9 @@ public class DungeonManager : MonoBehaviour
             CreateFloor();
             CameraController.Inst.SetFollowing();
         }
+
+
+        StartCoroutine(FadeIn());
     }
 
     public void RemoveClickedItem()
@@ -1277,11 +1351,9 @@ public class DungeonManager : MonoBehaviour
 
     public void MovePlayer(int roomNum)
     {
-        // player.transform.position = CalculateNodePosition(roomNum) + mapObject.transform.position;
         foreach(GameObject card in cardObjectList)
-        {
-            card.GetComponent<DungeonCard>().AddEnergy(0.1f);
-        }
+        {card.GetComponent<DungeonCard>().AddEnergy(1f);}
+
         nodeMap[roomNum].SetActive(true);
         nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
@@ -1500,6 +1572,10 @@ public class DungeonManager : MonoBehaviour
             card.GetComponent<DungeonCard>().AddEnergy(1000);
         }
     }
+
+    //나와 적 사이가 항상 1칸이 되게 유지
+
+
 
     public int ReturnMouseOnNode()
     {return mouseOnRoomNum;}

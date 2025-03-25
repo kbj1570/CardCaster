@@ -7,6 +7,7 @@ using System.Collections;
 
 public class DungeonEnemy : MonoBehaviour
 {
+    bool moveLocked;
     Enemy enemy;
     protected int currentNodeNum;
     public EEnemyDirection enemyDirection;
@@ -40,6 +41,12 @@ public class DungeonEnemy : MonoBehaviour
         this.gameObject.SetActive(value);
         visible = value;
     }
+
+    public void SetMoveLock(bool value)
+    {moveLocked = value;}
+
+    public bool GetMoveLock()
+    {return moveLocked;}
 
     public IEnumerator Kill()
     {
