@@ -36,6 +36,8 @@ public class Enemy
     {return serventList;}
     public List<EnemyAbility> GetEnemyAbilities()
     {return enemyAbilities;}
+    public int GetActionToken()
+    {return actionToken;}
 
 
     public void SetRewards()

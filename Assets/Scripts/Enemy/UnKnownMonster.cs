@@ -6,9 +6,9 @@ public class UnknownMonster : Enemy
     {
         enemyName = "정체불명의 괴물";
         enemyNum = "0";
-        enemyHealth = 40;
+        enemyHealth = 20;
         enemyGold = 300;
-        actionToken = 4;
+        actionToken = 2;
 
         enemyRewards = new Dictionary<Item, int>()
         {

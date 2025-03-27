@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
+using System.Text;
 
 public class CutSceneManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class CutSceneManager : MonoBehaviour
     public Image characterOnLeftSide;
     public Image characterOnRightSide;
     public Image fadeImage;
+    private StringBuilder currentText = new StringBuilder();
 
     bool isActionDone;
     float typingSpeed = 0.04f;
@@ -55,7 +57,7 @@ public class CutSceneManager : MonoBehaviour
 
                 textBoxObject.SetActive(true);
                 nameBox.text = cutSceneNode.name;
-                // textBox.text = cutSceneNode.text;
+                textBox.text = cutSceneNode.text;
 
                 for (int i = 0; i < cutSceneNode.text.Length; i++)
                 {
@@ -67,7 +69,11 @@ public class CutSceneManager : MonoBehaviour
                     {typingSpeed = 0.05f;}
                     textBox.text = cutSceneNode.text.Substring(0, i + 1); // 한 글자씩 추가
                     yield return new WaitForSeconds(typingSpeed); // 일정 시간 대기
+
+
+                    
                 }
+
                 isTyping = false;
 
                 yield return new WaitUntil(() => isActionDone);

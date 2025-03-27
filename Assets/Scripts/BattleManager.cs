@@ -40,7 +40,6 @@ public class BattleManager : MonoBehaviour
     public Transform enemyTransform;
     public Transform alertPoint; 
     public static BattleManager Inst{get; private set;}
-    void Awake() => Inst = this;
     public Canvas canvas;
     public Camera camera;
     public RectTransform backgroundDetectArea;
@@ -140,15 +139,13 @@ public class BattleManager : MonoBehaviour
     public GameObject cardSelectWindow;
     public GameObject trashWindow;
 
+    public Image fadeImage;
+
 
     public Scrollbar scrollbar;
 
     private int selectedLimit;
     private bool isActionDone = false;
-
-    // public void StartAction()
-    // {isActionDone = false;}
-
     public void ActionDone()
     {isActionDone = true;}
 
@@ -157,6 +154,12 @@ public class BattleManager : MonoBehaviour
 
     void Start()
     {
+        
+    }
+
+    void Awake()
+    {
+        Inst = this;
         GameSetup();
         isLoading = true;
 
@@ -165,6 +168,7 @@ public class BattleManager : MonoBehaviour
         mouseOnArea = EMouseOnArea.None;
 
         StartCoroutine(StartGameCo());
+        StartCoroutine(FadeIn());
     }
 
     public bool AddSelectedCards(CardData cardData)
@@ -175,6 +179,40 @@ public class BattleManager : MonoBehaviour
         {selectedCards.Add(cardData);}
 
         return foo;
+    }
+    private IEnumerator FadeIn()
+    {
+        
+        float time = 0;
+        Color color = fadeImage.color;
+        
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            color.a = Mathf.Lerp(1, 0, time / 1f); // 알파 값을 1 → 0으로 변경
+            fadeImage.color = color;
+            yield return null;
+        }
+        fadeImage.gameObject.SetActive(false);
+    }
+
+    private IEnumerator FadeOut()
+    {
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<BattleCard>().HideAndReveal(true);}
+        yield return new WaitForSeconds(0.5f);
+        fadeImage.gameObject.SetActive(true);
+        float time = 0;
+        Color color = fadeImage.color;
+
+        while (time < 1f)
+        {
+            time += Time.deltaTime;
+            color.a = Mathf.Lerp(0, 1, time / 1f); // 알파 값을 0 → 1로 변경
+            fadeImage.color = color;
+            yield return null;
+        }
+        SceneManager.LoadScene("Dungeon");
     }
 
     public void RemoveSelectedCards(CardData cardData)
@@ -200,13 +238,6 @@ public class BattleManager : MonoBehaviour
             Debug.Log("카드를 선택하세요.");
         }
     }
-
-
-    public void WinBattle()
-    {
-        
-    }
-
     public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
     {
         isActionDone = false;
@@ -518,7 +549,7 @@ public class BattleManager : MonoBehaviour
             break;
 
             case 7: // 피의 대가
-            PlayerTakeDamage(1);
+            PlayerTakeDamage(4);
             DrawCard();
             break;
 
@@ -752,6 +783,14 @@ public class BattleManager : MonoBehaviour
         field_4.UpdateHealth();
         field_5.UpdateHealth();
         field_6.UpdateHealth();
+
+        if(enemyHealth <= 0)
+        {
+            enemyHealth = 0;
+
+            StartCoroutine(WinBattle());
+
+        }
     }
 
     IEnumerator StartTurnCo()
@@ -812,9 +851,16 @@ public class BattleManager : MonoBehaviour
 
     public void StartEnemyTurn()
     {
+        costCount = 0;
         if(turnState == ETurnState.Player)
         StartCoroutine(EnemyTurnCo());
     }
+    public IEnumerator WinBattle()
+    {
+        yield return new WaitForSeconds(1f);
+    }
+
+
 
     public IEnumerator EnemyTurnCo()
     {
@@ -823,7 +869,7 @@ public class BattleManager : MonoBehaviour
         {card.GetComponent<BattleCard>().HideAndReveal(true);}
 
         yield return new WaitForSeconds(0.3f);
-        int actionToken = 3;
+        int actionToken = enemy.GetActionToken();
 
         for(int i = 0; i < actionToken; ++i)
         {
@@ -1774,7 +1820,10 @@ public class BattleManager : MonoBehaviour
         if(deckList.Count != 0)
         {targetList = deckList;}
         else
-        {targetList = trashList;}
+        {
+            PlayerTakeDamage(1);
+            targetList = trashList;
+        }
 
         CardData cardData = targetList[targetList.Count - 1];
 
@@ -2013,10 +2062,16 @@ public class BattleManager : MonoBehaviour
                 if(ReturnMouseOnField(mouseOnArea).GetPenetrate())
                 {
                     defenderDamage = Math.Abs(defenderForce - attackerForce);
+
                     if(enemyDamageBlock)
-                    {defenderDamage = 0;}
-                    
-                    EnemyTakeDamage(defenderDamage);
+                    {
+                        defenderDamage = 0;
+                        EnemyTakeDamage(defenderDamage);
+                    }
+                    else if(defenderDamage == 0)
+                    {}
+                    else
+                    {EnemyTakeDamage(defenderDamage);}
                 }
                 
                 ReturnMouseOnField(mouseOnArea).SetAttacked(true);
@@ -2336,21 +2391,20 @@ public class BattleManager : MonoBehaviour
     
             return new Vector3(x, y);
         }
+        
         Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
         {
             Vector3 M0 = Vector3.Lerp(P0, P1, t);
             Vector3 M1 = Vector3.Lerp(P1, P2, t);
             Vector3 M2 = Vector3.Lerp(P2, P3, t);
-
             Vector3 B0 = Vector3.Lerp(M0, M1, t);
             Vector3 B1 = Vector3.Lerp(M1, M2, t);
-
             return Vector3.Lerp(B0, B1, t);
         }
     }
 
     public void BackToDungeon()
     {
-        SceneManager.LoadScene("Dungeon");
+        StartCoroutine(FadeOut());
     }
 }

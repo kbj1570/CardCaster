@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using UnityEditor.UI;
 using UnityEngine.UI;
 
 public class PopUpMessage : MonoBehaviour

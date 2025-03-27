@@ -6,9 +6,9 @@ public class MeetInTheDark : Encounter
     {
         encounterName = "어둠속의 대화";
         encounterNum = "0";
-        encounterText = new()
-        {"칠흑같은 어둠 속에서 어떤 목소리가 들려온다. 저기....",
-        "혹시 약을 갖고 계시면 좀 나눠주시겠어요?"};
+        // encounterText = new()
+        // {"칠흑같은 어둠 속에서 어떤 목소리가 들려온다. 저기....",
+        // "혹시 약을 갖고 계시면 좀 나눠주시겠어요?"};
 
         firstSelection = new();
         secondSelection = new();

@@ -10,7 +10,7 @@ public class SelectionNode
     private int requireGold;
     private int requireHealth;
     private CardData requireCard;
-    private Dictionary<Item, int> requireItem;
+    private Item requireItem;
     private SelectionNode firstSelection;
     private SelectionNode secondSelection;
     private SelectionNode thirdSelection;
@@ -44,14 +44,20 @@ public class SelectionNode
     {return thirdSelection;}
     public void SetThirdSelection(SelectionNode thirdSelection)
     {this.thirdSelection =  thirdSelection;}
-    public Dictionary<Item, int> GetRequireItem()
+    public Item GetRequireItem()
     {return requireItem;}
-    public void SetRequireItem(Dictionary<Item, int> requireItem)
-    {this.requireItem = requireItem;}
+    public void SetRequireCard(CardData requireCard)
+    {this.requireCard = requireCard;}
     public int GetRequireGold()
     {return requireGold;}
     public void SetRequireGold(int requireGold)
     {this.requireGold = requireGold;}
+
+    public int GetRequireHealth()
+    {return requireHealth;}
+
+    public CardData GetRequireCard()
+    {return requireCard;}
 }
 public enum ESelectionType
 {None, Random, ConditionChange}

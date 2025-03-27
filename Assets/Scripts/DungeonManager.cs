@@ -64,6 +64,24 @@ public class DungeonManager : MonoBehaviour
     public GameObject popUpMessageWindow;
     public GameObject popUpMessage;
 
+
+    private Encounter currentEncounter;
+    public GameObject encounterWindow;
+    public TMP_Text encounterName;
+    public TMP_Text encounterDescription;
+    public TMP_Text firstSelection;
+    public TMP_Text secondSelection;
+    public TMP_Text thirdSelection;
+    public TMP_Text hiddenSelection;
+
+
+    public GameObject firstSelectionButton;
+    public GameObject secondSelectionButton;
+    public GameObject thirdSelectionButton;
+
+    public GameObject hiddenSelectionButton;
+
+
     public GameObject nextButton;
     public GameObject backButton;
 
@@ -71,14 +89,11 @@ public class DungeonManager : MonoBehaviour
 
     public TMP_Text dungeonNameText;
     public TMP_Text floorText;
-    public TMP_Text encounterName;
-    public TMP_Text encounterDescription;
 
     public TMP_Text healthText;
     public TMP_Text goldText;
     public TMP_Text textbox;
 
-    private Encounter currentEncounter;
 
     public Item selectedItem;
 
@@ -127,7 +142,7 @@ public class DungeonManager : MonoBehaviour
             ReCreateFloor();
         }
 
-        StartCoroutine(FadeIn()); //밝아짐짐
+        StartCoroutine(FadeIn()); //밝아짐
         
         //DontDestroyOnLoad(this);
         
@@ -460,8 +475,10 @@ public class DungeonManager : MonoBehaviour
         DungeonData.previousPlayerLocation = previousPlayerLocation;
         DungeonData.currentFloor = floor;
         DungeonData.nodeNumList = nodeNumList;
+        DungeonData.dungeonEnemies = dungeonEnemies;
         Dictionary<int, bool> activeNodes = new();
         Dictionary<int, bool> visitedNodes = new();
+
 
         foreach(int roomNum in nodeNumList)
         {activeNodes.Add(roomNum, nodeMap[roomNum].activeSelf);}
@@ -475,7 +492,8 @@ public class DungeonManager : MonoBehaviour
         DungeonData.activeNodes = activeNodes;
         DungeonData.visitedNodes = visitedNodes;
         StartCoroutine(CameraController.Inst.CameraZoomEffect());
-        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(FadeOut());
+        yield return new WaitForSeconds(1f);
 
 
         SceneManager.LoadScene("Battle");
@@ -500,6 +518,8 @@ public class DungeonManager : MonoBehaviour
             SceneManager.GetSceneByName("Battle")
         );
     }
+
+    
     
     private bool CheckConnect(int enemyLocation)
     {
@@ -837,25 +857,90 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
+    public bool Foo(SelectionNode selectionNode)
+    {
+        if(selectionNode == null)
+        return false;
+
+        switch(selectionNode.GetRequireType())
+        {
+            case ERequireType.None:
+            return true;
+
+            case ERequireType.EGold:
+            return selectionNode.GetRequireGold() <= PlayerManager.Inst.GetGold();
+
+            case ERequireType.EHealth:
+            return selectionNode.GetRequireHealth() <= PlayerManager.Inst.GetHealth();
+
+            case ERequireType.EItem:
+            return myItemList.Contains(selectionNode.GetRequireItem());
+
+            case ERequireType.ECard:
+            return true;
+        }
+        return false;
+
+        //아이템 종류
+        
+    }
+
+    public void ShowEncounter()
+    {
+        encounterWindow.GetComponent<Window>().OnOff();
+        currentEncounter = new FunnyCookingTime();
+        
+        firstSelectionButton.SetActive(false);
+        secondSelectionButton.SetActive(false);
+        thirdSelectionButton.SetActive(false);
+        hiddenSelectionButton.SetActive(false);
+
+        encounterName.text = currentEncounter.GetName();
+        encounterDescription.text = currentEncounter.GetText();
+
+        if(currentEncounter.GetFirstSelection() != null)
+        {
+            if(Foo(currentEncounter.GetFirstSelection()))
+            {
+                firstSelectionButton.SetActive(true);
+                firstSelection.text = currentEncounter.GetFirstSelection().GetSelectionTitle();
+            }
+        }
+
+        if(currentEncounter.GetSecondSelection() == null)
+        {
+            if(Foo(currentEncounter.GetSecondSelection()))
+            {
+                secondSelectionButton.SetActive(true);
+                secondSelection.text = currentEncounter.GetSecondSelection().GetSelectionTitle();
+            }
+        }
+
+        if(currentEncounter.GetThirdSelection() == null)
+        {
+            if(Foo(currentEncounter.GetThirdSelection()))
+            {
+                thirdSelectionButton.SetActive(true);
+                thirdSelection.text = currentEncounter.GetThirdSelection().GetSelectionTitle();
+            }
+        }
+
+        if(currentEncounter.GetHiddenSelection() == null)
+        {
+            if(Foo(currentEncounter.GetHiddenSelection()))
+            {
+                hiddenSelectionButton.SetActive(true);
+                hiddenSelection.text = currentEncounter.GetHiddenSelection().GetSelectionTitle();
+            }
+        }
+
+    }
+
     
     private void SetNodeRoom()
     {
-         
-
         int x = Random.Range(0, nodeNumList.Count);
         map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
-
-        // x = Random.Range(0, nodeNumList.Count);
-        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        // SetEnemyInNode(map[nodeNumList[x]]);
-
-        // x = Random.Range(0, nodeNumList.Count);
-        // map[nodeNumList[x]].SetRoomType(ERoomType.EMonster);
-        // SetEnemyInNode(map[nodeNumList[x]]);
-
-        
-
-        // 중복되지 않는 랜덤숫자 생성
 
         List<int> usedNumbers = new List<int>();
 
@@ -940,6 +1025,7 @@ public class DungeonManager : MonoBehaviour
         previousPlayerLocation = DungeonData.previousPlayerLocation;
         floor = DungeonData.currentFloor;
         floorText.text = floor.ToString() + "F";
+        // dungeonEnemies = DungeonData.dungeonEnemies;
         
         nodeNumList = DungeonData.nodeNumList;
 
@@ -1413,7 +1499,10 @@ public class DungeonManager : MonoBehaviour
         else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
         {map[roomNum].SetRoomType(ERoomType.None);}
         else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
-        {map[roomNum].SetRoomType(ERoomType.None);}
+        {
+            // ShowEncounter();
+            map[roomNum].SetRoomType(ERoomType.None);
+        }
         else if(map[roomNum].GetRoomType() == ERoomType.EGold)
         {
             GainGold(map[roomNum]);
