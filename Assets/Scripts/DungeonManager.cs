@@ -40,6 +40,7 @@ public class DungeonManager : MonoBehaviour
     Dictionary<Item, int> itemList;
     Dictionary<Enemy, int> enemyList;
     public GameObject roomNodePrefab;
+    public GameObject wallNodePrefab;
     public GameObject itemNodePrefab;
     public GameObject encounterNodePrefab;
     public GameObject monsterNodePrefab;
@@ -741,7 +742,7 @@ public class DungeonManager : MonoBehaviour
         {
             if(CheckOutOfIndex(currentPlayerLocation - width))
             {
-                if(nodeMap[currentPlayerLocation - width] != null)
+                if(nodeMap[currentPlayerLocation - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
                 {
                     previousPlayerLocation = currentPlayerLocation;
                     currentPlayerLocation -= width;
@@ -760,7 +761,7 @@ public class DungeonManager : MonoBehaviour
 
             if(CheckOutOfIndex(currentPlayerLocation - 1))
             {
-                if(nodeMap[currentPlayerLocation - 1] != null)
+                if(nodeMap[currentPlayerLocation - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
                 {
                     previousPlayerLocation = currentPlayerLocation;
                     currentPlayerLocation -= 1;
@@ -775,7 +776,7 @@ public class DungeonManager : MonoBehaviour
         {
             if(CheckOutOfIndex(currentPlayerLocation + width))
             {
-                if(nodeMap[currentPlayerLocation + width] != null)
+                if(nodeMap[currentPlayerLocation + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
                 {
                     previousPlayerLocation = currentPlayerLocation;
                     currentPlayerLocation += width;
@@ -793,7 +794,7 @@ public class DungeonManager : MonoBehaviour
 
             if(CheckOutOfIndex(currentPlayerLocation + 1))
             {
-                if(nodeMap[currentPlayerLocation + 1] != null)
+                if(nodeMap[currentPlayerLocation + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
                 {
                     previousPlayerLocation = currentPlayerLocation;
                     currentPlayerLocation += 1;
@@ -1070,8 +1071,6 @@ public class DungeonManager : MonoBehaviour
         InstantiateNode();
         
         MovePlayer(currentPlayerLocation);
-        nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetWhite();
-        nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
         player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
         camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
         CreateEnemy();
@@ -1123,10 +1122,10 @@ public class DungeonManager : MonoBehaviour
             enemyObject.GetComponent<DungeonEnemy>().SetVisible(nodeMap[enemyObject.GetComponent<DungeonEnemy>().GetCurrentNodeNum()]
             .GetComponent<RoomNode>().GetVisited());
             enemyObject.GetComponent<DungeonEnemy>().SetMoveLock(
-                dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + 1 == currentPlayerLocation
-            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - 1 == currentPlayerLocation
-            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + width == currentPlayerLocation
-            || dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - width == currentPlayerLocation
+            dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + 1 == currentPlayerLocation
+            ||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - 1 == currentPlayerLocation
+            ||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + width == currentPlayerLocation
+            ||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - width == currentPlayerLocation
             );
 
         }
@@ -1184,9 +1183,9 @@ public class DungeonManager : MonoBehaviour
 
         for(int i = 0; i < map.Count; ++i)
         {
+            GameObject prefab = null;
             if(map[i] != null)
             {
-                GameObject prefab = null;
                 switch(map[i].GetRoomType())
                 {
                     case ERoomType.EStair:
@@ -1209,6 +1208,10 @@ public class DungeonManager : MonoBehaviour
                     prefab = monsterNodePrefab;
                     break;
 
+                    case ERoomType.EWall:
+                    prefab = monsterNodePrefab;
+                    break;
+
                     case ERoomType.None:
                     prefab = roomNodePrefab;
                     break;
@@ -1223,8 +1226,25 @@ public class DungeonManager : MonoBehaviour
                 gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
                 gameObject.SetActive(false);
 
-                 nodeMap[i] =gameObject;
+                nodeMap[i] = gameObject;
             }
+            else
+            {
+                prefab = wallNodePrefab;
+
+                GameObject gameObject = Instantiate(prefab,new Vector3(), Utils.QI);
+                gameObject.transform.SetParent(mapObject.transform);
+                gameObject.transform.position = mapObject.transform.position;
+                gameObject.GetComponent<RoomNode>().SetNodeNum(i);
+                // gameObject.GetComponent<RoomNode>().SetRoomType(map[i].GetRoomType());
+                gameObject.GetComponent<RoomNode>().SetRoomType(ERoomType.EWall);
+                gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
+                gameObject.SetActive(false);
+
+                nodeMap[i] = gameObject;
+            }
+
+            
         }
     }
 
@@ -1445,22 +1465,27 @@ public class DungeonManager : MonoBehaviour
 
         if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
         {
-            if(nodeMap[roomNum + 1] != null)
+            // if(nodeMap[roomNum + 1] != null)
+            // {
+                
+                
+            // }
+
+            if(nodeMap[roomNum + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
             {
-                if(!nodeMap[roomNum + 1].active)
+                if(!nodeMap[roomNum + 1].activeSelf)
                 {
                     nodeMap[roomNum + 1].SetActive(true);
                     StartCoroutine(nodeMap[roomNum + 1].GetComponent<RoomNode>().FadeOut());
                 }
-                
             }
         }
 
         if(CheckOutOfIndex(roomNum + width))
         {
-            if(nodeMap[roomNum + width] != null)
+            if(nodeMap[roomNum + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
             {
-                if(!nodeMap[roomNum + width].active)
+                if(!nodeMap[roomNum + width].activeSelf)
                 {
                     nodeMap[roomNum + width].SetActive(true);
                     StartCoroutine(nodeMap[roomNum + width].GetComponent<RoomNode>().FadeOut());
@@ -1470,9 +1495,9 @@ public class DungeonManager : MonoBehaviour
 
         if(CheckOutOfIndex(roomNum - 1) && roomNum % width != 0)
         {
-            if(nodeMap[roomNum - 1] != null)
+            if(nodeMap[roomNum - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
             {
-                if(!nodeMap[roomNum - 1].active)
+                if(!nodeMap[roomNum - 1].activeSelf)
                 {
                     nodeMap[roomNum - 1].SetActive(true);
                     StartCoroutine(nodeMap[roomNum - 1].GetComponent<RoomNode>().FadeOut());
@@ -1484,9 +1509,9 @@ public class DungeonManager : MonoBehaviour
 
         if(CheckOutOfIndex(roomNum - width))
         {
-            if(nodeMap[roomNum - width] != null)
+            if(nodeMap[roomNum - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
             {
-                if(!nodeMap[roomNum - width].active)
+                if(!nodeMap[roomNum - width].activeSelf)
                 {
                     nodeMap[roomNum - width].SetActive(true);
                     StartCoroutine(nodeMap[roomNum - width].GetComponent<RoomNode>().FadeOut());
@@ -1604,8 +1629,31 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
+    public void ActivateTeleport()
+    {
+        int randomNum = Random.Range(0, nodeNumList.Count);
+
+        previousPlayerLocation = currentPlayerLocation;
+        currentPlayerLocation = nodeNumList[randomNum];
+        MovePlayer(nodeNumList[randomNum]);
+        player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
+        CameraController.Inst.SetFollowing();
+
+    }
+
     IEnumerator ActivateSpell(CardData cardData, int nodeNum)
     {
+        switch(cardData.GetCardNum())
+        {
+            case 0: //텔레포트
+            int randomNum = Random.Range(0, nodeNumList.Count);
+            MovePlayer(randomNum);
+            break;
+
+            case 1: //익스플로전
+            nodeMap[nodeNum].GetComponent<RoomNode>().SetRoomType(ERoomType.None);
+            break;
+        }
 
         yield return new WaitForSeconds(1.5f);
     }
@@ -1711,6 +1759,6 @@ public class DungeonManager : MonoBehaviour
 }
 
 public enum ERoomType
-{None, EStair, ESafe, EMonster, EEncount, EItem, EGold}
+{None, EStair, ESafe, EMonster, EEncount, EItem, EGold, EWall}
 public enum EDirection
 {North,South,West,East}

@@ -4276,7 +4276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720325, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8405153592259396056, guid: c45994e50a73f564f825216343196359, type: 3}
       propertyPath: maxEnergy
@@ -4889,7 +4889,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &667425973
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6797,12 +6797,12 @@ GameObject:
   - component: {fileID: 1058466478}
   - component: {fileID: 1058466477}
   m_Layer: 6
-  m_Name: RevealButton
+  m_Name: TeleportButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1058466476
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6870,7 +6870,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1187038848}
         m_TargetAssemblyTypeName: DungeonManager, Assembly-CSharp
-        m_MethodName: RevealMap
+        m_MethodName: ActivateTeleport
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7660,6 +7660,7 @@ MonoBehaviour:
   itemDescriptionWindow: {fileID: 432731866}
   camera: {fileID: 646573020}
   roomNodePrefab: {fileID: 8866241803749357964, guid: 396c2b313c1bc1445b0dfb8f65ce6b4b, type: 3}
+  wallNodePrefab: {fileID: 8866241803749357964, guid: 59973d3d78de0fa43b76c5c41b2dbe0f, type: 3}
   itemNodePrefab: {fileID: 8866241803749357964, guid: a0ce97d9ac8de184581e951699e11c78, type: 3}
   encounterNodePrefab: {fileID: 8866241803749357964, guid: abb5104f892f17646ab82614a5d90195, type: 3}
   monsterNodePrefab: {fileID: 8866241803749357964, guid: 95c6ab567a1df054ea5deb0cd39c1862, type: 3}
@@ -10537,7 +10538,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8357732725725720325, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8907084610206978788, guid: 73b553965cc968645a7a51550f23a1a7, type: 3}
       propertyPath: m_Layer

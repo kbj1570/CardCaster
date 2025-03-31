@@ -68,6 +68,9 @@ public class RoomNode : MonoBehaviour
     public void SetRoomType(ERoomType roomType)
     {this.roomType = roomType;}
 
+    public ERoomType GetRoomType()
+    {return roomType;}
+
     public void SetWhite()
     {renderer.GetComponent<SpriteRenderer>().color = Color.white;}
 
