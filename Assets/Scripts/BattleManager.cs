@@ -18,9 +18,11 @@ public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
 public enum EServentSize{Small, Middle, Big}
+public enum EParryState{Idle, Parry, Succecced, Failed}
 
 public class BattleManager : MonoBehaviour
 {
+    EParryState parryState;
     bool playerDamageBlock;
     bool enemyDamageBlock;
     int playerDamageDecrease;
@@ -32,6 +34,10 @@ public class BattleManager : MonoBehaviour
     bool enemyAttackable;
 
     ETurnState turnState;
+
+    public Transform smallCircle; // 작은 원 (게임 오브젝트)
+    public Transform bigCircle; // 큰 원 (게임 오브젝트)
+    float expandDuration = 1.0f;
 
     Enemy enemy;
     Player player;
@@ -80,7 +86,6 @@ public class BattleManager : MonoBehaviour
     public Transform selectedTargetLineEnd;
 
     public EMouseOnArea mouseOnArea;
-    public TMP_Text parryText;
     private List<CardData> deckList;
     private List<CardData> trashList;
     private List<CardData> handList;
@@ -92,29 +97,17 @@ public class BattleManager : MonoBehaviour
     public LineRenderer attackDragLine;
     public int lineCount;
     private CardTargetingSystem targetingSystem;
-    enum EParryState{Idle, Parry}
     public List<GameObject> conditionMarkList;
     public List<GameObject> cardPrefabList;
     public List<GameObject> dummyCardPrefabList;
 
-    // 현재 지불해놓은 코스트의 수
-
-    private int turn;
-    //진행된 턴의 수
-
     private bool myTurn;
     public bool isLoading;
-    public int startCardCount;
-    public bool fastMode;
-    private EParryState parryState;
-    private bool justGuard;
 
     public GameObject missile;
     public GameObject missileTarget;
     public Servent clickedServent;
     public GameObject clickedServentInfo;
-    public int shot = 1;
-    private CardEffectSystem effectSystem;
 
     public TMP_Text costCountText;
     public TMP_Text deckCountText;
@@ -138,14 +131,11 @@ public class BattleManager : MonoBehaviour
     public GameObject cardSelectFrame;
     public GameObject cardSelectWindow;
     public GameObject trashWindow;
-
     public Image fadeImage;
-
-
-    public Scrollbar scrollbar;
-
     private int selectedLimit;
     private bool isActionDone = false;
+    public bool isParryWindowActive = false; // 패링 가능 여부
+    public float parryWindowTime = 0.3f; // 패링 가능 시간 (예: 0.3초)
     public void ActionDone()
     {isActionDone = true;}
 
@@ -265,16 +255,6 @@ public class BattleManager : MonoBehaviour
 
         cardSelectWindow.GetComponent<Window>().OnOff();
     }
-
-    IEnumerator ActivateTreatmentAbility(CardData cardData, Field field)
-    {
-        switch(cardData.GetServentNum())
-        {
-
-        }
-        yield return new WaitUntil(() => isActionDone);
-    }
-
 
 
 
@@ -599,8 +579,6 @@ public class BattleManager : MonoBehaviour
                 selectedField.AddCondition(EServentCondition.Madness);
                 break;
             }
-            
-
 
         }
 
@@ -613,6 +591,43 @@ public class BattleManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {CloseServentInfo();}
 
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if(parryState != EParryState.Parry)
+            return;
+
+            if(isParryWindowActive)
+            {
+                GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
+                damageText.GetComponent<FloatingDamageText>().SetDamageText("Parry!!");
+                damageText.GetComponent<FloatingDamageText>().SetFont(150);
+                parryState = EParryState.Succecced;
+                
+            }
+            else
+            {
+                GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
+                damageText.GetComponent<FloatingDamageText>().SetDamageText("Failed..!");
+                damageText.GetComponent<FloatingDamageText>().SetFont(150);
+                parryState = EParryState.Failed;
+            }
+            isActionDone = true;
+            StopCoroutine(ParryWindowCoroutine());
+            isParryWindowActive = false;
+        }
+    }
+
+    public void StartParryWindow()
+    {
+        StartCoroutine(ParryWindowCoroutine());
+    }
+
+    private IEnumerator ParryWindowCoroutine()
+    {
+        isParryWindowActive = true;
+        yield return new WaitForSeconds(parryWindowTime);
+        isParryWindowActive = false;
+        isActionDone = true;
     }
 
     public void UpdateAllFieldStatus()
@@ -937,6 +952,8 @@ public class BattleManager : MonoBehaviour
                     Field targetField = fields[Random.Range(0, fields.Count)];
 
                     StartCoroutine(EnemyAttack(startField, targetField));
+
+                    
                     break;
                 }
                 case EEnemyAction.Ability:
@@ -1006,10 +1023,15 @@ public class BattleManager : MonoBehaviour
 
     IEnumerator EnemyAttack(Field startField,Field targetField)
     {
+        parryState  = EParryState.Parry;
+        isActionDone = false;
         StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
         ,targetField.GetLinePoint().position, 1f));
-
+        ParryCircle();
         yield return new WaitForSeconds(1f);
+        StartParryWindow();
+        yield return new WaitUntil(() => isActionDone);
+        
         if(targetField == playerField)
         {
             int attackerForce = startField.GetForce();
@@ -1017,11 +1039,16 @@ public class BattleManager : MonoBehaviour
             attackerForce += playerDamageIncrease;
             attackerForce -= playerDamageDecrease;
 
+            if(parryState == EParryState.Succecced)
+            {attackerForce -= 1;}
+
             if(attackerForce < 0)
             {attackerForce = 0;}
 
             if(playerDamageBlock)
             {attackerForce = 0;}
+
+            
 
             PlayerTakeDamage(attackerForce);
             startField.SetAttacked(true);
@@ -1032,6 +1059,12 @@ public class BattleManager : MonoBehaviour
 
             int attackerDamage = Math.Abs(defenderForce);
             int defenderDamage = Math.Abs(attackerForce);
+
+            if(parryState == EParryState.Succecced)
+            {defenderDamage -= 1;}
+
+            if(attackerForce < 0)
+            {defenderDamage = 0;}
 
             startField.TakeDamage(attackerDamage);
             targetField.TakeDamage(defenderDamage);
@@ -1048,6 +1081,9 @@ public class BattleManager : MonoBehaviour
             startField.SetAttacked(true);
         }
         attackDragLine.positionCount = 0;
+        parryState = EParryState.Idle;
+        isActionDone = false;
+        yield return new WaitForSeconds(1f);
     }
 
     public Field ReturnMouseOnField(EMouseOnArea value)
@@ -2088,9 +2124,6 @@ public class BattleManager : MonoBehaviour
         float posA = 10f;
         float posB = 10f;
         attackDragLine.positionCount = lineCount;
-
-
-        
         for(int i = 0; i < lineCount; ++i)
         {
             float t;
@@ -2132,20 +2165,6 @@ public class BattleManager : MonoBehaviour
         }
 
     }
-
-    // private IEnumerator DrawLineCoroutine(Vector3 start, Vector3 end, float duration)
-    // {
-    //     // 선 활성화 및 위치 설정
-    //     lineRenderer.enabled = true;
-    //     lineRenderer.SetPosition(0, start);
-    //     lineRenderer.SetPosition(1, end);
-
-    //     // 지정된 시간(duration) 동안 대기
-
-
-    //     // 선 비활성화
-    //     lineRenderer.enabled = false;
-    // }
 
     public void DrawAttackLine(Vector2 startPoint, bool isUsuable)
     {
@@ -2404,7 +2423,18 @@ public class BattleManager : MonoBehaviour
     }
 
     public void BackToDungeon()
+    {StartCoroutine(FadeOut());}
+
+    
+    public void ParryCircle()
     {
-        StartCoroutine(FadeOut());
+        Vector3 targetScale = bigCircle.localScale;
+        smallCircle.DOScale(targetScale, 1f).SetEase(Ease.Linear)
+        .OnComplete(() => smallCircle.localScale = new Vector3(0,0,0));
+    }
+    public IEnumerator ParryTest()
+    {
+
+        yield return new WaitForSeconds(1f);
     }
 }

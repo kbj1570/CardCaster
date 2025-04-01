@@ -8,7 +8,7 @@ public class UnknownMonster : Enemy
         enemyNum = "0";
         enemyHealth = 20;
         enemyGold = 300;
-        actionToken = 2;
+        actionToken = 4;
 
         enemyRewards = new Dictionary<Item, int>()
         {

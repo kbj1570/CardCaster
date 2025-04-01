@@ -20,6 +20,13 @@ public class FloatingDamageText : MonoBehaviour
         AnimateFloatingText();
     }
 
+    public void SetDamageText(string text)
+    {
+        textMesh.text = text;
+        this.transform.localScale = Vector3.zero;
+        AnimateFloatingText();
+    }
+
     public void SetFont(int size)
     {
         textMesh.fontSize = size;
