@@ -12,7 +12,7 @@ public class Enemy
     protected KeyValuePair<Item, int> rewards;
     protected int enemyGold;
     protected List<CardData> serventList;
-    protected List<EnemyAbility> enemyAbilities;
+    protected EnemyAbility enemyAbility;
 
 
     public string GetName()
@@ -34,8 +34,8 @@ public class Enemy
     {return enemyGold;}
     public List<CardData> GetServentList()
     {return serventList;}
-    public List<EnemyAbility> GetEnemyAbilities()
-    {return enemyAbilities;}
+    public EnemyAbility GetEnemyAbility()
+    {return enemyAbility;}
     public int GetActionToken()
     {return actionToken;}
 

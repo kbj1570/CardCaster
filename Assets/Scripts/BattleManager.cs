@@ -30,15 +30,12 @@ public class BattleManager : MonoBehaviour
     int playerDamageIncrease;
     int enemyDamageIncrease;
 
-    bool enemySummonable;
-    bool enemyAttackable;
+    
 
     ETurnState turnState;
 
-    public Transform smallCircle; // 작은 원 (게임 오브젝트)
-    public Transform bigCircle; // 큰 원 (게임 오브젝트)
-    float expandDuration = 1.0f;
-
+    public Transform smallCircle;
+    public Transform bigCircle;
     Enemy enemy;
     Player player;
     
@@ -68,7 +65,7 @@ public class BattleManager : MonoBehaviour
     public Field field_6;
     public GameObject hole;
     public List<GameObject> anyWhereAreas;
-    //Prefab
+
     public GameObject cardPrefab;
     public GameObject enemyPrefab;
     public List<GameObject> playerServentPrefabList;
@@ -96,18 +93,19 @@ public class BattleManager : MonoBehaviour
     public LineRenderer cardDragLine;
     public LineRenderer attackDragLine;
     public int lineCount;
-    private CardTargetingSystem targetingSystem;
     public List<GameObject> conditionMarkList;
     public List<GameObject> cardPrefabList;
     public List<GameObject> dummyCardPrefabList;
 
     private bool myTurn;
-    public bool isLoading;
+    private bool isLoading;
+
 
     public GameObject missile;
     public GameObject missileTarget;
     public Servent clickedServent;
     public GameObject clickedServentInfo;
+
 
     public TMP_Text costCountText;
     public TMP_Text deckCountText;
@@ -115,36 +113,51 @@ public class BattleManager : MonoBehaviour
     public TMP_Text playerHealthText;
     public TMP_Text enemyHealthText;
 
-
     private int costCount;
     private int deckCount;
     private int trashCount;
 
-    private int playerHealth;
-    private int enemyHealth;
-
+    
     public List<CardData> selectedCards;
-
     public GridLayoutGroup selectedCardLayoutGroup;
     public GridLayoutGroup trashLayoutGroup;
-
     public GameObject cardSelectFrame;
     public GameObject cardSelectWindow;
     public GameObject trashWindow;
     public Image fadeImage;
+    public Image flashImage;
+
     private int selectedLimit;
     private bool isActionDone = false;
-    public bool isParryWindowActive = false; // 패링 가능 여부
-    public float parryWindowTime = 0.3f; // 패링 가능 시간 (예: 0.3초)
+    bool isParryWindowActive = false;
+
+    float parryWindowTime = 0.1f;
+    private int playerHealth;
+    private int enemyHealth;
+
+    private Dictionary<int, EnemyAbility> currentAbilities;
+
     public void ActionDone()
     {isActionDone = true;}
 
-
-
-
-    void Start()
+    public void FlashMultipleTimes()
     {
-        
+        int flashCount = 2;
+        float flashDuration = 0.05f;
+
+        flashImage.gameObject.SetActive(true);
+        flashImage.color = new Color(1, 1, 1, 0);
+
+        Sequence sequence = DOTween.Sequence();
+
+        for (int i = 0; i < flashCount; i++)
+        {
+            sequence.Append(flashImage.DOFade(0.75f, flashDuration)) // 흰색으로 깜빡
+                    .Append(flashImage.DOFade(0, flashDuration)); // 다시 투명
+        }
+
+        sequence.OnComplete(() => {flashImage.gameObject.SetActive(false);});
+        sequence.Play();
     }
 
     void Awake()
@@ -219,9 +232,7 @@ public class BattleManager : MonoBehaviour
             cardSelectWindow.GetComponent<Window>().OnOff();
 
             for( int i = selectedCardLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
-            {
-                Destroy( selectedCardLayoutGroup.transform.GetChild(i).gameObject );
-            }
+            {Destroy(selectedCardLayoutGroup.transform.GetChild(i).gameObject );}
         }
         else
         {
@@ -627,7 +638,6 @@ public class BattleManager : MonoBehaviour
         isParryWindowActive = true;
         yield return new WaitForSeconds(parryWindowTime);
         isParryWindowActive = false;
-        isActionDone = true;
     }
 
     public void UpdateAllFieldStatus()
@@ -740,13 +750,13 @@ public class BattleManager : MonoBehaviour
         enemy = new UnknownMonster();
         enemyHealth = enemy.GetHealth();
 
-
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
         List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
         Dictionary<string, int> myDeck = DataController.Inst.LoadDeck();
 
         foreach(KeyValuePair<string, int> value in myDeck)
         {deck.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
+
         deckList = new();
         cardObjectList = new();
         trashList = new();
@@ -757,10 +767,13 @@ public class BattleManager : MonoBehaviour
             {deckList.Add(value.Key);}
         };
 
-        // Deck Shuffle
         Shuffle();
 
-
+        currentAbilities = new()
+        {{0, new MysteriousFog()},
+        {1, null},
+        {2, null},
+        {3, null}};
 
         myTurn = true;
     }
@@ -788,7 +801,6 @@ public class BattleManager : MonoBehaviour
         costCountText.text = "Cost: " + costCount.ToString();
         deckCountText.text = "Deck: " + deckCount.ToString();
         trashCountText.text = "Trash: " + trashCount.ToString();
-
         playerHealthText.text = "PC: "+ playerHealth.ToString();
         enemyHealthText.text = "Enemy: "+ enemyHealth.ToString();
 
@@ -802,9 +814,7 @@ public class BattleManager : MonoBehaviour
         if(enemyHealth <= 0)
         {
             enemyHealth = 0;
-
             StartCoroutine(WinBattle());
-
         }
     }
 
@@ -812,20 +822,6 @@ public class BattleManager : MonoBehaviour
     {        
         isLoading = true;
         turnState = ETurnState.None;
-        
-
-        // player.GetComponent<Field>().UpdateHealth();
-        // enemy.GetComponent<Field>().UpdateHealth();
-
-        // field_1.GetComponent<Field>().UpdateHealth();
-        // field_2.GetComponent<Field>().UpdateHealth();
-        // field_3.GetComponent<Field>().UpdateHealth();
-        // field_4.GetComponent<Field>().UpdateHealth();
-        // field_5.GetComponent<Field>().UpdateHealth();
-        // field_6.GetComponent<Field>().UpdateHealth();
-
-        // playerField.GetComponent<Field>().SetAttacked(false);
-        // enemyField.GetComponent<Field>().SetAttacked(false);
 
         field_1.GetComponent<Field>().SetAttacked(false);
         field_2.GetComponent<Field>().SetAttacked(false);
@@ -835,7 +831,6 @@ public class BattleManager : MonoBehaviour
         field_6.GetComponent<Field>().SetAttacked(false);
 
         enemyDamageBlock = false;
-
 
         yield return new WaitForSeconds(0.4f);
         foreach(GameObject card in cardObjectList)
@@ -920,8 +915,6 @@ public class BattleManager : MonoBehaviour
                     field.Summon(new ChaoticCorvus(),
                     Instantiate(enemyServentPrefabList[new ChaoticCorvus().GetServentNum()],
                     field.transform.position , Utils.QI));
-
-                    yield return new WaitForSeconds(1f);
                     field.locked = false;
                     break;
                 }
@@ -952,8 +945,6 @@ public class BattleManager : MonoBehaviour
                     Field targetField = fields[Random.Range(0, fields.Count)];
 
                     StartCoroutine(EnemyAttack(startField, targetField));
-
-                    
                     break;
                 }
                 case EEnemyAction.Ability:
@@ -967,7 +958,7 @@ public class BattleManager : MonoBehaviour
                     break;
                 }
             }
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2.5f);
         }
 
         StartCoroutine(StartTurnCo());
@@ -979,8 +970,9 @@ public class BattleManager : MonoBehaviour
         List<Field> filledField = new();
         List<Field> attackedField = new();
 
-        enemyAttackable = true;
-        enemySummonable = true;
+        bool enemySummonable = true;
+        bool enemyAttackable = true;
+        bool abilityUsuable = true;
 
         int probability = 0;
         
@@ -1010,6 +1002,28 @@ public class BattleManager : MonoBehaviour
         if(attackedField.Count == filledField.Count || filledField.Count == 0)
         {enemyAttackable = false;}
 
+
+
+
+        //1,2,3,4
+
+        //Dictionary에 0, 1, 2, 3을 Key로 할당
+
+        //Dictionary 중에서 쓸 수 있는 능력을 확인
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         int randomNum = Random.Range(1,10);
 
         if(enemySummonable && probability < randomNum)
@@ -1018,7 +1032,10 @@ public class BattleManager : MonoBehaviour
         if(enemyAttackable)
         return EEnemyAction.Attack;
 
+        if(abilityUsuable)
         return EEnemyAction.Ability;
+
+        return EEnemyAction.None;
     } 
 
     IEnumerator EnemyAttack(Field startField,Field targetField)
@@ -1027,8 +1044,10 @@ public class BattleManager : MonoBehaviour
         isActionDone = false;
         StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
         ,targetField.GetLinePoint().position, 1f));
+        //선그리기 시작
         ParryCircle();
-        yield return new WaitForSeconds(1f);
+        //원그리기 시작, 둘 다 1초
+        yield return new WaitForSeconds(1f - parryWindowTime);
         StartParryWindow();
         yield return new WaitUntil(() => isActionDone);
         
@@ -1083,6 +1102,7 @@ public class BattleManager : MonoBehaviour
         attackDragLine.positionCount = 0;
         parryState = EParryState.Idle;
         isActionDone = false;
+        FlashMultipleTimes();
         yield return new WaitForSeconds(1f);
     }
 
@@ -1647,11 +1667,7 @@ public class BattleManager : MonoBehaviour
                 {return flag;}
             }
             return flag;
-
-            
         }
-
-        return false;
     }
 
     public void CardBeginDrag(GameObject cardObject)
@@ -2430,7 +2446,11 @@ public class BattleManager : MonoBehaviour
     {
         Vector3 targetScale = bigCircle.localScale;
         smallCircle.DOScale(targetScale, 1f).SetEase(Ease.Linear)
-        .OnComplete(() => smallCircle.localScale = new Vector3(0,0,0));
+        .OnComplete(() => 
+        {
+            smallCircle.localScale = new Vector3(0,0,0);
+            isActionDone = true;
+        });
     }
     public IEnumerator ParryTest()
     {

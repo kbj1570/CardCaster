@@ -25,11 +25,7 @@ public class UnknownMonster : Enemy
             new Wild()
         };
 
-        enemyAbilities = new List<EnemyAbility>
-        {
-            new MysteriousFog(),
-            new WildGrowl()
-        };
+        enemyAbility = new MysteriousFog();
 
         SetRewards();
     }

@@ -703,9 +703,7 @@ public class DungeonManager : MonoBehaviour
     }
 
     public void HideItemDescription()
-    {
-        itemDescriptionWindow.SetActive(false);
-    }
+    {itemDescriptionWindow.SetActive(false);}
 
 
     private void DungeonSetUp()
