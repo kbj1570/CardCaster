@@ -22,6 +22,8 @@ public class FieldArea : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if(field == null)
+        return;
         if(!field.GetFilled())
         return;
 
@@ -30,6 +32,9 @@ public class FieldArea : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     }
     public void OnDrag(PointerEventData eventData)
     {
+        if(field == null)
+        return;
+        
         if(!field.GetFilled())
         return;
         

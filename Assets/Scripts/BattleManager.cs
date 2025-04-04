@@ -34,8 +34,7 @@ public class BattleManager : MonoBehaviour
 
     ETurnState turnState;
 
-    public Transform smallCircle;
-    public Transform bigCircle;
+
     Enemy enemy;
     Player player;
     
@@ -101,6 +100,19 @@ public class BattleManager : MonoBehaviour
     private bool isLoading;
 
 
+    public GameObject battleWindowLeftSide;
+    public GameObject battleWindowRightSide;
+
+    public Transform battleWindowLeftSideFloatTextLocation;
+
+    public Transform battleWindowRightSideFloatTextLocation;
+
+    public Transform battleWindowLeftSideFirstPosition;
+    public Transform battleWindowLeftSideSecondPosition;
+    public Transform battleWindowRightSideFirstPosition;
+    public Transform battleWindowRightSideSecondPosition;
+
+
     public GameObject missile;
     public GameObject missileTarget;
     public Servent clickedServent;
@@ -126,16 +138,54 @@ public class BattleManager : MonoBehaviour
     public GameObject trashWindow;
     public Image fadeImage;
     public Image flashImage;
+    public SpriteRenderer smallCircle;
+    public SpriteRenderer bigCircle;
 
     private int selectedLimit;
     private bool isActionDone = false;
     bool isParryWindowActive = false;
 
     float parryWindowTime = 0.1f;
+    float circleSpeed = 1f;
     private int playerHealth;
     private int enemyHealth;
 
     private Dictionary<int, EnemyAbility> currentAbilities;
+
+    bool foo = true;
+
+    public void Dash()
+    {
+        StartCoroutine(ShowBattleWindow());   
+    }
+
+    private IEnumerator ShowBattleWindow()
+    {
+        //InOutElastic
+        //OutBack
+
+        battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position,
+        0.2f).SetEase(Ease.Linear);
+        battleWindowRightSide.transform.DOMove(battleWindowRightSideSecondPosition.position,
+        0.2f).SetEase(Ease.Linear);
+
+        yield return new WaitForSeconds(0.2f);
+
+        battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position + new Vector3(50, 0, 0),
+        1.5f).SetEase(Ease.OutExpo);
+        battleWindowRightSide.transform.DOMove(battleWindowRightSideSecondPosition.position + new Vector3(-50, 0, 0),
+        1.5f).SetEase(Ease.OutExpo);
+        yield return new WaitForSeconds(1.5f);
+
+        battleWindowLeftSide.transform.DOMove(battleWindowLeftSideFirstPosition.position,
+        0.2f).SetEase(Ease.InQuad);
+        battleWindowRightSide.transform.DOMove(battleWindowRightSideFirstPosition.position,
+        0.2f).SetEase(Ease.InQuad);
+
+        yield return new WaitForSeconds(0.3f);
+        isActionDone = true;
+
+    }
 
     public void ActionDone()
     {isActionDone = true;}
@@ -540,7 +590,7 @@ public class BattleManager : MonoBehaviour
             break;
 
             case 7: // 피의 대가
-            PlayerTakeDamage(4);
+            PlayerTakeDamage(4, false);
             DrawCard();
             break;
 
@@ -610,16 +660,17 @@ public class BattleManager : MonoBehaviour
             if(isParryWindowActive)
             {
                 GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
-                damageText.GetComponent<FloatingDamageText>().SetDamageText("Parry!!");
+                damageText.GetComponent<FloatingDamageText>().SetDamageText("Guard!!");
                 damageText.GetComponent<FloatingDamageText>().SetFont(150);
+                damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
                 parryState = EParryState.Succecced;
                 
             }
             else
             {
-                GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
-                damageText.GetComponent<FloatingDamageText>().SetDamageText("Failed..!");
-                damageText.GetComponent<FloatingDamageText>().SetFont(150);
+                // GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
+                // damageText.GetComponent<FloatingDamageText>().SetDamageText("Failed..!");
+                // damageText.GetComponent<FloatingDamageText>().SetFont(150);
                 parryState = EParryState.Failed;
             }
             isActionDone = true;
@@ -883,6 +934,8 @@ public class BattleManager : MonoBehaviour
 
         for(int i = 0; i < actionToken; ++i)
         {
+            isActionDone = false;
+
             List<Field> filledField = new();
             if(field_4.GetFilled())
             {filledField.Add(field_4);}
@@ -916,6 +969,9 @@ public class BattleManager : MonoBehaviour
                     Instantiate(enemyServentPrefabList[new ChaoticCorvus().GetServentNum()],
                     field.transform.position , Utils.QI));
                     field.locked = false;
+
+                    
+                    isActionDone = true;
                     break;
                 }
                 case EEnemyAction.Attack:
@@ -950,15 +1006,21 @@ public class BattleManager : MonoBehaviour
                 case EEnemyAction.Ability:
                 {
                     Debug.Log("적이 능력을 사용합니다.");
+                    isActionDone = true;
                     break;
                 }
                 case EEnemyAction.None:
                 {
                     Debug.Log("적이 아무것도 할 수 없습니다.");
+                    isActionDone = true;
                     break;
                 }
             }
+
             yield return new WaitForSeconds(2.5f);
+            
+            yield return new WaitUntil(() => isActionDone);
+            
         }
 
         StartCoroutine(StartTurnCo());
@@ -1043,11 +1105,11 @@ public class BattleManager : MonoBehaviour
         parryState  = EParryState.Parry;
         isActionDone = false;
         StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
-        ,targetField.GetLinePoint().position, 1f));
+        ,targetField.GetLinePoint().position, circleSpeed));
         //선그리기 시작
         ParryCircle();
         //원그리기 시작, 둘 다 1초
-        yield return new WaitForSeconds(1f - parryWindowTime);
+        yield return new WaitForSeconds(circleSpeed - parryWindowTime);
         StartParryWindow();
         yield return new WaitUntil(() => isActionDone);
         
@@ -1069,7 +1131,7 @@ public class BattleManager : MonoBehaviour
 
             
 
-            PlayerTakeDamage(attackerForce);
+            PlayerTakeDamage(attackerForce, parryState == EParryState.Succecced);
             startField.SetAttacked(true);
         }else
         {
@@ -1095,14 +1157,29 @@ public class BattleManager : MonoBehaviour
                 if(playerDamageBlock)
                 {defenderDamage = 0;}
                 
-                PlayerTakeDamage(defenderDamage);
+                PlayerTakeDamage(defenderDamage, parryState == EParryState.Succecced);
             }
             startField.SetAttacked(true);
         }
         attackDragLine.positionCount = 0;
+        
+
+        Color originColor = bigCircle.color;
+        Color targetColor = new Color(1f, 0.3f, 0.3f, 0.5f);
+
+
+        if(parryState == EParryState.Succecced)
+        {targetColor = new Color(0.3f, 0.3f, 1f, 0.5f);}
+        
+
+
+        bigCircle.DOColor(targetColor, 0.1f) // 빨간색으로 변경  
+                     .SetLoops(3, LoopType.Yoyo) // 2번 반복  
+                     .OnComplete(() => bigCircle.color = originColor); // 원래 색으로 복귀  
+        // FlashMultipleTimes();
+
         parryState = EParryState.Idle;
         isActionDone = false;
-        FlashMultipleTimes();
         yield return new WaitForSeconds(1f);
     }
 
@@ -1873,7 +1950,7 @@ public class BattleManager : MonoBehaviour
         {targetList = deckList;}
         else
         {
-            PlayerTakeDamage(1);
+            PlayerTakeDamage(1, false);
             targetList = trashList;
         }
 
@@ -2030,8 +2107,8 @@ public class BattleManager : MonoBehaviour
 
     public void EnemyTakeDamage(int damage)
     {
-
-        GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
+        Dash();
+        GameObject damageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
@@ -2039,12 +2116,16 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    public void PlayerTakeDamage(int damage)
+    public void PlayerTakeDamage(int damage, bool guarded)
     {
+        Dash();
 
-        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+        GameObject damageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        if(guarded)
+        damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
 
         playerHealth -= damage;
 
@@ -2444,11 +2525,11 @@ public class BattleManager : MonoBehaviour
     
     public void ParryCircle()
     {
-        Vector3 targetScale = bigCircle.localScale;
-        smallCircle.DOScale(targetScale, 1f).SetEase(Ease.Linear)
+        Vector3 targetScale = bigCircle.transform.localScale;
+        smallCircle.transform.DOScale(targetScale, circleSpeed).SetEase(Ease.Linear)
         .OnComplete(() => 
         {
-            smallCircle.localScale = new Vector3(0,0,0);
+            smallCircle.transform.localScale = new Vector3(0,0,0);
             isActionDone = true;
         });
     }

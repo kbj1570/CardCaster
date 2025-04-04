@@ -11,7 +11,7 @@ public class FloatingDamageText : MonoBehaviour
     public float scaleUpSize = 1.5f;    // 커지는 크기 비율
     public float scaleDownSize = 0.1f;
 
-    public float duration  = 1f;
+    float duration  = 1.5f;
 
     public void SetDamageText(int damage)
     {
@@ -46,17 +46,17 @@ public class FloatingDamageText : MonoBehaviour
         // textMesh.DOFade(0, duration).SetEase(Ease.InQuad).OnComplete(() => Destroy(gameObject));
 
 
-        Vector3 startPos = transform.position;
+        Vector3 startPos = transform.localPosition;
 
         Sequence seq = DOTween.Sequence();
 
 
-        seq.Append(transform.DOScale(Vector3.one * scaleUpSize, 0.2f).SetEase(Ease.OutBack));
+        seq.Append(transform.DOScale(Vector3.one * scaleUpSize, 0.3f).SetEase(Ease.OutBack));
 
-        seq.Join(transform.DOMove(startPos + new Vector3(Random.Range(-50f, 50f), floatDistance, 0), 0.3f).SetEase(Ease.OutCubic));
+        seq.Join(transform.DOLocalMove(startPos + new Vector3(Random.Range(-50f, 50f), floatDistance, 0), 1f).SetEase(Ease.OutCubic));
 
-        seq.Append(transform.DOScale(Vector3.one * scaleDownSize, 0.2f).SetEase(Ease.InQuad));
-        seq.Join(textMesh.DOFade(0, 0.2f).SetEase(Ease.InQuad));
+        seq.Append(transform.DOScale(Vector3.one * scaleDownSize, 0.3f).SetEase(Ease.InQuad));
+        seq.Join(textMesh.DOFade(0, 0.3f).SetEase(Ease.InQuad));
 
         seq.OnComplete(() => Destroy(gameObject));
 
