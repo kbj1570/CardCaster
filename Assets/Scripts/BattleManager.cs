@@ -145,7 +145,7 @@ public class BattleManager : MonoBehaviour
     private bool isActionDone = false;
     bool isParryWindowActive = false;
 
-    float parryWindowTime = 0.1f;
+    float parryWindowTime = 0.3f;
     float circleSpeed = 1f;
     private int playerHealth;
     private int enemyHealth;
@@ -163,6 +163,8 @@ public class BattleManager : MonoBehaviour
     {
         //InOutElastic
         //OutBack
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<BattleCard>().SetLock(true);}
 
         battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position,
         0.2f).SetEase(Ease.Linear);
@@ -184,6 +186,9 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.3f);
         isActionDone = true;
+
+        foreach(GameObject card in cardObjectList)
+        {card.GetComponent<BattleCard>().SetLock(false);}
 
     }
 
@@ -590,7 +595,7 @@ public class BattleManager : MonoBehaviour
             break;
 
             case 7: // 피의 대가
-            PlayerTakeDamage(4, false);
+            PlayerTakeDamage(4);
             DrawCard();
             break;
 
@@ -1131,7 +1136,7 @@ public class BattleManager : MonoBehaviour
 
             
 
-            PlayerTakeDamage(attackerForce, parryState == EParryState.Succecced);
+            PlayerTakeAttack(attackerForce, parryState == EParryState.Succecced);
             startField.SetAttacked(true);
         }else
         {
@@ -1150,6 +1155,8 @@ public class BattleManager : MonoBehaviour
             startField.TakeDamage(attackerDamage);
             targetField.TakeDamage(defenderDamage);
 
+            ServentTakeAttack(attackerForce, parryState == EParryState.Succecced);
+
             if(startField.GetPenetrate())
             {
                 defenderDamage = Math.Abs(defenderForce - attackerForce);
@@ -1157,7 +1164,7 @@ public class BattleManager : MonoBehaviour
                 if(playerDamageBlock)
                 {defenderDamage = 0;}
                 
-                PlayerTakeDamage(defenderDamage, parryState == EParryState.Succecced);
+                PlayerTakeDamage(defenderDamage);
             }
             startField.SetAttacked(true);
         }
@@ -1840,8 +1847,7 @@ public class BattleManager : MonoBehaviour
         foreach(GameObject gameObject in anyWhereAreas)
         {gameObject.SetActive(false);}
 
-        foreach(GameObject cardObject in cardObjectList)
-        {cardObject.GetComponent<BattleCard>().SetLock(false);}
+        
 
 
         DeleteDragLine();
@@ -1877,25 +1883,34 @@ public class BattleManager : MonoBehaviour
                     costCount -= card.GetCardData().GetCardCost();
 
                     cardObjectList.Remove(card.gameObject);
-                    card.SendMissile(alertPoint, ReturnMouseOnField().transform);
-
-                    yield return new WaitForSeconds(1.5f);
-
-                    targetField.Summon(card.GetCardData(), Instantiate(playerServentPrefabList[card.GetCardData().GetServentNum()], targetField.transform.position , Utils.QI));
-
-                    StartCoroutine(ActivateSummonAbility(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(),targetField));
-                    
                     handList.RemoveAt(card.GetCardOrder());
+
+                    card.SendMissile(alertPoint, ReturnMouseOnField().transform);
+                    foreach(GameObject cardObject in cardObjectList)
+                    {cardObject.GetComponent<BattleCard>().SetLock(true);}
                     
-                    List<CardData> newHandList = new List<CardData>();
+                    yield return new WaitForSeconds(1.5f);
+                    
+                    foreach(GameObject cardObject in cardObjectList)
+                    {cardObject.GetComponent<BattleCard>().SetLock(false);}
 
-                    foreach(CardData cardData in handList)
-                    {newHandList.Add(cardData);}
+                    targetField.Summon(
+                        card.GetCardData(),
+                        Instantiate(
+                            playerServentPrefabList[card.GetCardData().GetServentNum()],
+                            targetField.transform.position,
+                            Utils.QI
+                        )
+                    );
 
-                    for(int i = 0; i < cardObjectList.Count; ++i)
+                    StartCoroutine(ActivateSummonAbility(
+                        card.GetCardData(),
+                        card.GetComponent<BattleCard>().GetCurrentCost(),
+                        targetField
+                    ));
+
+                    for (int i = 0; i < cardObjectList.Count; ++i)
                     {cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
-
-                    handList = newHandList;
 
                     CardAlignmentAlt();
                 }
@@ -1910,20 +1925,14 @@ public class BattleManager : MonoBehaviour
                     StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
                     
                     AddTrash(card.GetCardData());
-                    ////////////////////////버그가 왜 터질깡맇ㄷㅈㄱㄷㅈㅎㅈㅅㅎㄱㅎㅈㄷ혻ㅈ섣홀ㅈ더ㅑㅎ숮류ㅕㅓ
                     handList.RemoveAt(card.GetCardOrder());
                     cardObjectList.Remove(card.gameObject);
+
                     card.SendMissile(alertPoint, hole.transform);
-
-                    List<CardData> newHandList = new List<CardData>();
-
-                    foreach(CardData cardData in handList)
-                    {newHandList.Add(cardData);}
 
                     for(int i = 0; i < cardObjectList.Count; ++i)
                     {cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
 
-                    handList = newHandList;
                     CardAlignmentAlt();
                     break;
 
@@ -1931,18 +1940,18 @@ public class BattleManager : MonoBehaviour
                     break;
                 }
             }
-            else
-            {
-                foreach(GameObject cardObject in cardObjectList)
-                {cardObject.GetComponent<BattleCard>().SetLock(false);}
-            }
+
+            
         }
+
+        foreach(GameObject cardObject in cardObjectList)
+        {cardObject.GetComponent<BattleCard>().SetLock(false);}
     }
     public void DrawCard()
     {
-
         if(deckList.Count == 0 && trashList.Count == 0)
         {return;}
+
 
         List<CardData> targetList;
 
@@ -1950,7 +1959,7 @@ public class BattleManager : MonoBehaviour
         {targetList = deckList;}
         else
         {
-            PlayerTakeDamage(1, false);
+            PlayerTakeDamage(1);
             targetList = trashList;
         }
 
@@ -2107,8 +2116,8 @@ public class BattleManager : MonoBehaviour
 
     public void EnemyTakeDamage(int damage)
     {
-        Dash();
-        GameObject damageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
+        
+        GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
@@ -2116,7 +2125,28 @@ public class BattleManager : MonoBehaviour
 
     }
 
-    public void PlayerTakeDamage(int damage, bool guarded)
+    public void EnemyTakeAttack(int damage)
+    {
+        Dash();
+        GameObject damageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        playerHealth -= damage;
+    }
+
+    public void PlayerTakeDamage(int damage)
+    {
+        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        playerHealth -= damage;
+    }
+
+
+
+    public void PlayerTakeAttack(int damage, bool guarded)
     {
         Dash();
 
@@ -2131,6 +2161,28 @@ public class BattleManager : MonoBehaviour
 
     }
 
+
+    public void ServentTakeDamage(int damage)
+    {
+        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        playerHealth -= damage;
+    }
+
+    public void ServentTakeAttack(int damage, bool guarded)
+    {
+
+        Dash();
+        GameObject damageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
+        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+        if(guarded)
+        damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
+    }
+
     public void EnemyLoseHP(int damage)
     {
 
@@ -2139,19 +2191,8 @@ public class BattleManager : MonoBehaviour
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
         enemyHealth -= damage;
-
     }
 
-    public void PlayerLoseHP(int damage)
-    {
-
-        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
-        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-        damageText.GetComponent<FloatingDamageText>().SetFont(150);
-
-        playerHealth -= damage;
-
-    }
 
     
 
@@ -2174,7 +2215,7 @@ public class BattleManager : MonoBehaviour
             {attackerForce = 0;}
             
 
-            EnemyTakeDamage(attackerForce);
+            EnemyTakeAttack(attackerForce);
             
             ReturnMouseOnField(mouseOnArea).SetAttacked(true);
 

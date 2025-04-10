@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Campsite.unity
     guid: f581297a38568fa49bde8bc000d2f575
   - enabled: 0
@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Camp.unity
     guid: 6c105b72e1f12524c8d3cd0b6f7d1d47
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Dungeon.unity
     guid: 50c344e037fa4e747b5ce4755eae86bd
   - enabled: 0

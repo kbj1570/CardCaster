@@ -125,8 +125,8 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         nameTMP.text = this.cardData.GetCardName();
         // this.cardHighlightBorder.SetActive(true);
         cardType = cardData.GetCardType();
-        if(cardType == ECardType.Servent)
-            forceTMP.text = this.cardData.GetForce().ToString();
+        // if(cardType == ECardType.Servent)
+        //     forceTMP.text = this.cardData.GetForce().ToString();
         
         // descriptionTMP.text = this.cardData.GetCardAbility();
         costTMP.text = this.cardData.GetCardCost().ToString();
@@ -162,14 +162,14 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
             }
             
-            for(int i = 0; i < cardData.GetForce(); ++i)
-            {
-                Image gameObject = Instantiate(image, forceAttribute.transform.position, Utils.QI);
+            // for(int i = 0; i < cardData.GetForce(); ++i)
+            // {
+            //     Image gameObject = Instantiate(image, forceAttribute.transform.position, Utils.QI);
 
-                gameObject.transform.SetParent(forceAttribute.transform);
+            //     gameObject.transform.SetParent(forceAttribute.transform);
 
-                gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
-            }
+            //     gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+            // }
         }
         // currentCost = this.cardData.GetCardCost();
         // UpdateIsUsable();
