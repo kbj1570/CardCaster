@@ -6,7 +6,7 @@ public class UnknownMonster : Enemy
     {
         enemyName = "정체불명의 괴물";
         enemyNum = "0";
-        enemyHealth = 20;
+        enemyHealth = 3;
         enemyGold = 300;
         actionToken = 4;
 

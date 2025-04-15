@@ -11,6 +11,8 @@ using UnityEngine.SceneManagement;
 
 public class DungeonManager : MonoBehaviour
 {
+
+    SaveData playerData;
     public Image fadeImage;
     int lineCount;
     int mouseOnRoomNum;
@@ -125,6 +127,8 @@ public class DungeonManager : MonoBehaviour
 
         myItemList = new();
         currentItemList = new();
+
+        playerData = DataController.Inst.LoadData();
         itemDatabase = DataController.Inst.LoadItemDatabase();
         currentPage = 0;
         lineCount = 30;
@@ -324,7 +328,7 @@ public class DungeonManager : MonoBehaviour
 
     public void LoadItemList()
     {
-        foreach(string value in DataController.Inst.LoadItemList())
+        foreach(string value in playerData.inventory)
         {myItemList.Add(itemDatabase[Convert.ToInt32(value)]);}
     }
 
@@ -1541,7 +1545,10 @@ public class DungeonManager : MonoBehaviour
     
 
     private void GainGold(Node node)
-    {AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");}
+    {
+        playerData.gold += node.GetGold();
+        AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");
+    }
 
     private void GainItem(Node node)
     {

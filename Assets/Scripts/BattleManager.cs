@@ -22,6 +22,9 @@ public enum EParryState{Idle, Parry, Succecced, Failed}
 
 public class BattleManager : MonoBehaviour
 {
+    SaveData playerData;
+
+
     EParryState parryState;
     bool playerDamageBlock;
     bool enemyDamageBlock;
@@ -33,6 +36,11 @@ public class BattleManager : MonoBehaviour
     
 
     ETurnState turnState;
+
+
+    List<Enemy> enemies = new();
+    Enemy currentEnemy;
+    int enemyIndex = 0;
 
 
     Enemy enemy;
@@ -71,12 +79,6 @@ public class BattleManager : MonoBehaviour
     public List<GameObject> playerServentInfoList;
     public List<GameObject> enemyServentPrefabList;
     public List<GameObject> enemyServentInfoList;
-    public GameObject draggedCard;
-    public Button monsterAbilityButton;
-    public Button monsterDetailButton;
-    public GameObject monsterConditionPanel;
-    public GameObject monsterDetailPanel;
-    public Transform cardSpawnPoint;
     public Transform cardAreaBorderLeft;
     public Transform cardAreaBorderRight;
     public Transform selectedTargetLineEnd;
@@ -141,6 +143,9 @@ public class BattleManager : MonoBehaviour
     public SpriteRenderer smallCircle;
     public SpriteRenderer bigCircle;
 
+
+    public GameObject alertMessage;
+
     private int selectedLimit;
     private bool isActionDone = false;
     bool isParryWindowActive = false;
@@ -184,7 +189,7 @@ public class BattleManager : MonoBehaviour
         battleWindowRightSide.transform.DOMove(battleWindowRightSideFirstPosition.position,
         0.2f).SetEase(Ease.InQuad);
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(1f);
         isActionDone = true;
 
         foreach(GameObject card in cardObjectList)
@@ -207,8 +212,8 @@ public class BattleManager : MonoBehaviour
 
         for (int i = 0; i < flashCount; i++)
         {
-            sequence.Append(flashImage.DOFade(0.75f, flashDuration)) // 흰색으로 깜빡
-                    .Append(flashImage.DOFade(0, flashDuration)); // 다시 투명
+            sequence.Append(flashImage.DOFade(0.75f, flashDuration))
+            .Append(flashImage.DOFade(0, flashDuration));
         }
 
         sequence.OnComplete(() => {flashImage.gameObject.SetActive(false);});
@@ -320,6 +325,56 @@ public class BattleManager : MonoBehaviour
         rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
 
         cardSelectWindow.GetComponent<Window>().OnOff();
+    }
+
+    
+    IEnumerator ActivateEnemyAbility(EnemyAbility enemyAbility)
+    {
+        yield return new WaitForSeconds(.3f);
+        switch(enemyAbility.GetNum())
+        {
+            case "0": // 미지의 안개
+            {
+                if(field_1.GetFilled())
+                {
+                    field_1.TakeDamage(1);
+                }
+
+                if(field_2.GetFilled())
+                {
+                    field_2.TakeDamage(1);
+                }
+
+                if(field_3.GetFilled())
+                {
+                    field_3.TakeDamage(1);
+                }
+
+                PlayerTakeDamage(1);
+                break;
+            }
+            case "1": // 사나운 울음소리
+            {
+                List<Field> filledField = new();
+                if(field_1.GetFilled())
+                {filledField.Add(field_1);}
+
+                if(field_2.GetFilled())
+                {filledField.Add(field_2);}
+
+                if(field_3.GetFilled())
+                {filledField.Add(field_3);}
+
+                int randomNum = Random.Range(0, filledField.Count);
+                Field field = filledField[randomNum];
+
+                field.TakeDamage(1);
+
+                break;
+            }
+
+        }
+
     }
 
 
@@ -544,13 +599,13 @@ public class BattleManager : MonoBehaviour
             {field_3.Kill();}
 
             if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-            {field_4.GetComponent<Field>().Kill();}
+            {field_4.Kill();}
 
             if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-            {field_5.GetComponent<Field>().Kill();}
+            {field_5.Kill();}
 
             if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-            {field_6.GetComponent<Field>().Kill();}
+            {field_6.Kill();}
 
             break;
 
@@ -653,6 +708,13 @@ public class BattleManager : MonoBehaviour
     void Update()
     {
         UpdateCondition();
+
+        if(enemyHealth <= 0 && isActionDone)
+        {
+            enemyHealth = 0;
+            StartCoroutine(LoadNextEnemy());
+            isActionDone = false;
+        }
         
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {CloseServentInfo();}
@@ -695,30 +757,6 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(parryWindowTime);
         isParryWindowActive = false;
     }
-
-    public void UpdateAllFieldStatus()
-    {
-        playerField.GetComponent<Field>().UpdateHealth();
-        enemyField.GetComponent<Field>().UpdateHealth();
-
-        field_1.GetComponent<Field>().UpdateHealth();
-        field_2.GetComponent<Field>().UpdateHealth();
-        field_3.GetComponent<Field>().UpdateHealth();
-        field_4.GetComponent<Field>().UpdateHealth();
-        field_5.GetComponent<Field>().UpdateHealth();
-        field_6.GetComponent<Field>().UpdateHealth();
-
-        playerField.GetComponent<Field>().UpdateCondition();
-        enemyField.GetComponent<Field>().UpdateCondition();
-
-        field_1.GetComponent<Field>().UpdateCondition();
-        field_2.GetComponent<Field>().UpdateCondition();
-        field_3.GetComponent<Field>().UpdateCondition();
-        field_4.GetComponent<Field>().UpdateCondition();
-        field_5.GetComponent<Field>().UpdateCondition();
-        field_6.GetComponent<Field>().UpdateCondition();
-    }
-
     public GameObject ReturnConditionMark(EServentCondition value)
     {
         switch(value)
@@ -796,19 +834,29 @@ public class BattleManager : MonoBehaviour
         StartCoroutine(StartTurnCo());
     }
 
-     void GameSetup()
+    public void EndBattle()
     {
+        
+    }
+
+    void GameSetup()
+    {
+        playerData = DataController.Inst.LoadData();
         trashCount = 0;
         deckCount = 0;
         costCount = 0;
-        playerHealth = 30;
+        playerHealth = playerData.health;
 
-        enemy = new UnknownMonster();
-        enemyHealth = enemy.GetHealth();
+        enemies.Add(new UnknownMonster());
+        enemies.Add(new UnknownMonster());
+
+        currentEnemy = enemies[enemyIndex];
+        enemyHealth = currentEnemy.GetHealth();
 
         Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
         List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
-        Dictionary<string, int> myDeck = DataController.Inst.LoadDeck();
+        Dictionary<string, int> myDeck = playerData.deck;
+
 
         foreach(KeyValuePair<string, int> value in myDeck)
         {deck.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
@@ -845,7 +893,7 @@ public class BattleManager : MonoBehaviour
             deckList[b] = c;
         }
     }
-
+ 
     public void UpdateCondition()
     {
         if(deckList == null)
@@ -926,6 +974,45 @@ public class BattleManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
+    IEnumerator LoadNextEnemy()
+    {
+        AlertMessage("적을 쓰러트렸습니다.");
+        yield return new WaitForSeconds(2f);
+
+        StartCoroutine(EnemyFieldClear());
+
+        yield return new WaitForSeconds(2f);
+        enemyIndex++;
+        Debug.Log(enemyIndex);
+        currentEnemy = enemies[enemyIndex];
+        enemyHealth = currentEnemy.GetHealth();
+
+        AlertMessage("새로운 적이 나타났습니다.");
+    }
+
+    void AlertMessage(string message)
+    {
+        GameObject onMessage = Instantiate(alertMessage, alertPoint);
+        onMessage.GetComponent<PopUpMessage>().SetText(message);
+    }
+
+
+
+    
+    public IEnumerator EnemyFieldClear()
+    {
+        if(field_4.GetFilled())
+        field_4.SetHealth(0);
+
+        if(field_5.GetFilled())
+        field_5.SetHealth(0);
+
+        if(field_6.GetFilled())
+        field_6.SetHealth(0);
+        
+        yield return new WaitForSeconds(0.3f);
+    }
+
 
 
     public IEnumerator EnemyTurnCo()
@@ -935,7 +1022,7 @@ public class BattleManager : MonoBehaviour
         {card.GetComponent<BattleCard>().HideAndReveal(true);}
 
         yield return new WaitForSeconds(0.3f);
-        int actionToken = enemy.GetActionToken();
+        int actionToken = currentEnemy.GetActionToken();
 
         for(int i = 0; i < actionToken; ++i)
         {
@@ -955,7 +1042,7 @@ public class BattleManager : MonoBehaviour
             {
                 case EEnemyAction.Summon:
                 {
-                    Debug.Log("적이 동료를 부릅니다.");
+                    AlertMessage("적이 동료를 부릅니다.");
                     List<Field> unfilledField = new();
 
                     if(!field_4.GetFilled())
@@ -981,7 +1068,7 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.Attack:
                 {
-                    Debug.Log("적이 공격합니다.");
+                    AlertMessage("적이 공격합니다.");
                     
                     List<Field> fields = new List<Field>(){playerField};
 
@@ -1010,13 +1097,14 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.Ability:
                 {
-                    Debug.Log("적이 능력을 사용합니다.");
+                    AlertMessage("적이 능력을 사용합니다.");
+                    ActivateEnemyAbility(currentAbilities[0]);
                     isActionDone = true;
                     break;
                 }
                 case EEnemyAction.None:
                 {
-                    Debug.Log("적이 아무것도 할 수 없습니다.");
+                    AlertMessage("적이 아무것도 할 수 없습니다.");
                     isActionDone = true;
                     break;
                 }
@@ -1027,6 +1115,7 @@ public class BattleManager : MonoBehaviour
             yield return new WaitUntil(() => isActionDone);
             
         }
+        isActionDone = false;
 
         StartCoroutine(StartTurnCo());
         
@@ -1988,9 +2077,6 @@ public class BattleManager : MonoBehaviour
 
         CardAlignmentAlt();
         ShotDrawMissile(cardObject.transform);
-        // StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
-        
-        // CardAlignment();
     }
 
     // public void DrawCard()
@@ -2097,9 +2183,8 @@ public class BattleManager : MonoBehaviour
 
     public void CardAlignment()
     {
-        List<PRS> originCardPRSs = new List<PRS>();
 
-        originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
+        List<PRS> originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
         for(int i = 0; i < cardObjectList.Count; ++i)
         {
             var targetCard = cardObjectList[i];
@@ -2122,7 +2207,6 @@ public class BattleManager : MonoBehaviour
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
         enemyHealth -= damage;
-
     }
 
     public void EnemyTakeAttack(int damage)
@@ -2132,7 +2216,8 @@ public class BattleManager : MonoBehaviour
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
-        playerHealth -= damage;
+        enemyHealth -= damage;
+        
     }
 
     public void PlayerTakeDamage(int damage)
@@ -2162,14 +2247,14 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    public void ServentTakeDamage(int damage)
-    {
-        GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
-        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-        damageText.GetComponent<FloatingDamageText>().SetFont(150);
+    // public void ServentTakeDamage(int damage)
+    // {
+    //     GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+    //     damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+    //     damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
-        playerHealth -= damage;
-    }
+    //     playerHealth -= damage;
+    // }
 
     public void ServentTakeAttack(int damage, bool guarded)
     {
@@ -2447,16 +2532,6 @@ public class BattleManager : MonoBehaviour
         trashList.Remove(cardData);
     }
 
-    public void GetRewards()
-    {
-        player.SetGold(enemy.GetGold() + player.GetGold());
-
-        for(int i = 0; i < enemy.GetReward().Value; ++i)
-        player.GainItem(enemy.GetReward().Key);
-    }
-
-
-
     public void DrawDragLine(Vector2 startPoint, bool isUsuable)
     {
         Vector3[] point = new Vector3[lineCount];
@@ -2561,7 +2636,9 @@ public class BattleManager : MonoBehaviour
     }
 
     public void BackToDungeon()
-    {StartCoroutine(FadeOut());}
+    {
+        StartCoroutine(FadeOut());
+    }
 
     
     public void ParryCircle()
@@ -2573,10 +2650,5 @@ public class BattleManager : MonoBehaviour
             smallCircle.transform.localScale = new Vector3(0,0,0);
             isActionDone = true;
         });
-    }
-    public IEnumerator ParryTest()
-    {
-
-        yield return new WaitForSeconds(1f);
     }
 }

@@ -29,9 +29,10 @@ public class Enemy
 
     public KeyValuePair<Item, int> GetReward()
     {return rewards;}
-
     public int GetGold()
     {return enemyGold;}
+
+    
     public List<CardData> GetServentList()
     {return serventList;}
     public EnemyAbility GetEnemyAbility()

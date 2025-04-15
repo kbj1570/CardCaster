@@ -49,11 +49,11 @@ public enum EPreRequisite
     TrashCountUnder, //트래쉬의 매수 ~이하
     DeckCountUnder, //덱의 매수 ~이하
     PlayerServentCount,//나의 소환수의 수
-    PlayerServentCountUnder, //나의 소환수의 수 ~이하
+    PlayerServentCountUnder, //나의 소환수의 수 ~미만
     PlayerServentCountOver, //나의 소환수의 수 ~초과
     EnemyServentCount,//상대의 소환수의 수
-    EnemyServentCountUnder, //상대의 소환수의 수 ~이하
-    EnemyServentCountOver, //상대의 소환수의 수 ~이상
+    EnemyServentCountUnder, //상대의 소환수의 수 ~미만
+    EnemyServentCountOver, //상대의 소환수의 수 ~초과
     EnemyHP, //상대의 체력
     EnemyHPOver, //상대의 체력 ~초과
     EnemyHPUnder, //상대의 체력 ~미만

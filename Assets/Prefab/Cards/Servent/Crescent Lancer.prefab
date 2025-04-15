@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 88c2db3eef5ff934897e44137051f239, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7e821d099d7641c44a10307b5f40b53b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -537,7 +537,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 88c2db3eef5ff934897e44137051f239, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7e821d099d7641c44a10307b5f40b53b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -865,7 +865,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 88c2db3eef5ff934897e44137051f239, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7e821d099d7641c44a10307b5f40b53b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1248,6 +1248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7cb6bb2c1bcce54ba482278b98e2ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uIEffect: {fileID: 6110797051617872478}
   nameTMP: {fileID: 664345565945116137}
   forceTMP: {fileID: 0}
   descriptionTMP: {fileID: 8221799803271859746}

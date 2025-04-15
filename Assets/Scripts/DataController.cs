@@ -16,24 +16,41 @@ public class  DataController : MonoBehaviour
         File.WriteAllText(Path.Combine(Application.dataPath , "Deck.json"), info.ToString());
     }
 
-   
-
-    public void SaveCard(CardData value)
+    public SaveData LoadData()
     {
-        JsonData info = JsonMapper.ToJson(value);
-
-        File.WriteAllText(Path.Combine(Application.dataPath , "Card.json"), info.ToString());
-    }
-
-    public CardData LoadCard()
-    {
-        if(File.Exists(Path.Combine(Application.dataPath , "Card.json")))
+        if(File.Exists(Path.Combine(Application.dataPath , "SaveData.json")))
         {
-            CardData data = JsonMapper.ToObject<CardData>(File.ReadAllText(Path.Combine(Application.dataPath , "Card.json")));
+            SaveData data = JsonMapper.ToObject<SaveData>(File.ReadAllText(Path.Combine(Application.dataPath , "SaveData.json")));
             return data;
         }
         return null;
     }
+
+    public void SaveData(SaveData value)
+    {
+        JsonData info = JsonMapper.ToJson(value);
+
+        File.WriteAllText(Path.Combine(Application.dataPath , "SaveData.json"), info.ToString());
+    }
+
+   
+
+    // public void SaveCard(CardData value)
+    // {
+    //     JsonData info = JsonMapper.ToJson(value);
+
+    //     File.WriteAllText(Path.Combine(Application.dataPath , "Card.json"), info.ToString());
+    // }
+
+    // public CardData LoadCard()
+    // {
+    //     if(File.Exists(Path.Combine(Application.dataPath , "Card.json")))
+    //     {
+    //         CardData data = JsonMapper.ToObject<CardData>(File.ReadAllText(Path.Combine(Application.dataPath , "Card.json")));
+    //         return data;
+    //     }
+    //     return null;
+    // }
 
 
     public Dictionary<string, int> LoadDeck()

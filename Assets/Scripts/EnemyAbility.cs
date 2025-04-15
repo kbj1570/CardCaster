@@ -6,6 +6,8 @@ public class EnemyAbility
     protected string abilityName;
     protected string abilityDescription;
     protected List<PreRequisite> preRequisites;
+    public string GetNum()
+    {return abilityNum;}
     
     public string GetName()
     {return abilityName;}

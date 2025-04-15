@@ -113,15 +113,30 @@ public class Field : MonoBehaviour
         if(voidWalker)
         {return;}
 
+        forceTMP.gameObject.SetActive(false);
+        filled = false;
+        attacked = false;
+
+        if(summonedServent.GetComponent<Servent>().GetServentType() == EServentType.Player)
+        BattleManager.Inst.AddTrash(cardData);
+
+        
+        summonedServent.GetComponent<Servent>().Dead();
         currentForce = 0;
     }
 
+    public void SetHealth(int value)
+    {
+        currentForce = value;
+    }
+    
+
     public void UpdateHealth()
     {
-        forceTMP.text = currentForce.ToString();
 
         if(!filled)
         {return;}
+        forceTMP.text = currentForce.ToString();
 
         if(currentForce <= 0)
         {

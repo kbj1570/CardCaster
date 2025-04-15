@@ -5,11 +5,13 @@ using UnityEngine.EventSystems;
 using System;
 using UnityEngine.UI;
 using System.Collections;
+using Coffee.UIEffects; 
 
 
 
 public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    public UIEffect uIEffect;
     public TMP_Text nameTMP;
     public TMP_Text forceTMP;
     public TMP_Text descriptionTMP;
@@ -95,6 +97,10 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         currentCost = this.cardData.GetCardCost() - cost;
         if(currentCost < 0){currentCost = 0;}
         costTMP.text = currentCost.ToString();
+
+        if(uIEffect != null)
+        uIEffect.enabled = currentCost == 0;
+
     }
 
     public void SendMissile(Transform alertPoint, Transform targetPoint)
@@ -214,26 +220,6 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     {
         if(locked)
         {return;}
-        // this.transform.position = eventData.delta;
-        // this.MoveTransform(new PRS(Utils.MousePos, Utils.QI, this.originPRS.scale), false);
-
-        // if (currentSequence != null && currentSequence.IsActive())
-        // {currentSequence.Kill();}
-                
-        // Sequence sequence = DOTween.Sequence();
-        // sequence.Append(transform.DOScale(new Vector3(this.transform.localScale.x, this.transform.localScale.y, 1), 0.07f).SetEase(Ease.InOutQuad));
-
-        // currentSequence = sequence;
-        
-
-
-        // if (currentSequence != null && currentSequence.IsActive())
-        // currentSequence.Kill();
-
-        // currentSequence = DOTween.Sequence()
-        //     .Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
-        //     .Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
-
         this.transform.localScale = new Vector3(0.4f, 0.4f, 1);
         this.transform.position = originPRS.pos;
         BattleManager.Inst.CardOnDrag(this.gameObject);
@@ -241,9 +227,6 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (locked) return;
-
-         // 현재 카드의 인덱스를 가져옴
-        // BattleManagerAlt.Inst.UpdateHandAlignment(cardOrder);
 
         if (currentSequence != null && currentSequence.IsActive())
             currentSequence.Kill();
@@ -258,9 +241,6 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
     {
         if (locked) return;
 
-        // BattleManagerAlt.Inst.UpdateHandAlignment(-1); // 모든 카드를 기본 상태로 정렬
-
-        // 카드 복귀 애니메이션
         if (currentSequence != null && currentSequence.IsActive())
             currentSequence.Kill();
 
