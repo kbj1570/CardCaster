@@ -157,6 +157,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 28044545}
   conditionPanel: {fileID: 0}
@@ -2662,7 +2664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -2787,6 +2789,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c20bd58ad890e434684519739fd1347d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerActor: {fileID: 2113859917}
+  enemyActor: {fileID: 1646644581}
+  actorSpriteList: []
   floatingTextPrefab: {fileID: 4986798275329168417, guid: ec2bccc9e51e8d24aa1df2f718caacec, type: 3}
   enemyTransform: {fileID: 1576748044}
   alertPoint: {fileID: 681909812}
@@ -2838,8 +2843,10 @@ MonoBehaviour:
   - {fileID: 415667162582626545, guid: b646b8e30db3f1343bcbcf0823c8070a, type: 3}
   enemyServentPrefabList:
   - {fileID: 7468473442354731412, guid: 2b0d5bd479f6a7d4c903695e0e16c021, type: 3}
+  - {fileID: 7468473442354731412, guid: 45f26e4e00037184fbbeae26f01d9859, type: 3}
   enemyServentInfoList:
   - {fileID: 415667162582626545, guid: dd099df1d8f1188458c7b2b5c14a9182, type: 3}
+  - {fileID: 415667162582626545, guid: 617de42e4c3ddc042b6967c7e836bdd7, type: 3}
   cardAreaBorderLeft: {fileID: 460651626}
   cardAreaBorderRight: {fileID: 1974915329}
   selectedTargetLineEnd: {fileID: 1537512786}
@@ -3795,6 +3802,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 1043710179}
   conditionPanel: {fileID: 0}
@@ -5965,6 +5974,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 0}
   conditionPanel: {fileID: 0}
@@ -7304,6 +7315,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 0}
   conditionPanel: {fileID: 0}
@@ -8364,6 +8377,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 2128747508}
   conditionPanel: {fileID: 0}
@@ -11011,7 +11026,7 @@ GameObject:
   - component: {fileID: 1646644582}
   - component: {fileID: 1646644581}
   m_Layer: 7
-  m_Name: Image (5)
+  m_Name: Actor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12429,6 +12444,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 285807865}
   conditionPanel: {fileID: 0}
@@ -13965,7 +13982,7 @@ GameObject:
   - component: {fileID: 2113859918}
   - component: {fileID: 2113859917}
   m_Layer: 7
-  m_Name: Image
+  m_Name: Actor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14063,6 +14080,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 1335894635}
   conditionPanel: {fileID: 0}
@@ -14411,6 +14430,8 @@ MonoBehaviour:
   serventAttribute: 0
   filled: 0
   locked: 0
+  hasAbility: 0
+  canUseAbility: 0
   isDragable: 0
   forceTMP: {fileID: 1246661340}
   conditionPanel: {fileID: 0}

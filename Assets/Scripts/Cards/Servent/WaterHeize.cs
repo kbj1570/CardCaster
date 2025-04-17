@@ -15,8 +15,6 @@ public class WaterHeize : CardData
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Water;
 
-
-
         preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.DeckCountOver;

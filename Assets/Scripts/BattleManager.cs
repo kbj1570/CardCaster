@@ -36,15 +36,14 @@ public class BattleManager : MonoBehaviour
     
 
     ETurnState turnState;
-
-
     List<Enemy> enemies = new();
     Enemy currentEnemy;
     int enemyIndex = 0;
 
+    public Image playerActor;
+    public Image enemyActor;
 
-    Enemy enemy;
-    Player player;
+    public List<Sprite> actorSpriteList;
     
     public GameObject floatingTextPrefab;
     public Transform enemyTransform;
@@ -155,9 +154,7 @@ public class BattleManager : MonoBehaviour
     private int playerHealth;
     private int enemyHealth;
 
-    private Dictionary<int, EnemyAbility> currentAbilities;
-
-    bool foo = true;
+    private List<int> currentAbilities;
 
     public void Dash()
     {
@@ -223,6 +220,7 @@ public class BattleManager : MonoBehaviour
     void Awake()
     {
         Inst = this;
+        enemies = BattleData.enemies;
         GameSetup();
         isLoading = true;
 
@@ -261,8 +259,6 @@ public class BattleManager : MonoBehaviour
 
     private IEnumerator FadeOut()
     {
-        foreach(GameObject card in cardObjectList)
-        {card.GetComponent<BattleCard>().HideAndReveal(true);}
         yield return new WaitForSeconds(0.5f);
         fadeImage.gameObject.SetActive(true);
         float time = 0;
@@ -275,7 +271,6 @@ public class BattleManager : MonoBehaviour
             fadeImage.color = color;
             yield return null;
         }
-        SceneManager.LoadScene("Dungeon");
     }
 
     public void RemoveSelectedCards(CardData cardData)
@@ -705,16 +700,36 @@ public class BattleManager : MonoBehaviour
 
     }
 
+    IEnumerator CheckEnemyCondition(float delay)
+    {
+        if(enemyHealth <= 0)
+        {
+            enemyHealth = 0;
+            yield return new WaitForSeconds(delay);
+
+            if(enemyIndex == enemies.Count - 1)
+            {
+                AlertMessage("전투에서 승리했습니다.");
+                
+                foreach(GameObject card in cardObjectList)
+                {card.GetComponent<BattleCard>().HideAndReveal(true);}
+
+                yield return new WaitForSeconds(0.3f);
+                StartCoroutine(EnemyFieldClear());
+                yield return new WaitForSeconds(1f);
+                StartCoroutine(BackToDungeon());
+            }
+            else
+            {StartCoroutine(LoadNextEnemy());}
+        }
+
+    }
+
     void Update()
     {
         UpdateCondition();
 
-        if(enemyHealth <= 0 && isActionDone)
-        {
-            enemyHealth = 0;
-            StartCoroutine(LoadNextEnemy());
-            isActionDone = false;
-        }
+        
         
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {CloseServentInfo();}
@@ -740,8 +755,8 @@ public class BattleManager : MonoBehaviour
                 // damageText.GetComponent<FloatingDamageText>().SetFont(150);
                 parryState = EParryState.Failed;
             }
-            isActionDone = true;
             StopCoroutine(ParryWindowCoroutine());
+            isActionDone = true;
             isParryWindowActive = false;
         }
     }
@@ -803,7 +818,7 @@ public class BattleManager : MonoBehaviour
         if(servent.GetServentType() == EServentType.Player)
         {clickedServentInfo = Instantiate(playerServentInfoList[servent.GetServentNum()], Input.mousePosition, Utils.QI);}
         else if(servent.GetServentType() == EServentType.Enemy)
-        {clickedServentInfo = Instantiate(enemyServentInfoList[servent.GetServentNum()], Input.mousePosition, Utils.QI);}
+        {clickedServentInfo = Instantiate(enemyServentInfoList[servent.GetServentNum() - 1000], Input.mousePosition, Utils.QI);}
         
         Vector3 vector = clickedServentInfo.transform.position;
         vector.x += clickedServentInfo.GetComponent<RectTransform>().rect.width * 0.7f;
@@ -847,9 +862,6 @@ public class BattleManager : MonoBehaviour
         costCount = 0;
         playerHealth = playerData.health;
 
-        enemies.Add(new UnknownMonster());
-        enemies.Add(new UnknownMonster());
-
         currentEnemy = enemies[enemyIndex];
         enemyHealth = currentEnemy.GetHealth();
 
@@ -873,11 +885,7 @@ public class BattleManager : MonoBehaviour
 
         Shuffle();
 
-        currentAbilities = new()
-        {{0, new MysteriousFog()},
-        {1, null},
-        {2, null},
-        {3, null}};
+        currentAbilities = new();
 
         myTurn = true;
     }
@@ -920,6 +928,25 @@ public class BattleManager : MonoBehaviour
             enemyHealth = 0;
             StartCoroutine(WinBattle());
         }
+    }
+
+
+    IEnumerator CheckBattleAbility(Field start, Field end)
+    {
+        yield return new WaitForSeconds(0.5f);
+        switch(end.GetCardData().GetServentNum())
+        {
+            case 1000:
+            end.SetHealth(0);
+            Debug.Log("뚜쉬뚜쉬");
+            yield return new WaitForSeconds(0.5f);
+            break;
+        }
+    }
+
+    IEnumerator CheckDeathAbility(int serventNum)
+    {
+        yield return new WaitForSeconds(1f);
     }
 
     IEnumerator StartTurnCo()
@@ -977,13 +1004,12 @@ public class BattleManager : MonoBehaviour
     IEnumerator LoadNextEnemy()
     {
         AlertMessage("적을 쓰러트렸습니다.");
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.3f);
 
         StartCoroutine(EnemyFieldClear());
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         enemyIndex++;
-        Debug.Log(enemyIndex);
         currentEnemy = enemies[enemyIndex];
         enemyHealth = currentEnemy.GetHealth();
 
@@ -1026,17 +1052,33 @@ public class BattleManager : MonoBehaviour
 
         for(int i = 0; i < actionToken; ++i)
         {
+            currentAbilities.Clear();
             isActionDone = false;
+
+            currentAbilities.Add(0);
 
             List<Field> filledField = new();
             if(field_4.GetFilled())
-            {filledField.Add(field_4);}
+            {
+                filledField.Add(field_4);
+
+                if(field_4.canUseAbility)
+                currentAbilities.Add(1);
+            }
 
             if(field_5.GetFilled())
-            {filledField.Add(field_5);}
+            {
+                filledField.Add(field_5);
+                if(field_5.canUseAbility)
+                currentAbilities.Add(2);
+            }
 
             if(field_6.GetFilled())
-            {filledField.Add(field_6);}
+            {
+                filledField.Add(field_6);
+                if(field_6.canUseAbility)
+                currentAbilities.Add(3);
+            }
 
             switch(SelectEnemyAction())
             {
@@ -1057,12 +1099,15 @@ public class BattleManager : MonoBehaviour
 
                     Field field = unfilledField[randomNum];
                     field.locked = true;
-                    field.Summon(new ChaoticCorvus(),
-                    Instantiate(enemyServentPrefabList[new ChaoticCorvus().GetServentNum()],
+                    List<CardData> serventList = currentEnemy.GetServentList();
+
+                    CardData randomServent = serventList[Random.Range(0, serventList.Count)];
+
+                    field.Summon(randomServent,
+                    Instantiate(enemyServentPrefabList[randomServent.GetServentNum() - 1000],
                     field.transform.position , Utils.QI));
                     field.locked = false;
 
-                    
                     isActionDone = true;
                     break;
                 }
@@ -1097,8 +1142,8 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.Ability:
                 {
-                    AlertMessage("적이 능력을 사용합니다.");
-                    ActivateEnemyAbility(currentAbilities[0]);
+                    AlertMessage("적이 Ability를 사용합니다.");
+                    int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
                     isActionDone = true;
                     break;
                 }
@@ -1126,9 +1171,10 @@ public class BattleManager : MonoBehaviour
         List<Field> filledField = new();
         List<Field> attackedField = new();
 
+
         bool enemySummonable = true;
         bool enemyAttackable = true;
-        bool abilityUsuable = true;
+        bool abilityUsuable = currentAbilities.Count != 0;
 
         int probability = 0;
         
@@ -1166,6 +1212,7 @@ public class BattleManager : MonoBehaviour
         //Dictionary에 0, 1, 2, 3을 Key로 할당
 
         //Dictionary 중에서 쓸 수 있는 능력을 확인
+
 
 
 
@@ -1244,7 +1291,7 @@ public class BattleManager : MonoBehaviour
             startField.TakeDamage(attackerDamage);
             targetField.TakeDamage(defenderDamage);
 
-            ServentTakeAttack(attackerForce, parryState == EParryState.Succecced);
+            ServentTakeAttack(defenderDamage, parryState == EParryState.Succecced);
 
             if(startField.GetPenetrate())
             {
@@ -2207,17 +2254,20 @@ public class BattleManager : MonoBehaviour
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
         enemyHealth -= damage;
+
+        StartCoroutine(CheckEnemyCondition(0.3f));
     }
 
     public void EnemyTakeAttack(int damage)
     {
-        Dash();
+        StartCoroutine(ShowBattleWindow());
         GameObject damageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
         damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
         enemyHealth -= damage;
-        
+
+        StartCoroutine(CheckEnemyCondition(2.2f));
     }
 
     public void PlayerTakeDamage(int damage)
@@ -2233,7 +2283,7 @@ public class BattleManager : MonoBehaviour
 
     public void PlayerTakeAttack(int damage, bool guarded)
     {
-        Dash();
+        StartCoroutine(ShowBattleWindow());  
 
         GameObject damageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
         damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
@@ -2245,17 +2295,6 @@ public class BattleManager : MonoBehaviour
         playerHealth -= damage;
 
     }
-
-
-    // public void ServentTakeDamage(int damage)
-    // {
-    //     GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
-    //     damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-    //     damageText.GetComponent<FloatingDamageText>().SetFont(150);
-
-    //     playerHealth -= damage;
-    // }
-
     public void ServentTakeAttack(int damage, bool guarded)
     {
 
@@ -2266,16 +2305,6 @@ public class BattleManager : MonoBehaviour
 
         if(guarded)
         damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
-    }
-
-    public void EnemyLoseHP(int damage)
-    {
-
-        GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
-        damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-        damageText.GetComponent<FloatingDamageText>().SetFont(150);
-
-        enemyHealth -= damage;
     }
 
 
@@ -2301,6 +2330,8 @@ public class BattleManager : MonoBehaviour
             
 
             EnemyTakeAttack(attackerForce);
+
+            
             
             ReturnMouseOnField(mouseOnArea).SetAttacked(true);
 
@@ -2331,7 +2362,10 @@ public class BattleManager : MonoBehaviour
                     {}
                     else
                     {EnemyTakeDamage(defenderDamage);}
+
                 }
+                
+                StartCoroutine(CheckBattleAbility(ReturnMouseOnField(mouseOnArea), ReturnMouseOnField()));
                 
                 ReturnMouseOnField(mouseOnArea).SetAttacked(true);
 
@@ -2401,6 +2435,7 @@ public class BattleManager : MonoBehaviour
         {attackDragLine.endColor = Color.blue;}
         else
         {attackDragLine.endColor = Color.red;}
+        
 
         switch(mouseOnArea)
         {
@@ -2513,7 +2548,7 @@ public class BattleManager : MonoBehaviour
     public void CloseTrashCards()
     {
         for( int i = trashLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
-        {Destroy( trashLayoutGroup.transform.GetChild(i).gameObject );}
+        {Destroy(trashLayoutGroup.transform.GetChild(i).gameObject );}
 
 
         foreach(GameObject cardObject in cardObjectList)
@@ -2635,9 +2670,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void BackToDungeon()
+    IEnumerator BackToDungeon()
     {
         StartCoroutine(FadeOut());
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene("Dungeon");
+
     }
 
     

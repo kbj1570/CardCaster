@@ -110,14 +110,13 @@ public class DungeonManager : MonoBehaviour
     void Awake()
     {
         moveLocked = true;
-        // 이미 존재하는 DungeonManager가 있으면, 새로 생성된 것은 제거
+
         if (Inst != null)
         {
             Destroy(gameObject);
             return;
         }
 
-        // 싱글톤 인스턴스로 등록
         Inst = this;
         itemObjectList = new();
         messageList = new();
@@ -465,9 +464,6 @@ public class DungeonManager : MonoBehaviour
             .Select(enemy => enemy.Key) // 최종적으로 적 객체 리스트 변환
             .ToList();
 
-       
-
-
 
         foreach(DungeonEnemy selectedEnemy in selectedEnemies)
         {
@@ -496,10 +492,14 @@ public class DungeonManager : MonoBehaviour
 
         DungeonData.activeNodes = activeNodes;
         DungeonData.visitedNodes = visitedNodes;
+
+        BattleData.enemies = enemies;
+
         StartCoroutine(CameraController.Inst.CameraZoomEffect());
         StartCoroutine(FadeOut());
         yield return new WaitForSeconds(1f);
 
+        DOTween.KillAll();
 
         SceneManager.LoadScene("Battle");
         // GameObject[] allObjects = FindObjectsOfType<GameObject>(true); // 비활성화된 오브젝트도 포함하여 검색
@@ -570,19 +570,6 @@ public class DungeonManager : MonoBehaviour
 
         foreach(KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
         {
-            //enemyObjectList[count].transform.position = CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position;
-
-            // enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
-            //     .SetEase(Ease.OutQuad)
-            //     .OnStart(() => {
-            //         if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
-            //         {StartCoroutine(dungeonEnemy.Key.FadeOut());}
-
-            //     })
-            //     .OnComplete(() => {
-            //         if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].GetComponent<RoomNode>().GetVisited() && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
-            //         {StartCoroutine(dungeonEnemy.Key.FadeIn());}
-            //         });
 
             enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
             .SetEase(Ease.OutQuad)
@@ -595,7 +582,6 @@ public class DungeonManager : MonoBehaviour
                 if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
                 {StartCoroutine(dungeonEnemy.Key.FadeIn());}
                 });
-            
             count++;
         }
     }
@@ -837,7 +823,7 @@ public class DungeonManager : MonoBehaviour
                     isMoving = false;
                     StartNextMove(); // 다음 이동 실행
                 });
-
+            
             // if(CheckBattleStart())
             // {moveDistance = moveDistance / 2;}
 
@@ -1028,7 +1014,9 @@ public class DungeonManager : MonoBehaviour
         previousPlayerLocation = DungeonData.previousPlayerLocation;
         floor = DungeonData.currentFloor;
         floorText.text = floor.ToString() + "F";
-        // dungeonEnemies = DungeonData.dungeonEnemies;
+
+
+        dungeonEnemies = DungeonData.dungeonEnemies;
         
         nodeNumList = DungeonData.nodeNumList;
 
@@ -1045,6 +1033,7 @@ public class DungeonManager : MonoBehaviour
         player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
         camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
        
+        ReCreateEnemy();
         LoadItemList();
         UpdateItemPage();
     }
@@ -1077,10 +1066,39 @@ public class DungeonManager : MonoBehaviour
         camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
         CreateEnemy();
     }
+    
+    public void ReCreateEnemy()
+    {
+
+        foreach(KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
+        {
+            GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
+            enemyObject.GetComponent<DungeonEnemy>().SetEnemy(dungeonEnemy.Key.GetEnemy());
+            enemyObject.GetComponent<DungeonEnemy>().SetCurrentNodeNum(dungeonEnemy.Value);
+            enemyObject.GetComponent<DungeonEnemy>().SetEnemyDirection(dungeonEnemy.Key.GetEnemyDirection());
+            enemyObject.GetComponent<DungeonEnemy>().SetVisible(dungeonEnemy.Key.GetVisible());
+
+            enemyObject.GetComponent<DungeonEnemy>().SetMoveLock(
+            dungeonEnemy.Value + 1 == currentPlayerLocation
+            ||dungeonEnemy.Value - 1 == currentPlayerLocation
+            ||dungeonEnemy.Value + width == currentPlayerLocation
+            ||dungeonEnemy.Value - width == currentPlayerLocation
+            );
+
+            enemyObjectList.Add(enemyObject);
+        }
+
+
+        dungeonEnemies = new Dictionary<DungeonEnemy, int>();
+
+        foreach(GameObject dungeonEnemy in enemyObjectList)
+        {dungeonEnemies.Add(dungeonEnemy.GetComponent<DungeonEnemy>(), dungeonEnemy.GetComponent<DungeonEnemy>().GetCurrentNodeNum());}
+
+        MoveEnemy();
+    }
 
     public void CreateEnemy()
     {
-        // 우선 랜덤으로 배치한다.
         List<int> usedNumbers = new List<int>();
         dungeonEnemies.Clear();
 
@@ -1131,7 +1149,7 @@ public class DungeonManager : MonoBehaviour
             );
 
         }
-        MoveEnemy();        
+        MoveEnemy();
     }
 
     public void DestroyFloor()
@@ -1141,6 +1159,7 @@ public class DungeonManager : MonoBehaviour
 
         foreach(GameObject enemyObject in enemyObjectList)
         {
+            DOTween.Kill(enemyObject);
             Destroy(enemyObject);
         }
         enemyObjectList.Clear();
@@ -1646,16 +1665,15 @@ public class DungeonManager : MonoBehaviour
 
     }
 
-    IEnumerator ActivateSpell(CardData cardData, int nodeNum)
+    IEnumerator ActivateExploreCard(CardData cardData, int nodeNum)
     {
         switch(cardData.GetCardNum())
         {
-            case 0: //텔레포트
-            int randomNum = Random.Range(0, nodeNumList.Count);
-            MovePlayer(randomNum);
+            case 99: //랜덤 텔레포터
+            ActivateTeleport();
             break;
 
-            case 1: //익스플로전
+            case 100: //익스플로전
             nodeMap[nodeNum].GetComponent<RoomNode>().SetRoomType(ERoomType.None);
             break;
         }
@@ -1679,7 +1697,7 @@ public class DungeonManager : MonoBehaviour
 
         if(CheckCardUsable(dungeonCard.GetCardData(), nodeNum))
         {
-            StartCoroutine(ActivateSpell(dungeonCard.GetCardData(), nodeNum));
+            StartCoroutine(ActivateExploreCard(dungeonCard.GetCardData(), nodeNum));
             // card.SendMissile(alertPoint, hole.transform);
 
             for(int i = 0; i < cardObjectList.Count; ++i)

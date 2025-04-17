@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 4
-  m_Sprite: {fileID: 21300000, guid: 2fc6907714fb48141b32e1b8aa02720c, type: 3}
+  m_Sprite: {fileID: -4619988530279709204, guid: 9a5b4f0962e0e1f42b7930da02b35c87, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 7468473442354731413}
   - component: {fileID: 7468473442354731415}
   m_Layer: 0
-  m_Name: ChaoticCorvus
+  m_Name: Wild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,14 +131,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70dacefdee0cab245bca77ae8b7d0187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serventForce: 3
+  serventForce: 2
   border: {fileID: 0}
   infoWindow: {fileID: 0}
   serventForceText: {fileID: 3965241541678656265}
   activationButton: {fileID: 0}
   spriteRenderer: {fileID: 7468473441850001522}
   fadeColor: {r: 0.057105, g: 0.4811321, b: 0, a: 0}
-  serventNum: 1000
+  serventNum: 1001
   texture2D: {fileID: 2800000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
 --- !u!61 &7468473442354731415
 BoxCollider2D:

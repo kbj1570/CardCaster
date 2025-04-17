@@ -42,6 +42,9 @@ public class DungeonEnemy : MonoBehaviour
         visible = value;
     }
 
+    public bool GetVisible()
+    {return visible;}
+
     public void SetMoveLock(bool value)
     {moveLocked = value;}
 

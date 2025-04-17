@@ -11,6 +11,8 @@ public class Field : MonoBehaviour
     
     public bool filled;
     public bool locked;
+    public bool hasAbility;
+    public bool canUseAbility;
     public bool isDragable;
     private bool attacked;
     public TMP_Text forceTMP;
@@ -167,6 +169,8 @@ public class Field : MonoBehaviour
         voidWalker = cardData.GetVoidWalker();
         serventAttribute = cardData.GetAttribute();
         summonedServent = gameObject;
+        hasAbility = cardData.GetHasAbility();
+        canUseAbility = cardData.GetCanUseAbility();
 
         gameObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
 

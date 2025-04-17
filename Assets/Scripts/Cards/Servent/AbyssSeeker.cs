@@ -8,7 +8,7 @@ public class AbyssSeeker : CardData
         cardCost = 2;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
-        force = 3;
+        force = 5;
         cardGuideDescription = "";
         voidWalker = true;
         cardAbility = "이 소환수는 다른 소환수나 마법의 효과를 받지 않는다";

@@ -17,6 +17,9 @@ public class CardData
     protected EServentSize serventSize;
     protected EServentType serventType;
     protected List<PreRequisite> preRequisites;
+
+    protected bool hasAbility;
+    protected bool canUseAbility;
     protected bool penetrate;
     protected bool voidWalker;
 
@@ -25,7 +28,7 @@ public class CardData
     protected bool windImmune;
     protected bool darkImmune;
     protected bool lightImmune;
-    
+
 
     public int GetCardNum(){return cardNum;}
     public int GetServentNum(){return serventNum;}
@@ -34,6 +37,8 @@ public class CardData
     public string GetCardAbility(){return cardAbility;}
     public int GetForce(){return force;}
     public int GetCardCost(){return cardCost;}
+    public bool GetHasAbility(){return hasAbility;}
+    public bool GetCanUseAbility(){return canUseAbility;}
     public EServentAttribute GetAttribute(){return serventAttribute;}
     public EServentSize GetSize(){return serventSize;}
     public ECardType GetCardType(){return cardType;}

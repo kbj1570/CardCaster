@@ -118,6 +118,8 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
         // 3. 일정 시간 대기 후 오브젝트 삭제
         seq.AppendInterval(0.5f); // 0.5초 기다리기
         seq.AppendCallback(() => Destroy(gameObject));
+
+        DOTween.Kill(seq);
     }
 
     public int GetCurrentCost()

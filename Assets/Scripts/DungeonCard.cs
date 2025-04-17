@@ -30,10 +30,12 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public bool locked = false;
     private Sequence currentSequence;
 
-    void Start()
+    void Awake()
     {
         originPRS.pos = this.transform.position;
         UpdateEnergyUI(); // 시작할 때 UI 초기화
+
+        cardData = new RandomTeleporter();
     }
 
 
