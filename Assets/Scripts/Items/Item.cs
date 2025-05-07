@@ -15,6 +15,9 @@ public class Item
     public string GetItemDescription()
     {return itemDescription;}
 
+    public EItemCategory GetItemCategory()
+    {return itemCategory;}
+
 }
 public enum EItemCategory
-{ETool, EUsableItem, EImportantItem, EUnUsableItem}
+{ETool, EDocument, EImportantItem, EOthers}

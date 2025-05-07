@@ -15,6 +15,9 @@ public static class DungeonData
     public static Dictionary<int, bool> visitedNodes;
     public static Dictionary<DungeonEnemy, int> dungeonEnemies;
     public static int currentFloor;
+
+
+
     
 
     public static void Reset()
@@ -37,14 +40,39 @@ public static class DungeonClearData
 public class CampsiteManager : MonoBehaviour
 {
     public Image fadeImage;
+    public AudioSource audioSource;
+    public AudioClip clip1;
+    public AudioClip clip2;
+
 
     
     public void GoToDungeon()
     {
         fadeImage.gameObject.SetActive(true);
         StartCoroutine(FadeOut());
-        
     }
+
+    public void OpenCardPack()
+    {
+        ECardRarity eCardRarity;
+        
+        int randomNum = Random.Range(0, 10);
+
+        if(randomNum < 6)
+        {eCardRarity = ECardRarity.Common;}
+        else if(randomNum < 9)
+        {eCardRarity = ECardRarity.Uncommon;}
+        else
+        {eCardRarity = ECardRarity.Rare;}
+
+    }
+
+    public void PlayOpen()
+    {audioSource.PlayOneShot(clip1);}
+
+    public void PlayClose()
+    {audioSource.PlayOneShot(clip2);}
+
 
     private IEnumerator FadeOut()
     {

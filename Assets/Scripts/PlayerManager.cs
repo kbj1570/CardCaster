@@ -26,6 +26,8 @@ public class PlayerManager : MonoBehaviour
 
     public List<GameObject> itemObjectList;
 
+    public SaveData saveData;
+
     public static PlayerManager Inst{get; private set;}
 
     void Awake()
@@ -37,6 +39,7 @@ public class PlayerManager : MonoBehaviour
         }
 
         Inst = this;
+        saveData = DataController.Inst.LoadData();
         DontDestroyOnLoad(this);
     }
 
@@ -103,13 +106,7 @@ public class PlayerManager : MonoBehaviour
             dictionary = importantItem;
             break;
 
-            case EItemCategory.EUsableItem:
-            dictionary = usableItem;
-            break;
 
-            case EItemCategory.EUnUsableItem:
-            dictionary = unusableItem;
-            break;
         }
 
         foreach(KeyValuePair<ItemSO, int> value in dictionary)
@@ -132,13 +129,6 @@ public class PlayerManager : MonoBehaviour
             itemCategory = EItemCategory.EImportantItem;
             break;
 
-            case 1:
-            itemCategory = EItemCategory.EUsableItem;
-            break;
-
-            case 2:
-            itemCategory = EItemCategory.EUnUsableItem;
-            break;
         }
         this.selectedCategory = itemCategory;
     }

@@ -11,6 +11,8 @@ public class Wild : CardData
         force = 2;
         cardGuideDescription = "";
         cardAbility = "";
+        canUseAbility = true;
+        hasAbility = true;
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Earth;

@@ -59,10 +59,12 @@ public class DungeonManager : MonoBehaviour
     public List<GameObject> itemPrefabList;
 
     public List<Transform> itemLocation;
+
+    public Transform verticalItemScroll;
     public LineRenderer cardDragLine;
 
-    private List<Item> currentItemList;
-    private List<Item> myItemList;
+    private Dictionary<Item, int> currentItemList;
+    private Dictionary<Item, int> myItemList;
 
     public GameObject popUpMessageWindow;
     public GameObject popUpMessage;
@@ -96,6 +98,9 @@ public class DungeonManager : MonoBehaviour
     public TMP_Text healthText;
     public TMP_Text goldText;
     public TMP_Text textbox;
+
+    public Toggle toolToggle;
+    public Toggle othersToggle;
 
 
     public Item selectedItem;
@@ -327,8 +332,8 @@ public class DungeonManager : MonoBehaviour
 
     public void LoadItemList()
     {
-        foreach(string value in playerData.inventory)
-        {myItemList.Add(itemDatabase[Convert.ToInt32(value)]);}
+        foreach(KeyValuePair<int, int> value in playerData.inventory)
+        {myItemList.Add(itemDatabase[value.Key], value.Value);}
     }
 
     public void ChangePage(bool value)
@@ -629,14 +634,34 @@ public class DungeonManager : MonoBehaviour
 
     public void UpdateItemPage()
     {
-        int count = 0;
         int sum = myItemList.Count;
         pageLimit = (sum / 8);
         int remainder = sum % 8;
 
         currentItemList.Clear();
+
         foreach(GameObject gameObject in itemObjectList)
         {Destroy(gameObject);}
+
+        EItemCategory selectedItemCategory = EItemCategory.ETool;
+
+        if(toolToggle.isOn)
+        {selectedItemCategory = EItemCategory.ETool;}
+        else if(othersToggle.isOn)
+        {selectedItemCategory = EItemCategory.EOthers;}
+
+
+        foreach(KeyValuePair<Item, int> itemPair in myItemList)
+        {
+            if(itemPair.Key.GetItemCategory() == selectedItemCategory)
+            {
+                GameObject cardObject = Instantiate(itemPrefabList[Int32.Parse(itemPair.Key.GetNum())], new Vector3(0,0,0), Utils.QI);
+                cardObject.transform.SetParent(verticalItemScroll);
+                cardObject.transform.localScale = new Vector3(1f,1f,1f);
+                cardObject.transform.localPosition = new Vector3(0,0,0);
+                itemObjectList.Add(cardObject);
+            }
+        }
 
         if(sum == 0)
         {return;}
@@ -650,30 +675,29 @@ public class DungeonManager : MonoBehaviour
             remainder = 8;
         }
 
-        if(currentPage != pageLimit)
-        {
-            for(int i = 0; i < 8; ++i)
-            {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
-        }else
-        {
-            for(int i = 0; i < remainder; ++i)
-            {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
-        }
+        // if(currentPage != pageLimit)
+        // {
+        //     for(int i = 0; i < 8; ++i)
+        //     {currentItemList.Add(myItemList.ToList()[(currentPage * 8) + i]);}
+        // }else
+        // {
+        //     for(int i = 0; i < remainder; ++i)
+        //     {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
+        // }
 
-        foreach(Item item in currentItemList)
-        {
-            int x = Convert.ToInt32(item.GetNum());
-            GameObject cardObject = Instantiate(itemPrefabList[x],
-            new Vector3(0,0,0) , Utils.QI);
-            cardObject.transform.SetParent(itemLocation[count].transform);
-            cardObject.transform.localScale = new Vector3(1f,1f,1f);
-            cardObject.transform.localPosition = new Vector3(0,0,0);
+        // foreach(KeyValuePair<Item, int> itemPair in currentItemList)
+        // {
+        //     int x = Convert.ToInt32(itemPair.Key.GetNum());
+        //     GameObject cardObject = Instantiate(itemPrefabList[x],
+        //     new Vector3(0,0,0) , Utils.QI);
+        //     cardObject.transform.SetParent(itemLocation[count].transform);
+        //     cardObject.transform.localScale = new Vector3(1f,1f,1f);
+        //     cardObject.transform.localPosition = new Vector3(0,0,0);
             
-            itemObjectList.Add(cardObject);
-            count++;
+        //     itemObjectList.Add(cardObject);
+        //     count++;
+        // }
 
-            
-        }
         if(currentPage == 0)
         backButton.SetActive(false);
         else
@@ -862,8 +886,8 @@ public class DungeonManager : MonoBehaviour
             case ERequireType.EHealth:
             return selectionNode.GetRequireHealth() <= PlayerManager.Inst.GetHealth();
 
-            case ERequireType.EItem:
-            return myItemList.Contains(selectionNode.GetRequireItem());
+            // case ERequireType.EItem:
+            // return myItemList.Contains(selectionNode.GetRequireItem());
 
             case ERequireType.ECard:
             return true;
@@ -1430,7 +1454,7 @@ public class DungeonManager : MonoBehaviour
 
     public void RemoveClickedItem()
     {
-        myItemList.RemoveAt(clickedItemOrder);
+        // myItemList.RemoveAt(clickedItemOrder);
         UpdateItemPage();
     }
 
@@ -1470,7 +1494,7 @@ public class DungeonManager : MonoBehaviour
     public void SelectUsingItem(int itemNum, int itemOrder)
     {
         clickedItemOrder = itemOrder + (currentPage * 8);
-        clickedItem = myItemList[clickedItemOrder];
+        // clickedItem = myItemList[clickedItemOrder];
         itemAlert.GetComponent<Window>().OnOff();
         itemAlert.GetComponent<ItemAlert>().SetText(clickedItem.GetName());
     }
@@ -1572,7 +1596,7 @@ public class DungeonManager : MonoBehaviour
     private void GainItem(Node node)
     {
         AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
-        myItemList.Add(node.GetItem());
+        // myItemList.Add(node.GetItem());
         UpdateItemPage();
     }
 

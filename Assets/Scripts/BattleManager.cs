@@ -12,6 +12,7 @@ public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
 public enum ECardType{None ,Servent, Spell, Explore}
+public enum ECardRarity{None, Common, Uncommon, Rare}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
@@ -1055,7 +1056,8 @@ public class BattleManager : MonoBehaviour
             currentAbilities.Clear();
             isActionDone = false;
 
-            currentAbilities.Add(0);
+            if(currentEnemy.GetEnemyAbility() != null)
+            {currentAbilities.Add(0);}
 
             List<Field> filledField = new();
             if(field_4.GetFilled())
@@ -1142,8 +1144,27 @@ public class BattleManager : MonoBehaviour
                 }
                 case EEnemyAction.Ability:
                 {
-                    AlertMessage("적이 Ability를 사용합니다.");
+                    AlertMessage("적이 능력을 사용합니다.");
                     int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
+                    switch(randomNum)
+                    {
+                        case 0:
+                        Debug.Log("대장이 능력을 사용합니다.");
+                        break;
+
+                        case 1:
+                        Debug.Log("1번 필드의 적이 능력을 사용합니다.");
+                        break;
+
+                        case 2:
+                        Debug.Log("2번 필드의 적이 능력을 사용합니다.");
+                        break;
+
+                        case 3:
+                        Debug.Log("3번 필드의 적이 능력을 사용합니다.");
+                        break;
+                    }
+
                     isActionDone = true;
                     break;
                 }
@@ -1206,33 +1227,14 @@ public class BattleManager : MonoBehaviour
 
 
 
-
-        //1,2,3,4
-
-        //Dictionary에 0, 1, 2, 3을 Key로 할당
-
-        //Dictionary 중에서 쓸 수 있는 능력을 확인
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         int randomNum = Random.Range(1,10);
 
         if(enemySummonable && probability < randomNum)
         return EEnemyAction.Summon;
 
-        if(enemyAttackable)
+        randomNum = Random.Range(0,2);
+
+        if(enemyAttackable && randomNum == 1)
         return EEnemyAction.Attack;
 
         if(abilityUsuable)
@@ -1245,11 +1247,11 @@ public class BattleManager : MonoBehaviour
     {
         parryState  = EParryState.Parry;
         isActionDone = false;
+
         StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
         ,targetField.GetLinePoint().position, circleSpeed));
-        //선그리기 시작
+
         ParryCircle();
-        //원그리기 시작, 둘 다 1초
         yield return new WaitForSeconds(circleSpeed - parryWindowTime);
         StartParryWindow();
         yield return new WaitUntil(() => isActionDone);

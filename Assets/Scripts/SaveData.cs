@@ -3,7 +3,7 @@ using System.Collections.Generic;
 public class SaveData
 {
     public int health;
-    public List<string> inventory;
+    public Dictionary<int, int> inventory;
     public int gold;
     public Dictionary<string, int> cardList;
     public Dictionary<string, int> deck;

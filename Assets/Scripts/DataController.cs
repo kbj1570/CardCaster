@@ -132,6 +132,7 @@ public class  DataController : MonoBehaviour
         items.Add(new OldStick());
         items.Add(new ShardOfStarlight());
         items.Add(new SharpFang());
+
         return items;
     }
 

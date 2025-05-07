@@ -7,7 +7,7 @@ using System.Text;
 
 public class CutSceneManager : MonoBehaviour
 {
-    CutScenes cutScenes;
+    public CutScenes cutScenes;
     public GameObject textBoxObject;
     public TMP_Text textBox;
     public TMP_Text nameBox;
