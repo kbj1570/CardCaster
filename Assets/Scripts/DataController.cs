@@ -5,7 +5,6 @@ using System.IO;
 
 public class  DataController : MonoBehaviour
 {
-
     public static DataController Inst{get; private set;}
     void Awake() => Inst = this;
 

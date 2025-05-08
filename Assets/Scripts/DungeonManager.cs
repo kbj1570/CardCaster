@@ -13,6 +13,10 @@ public class DungeonManager : MonoBehaviour
 {
 
     SaveData playerData;
+
+    public AudioSource backGroundMusic;
+    public AudioSource soundEffect;
+    public AudioClip runningInGrass;
     public Image fadeImage;
     int lineCount;
     int mouseOnRoomNum;
@@ -59,6 +63,9 @@ public class DungeonManager : MonoBehaviour
     public List<GameObject> itemPrefabList;
 
     public List<Transform> itemLocation;
+    public List<Sprite> itemImageList;
+
+    
 
     public Transform verticalItemScroll;
     public LineRenderer cardDragLine;
@@ -231,17 +238,15 @@ public class DungeonManager : MonoBehaviour
         List<string> directions = new List<string>();
         while (temp != 0)
         {
-
             int prev = cameFrom[temp];
-
             int dx = temp - prev;
 
             if (dx == 1) directions.Add("Right");
             else if (dx == -1) directions.Add("Left");
             else if (dx == -width) directions.Add("Up");
             else if (dx == width) directions.Add("Down");
-
             temp = prev;
+
         }
         directions.Reverse();
 
@@ -317,10 +322,7 @@ public class DungeonManager : MonoBehaviour
         foreach(GameObject node in nodeMap)
         {
             if(node != null)
-            {
-                node.SetActive(true);
-                // node.GetComponent<RoomNode>().SetVisited();
-            }
+            {node.SetActive(true);}
         }
     }
 
@@ -332,8 +334,8 @@ public class DungeonManager : MonoBehaviour
 
     public void LoadItemList()
     {
-        foreach(KeyValuePair<int, int> value in playerData.inventory)
-        {myItemList.Add(itemDatabase[value.Key], value.Value);}
+        foreach(KeyValuePair<string, int> value in playerData.inventory)
+        {myItemList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
     }
 
     public void ChangePage(bool value)
@@ -507,22 +509,11 @@ public class DungeonManager : MonoBehaviour
         DOTween.KillAll();
 
         SceneManager.LoadScene("Battle");
-        // GameObject[] allObjects = FindObjectsOfType<GameObject>(true); // 비활성화된 오브젝트도 포함하여 검색
-        // foreach (GameObject obj in allObjects)
-        // {
-        //     if(obj != gameObject)
-        //     {obj.SetActive(false);}
-        // }
-        // SceneManager.SetActiveScene(
-        //     SceneManager.GetSceneByName("Battle")
-        // );
-        // StartCoroutine(SetActiveBattleScene());
-        
     }
 
     IEnumerator SetActiveBattleScene()
     {
-        yield return new WaitForSeconds(0.2f); // 씬이 로드될 시간을 줌
+        yield return new WaitForSeconds(0.2f);
 
         SceneManager.SetActiveScene(
             SceneManager.GetSceneByName("Battle")
@@ -634,9 +625,6 @@ public class DungeonManager : MonoBehaviour
 
     public void UpdateItemPage()
     {
-        int sum = myItemList.Count;
-        pageLimit = (sum / 8);
-        int remainder = sum % 8;
 
         currentItemList.Clear();
 
@@ -655,58 +643,15 @@ public class DungeonManager : MonoBehaviour
         {
             if(itemPair.Key.GetItemCategory() == selectedItemCategory)
             {
-                GameObject cardObject = Instantiate(itemPrefabList[Int32.Parse(itemPair.Key.GetNum())], new Vector3(0,0,0), Utils.QI);
-                cardObject.transform.SetParent(verticalItemScroll);
-                cardObject.transform.localScale = new Vector3(1f,1f,1f);
-                cardObject.transform.localPosition = new Vector3(0,0,0);
-                itemObjectList.Add(cardObject);
+                GameObject itemObject = Instantiate(itemPrefabList[0], new Vector3(0,0,0), Utils.QI);
+
+                itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value,
+                itemImageList[Int32.Parse(itemPair.Key.GetNum())]);
+
+                itemObject.transform.SetParent(verticalItemScroll);
+                itemObjectList.Add(itemObject);
             }
         }
-
-        if(sum == 0)
-        {return;}
-
-        if(pageLimit < currentPage)
-        {currentPage--;}
-
-        if(remainder == 0)
-        {
-            pageLimit--;
-            remainder = 8;
-        }
-
-        // if(currentPage != pageLimit)
-        // {
-        //     for(int i = 0; i < 8; ++i)
-        //     {currentItemList.Add(myItemList.ToList()[(currentPage * 8) + i]);}
-        // }else
-        // {
-        //     for(int i = 0; i < remainder; ++i)
-        //     {currentItemList.Add(myItemList[(currentPage * 8) + i]);}
-        // }
-
-        // foreach(KeyValuePair<Item, int> itemPair in currentItemList)
-        // {
-        //     int x = Convert.ToInt32(itemPair.Key.GetNum());
-        //     GameObject cardObject = Instantiate(itemPrefabList[x],
-        //     new Vector3(0,0,0) , Utils.QI);
-        //     cardObject.transform.SetParent(itemLocation[count].transform);
-        //     cardObject.transform.localScale = new Vector3(1f,1f,1f);
-        //     cardObject.transform.localPosition = new Vector3(0,0,0);
-            
-        //     itemObjectList.Add(cardObject);
-        //     count++;
-        // }
-
-        if(currentPage == 0)
-        backButton.SetActive(false);
-        else
-        backButton.SetActive(true);
-
-        if(currentPage == pageLimit)
-        nextButton.SetActive(false);
-        else
-        nextButton.SetActive(true);
     }
 
     public void ShowItemDescription(int itemNum)
@@ -833,13 +778,12 @@ public class DungeonManager : MonoBehaviour
         {
             isMoving = true;
             Vector2 direction = moveQueue.Dequeue();
-
-        // 
-
             Vector3 targetPosition = player.transform.position + (Vector3)direction * moveDistance;
 
             
             SetEnemyCourse();
+            
+            soundEffect.PlayOneShot(runningInGrass);
 
             player.transform.DOMove(targetPosition, moveDuration)
                 .SetEase(Ease.OutQuad) // 부드러운 감속 효과
@@ -957,7 +901,7 @@ public class DungeonManager : MonoBehaviour
 
         List<int> usedNumbers = new List<int>();
 
-        for(int i = 0; i < 5; ++i)
+        for(int i = 0; i < 20; ++i)
         {
             int num;
             do {num = Random.Range(0, nodeNumList.Count);}
@@ -969,7 +913,7 @@ public class DungeonManager : MonoBehaviour
         for(int i = 0; i < usedNumbers.Count; ++i)
         {
 
-            if(Random.Range(0, 2) == 0)
+            if(Random.Range(0, 3) == 0)
             {
                 map[usedNumbers[i]].SetRoomType(ERoomType.EItem);
                 map[usedNumbers[i]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
@@ -1454,7 +1398,13 @@ public class DungeonManager : MonoBehaviour
 
     public void RemoveClickedItem()
     {
-        // myItemList.RemoveAt(clickedItemOrder);
+        if (myItemList.ContainsKey(clickedItem))
+        {
+            myItemList[clickedItem]--;
+
+            if (myItemList[clickedItem] <= 0)
+            {myItemList.Remove(clickedItem);}
+        }
         UpdateItemPage();
     }
 
@@ -1491,10 +1441,9 @@ public class DungeonManager : MonoBehaviour
         AlertPopUpMessage(clickedItem.GetName() + "을(를) 사용하였습니다.");
     }
 
-    public void SelectUsingItem(int itemNum, int itemOrder)
+    public void SelectUsingItem(Item item)
     {
-        clickedItemOrder = itemOrder + (currentPage * 8);
-        // clickedItem = myItemList[clickedItemOrder];
+        clickedItem = item;
         itemAlert.GetComponent<Window>().OnOff();
         itemAlert.GetComponent<ItemAlert>().SetText(clickedItem.GetName());
     }
@@ -1752,15 +1701,8 @@ public class DungeonManager : MonoBehaviour
     public void GainEnergyToMax()
     {
         foreach(GameObject card in cardObjectList)
-        {
-            card.GetComponent<DungeonCard>().AddEnergy(1000);
-        }
+        {card.GetComponent<DungeonCard>().AddEnergy(1000);}
     }
-
-    //나와 적 사이가 항상 1칸이 되게 유지
-
-
-
     public int ReturnMouseOnNode()
     {return mouseOnRoomNum;}
 

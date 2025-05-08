@@ -41,8 +41,9 @@ public class CampsiteManager : MonoBehaviour
 {
     public Image fadeImage;
     public AudioSource audioSource;
-    public AudioClip clip1;
-    public AudioClip clip2;
+    public AudioClip inventoryOpen;
+    public AudioClip inventoryClose;
+    public AudioClip mapOpen;
 
 
     
@@ -67,11 +68,14 @@ public class CampsiteManager : MonoBehaviour
 
     }
 
-    public void PlayOpen()
-    {audioSource.PlayOneShot(clip1);}
+    public void PlayInventoryOpen()
+    {audioSource.PlayOneShot(inventoryOpen);}
 
-    public void PlayClose()
-    {audioSource.PlayOneShot(clip2);}
+    public void PlayInventoryClose()
+    {audioSource.PlayOneShot(inventoryClose);}
+
+    public void PlayMapOpen()
+    {audioSource.PlayOneShot(mapOpen);}
 
 
     private IEnumerator FadeOut()

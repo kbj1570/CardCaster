@@ -26,6 +26,12 @@ public class BattleManager : MonoBehaviour
     SaveData playerData;
 
 
+    public AudioSource backGroundMusic;
+    public AudioSource soundEffect;
+    public AudioClip serventDeath;
+    public AudioClip serventSummon;
+
+
     EParryState parryState;
     bool playerDamageBlock;
     bool enemyDamageBlock;
@@ -1108,6 +1114,7 @@ public class BattleManager : MonoBehaviour
                     field.Summon(randomServent,
                     Instantiate(enemyServentPrefabList[randomServent.GetServentNum() - 1000],
                     field.transform.position , Utils.QI));
+                    soundEffect.PlayOneShot(serventSummon);
                     field.locked = false;
 
                     isActionDone = true;
@@ -1960,6 +1967,11 @@ public class BattleManager : MonoBehaviour
 
     }
 
+    public void PlayServentDeathSound()
+    {
+        soundEffect.PlayOneShot(serventDeath);
+    }
+
     public bool CheckAttackable(EMouseOnArea start)
     {
         if(ReturnMouseOnField() == null)
@@ -2040,6 +2052,8 @@ public class BattleManager : MonoBehaviour
                             Utils.QI
                         )
                     );
+
+                    soundEffect.PlayOneShot(serventSummon);
 
                     StartCoroutine(ActivateSummonAbility(
                         card.GetCardData(),

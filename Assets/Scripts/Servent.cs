@@ -57,13 +57,15 @@ public class Servent: MonoBehaviour
             {
                 fade = 1f;
                 isDissolving = false;
-                // BattleManagerAlt.Inst.ActionDone();
             }
             monsterMaterial.SetFloat("_Fade", fade);
         }
 
         if(isDying)
         {
+            if(fade == 1f)
+            {BattleManager.Inst.PlayServentDeathSound();}
+
             fade -= Time.deltaTime * 1.1f;
 
 

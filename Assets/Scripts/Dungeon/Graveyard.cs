@@ -27,7 +27,7 @@ public class Graveyard : Dungeon
             {new MeetInTheDark(), 1}
         };
 
-        maxGold = 200;
+        maxGold = 20;
     }
 
 }

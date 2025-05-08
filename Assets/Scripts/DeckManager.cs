@@ -28,6 +28,8 @@ public class DeckManager : MonoBehaviour
     private Dictionary<CardData, int> currentCardList;
     private int currentPage;
     private int pageLimit;
+
+    private SaveData saveData;
     public static DeckManager Inst{get; private set;}
     public TMP_Text pageNumber;
     public TMP_Text searchText;
@@ -36,23 +38,29 @@ public class DeckManager : MonoBehaviour
     private GameObject onMessage;
     public GameObject backButton;
     public GameObject nextButton;
-    void Awake() => Inst = this;
-
-    public ScrollRect scrollRect; // ScrollRect 컴포넌트
-
-
-    void Start()
+    void Awake()
     {
+        Inst = this;
+
         currentPage = 0;
-        cardDatabase = DataController.Inst.LoadCardDatabase();
         myCardList = new();
         deckCardObjectList = new();
         scrollRect.normalizedPosition = new Vector2(1, 1);
 
-        LoadCardList();
-        LoadDeck();
+        
+
+
+        foreach(KeyValuePair<string, int> value in saveData.cardList)
+        {myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
+
+        foreach(KeyValuePair<string, int> value in saveData.deck)
+        {myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
         CreatePage();
+
     }
+
+    public ScrollRect scrollRect; // ScrollRect 컴포넌트
+
 
     public void FocusOnCard(CardData cardData)
     {
@@ -83,10 +91,7 @@ public class DeckManager : MonoBehaviour
     {
        Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();
 
-        foreach(KeyValuePair<string, int> value in DataController.Inst.LoadDeck())
-        {dumb.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
-
-        myDeckList = dumb;
+        
     }
     public void SaveCardList()
     {
@@ -95,21 +100,17 @@ public class DeckManager : MonoBehaviour
         foreach(KeyValuePair<CardData, int> value in myCardList)
         {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
 
-        DataController.Inst.SaveCardList(dumb);
+        DataController.Inst.SaveData(saveData);
     }
     public void LoadCardList()
     {
-        foreach(KeyValuePair<string, int> value in DataController.Inst.LoadCardList())
-        {myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
+        
     }
     public void CreatePage()
     {
-        // for(int i = 0; i < cardLocation.Count; ++i)
-        // {
-        //     dummyCardObjectList.Add(Instantiate(cardPrefab, new Vector3(0,0,0) , Utils.QI));
-        //     dummyCardObjectList[i].transform.SetParent(cardLocation[i].transform);
-        //     dummyCardObjectList[i].transform.localScale = new Vector3(1,1,1);
-        // }
+
+        saveData = DataController.Inst.LoadData();
+        cardDatabase = DataController.Inst.LoadCardDatabase();
         currentCardList = new Dictionary<CardData, int>();
 
         UpdatePage();
