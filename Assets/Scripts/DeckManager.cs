@@ -38,28 +38,34 @@ public class DeckManager : MonoBehaviour
     private GameObject onMessage;
     public GameObject backButton;
     public GameObject nextButton;
+    public ScrollRect scrollRect;
+
+    void Start()
+    {
+        saveData = DataController.Inst.LoadData();
+        cardDatabase = DataController.Inst.LoadCardDatabase();
+
+        currentPage = 0;
+        myCardList = new();
+        myDeckList = new();
+        deckCardObjectList = new();
+        scrollRect.normalizedPosition = new Vector2(1, 1);
+
+        foreach (KeyValuePair<string, int> value in saveData.cardList)
+        { myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+
+        foreach (KeyValuePair<string, int> value in saveData.deck)
+        { myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+        CreatePage();
+    }
+
     void Awake()
     {
         Inst = this;
 
-        currentPage = 0;
-        myCardList = new();
-        deckCardObjectList = new();
-        scrollRect.normalizedPosition = new Vector2(1, 1);
-
         
-
-
-        foreach(KeyValuePair<string, int> value in saveData.cardList)
-        {myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
-
-        foreach(KeyValuePair<string, int> value in saveData.deck)
-        {myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
-        CreatePage();
-
     }
 
-    public ScrollRect scrollRect; // ScrollRect 컴포넌트
 
 
     public void FocusOnCard(CardData cardData)
@@ -108,9 +114,6 @@ public class DeckManager : MonoBehaviour
     }
     public void CreatePage()
     {
-
-        saveData = DataController.Inst.LoadData();
-        cardDatabase = DataController.Inst.LoadCardDatabase();
         currentCardList = new Dictionary<CardData, int>();
 
         UpdatePage();
