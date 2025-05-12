@@ -7,13 +7,18 @@ using System.Text;
 
 public class CutSceneManager : MonoBehaviour
 {
-    public CutScenes cutScenes;
+    CutScenes cutScenes;
     public GameObject textBoxObject;
     public TMP_Text textBox;
     public TMP_Text nameBox;
     public AudioSource soundManager;
 
+    public int cutsceneNum;
+
     public List<Sprite> characters;
+
+    public List<AudioClip> soundEffects;
+    public List<AudioClip> backgroundMusic;
 
     public Image characterOnLeftSide;
     public Image characterOnRightSide;
@@ -26,7 +31,16 @@ public class CutSceneManager : MonoBehaviour
 
     void Awake()
     {
-        cutScenes = new HowAboutTrade();
+        switch(cutsceneNum)
+        {
+            case 0:
+                cutScenes = new Intro();
+                break;
+
+            case 1:
+                cutScenes = new SmallTalk();
+                break;
+        }
         StartCoroutine(StartCutScene());
     }
 
@@ -84,7 +98,7 @@ public class CutSceneManager : MonoBehaviour
                 break;
 
                 case ECutSceneCommand.ShowCharacterLeftSide: // 왼쪽에 캐릭터 띄우기
-                characterOnLeftSide.sprite = characters[cutSceneNode.characterNum];
+                characterOnLeftSide.sprite = characters[cutSceneNode.valueNum];
             
                 if(!characterOnLeftSide.gameObject.activeSelf)
                 {
@@ -125,7 +139,7 @@ public class CutSceneManager : MonoBehaviour
 
 
                 case ECutSceneCommand.ShowCharacterRightSide: // 오른쪽에 캐릭터 띄우기
-                characterOnRightSide.sprite = characters[cutSceneNode.characterNum];
+                characterOnRightSide.sprite = characters[cutSceneNode.valueNum];
 
                 if(!characterOnRightSide.gameObject.activeSelf)
                 {

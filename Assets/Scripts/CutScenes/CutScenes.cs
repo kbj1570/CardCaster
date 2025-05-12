@@ -2,24 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CutScenes : MonoBehaviour
+public class CutScenes
 {
-    protected List<CutSceneNode> cutSceneNodes;
-    public List<CutSceneNode> GetCutSceneNodes()
-    {return cutSceneNodes;}
+	protected List<CutSceneNode> cutSceneNodes;
+	public List<CutSceneNode> GetCutSceneNodes()
+	{return cutSceneNodes;}
 
 }
 
 public class CutSceneNode
 {
-    public ECutSceneCommand cutSceneCommand;
-    public string text;
-    public string name;
-    public int characterNum;
-    public float waitTime;
-    public string characterName;
-    public CardData cardData;
-    public Item item;
+	public ECutSceneCommand cutSceneCommand;
+	public string text;
+	public string name;
+	public int valueNum;
+	public float waitTime;
+	public string characterName;
+	public CardData cardData;
+	public Item item;
 }
 
 public enum ECutSceneCommand
@@ -38,7 +38,9 @@ HighLightCharacterRightSide,
 ShakeScreen,
 FadeInScreen,
 FadeOutScreen,
-PlaySound,
+PlaySoundEffect,
+PlayMusic,
+
 HideTextBox,
 GainItem,
 GainCard

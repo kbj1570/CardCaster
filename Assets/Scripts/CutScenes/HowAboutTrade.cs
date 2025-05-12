@@ -20,7 +20,7 @@ public class HowAboutTrade : CutScenes
 
         cutSceneNode = new();
         cutSceneNode.cutSceneCommand = ECutSceneCommand.ShowCharacterRightSide;
-        cutSceneNode.characterNum = 0;
+        cutSceneNode.valueNum = 0;
         cutSceneNodes.Add(cutSceneNode);
 
         cutSceneNode = new();
@@ -30,7 +30,7 @@ public class HowAboutTrade : CutScenes
 
         cutSceneNode = new();
         cutSceneNode.cutSceneCommand = ECutSceneCommand.ShowCharacterLeftSide;
-        cutSceneNode.characterNum = 1;
+        cutSceneNode.valueNum = 1;
 
         cutSceneNodes.Add(cutSceneNode);
         cutSceneNode = new();
