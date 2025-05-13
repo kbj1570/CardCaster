@@ -66,7 +66,10 @@ public class CampsiteManager : MonoBehaviour
 	}
 
 	public void SaveData()
-	{ DataController.Inst.SaveData(PlayerData.saveData);}
+	{ 
+		DataController.Inst.SaveData(PlayerData.saveData);
+		Debug.Log("데이터를 저장했습니다.");
+	}
 
 	public void OpenCardPack()
 	{
@@ -116,7 +119,7 @@ public class CampsiteManager : MonoBehaviour
 		while (time < 0.6f)
 		{
 			time += Time.deltaTime;
-			color.a = Mathf.Lerp(0, 1, time / 0.6f); // 알파 값을 0 → 1로 변경
+			color.a = Mathf.Lerp(0, 1, time / 0.6f);
 			fadeImage.color = color;
 			yield return null;
 		}
