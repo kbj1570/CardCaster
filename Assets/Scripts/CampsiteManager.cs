@@ -17,14 +17,16 @@ public static class DungeonData
 	public static int currentFloor;
 
 
-
-	
-
 	public static void Reset()
 	{
 		dungeon = null;
 		map = null;
 	}
+}
+
+public static class PlayerData
+{
+	public static SaveData saveData;
 }
 
 public static class BattleData
@@ -49,6 +51,11 @@ public class CampsiteManager : MonoBehaviour
 	List<CardData> uncommonCards;
 	List<CardData> rareCards;
 
+	void Start()
+	{
+		PlayerData.saveData = DataController.Inst.LoadData();
+	}
+
 
 
 
@@ -57,6 +64,9 @@ public class CampsiteManager : MonoBehaviour
 		fadeImage.gameObject.SetActive(true);
 		StartCoroutine(FadeOut());
 	}
+
+	public void SaveData()
+	{ DataController.Inst.SaveData(PlayerData.saveData);}
 
 	public void OpenCardPack()
 	{

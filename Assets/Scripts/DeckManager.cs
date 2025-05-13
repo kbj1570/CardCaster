@@ -5,280 +5,282 @@ using UnityEngine.UI;
 using TMPro;
 public class DeckManager : MonoBehaviour
 {
-    private int deckCount;
-    public Transform focusOnCardPosition;
-    public Transform gridlayoutPosition;
-    public Transform popUpPosition;
-    public List<Transform> cardLocation;
-    public GameObject window;
-    public GameObject cardPrefab;
-    public GameObject smallCardPrefab;
-    public GameObject cardFrame;
-    private GameObject focusOnCard;
-    public GridLayoutGroup gridLayout;
-    private Dictionary<CardData, int> myCardList;
-    private Dictionary<CardData, int> myDeckList;
-    private List<CardData> cardDatabase;
-    private List<CardData> currentPageCardList;
-    public List<GameObject> dummyCardObjectList;
-    public List<GameObject> dummyCardPrefabList;
-    private List<GameObject> deckCardObjectList;
+	private int deckCount;
+	public Transform focusOnCardPosition;
+	public Transform gridlayoutPosition;
+	public Transform popUpPosition;
+	public List<Transform> cardLocation;
+	public GameObject window;
+	public GameObject cardPrefab;
+	public GameObject smallCardPrefab;
+	public GameObject cardFrame;
+	private GameObject focusOnCard;
+	public GridLayoutGroup gridLayout;
+	private Dictionary<CardData, int> myCardList;
+	private Dictionary<CardData, int> myDeckList;
+	private List<CardData> cardDatabase;
+	private List<CardData> currentPageCardList;
+	public List<GameObject> dummyCardObjectList;
+	public List<GameObject> dummyCardPrefabList;
+	private List<GameObject> deckCardObjectList;
 
 
-    private Dictionary<CardData, int> currentCardList;
-    private int currentPage;
-    private int pageLimit;
+	private Dictionary<CardData, int> currentCardList;
+	private int currentPage;
+	private int pageLimit;
 
-    private SaveData saveData;
-    public static DeckManager Inst{get; private set;}
-    public TMP_Text pageNumber;
-    public TMP_Text searchText;
-    public TMP_Text deckCountText;
-    public GameObject popUpMessage;
-    private GameObject onMessage;
-    public GameObject backButton;
-    public GameObject nextButton;
-    public ScrollRect scrollRect;
+	private SaveData saveData;
+	public static DeckManager Inst{get; private set;}
+	public TMP_Text pageNumber;
+	public TMP_Text searchText;
+	public TMP_Text deckCountText;
+	public GameObject popUpMessage;
+	private GameObject onMessage;
+	public GameObject backButton;
+	public GameObject nextButton;
+	public ScrollRect scrollRect;
 
-    void Start()
-    {
-        saveData = DataController.Inst.LoadData();
-        cardDatabase = DataController.Inst.LoadCardDatabase();
+	void Start()
+	{
+		saveData = DataController.Inst.LoadData();
+		cardDatabase = DataController.Inst.LoadCardDatabase();
 
-        currentPage = 0;
-        myCardList = new();
-        myDeckList = new();
-        deckCardObjectList = new();
-        scrollRect.normalizedPosition = new Vector2(1, 1);
+		currentPage = 0;
+		myCardList = new();
+		myDeckList = new();
+		deckCardObjectList = new();
+		//scrollRect.normalizedPosition = new Vector2(1, 1);
 
-        foreach (KeyValuePair<string, int> value in saveData.cardList)
-        { myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+		foreach (KeyValuePair<string, int> value in saveData.cardList)
+		{ myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
 
-        foreach (KeyValuePair<string, int> value in saveData.deck)
-        { myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
-        CreatePage();
-    }
+		foreach (KeyValuePair<string, int> value in saveData.deck)
+		{ myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+		CreatePage();
+	}
 
-    void Awake()
-    {
-        Inst = this;
+	void Awake()
+	{
+		Inst = this;
 
-        
-    }
+		
+	}
 
 
 
-    public void FocusOnCard(CardData cardData)
-    {
-        focusOnCard = Instantiate(dummyCardPrefabList[cardData.GetCardNum()],
-            new Vector3(0,0,0) , Utils.QI);
-            focusOnCard.transform.SetParent(focusOnCardPosition);
-            focusOnCard.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
-            focusOnCard.transform.localPosition = new Vector3(0,0,0);
-    }
+	public void FocusOnCard(CardData cardData)
+	{
+		focusOnCard = Instantiate(dummyCardPrefabList[cardData.GetCardNum()],
+			new Vector3(0,0,0) , Utils.QI);
+			focusOnCard.transform.SetParent(focusOnCardPosition);
+			focusOnCard.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+			focusOnCard.transform.localPosition = new Vector3(0,0,0);
+	}
 
-    
+	
 
-    public void UnFocusCard()
-    {
-        if(focusOnCard != null)
-        Destroy(focusOnCard);
-    }
-    public void SaveDeck()
-    {
-        AlertPopUpMessage("해당 덱을 저장했습니다");
-        Dictionary<string, int> dumb = new Dictionary<string, int>();
-        foreach(KeyValuePair<CardData, int> value in myDeckList)
-        {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
+	public void UnFocusCard()
+	{
+		if(focusOnCard != null)
+		Destroy(focusOnCard);
+	}
+	public void SaveDeck()
+	{
+		AlertPopUpMessage("해당 덱을 저장했습니다");
+		Dictionary<string, int> dumb = new Dictionary<string, int>();
+		foreach(KeyValuePair<CardData, int> value in myDeckList)
+		{dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
 
-        DataController.Inst.SaveDeck(dumb);
-    }
-    public void LoadDeck()
-    {
-       Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();
+		PlayerData.saveData.deck = dumb;
 
-        
-    }
-    public void SaveCardList()
-    {
-        Dictionary<string, int> dumb = new Dictionary<string, int>();
+		dumb = new Dictionary<string, int>();
 
-        foreach(KeyValuePair<CardData, int> value in myCardList)
-        {dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
+		foreach (KeyValuePair<CardData, int> value in myCardList)
+		{ dumb.Add(value.Key.GetCardNum().ToString(), value.Value); }
 
-        DataController.Inst.SaveData(saveData);
-    }
-    public void LoadCardList()
-    {
-        
-    }
-    public void CreatePage()
-    {
-        currentCardList = new Dictionary<CardData, int>();
 
-        UpdatePage();
-        UpdateDeckPage();
-    }
+		PlayerData.saveData.cardList = dumb;
+		DataController.Inst.SaveData(PlayerData.saveData);
+	}
+	public void LoadDeck()
+	{
+	   Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();
+	}
+	public void SaveCardList()
+	{
+		
+	}
+	public void LoadCardList()
+	{
+		
+	}
+	public void CreatePage()
+	{
+		currentCardList = new Dictionary<CardData, int>();
 
-    public void AlertPopUpMessage(string value)
-    {
-        if(onMessage == null)
-        {onMessage = Instantiate(popUpMessage, popUpPosition);}
-        else
-        {
-            Destroy(onMessage.gameObject);
-            onMessage = Instantiate(popUpMessage, popUpPosition);
-        }
-        onMessage.GetComponent<PopUpMessage>().SetText(value);
-    }
+		UpdatePage();
+		UpdateDeckPage();
+	}
 
-    public void UpdatePage()
-    {
-        int count = 0;
+	public void AlertPopUpMessage(string value)
+	{
+		if(onMessage == null)
+		{onMessage = Instantiate(popUpMessage, popUpPosition);}
+		else
+		{
+			Destroy(onMessage.gameObject);
+			onMessage = Instantiate(popUpMessage, popUpPosition);
+		}
+		onMessage.GetComponent<PopUpMessage>().SetText(value);
+	}
 
-        pageLimit = myCardList.Count / 6;
-        int remainder = myCardList.Count % 6;
+	public void UpdatePage()
+	{
+		int count = 0;
 
-        currentCardList.Clear();
-        foreach(GameObject gameObject in dummyCardObjectList)
-        {Destroy(gameObject);}
+		pageLimit = myCardList.Count / 6;
+		int remainder = myCardList.Count % 6;
 
-        List<CardData> cardList = new List<CardData>(myCardList.Keys);
+		currentCardList.Clear();
+		foreach(GameObject gameObject in dummyCardObjectList)
+		{Destroy(gameObject);}
 
-        if(currentPage != pageLimit)
-        {remainder = 6;}
+		List<CardData> cardList = new List<CardData>(myCardList.Keys);
 
-        for(int i = 0; i < remainder; ++i)
-        {currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);}
+		if(currentPage != pageLimit)
+		{remainder = 6;}
 
-        foreach(KeyValuePair<CardData, int> item in currentCardList)
-        {
-            GameObject cardObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
-            new Vector3(0,0,0) , Utils.QI);
-            cardObject.transform.SetParent(cardLocation[count].transform);
-            cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
-            cardObject.transform.localPosition = new Vector3(0,0,0);
-            
-            dummyCardObjectList.Add(cardObject);
+		for(int i = 0; i < remainder; ++i)
+		{currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);}
 
-            bool locked = false;
+		foreach(KeyValuePair<CardData, int> item in currentCardList)
+		{
+			GameObject cardObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
+			new Vector3(0,0,0) , Utils.QI);
+			cardObject.transform.SetParent(cardLocation[count].transform);
+			cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+			cardObject.transform.localPosition = new Vector3(0,0,0);
+			
+			dummyCardObjectList.Add(cardObject);
 
-            if(item.Value == 0)
-            {locked = true;}
+			bool locked = false;
 
-            if(myDeckList.ContainsKey(item.Key))
-            {
-                if(myDeckList[item.Key]  == item.Value)
-                {locked = true;}
+			if(item.Value == 0)
+			{locked = true;}
 
-                if(myDeckList[item.Key]  == 3)
-                {locked = true;}
-            }
+			if(myDeckList.ContainsKey(item.Key))
+			{
+				if(myDeckList[item.Key]  == item.Value)
+				{locked = true;}
 
-            
+				if(myDeckList[item.Key]  == 3)
+				{locked = true;}
+			}
 
-            GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
-            cardFrameObject.transform.SetParent(cardLocation[count].transform);
-            cardFrameObject.transform.localPosition = new Vector3(0,0,0);
-            cardFrameObject.GetComponent<CardFrame>().
-            SetCardData(item.Key, item.Value, count, locked);
+			
 
-            dummyCardObjectList.Add(cardFrameObject);
-            count++;
+			GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
+			cardFrameObject.transform.SetParent(cardLocation[count].transform);
+			cardFrameObject.transform.localPosition = new Vector3(0,0,0);
+			cardFrameObject.GetComponent<CardFrame>().
+			SetCardData(item.Key, item.Value, count, locked);
 
-            
-        }
-        if(currentPage == 0)
-        backButton.SetActive(false);
-        else
-        backButton.SetActive(true);
+			dummyCardObjectList.Add(cardFrameObject);
+			count++;
 
-        if(currentPage == pageLimit)
-        nextButton.SetActive(false);
-        else
-        nextButton.SetActive(true);
+			
+		}
+		if(currentPage == 0)
+		backButton.SetActive(false);
+		else
+		backButton.SetActive(true);
 
-        pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
-    }
+		if(currentPage == pageLimit)
+		nextButton.SetActive(false);
+		else
+		nextButton.SetActive(true);
 
-    public void ChangePage(bool value)
-    {
-        if(value)
-        {currentPage++;}
-        else{currentPage--;}
+		pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
+	}
 
-        if(currentPage < 0)
-        {currentPage = 0;}
+	public void ChangePage(bool value)
+	{
+		if(value)
+		{currentPage++;}
+		else{currentPage--;}
 
-        if(currentPage > pageLimit)
-        {currentPage = pageLimit;}
+		if(currentPage < 0)
+		{currentPage = 0;}
 
-        UpdatePage();
-    }
+		if(currentPage > pageLimit)
+		{currentPage = pageLimit;}
 
-    public void UpdateDeckPage()
-    {
-        deckCount = 0;
-        foreach(GameObject gameObject in deckCardObjectList)
-        {Destroy(gameObject);}
+		UpdatePage();
+	}
 
-        foreach(KeyValuePair<CardData, int> value in myDeckList)
-        {
-            GameObject gameObject = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
-            deckCardObjectList.Add(gameObject);
+	public void UpdateDeckPage()
+	{
+		deckCount = 0;
+		foreach(GameObject gameObject in deckCardObjectList)
+		{Destroy(gameObject);}
 
-            gameObject.transform.SetParent(gridLayout.transform);
-            gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
+		foreach(KeyValuePair<CardData, int> value in myDeckList)
+		{
+			GameObject gameObject = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
+			deckCardObjectList.Add(gameObject);
 
-            deckCount += value.Value;
-        }
+			gameObject.transform.SetParent(gridLayout.transform);
+			gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
 
-        deckCountText.text = deckCount.ToString() + "  /  30"; 
-    }
+			deckCount += value.Value;
+		}
 
-    public void AddCard(CardData value, int order)
-    {
-        if(deckCount == 30)
-        {
-            AlertPopUpMessage("덱이 가득 차서 더 이상 카드를 추가할 수 없습니다");
-            return;
-        }
+		deckCountText.text = deckCount.ToString() + "  /  30"; 
+	}
 
-        if(!myDeckList.ContainsKey(value))
-        {myDeckList.Add(value, 1);}
-        else
-        {myDeckList[value]++;}
+	public void AddCard(CardData value, int order)
+	{
+		if(deckCount == 30)
+		{
+			AlertPopUpMessage("덱이 가득 차서 더 이상 카드를 추가할 수 없습니다");
+			return;
+		}
 
-        // myCardList[value]--;
+		if(!myDeckList.ContainsKey(value))
+		{
+			myDeckList.Add(value, 1);
+			PlayerData.saveData.deck.Add(value.GetCardNum().ToString(), 1);
+		}
+		else
+		{
+			myDeckList[value]++;
+			PlayerData.saveData.deck[value.GetCardNum().ToString()]++;
+		}
 
-        // if(myCardList[value] == 0)
-        // {myCardList.Remove(value);}
+		GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], cardLocation[order].position , Utils.QI);
+		gameObject.transform.SetParent(window.transform);
+		gameObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
+		UpdatePage();
+		UpdateDeckPage();
+	}
 
-        GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], cardLocation[order].position , Utils.QI);
-        gameObject.transform.SetParent(window.transform);
-        gameObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
-        UpdatePage();
-        UpdateDeckPage();
-    }
+	public void DeleteCard(CardData value)
+	{
+		myDeckList[value]--;
+		PlayerData.saveData.deck[value.GetCardNum().ToString()]--;
 
-    public void DeleteCard(CardData value)
-    {
-        myDeckList[value]--;
+		if (myDeckList[value] == 0)
+		{
+			myDeckList.Remove(value);
+			PlayerData.saveData.deck.Remove(value.GetCardNum().ToString());
+		}
 
-        if(myDeckList[value] == 0)
-        {myDeckList.Remove(value);}
+		GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], gridlayoutPosition.position , Utils.QI);
+		gameObject.transform.SetParent(window.transform);
+		gameObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
 
-        // if(!myCardList.ContainsKey(value))
-        // {myCardList.Add(value, 1);}
-        // else
-        // {myCardList[value]++;}
-
-        GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], gridlayoutPosition.position , Utils.QI);
-        gameObject.transform.SetParent(window.transform);
-        gameObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
-
-        UpdatePage();
-        UpdateDeckPage();
-    }
+		UpdatePage();
+		UpdateDeckPage();
+	}
 
 }

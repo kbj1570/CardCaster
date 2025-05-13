@@ -7,28 +7,28 @@ using TMPro;
 
 public class CardFrame : MonoBehaviour, IPointerClickHandler
 {
-    bool locked;
-    int order;
-    CardData cardData;
-    public Image lockMark;
-    public TMP_Text cardCountText;
+	bool locked;
+	int order;
+	CardData cardData;
+	public Image lockMark;
+	public TMP_Text cardCountText;
 
 
-    public void SetCardData(CardData cardData, int cardCount, int order, bool locked)
-    {
-        this.cardData = cardData;
-        cardCountText.text = cardCount.ToString();
-        this.order = order;
-        this.locked = locked;
+	public void SetCardData(CardData cardData, int cardCount, int order, bool locked)
+	{
+		this.cardData = cardData;
+		cardCountText.text = cardCount.ToString();
+		this.order = order;
+		this.locked = locked;
 
-        lockMark.gameObject.SetActive(locked);
-    }
-    
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if(!locked)
-        DeckManager.Inst.AddCard(cardData, order);
-        else
-        DeckManager.Inst.AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
-    }
+		lockMark.gameObject.SetActive(locked);
+	}
+	
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		if(!locked)
+		DeckManager.Inst.AddCard(cardData, order);
+		else
+		DeckManager.Inst.AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
+	}
 }
