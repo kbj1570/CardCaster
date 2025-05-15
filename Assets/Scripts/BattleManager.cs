@@ -733,7 +733,7 @@ public class BattleManager : MonoBehaviour
 				yield return new WaitForSeconds(0.3f);
 				StartCoroutine(EnemyFieldClear());
 				yield return new WaitForSeconds(1f);
-				StartCoroutine(BackToDungeon());
+				BackToDungeon();
 			}
 			else
 			{StartCoroutine(LoadNextEnemy());}
@@ -2711,12 +2711,16 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
-	IEnumerator BackToDungeon()
+	public void BackToDungeon()
+	{
+		StartCoroutine(BackToDungeonRoutine());
+	}
+
+	IEnumerator BackToDungeonRoutine()
 	{
 		StartCoroutine(FadeOut());
 		yield return new WaitForSeconds(1.5f);
 		SceneManager.LoadScene("Dungeon");
-
 	}
 
 	

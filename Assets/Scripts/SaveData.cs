@@ -4,7 +4,8 @@ public class SaveData
 {
     public int health;
     public Dictionary<string, int> inventory;
-    public int gold;
+	public Dictionary<string, int> storage;
+	public int gold;
     public Dictionary<string, int> cardList;
     public Dictionary<string, int> deck;
     public ELocation currentLocation;
