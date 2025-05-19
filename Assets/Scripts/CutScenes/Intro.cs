@@ -54,12 +54,24 @@ public class Intro : CutScenes
         cutSceneNode.waitTime = 0.5f;
         cutSceneNodes.Add(cutSceneNode);
 
-        cutSceneNode.cutSceneCommand = ECutSceneCommand.FadeInScreen;
+		cutSceneNode = new();
+		cutSceneNode.cutSceneCommand = ECutSceneCommand.Wait;
+		cutSceneNode.waitTime = 0.5f;
+		cutSceneNodes.Add(cutSceneNode);
+
+
+
+		cutSceneNode.cutSceneCommand = ECutSceneCommand.FadeInScreen;
         cutSceneNode.waitTime = 0.5f;
         cutSceneNodes.Add(cutSceneNode);
 
+		cutSceneNode = new();
+		cutSceneNode.cutSceneCommand = ECutSceneCommand.Wait;
+		cutSceneNode.waitTime = 0.5f;
+		cutSceneNodes.Add(cutSceneNode);
 
-        cutSceneNode = new();
+
+		cutSceneNode = new();
         cutSceneNode.cutSceneCommand = ECutSceneCommand.ShowText;
         cutSceneNode.text = "무슨 문제라도 있나?";
         cutSceneNode.name = "이드";

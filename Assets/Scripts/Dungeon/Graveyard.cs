@@ -16,7 +16,7 @@ public class Graveyard : Dungeon
         };
 
         safeFloorList = new(){
-            {8}
+            {1,"SafeZone_Graveyard"}
         };
 
         enemyList = new(){

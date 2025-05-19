@@ -54,10 +54,8 @@ public class CampsiteManager : MonoBehaviour
 	void Start()
 	{
 		PlayerData.saveData = DataController.Inst.LoadData();
+		StartCoroutine(FadeIn());
 	}
-
-
-
 
 	public void GoToDungeon()
 	{
@@ -74,7 +72,6 @@ public class CampsiteManager : MonoBehaviour
 	public void OpenCardPack()
 	{
 		ECardRarity eCardRarity;
-		
 		int randomNum = Random.Range(0, 10);
 
 		if(randomNum < 6)
@@ -126,6 +123,21 @@ public class CampsiteManager : MonoBehaviour
 
 		DungeonData.dungeon = new Graveyard();
 		SceneManager.LoadScene("Dungeon");
+	}
+
+	private IEnumerator FadeIn()
+	{
+		float time = 0;
+		Color color = fadeImage.color;
+
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Lerp(1, 0, time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		fadeImage.gameObject.SetActive(false);
 	}
 
 	public void GoToShop()

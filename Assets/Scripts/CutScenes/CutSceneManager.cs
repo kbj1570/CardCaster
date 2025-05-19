@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using UnityEngine;
-using TMPro;
 using System.Text;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CutSceneManager : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class CutSceneManager : MonoBehaviour
 	public AudioSource soundManager;
 
 	public int cutsceneNum;
+	public static CutSceneManager Inst { get; private set; }
 
 	public List<Sprite> characters;
 
@@ -31,18 +33,25 @@ public class CutSceneManager : MonoBehaviour
 
 	void Awake()
 	{
-		switch(cutsceneNum)
+		Inst = this;
+		switch (cutsceneNum)
 		{
 			case 0:
 				cutScenes = new Intro();
 				break;
 
 			case 1:
+				cutScenes = new HowAboutTrade();
+				break;
+
+			case 2:
 				cutScenes = new SmallTalk();
 				break;
 		}
 		StartCoroutine(StartCutScene());
 	}
+
+
 
 	void Update()
 	{
@@ -50,6 +59,31 @@ public class CutSceneManager : MonoBehaviour
 		{
 			if(!isTyping)
 			isActionDone = true;
+		}
+	}
+
+	public void LoadCutScene(int cutSceneNum)
+	{
+		switch(cutsceneNum)
+		{
+			case 0:
+				SceneManager.LoadScene("Scene/HowAboutTrade");
+				break;
+
+			case 1:
+				break;
+
+			case 2:
+				break;
+
+			case 3:
+				break;
+
+			case 4:
+				break;
+
+			case 5:
+				break;
 		}
 	}
 

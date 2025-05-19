@@ -32,7 +32,7 @@ public class DungeonManager : MonoBehaviour
 	int maxGold;
 	int enemyLimit;
 	int dungeonEndFloor;
-	List<int> safeFloorList;
+	Dictionary<int, string> safeFloorList;
 	List<Item> itemDatabase;
 	int floor;
 	int floorSize;
@@ -71,6 +71,7 @@ public class DungeonManager : MonoBehaviour
 
 	private Dictionary<Item, int> currentItemList;
 	private Dictionary<Item, int> myItemList;
+	private List<Item> myToolList;
 
 	public GameObject popUpMessageWindow;
 	public GameObject popUpMessage;
@@ -334,7 +335,7 @@ public class DungeonManager : MonoBehaviour
 
 	public void LoadItemList()
 	{
-		foreach(KeyValuePair<string, int> value in PlayerData.saveData.inventory)
+		foreach(KeyValuePair<string, int> value in PlayerData.saveData.others)
 		{myItemList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
 	}
 
@@ -414,7 +415,7 @@ public class DungeonManager : MonoBehaviour
 
 	private bool CheckBattleStart()
 	{
-		if(dungeonEnemies.Values.Contains(currentPlayerLocation)) // 전투 시작
+		if(dungeonEnemies.Values.Contains(currentPlayerLocation))
 		{return true;}
 		else
 		{
@@ -932,7 +933,7 @@ public class DungeonManager : MonoBehaviour
 		for(int i = 0; i < usedNumbers.Count; ++i)
 		{
 
-			if(Random.Range(0, 5) == 0)
+			if(Random.Range(0, 10) == 0)
 			{
 				map[usedNumbers[i]].SetRoomType(ERoomType.EItem);
 				map[usedNumbers[i]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
@@ -1393,15 +1394,15 @@ public class DungeonManager : MonoBehaviour
 	{
 		StartCoroutine(FadeOut());
 		yield return new WaitForSeconds(1f);
-		if(safeFloorList.Contains(floor))
+		if(safeFloorList.ContainsKey(floor))
 		{
-			wayPointWindow.GetComponent<Window>().OnOff();
-			DestroyFloor();
+			SceneManager.LoadScene(safeFloorList[floor]);
 		}
 		else if(dungeonEndFloor == floor)
 		{
 			Debug.Log("던전을 클리어 했습니다");
 			dungeonClearWindow.GetComponent<Window>().OnOff();
+			moveLocked = true;
 			DungeonData.Reset();
 		}
 		else

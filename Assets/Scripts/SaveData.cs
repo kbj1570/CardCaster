@@ -3,11 +3,13 @@ using System.Collections.Generic;
 public class SaveData
 {
     public int health;
-    public Dictionary<string, int> inventory;
+    public Dictionary<string, int> others;
+    public List<string> items;
 	public Dictionary<string, int> storage;
 	public int gold;
     public Dictionary<string, int> cardList;
     public Dictionary<string, int> deck;
+    public Dictionary<string, bool> cutsceneVIewed;
     public ELocation currentLocation;
     public int currentFloor;
 }
