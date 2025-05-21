@@ -18,11 +18,14 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public Image itemImage;
 
     public void OnPointerClick(PointerEventData eventData)
-    {DungeonManager.Inst.SelectUsingItem(item);}
+    {
+        if(item.GetItemCategory() == EItemCategory.ETool)
+        ItemWindow.Inst.SelectUsingItem(item);
+    }
     public void OnPointerEnter(PointerEventData eventData)
-    {DungeonManager.Inst.ShowItemDescription(itemNum);}
+    {ItemWindow.Inst.ShowItemDescription(itemNum);}
     public void OnPointerExit(PointerEventData eventData)
-    {DungeonManager.Inst.HideItemDescription();}
+    {ItemWindow.Inst.HideItemDescription();}
 
     
 
@@ -35,7 +38,15 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         itemImage.sprite = sprite;
     }
 
-    public Item GetItem()
+
+	public void SetUp(Item item, Sprite sprite)
+	{
+		this.item = item;
+		itemNum = Int32.Parse(item.GetNum());
+		itemImage.sprite = sprite;
+	}
+
+	public Item GetItem()
     {return item;}
     public int GetCount()
     {return count;}

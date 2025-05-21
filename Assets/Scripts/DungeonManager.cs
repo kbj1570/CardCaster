@@ -1,13 +1,14 @@
-using System.Collections.Generic;
-using System.Collections;
-using UnityEngine;
-using TMPro;
-using Random = UnityEngine.Random;
-using System;
-using UnityEngine.UI;
 using DG.Tweening;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class DungeonManager : MonoBehaviour
 {
@@ -69,9 +70,8 @@ public class DungeonManager : MonoBehaviour
 	public Transform verticalItemScroll;
 	public LineRenderer cardDragLine;
 
-	private Dictionary<Item, int> currentItemList;
-	private Dictionary<Item, int> myItemList;
-	private List<Item> myToolList;
+	//private Dictionary<Item, int> currentItemList;
+	//private Dictionary<Item, int> myItemList;
 
 	public GameObject popUpMessageWindow;
 	public GameObject popUpMessage;
@@ -117,8 +117,18 @@ public class DungeonManager : MonoBehaviour
 
 	private bool updateLock;
 
-	private int goldMultiple;
-	private bool isIgnorable;
+
+	public Transform toolLocation;
+
+
+
+
+
+
+
+
+
+
 	public static DungeonManager Inst{get; private set;}
 	int currentPage;
 	void Awake()
@@ -138,8 +148,8 @@ public class DungeonManager : MonoBehaviour
 		enemyObjectList = new();
 		dungeonEnemies = new();
 
-		myItemList = new();
-		currentItemList = new();
+		//myItemList = new();
+		//currentItemList = new();
 
 		itemDatabase = DataController.Inst.LoadItemDatabase();
 		currentPage = 0;
@@ -150,9 +160,9 @@ public class DungeonManager : MonoBehaviour
 		if(DungeonData.map == null)
 		{
 			CreateFloor();
-			LoadItemList();
+			//LoadItemList();
 
-			UpdateItemPage();
+			//UpdateItemPage();
 		}
 		else
 		{
@@ -333,11 +343,11 @@ public class DungeonManager : MonoBehaviour
 	public void SetSelectedItem(int itemNum)
 	{selectedItem = itemDatabase[itemNum];}
 
-	public void LoadItemList()
-	{
-		foreach(KeyValuePair<string, int> value in PlayerData.saveData.others)
-		{myItemList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
-	}
+	//public void LoadItemList()
+	//{
+	//	foreach(KeyValuePair<string, int> value in PlayerData.saveData.others)
+	//	{myItemList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
+	//}
 
 	public void ChangePage(bool value)
 	{
@@ -351,7 +361,7 @@ public class DungeonManager : MonoBehaviour
 		if(currentPage >= pageLimit)
 		{currentPage = pageLimit;}
 
-		UpdateItemPage();
+		//UpdateItemPage();
 	}
 
 	public void SetEnemyCourse()
@@ -624,36 +634,36 @@ public class DungeonManager : MonoBehaviour
 	}
 
 
-	public void UpdateItemPage()
-	{
+	//public void UpdateItemPage()
+	//{
 
-		currentItemList.Clear();
+	//	currentItemList.Clear();
 
-		foreach(GameObject gameObject in itemObjectList)
-		{Destroy(gameObject);}
+	//	foreach(GameObject gameObject in itemObjectList)
+	//	{Destroy(gameObject);}
 
-		EItemCategory selectedItemCategory = EItemCategory.ETool;
+	//	EItemCategory selectedItemCategory = EItemCategory.ETool;
 
-		if(toolToggle.isOn)
-		{selectedItemCategory = EItemCategory.ETool;}
-		else if(othersToggle.isOn)
-		{selectedItemCategory = EItemCategory.EOthers;}
+	//	if(toolToggle.isOn)
+	//	{selectedItemCategory = EItemCategory.ETool;}
+	//	else if(othersToggle.isOn)
+	//	{selectedItemCategory = EItemCategory.EOthers;}
 
 
-		foreach (KeyValuePair<Item, int> itemPair in myItemList)
-		{
-			if(itemPair.Key.GetItemCategory() == selectedItemCategory)
-			{
-				GameObject itemObject = Instantiate(itemPrefabList[0], new Vector3(0,0,0), Utils.QI);
+	//	foreach (KeyValuePair<Item, int> itemPair in myItemList)
+	//	{
+	//		if(itemPair.Key.GetItemCategory() == selectedItemCategory)
+	//		{
+	//			GameObject itemObject = Instantiate(itemPrefabList[0], new Vector3(0,0,0), Utils.QI);
 
-				itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value,
-				itemImageList[Int32.Parse(itemPair.Key.GetNum())]);
+	//			itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value,
+	//			itemImageList[Int32.Parse(itemPair.Key.GetNum())]);
 
-				itemObject.transform.SetParent(verticalItemScroll);
-				itemObjectList.Add(itemObject);
-			}
-		}
-	}
+	//			itemObject.transform.SetParent(verticalItemScroll);
+	//			itemObjectList.Add(itemObject);
+	//		}
+	//	}
+	//}
 
 	public void ShowItemDescription(int itemNum)
 	{
@@ -1022,8 +1032,8 @@ public class DungeonManager : MonoBehaviour
 		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
 	   
 		ReCreateEnemy();
-		LoadItemList();
-		UpdateItemPage();
+		//LoadItemList();
+		//UpdateItemPage();
 	}
 
 	public void LoadData()
@@ -1418,14 +1428,14 @@ public class DungeonManager : MonoBehaviour
 
 	public void RemoveClickedItem()
 	{
-		if (myItemList.ContainsKey(clickedItem))
-		{
-			myItemList[clickedItem]--;
+		//if (myItemList.ContainsKey(clickedItem))
+		//{
+		//	myItemList[clickedItem]--;
 
-			if (myItemList[clickedItem] <= 0)
-			{myItemList.Remove(clickedItem);}
-		}
-		UpdateItemPage();
+		//	if (myItemList[clickedItem] <= 0)
+		//	{myItemList.Remove(clickedItem);}
+		//}
+		//UpdateItemPage();
 	}
 
 	public void UseItem()
@@ -1583,16 +1593,53 @@ public class DungeonManager : MonoBehaviour
 		{
 			// ShowEncounter();
 			map[roomNum].SetRoomType(ERoomType.None);
+			nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 		}
 		else if(map[roomNum].GetRoomType() == ERoomType.EGold)
 		{
 			GainGold(map[roomNum]);
 			map[roomNum].SetRoomType(ERoomType.None);
+			nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 		}
 		else if(map[roomNum].GetRoomType() == ERoomType.EItem)
 		{
-			GainItem(map[roomNum]);
-			map[roomNum].SetRoomType(ERoomType.None);
+			switch(map[roomNum].GetItem().GetItemCategory())
+			{
+				case EItemCategory.ETool:
+					Debug.Log(PlayerData.saveData.items.Count);
+					if (PlayerData.saveData.items.Count <= 7)
+					{
+						PlayerData.saveData.items.Add(map[roomNum].GetItem().GetNum());
+						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
+						map[roomNum].SetRoomType(ERoomType.None);
+						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
+					}
+					else
+					{
+						AlertPopUpMessage("아이템을 얻을 수 없습니다.");
+					}
+					break;
+				case EItemCategory.EOthers:
+
+					if (PlayerData.saveData.others.ContainsKey(map[roomNum].GetItem().GetNum()))
+					{ 
+						PlayerData.saveData.others[map[roomNum].GetItem().GetNum()]++;
+						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
+						map[roomNum].SetRoomType(ERoomType.None);
+						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
+					}
+					else if(PlayerData.saveData.others.Count <= 7)
+					{
+						PlayerData.saveData.others.Add(map[roomNum].GetItem().GetNum(), 1);
+						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
+						map[roomNum].SetRoomType(ERoomType.None);
+						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
+					}
+					else
+					{ AlertPopUpMessage("아이템을 얻을 수 없습니다."); }
+					break;
+			}
+			
 		}
 	}
 
@@ -1608,12 +1655,10 @@ public class DungeonManager : MonoBehaviour
 	{
 		AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
 
-		if (myItemList.ContainsKey(node.GetItem()))
-		{myItemList[node.GetItem()]++;}
-		else
-		{myItemList.Add(node.GetItem(), 1);}
-
-		UpdateItemPage();
+		//if (myItemList.ContainsKey(node.GetItem()))
+		//{myItemList[node.GetItem()]++;}
+		//else
+		//{myItemList.Add(node.GetItem(), 1);}
 	}
 
 	public void ShowStairAlert()
@@ -1788,7 +1833,6 @@ public class DungeonManager : MonoBehaviour
 			switch(value)
 			{
 				case 0:
-				goldMultiple = 2;
 				break;
 
 				case 1:
@@ -1796,7 +1840,6 @@ public class DungeonManager : MonoBehaviour
 				break;
 
 				case 2:
-				isIgnorable = false;
 				break;
 			}
 			break;

@@ -5,5 +5,6 @@ public class SharpFang : Item
         itemNum = "12";
         itemName = "날카로운 송곳니";
         itemInfo = ".";
+        itemCategory = EItemCategory.EOthers;
     }
 }

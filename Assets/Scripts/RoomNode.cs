@@ -77,12 +77,17 @@ public class RoomNode : MonoBehaviour
         visited = true;
         renderer.GetComponent<SpriteRenderer>().color = Color.white;
 
-        if(roomType != ERoomType.EStair)
-        {
-            roomMark.SetActive(false);
-            roomType = ERoomType.None;
-        }
+        //if (roomType != ERoomType.EStair)
+        //{
+        //    ClearRoom();
+        //}
     }
+
+    public void ClearRoom()
+    {
+		roomMark.SetActive(false);
+		roomType = ERoomType.None;
+	}
 
     public void SetVisited(bool value)
     {

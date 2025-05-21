@@ -8,36 +8,29 @@ using TMPro;
 public class Window : MonoBehaviour
 {
 
-    bool isOpened;
-    void Start()
-    {
-        ScaleZero();
-        
-    }
-    void Update()
-    {
-        
-    }
+	bool isOpened;
+	void Start()
+	{
+		ScaleZero();
+		
+	}
 
-    public void OnOff()
-    {
-        if(isOpened)
-        {
-            DG.Tweening.Sequence sequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.OutCirc));
-            isOpened = false;
-        }
-        else
-        {
-            DG.Tweening.Sequence sequence = DOTween.Sequence()
-            .Append(transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.OutCirc);
-            isOpened = true;
-        }
-    }
+	public void OnOff()
+	{
+		if(isOpened)
+		{
+			DG.Tweening.Sequence sequence = DOTween.Sequence()
+			.Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.OutCirc));
+			isOpened = false;
+		}
+		else
+		{
+			DG.Tweening.Sequence sequence = DOTween.Sequence()
+			.Append(transform.DOScale(Vector3.one, 0.3f)).SetEase(Ease.OutCirc);
+			isOpened = true;
+		}
+	}
 
-    [ContextMenu("ScaleOne")]
-    void ScaleOne() => transform.localScale = Vector3.one;
-
-    [ContextMenu("ScaleZero")]
-    void ScaleZero() => transform.localScale = Vector3.zero;
+	protected void ScaleOne() => transform.localScale = Vector3.one;
+	protected void ScaleZero() => transform.localScale = Vector3.zero;
 }
