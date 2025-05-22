@@ -1,4 +1,6 @@
-public class DespairOfBerserker : CardData
+using System.Collections;
+
+public class DespairOfBerserker : SpellCardData
 {
     public DespairOfBerserker()
     {
@@ -18,5 +20,19 @@ public class DespairOfBerserker : CardData
 
         preRequisites.Add(preRequisite);
     }
+
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
 
 }

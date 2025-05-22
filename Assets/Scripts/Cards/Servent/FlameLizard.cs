@@ -1,4 +1,4 @@
-public class FlameLizard : CardData
+public class FlameLizard : ServentCardData
 {
     public FlameLizard()
     {
@@ -15,4 +15,21 @@ public class FlameLizard : CardData
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Fire;
     }
+
+	public override IEnumerator SummonEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override IEnumerator AttackEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override IEnumerator DefendEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override bool IsAbilityUsable(BattleManager bm)
+	{
+		return true;
+	}
 }

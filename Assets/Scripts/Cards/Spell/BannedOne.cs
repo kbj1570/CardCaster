@@ -1,6 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 
-public class BannedOne : CardData
+public class BannedOne : SpellCardData
 {
     public BannedOne()
     {
@@ -14,4 +15,13 @@ public class BannedOne : CardData
         cardTargetType = ECardTargetType.Select;
     }
 
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		throw new System.NotImplementedException();
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		throw new System.NotImplementedException();
+	}
 }

@@ -1,4 +1,7 @@
-public class FireCrimson : CardData
+using System.Collections;
+using UnityEngine;
+
+public class FireCrimson : ServentCardData
 {
     public FireCrimson()
     {
@@ -25,4 +28,21 @@ public class FireCrimson : CardData
 
         preRequisites.Add(preRequisite);
     }
+	public override IEnumerator SummonEffectExecute(BattleManager bm)
+	{
+		bm.SearchCardInDeck(new WaterHeize());
+		yield return null;
+	}
+	public override IEnumerator AttackEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override IEnumerator DefendEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override bool IsAbilityUsable(BattleManager bm)
+	{
+		return true;
+	}
 }

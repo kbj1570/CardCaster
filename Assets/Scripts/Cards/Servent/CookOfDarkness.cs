@@ -1,4 +1,7 @@
-public class CookOfDarkness : CardData
+using System.Collections;
+using UnityEngine;
+
+public class CookOfDarkness : ServentCardData
 {
     public CookOfDarkness()
     {
@@ -24,4 +27,25 @@ public class CookOfDarkness : CardData
 
         preRequisites.Add(preRequisite);
     }
+
+	public override IEnumerator SummonEffectExecute(BattleManager bm)
+	{
+
+        bm.SearchCardInDeck(new Stew());
+        yield return new WaitForSeconds(0.4f);
+		bm.SearchCardInDeck(new Stew());
+		yield return null;
+	}
+	public override IEnumerator AttackEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override IEnumerator DefendEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+	public override bool IsAbilityUsable(BattleManager bm)
+	{
+		return true;
+	}
 }

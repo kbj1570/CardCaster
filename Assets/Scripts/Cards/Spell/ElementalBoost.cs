@@ -1,6 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 
-public class ElementalBoost : CardData
+public class ElementalBoost : SpellCardData
 {
     
     public ElementalBoost()
@@ -23,8 +24,22 @@ public class ElementalBoost : CardData
         preRequisites.Add(preRequisite);
 
     }
-}
 
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
+
+}
 public enum ETrigger
 {
     None,

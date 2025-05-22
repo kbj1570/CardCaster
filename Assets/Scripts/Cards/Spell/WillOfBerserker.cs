@@ -1,4 +1,6 @@
-public class WillOfBerserker : CardData
+using System.Collections;
+
+public class WillOfBerserker : SpellCardData
 {
     public WillOfBerserker()
     {
@@ -18,5 +20,19 @@ public class WillOfBerserker : CardData
 
         preRequisites.Add(preRequisite);
     }
+
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
 
 }

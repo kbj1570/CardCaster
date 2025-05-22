@@ -5,5 +5,6 @@ public class OldStick : Item
         itemNum = "10";
         itemName = "마른 나뭇가지";
         itemInfo = ".";
-    }
+		itemCategory = EItemCategory.EOthers;
+	}
 }

@@ -1,12 +1,13 @@
-using System.Collections;
-using UnityEngine;
-using TMPro;
-using System;
-using Random = UnityEngine.Random;
-using System.Collections.Generic;
-using UnityEngine.UI;
 using DG.Tweening;
+using NUnit.Framework;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
@@ -91,9 +92,9 @@ public class BattleManager : MonoBehaviour
 	public Transform selectedTargetLineEnd;
 
 	public EMouseOnArea mouseOnArea;
-	private List<CardData> deckList;
-	private List<CardData> trashList;
-	private List<CardData> handList;
+	public List<CardData> deckList;
+	public List<CardData> trashList;
+	public List<CardData> handList;
 	private List<GameObject> cardObjectList;
 	private Dictionary<ItemSO, int> inventory;
 	WaitForSeconds delay05 = new WaitForSeconds(0.5f);
@@ -176,7 +177,7 @@ public class BattleManager : MonoBehaviour
 		//InOutElastic
 		//OutBack
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<BattleCard>().SetLock(true);}
+		{card.GetComponent<BattleCardObject>().SetLock(true);}
 
 		battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position,
 		0.2f).SetEase(Ease.Linear);
@@ -200,7 +201,7 @@ public class BattleManager : MonoBehaviour
 		isActionDone = true;
 
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<BattleCard>().SetLock(false);}
+		{card.GetComponent<BattleCardObject>().SetLock(false);}
 
 	}
 
@@ -385,7 +386,7 @@ public class BattleManager : MonoBehaviour
 
 
 
-	IEnumerator ActivateSummonAbility(CardData cardData, int currentCost, Field field)
+	IEnumerator ActivateSummonAbility(ServentCardData cardData, int currentCost, Field field)
 	{
 		yield return new WaitForSeconds(.3f);
 		if(CheckCardUsable(cardData, currentCost, field))
@@ -396,7 +397,7 @@ public class BattleManager : MonoBehaviour
 				ShowSelectedCards(trashList, ECardType.Spell, 1);
 				yield return new WaitUntil(() => isActionDone);
 				
-				CardData card = selectedCards[0];
+				SpellCardData card = selectedCards[0] as SpellCardData;
 				RemoveTrash(card);
 				cardPrefab = cardPrefabList[card.GetCardNum()];
 
@@ -404,9 +405,9 @@ public class BattleManager : MonoBehaviour
 				cardObject.transform.SetParent(canvas.transform);
 				cardObjectList.Add(cardObject);
 				
-				cardObject.GetComponent<BattleCard>().Setup(card);
+				cardObject.GetComponent<BattleCardObject>().Setup(card);
 				
-				cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
+				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 				handList.Add(card);
 
 				selectedCards = new();
@@ -421,7 +422,7 @@ public class BattleManager : MonoBehaviour
 
 			case 2: //암흑요리사
 			{
-				CardData card = new Stew();
+				SpellCardData card = new Stew();
 				CardData targetCard = new();
 				int count = 0;
 
@@ -446,9 +447,9 @@ public class BattleManager : MonoBehaviour
 					cardObject.transform.SetParent(canvas.transform);
 					cardObjectList.Add(cardObject);
 					
-					cardObject.GetComponent<BattleCard>().Setup(card);
+					cardObject.GetComponent<BattleCardObject>().Setup(card);
 					
-					cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
+					cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 					handList.Add(card);
 				}
 				
@@ -459,7 +460,7 @@ public class BattleManager : MonoBehaviour
 
 			case 4: //불의 정령 크림슨
 			{
-				CardData card = new WaterHeize();
+				ServentCardData card = new WaterHeize();
 				CardData targetCard = new();
 
 				foreach(CardData value in deckList)
@@ -474,9 +475,9 @@ public class BattleManager : MonoBehaviour
 				cardObject.transform.SetParent(canvas.transform);
 				cardObjectList.Add(cardObject);
 				
-				cardObject.GetComponent<BattleCard>().Setup(card);
+				cardObject.GetComponent<BattleCardObject>().Setup(card);
 				
-				cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
+				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 				handList.Add(card);
 
 				CardAlignmentAlt();
@@ -491,10 +492,10 @@ public class BattleManager : MonoBehaviour
 
 			case 5: //물의 정령 헤이즈
 			{
-				CardData card = new FireCrimson();
-				CardData targetCard = new();
+				ServentCardData card = new FireCrimson();
+				BattleCardData targetCard = new();
 
-				foreach(CardData value in deckList)
+				foreach(BattleCardData value in deckList)
 				{
 					if(value.GetCardNum() == 13)
 					targetCard = value;
@@ -507,9 +508,9 @@ public class BattleManager : MonoBehaviour
 				cardObject.transform.SetParent(canvas.transform);
 				cardObjectList.Add(cardObject);
 				
-				cardObject.GetComponent<BattleCard>().Setup(card);
+				cardObject.GetComponent<BattleCardObject>().Setup(card);
 				
-				cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
+				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 				handList.Add(card);
 
 				CardAlignmentAlt();
@@ -545,7 +546,7 @@ public class BattleManager : MonoBehaviour
 	}
 
 		
-	IEnumerator ActivateSpell(CardData cardData, Field selectedField)
+	IEnumerator ActivateSpell(SpellCardData cardData, Field selectedField)
 	{
 		yield return new WaitForSeconds(.5f);
 		switch(cardData.GetSpellNum())
@@ -728,7 +729,7 @@ public class BattleManager : MonoBehaviour
 
 
 				foreach (GameObject card in cardObjectList)
-				{card.GetComponent<BattleCard>().HideAndReveal(true);}
+				{card.GetComponent<BattleCardObject>().HideAndReveal(true);}
 
 				yield return new WaitForSeconds(0.3f);
 				StartCoroutine(EnemyFieldClear());
@@ -997,7 +998,7 @@ public class BattleManager : MonoBehaviour
 
 		yield return new WaitForSeconds(0.4f);
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<BattleCard>().HideAndReveal(false);}
+		{card.GetComponent<BattleCardObject>().HideAndReveal(false);}
 		yield return new WaitForSeconds(0.4f);
 
 		if(myTurn)
@@ -1071,13 +1072,39 @@ public class BattleManager : MonoBehaviour
 		yield return new WaitForSeconds(0.3f);
 	}
 
+	public GameObject InstantiateCard(BattleCardData battleCardData)
+	{
+		GameObject cardPrefab = cardPrefabList[battleCardData.GetCardNum()];
+		GameObject cardObject = Instantiate(cardPrefab, new Vector3(), Utils.QI);
+		cardObject.transform.SetParent(canvas.transform);
+		cardObjectList.Add(cardObject);
+
+
+		cardObject.GetComponent<BattleCardObject>().Setup(battleCardData);
+
+		cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
+		handList.Add(battleCardData);
+
+		ShotDrawMissile(cardObject.transform);
+		return cardObject;
+	}
+
+	public void SearchCardInDeck(BattleCardData targetCardData)
+	{
+
+		var cardDataToRemove = deckList.Find(cardData => cardData.GetCardNum() == targetCardData.GetCardNum());
+		if (cardDataToRemove != null)
+		{deckList.Remove(cardDataToRemove);}
+		InstantiateCard(targetCardData);
+	}
+
 
 
 	public IEnumerator EnemyTurnCo()
 	{
 		turnState = ETurnState.Enemy;
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<BattleCard>().HideAndReveal(true);}
+		{card.GetComponent<BattleCardObject>().HideAndReveal(true);}
 
 		yield return new WaitForSeconds(0.3f);
 		int actionToken = currentEnemy.GetActionToken();
@@ -1926,30 +1953,30 @@ public class BattleManager : MonoBehaviour
 
 	public void CardBeginDrag(GameObject cardObject)
 	{
-		if(cardObject.GetComponent<BattleCard>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
+		if(cardObject.GetComponent<BattleCardObject>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
 		{
 			foreach(GameObject gameObject in anyWhereAreas)
 			{gameObject.SetActive(true);}
 		}
 
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<BattleCard>().SetLock(true);}
-		cardObject.GetComponent<BattleCard>().SetLock(false);
+		{card.GetComponent<BattleCardObject>().SetLock(true);}
+		cardObject.GetComponent<BattleCardObject>().SetLock(false);
 	}
 
 	public void CardOnDrag(GameObject cardObject)
 	{
-		if(cardObject.GetComponent<BattleCard>().GetCardData().GetCardType() == ECardType.Servent)
+		if(cardObject.GetComponent<BattleCardObject>().GetCardData().GetCardType() == ECardType.Servent)
 		{
 			DrawDragLine(cardObject.transform.position,
-			CheckServentSummonable(cardObject.GetComponent<BattleCard>().GetCardData(),
-			cardObject.GetComponent<BattleCard>().GetCurrentCost(),ReturnMouseOnField())
+			CheckServentSummonable(cardObject.GetComponent<BattleCardObject>().GetCardData(),
+			cardObject.GetComponent<BattleCardObject>().GetCurrentCost(),ReturnMouseOnField())
 			);
 		}
 		else{
 			DrawDragLine(cardObject.transform.position,
-			CheckCardUsable(cardObject.GetComponent<BattleCard>().GetCardData(),
-			cardObject.GetComponent<BattleCard>().GetCurrentCost(),ReturnMouseOnField())
+			CheckCardUsable(cardObject.GetComponent<BattleCardObject>().GetCardData(),
+			cardObject.GetComponent<BattleCardObject>().GetCurrentCost(),ReturnMouseOnField())
 			);
 		}
 		
@@ -2017,7 +2044,7 @@ public class BattleManager : MonoBehaviour
 		return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
 	}
 
-	public IEnumerator CardEndDrag(BattleCard card, Field targetField)
+	public IEnumerator CardEndDrag(BattleCardObject card, Field targetField)
 	{
 		foreach(GameObject gameObject in anyWhereAreas)
 		{gameObject.SetActive(false);}
@@ -2043,7 +2070,7 @@ public class BattleManager : MonoBehaviour
 			{newHandList.Add(cardData);}
 
 			for(int i = 0; i < cardObjectList.Count; ++i)
-			{cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
+			{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
 
 			handList = newHandList;
 			CardAlignmentAlt();
@@ -2052,27 +2079,28 @@ public class BattleManager : MonoBehaviour
 		{
 			if(card.GetCardType() == ECardType.Servent)
 			{
-				if(CheckServentSummonable(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(), targetField))
+				ServentCardData serventCardData = card.GetCardData() as ServentCardData;
+				if(CheckServentSummonable(serventCardData, card.GetComponent<BattleCardObject>().GetCurrentCost(), targetField))
 				{
 					targetField.locked = true;
-					costCount -= card.GetCardData().GetCardCost();
+					costCount -= serventCardData.GetCardCost();
 
 					cardObjectList.Remove(card.gameObject);
 					handList.RemoveAt(card.GetCardOrder());
 
 					card.SendMissile(alertPoint, ReturnMouseOnField().transform);
 					foreach(GameObject cardObject in cardObjectList)
-					{cardObject.GetComponent<BattleCard>().SetLock(true);}
+					{cardObject.GetComponent<BattleCardObject>().SetLock(true);}
 					
 					yield return new WaitForSeconds(1.5f);
 					
 					foreach(GameObject cardObject in cardObjectList)
-					{cardObject.GetComponent<BattleCard>().SetLock(false);}
+					{cardObject.GetComponent<BattleCardObject>().SetLock(false);}
 
 					targetField.Summon(
-						card.GetCardData(),
+						serventCardData,
 						Instantiate(
-							playerServentPrefabList[card.GetCardData().GetServentNum()],
+							playerServentPrefabList[serventCardData.GetServentNum()],
 							targetField.transform.position,
 							Utils.QI
 						)
@@ -2081,26 +2109,27 @@ public class BattleManager : MonoBehaviour
 					soundEffect.PlayOneShot(serventSummon);
 
 					StartCoroutine(ActivateSummonAbility(
-						card.GetCardData(),
-						card.GetComponent<BattleCard>().GetCurrentCost(),
+						serventCardData,
+						card.GetComponent<BattleCardObject>().GetCurrentCost(),
 						targetField
 					));
 
 					for (int i = 0; i < cardObjectList.Count; ++i)
-					{cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
+					{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
 
 					CardAlignmentAlt();
 				}
 			}
 
-			if(CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCard>().GetCurrentCost(), targetField))
+			if(CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCardObject>().GetCurrentCost(), targetField))
 			{
 				switch(card.GetCardType())
 				{
 					case ECardType.Spell:
 					costCount -= card.GetCardData().GetCardCost();
 					StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
-					
+
+
 					AddTrash(card.GetCardData());
 					handList.RemoveAt(card.GetCardOrder());
 					cardObjectList.Remove(card.gameObject);
@@ -2108,7 +2137,7 @@ public class BattleManager : MonoBehaviour
 					card.SendMissile(alertPoint, hole.transform);
 
 					for(int i = 0; i < cardObjectList.Count; ++i)
-					{cardObjectList[i].GetComponent<BattleCard>().SetCardOrder(i);}
+					{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
 
 					CardAlignmentAlt();
 					break;
@@ -2122,7 +2151,7 @@ public class BattleManager : MonoBehaviour
 		}
 
 		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<BattleCard>().SetLock(false);}
+		{cardObject.GetComponent<BattleCardObject>().SetLock(false);}
 	}
 	public void DrawCard()
 	{
@@ -2152,9 +2181,9 @@ public class BattleManager : MonoBehaviour
 		cardObject.transform.localScale = new Vector3(0.5f, 0.5f, 1);
 		cardObjectList.Add(cardObject);
 		
-		cardObject.GetComponent<BattleCard>().Setup(cardData);
+		cardObject.GetComponent<BattleCardObject>().Setup(cardData);
 		
-		cardObject.GetComponent<BattleCard>().SetCardOrder(handList.Count);
+		cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 		handList.Add(cardData);
 
 
@@ -2210,10 +2239,10 @@ public class BattleManager : MonoBehaviour
 		for(int i = 0; i < cardObjectList.Count; ++i)
 		{
 			var targetCard = cardObjectList[i];
-			targetCard.GetComponent<BattleCard>().originPRS = originCardPRSs[i];
+			targetCard.GetComponent<BattleCardObject>().originPRS = originCardPRSs[i];
 			targetCard.transform.position = originCardPRSs[i].pos;
 
-			targetCard.GetComponent<BattleCard>().UpdateCardCost(costCount);
+			targetCard.GetComponent<BattleCardObject>().UpdateCardCost(costCount);
 		}
 
 	}
@@ -2276,8 +2305,8 @@ public class BattleManager : MonoBehaviour
 		for(int i = 0; i < cardObjectList.Count; ++i)
 		{
 			var targetCard = cardObjectList[i];
-			targetCard.GetComponent<BattleCard>().originPRS = originCardPRSs[i];
-			targetCard.GetComponent<BattleCard>().MoveTransform(targetCard.GetComponent<BattleCard>().originPRS, true, 0.7f);
+			targetCard.GetComponent<BattleCardObject>().originPRS = originCardPRSs[i];
+			targetCard.GetComponent<BattleCardObject>().MoveTransform(targetCard.GetComponent<BattleCardObject>().originPRS, true, 0.7f);
 
 		}
 	}
@@ -2576,7 +2605,7 @@ public class BattleManager : MonoBehaviour
 		}
 
 		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<BattleCard>().SetLock(true);}
+		{cardObject.GetComponent<BattleCardObject>().SetLock(true);}
 
 		RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
 
@@ -2593,7 +2622,7 @@ public class BattleManager : MonoBehaviour
 
 
 		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<BattleCard>().SetLock(false);}
+		{cardObject.GetComponent<BattleCardObject>().SetLock(false);}
 
 		trashWindow.GetComponent<Window>().OnOff();
 	}

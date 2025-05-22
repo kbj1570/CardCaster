@@ -1,4 +1,6 @@
-public class PriceOfBlood : CardData
+using System.Collections;
+
+public class PriceOfBlood : SpellCardData
 {
     public PriceOfBlood()
     {
@@ -17,5 +19,20 @@ public class PriceOfBlood : CardData
 
         preRequisites.Add(preRequisite);
     }
+
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
+
 
 }

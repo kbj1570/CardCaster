@@ -1,4 +1,6 @@
-public class OnlySilence : CardData
+using System.Collections;
+
+public class OnlySilence : SpellCardData
 {
     public OnlySilence()
     {
@@ -28,5 +30,19 @@ public class OnlySilence : CardData
         preRequisites.Add(preRequisite);
 
     }
+
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
 
 }

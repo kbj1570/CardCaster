@@ -1,4 +1,6 @@
-public class HeartOnFire : CardData
+using System.Collections;
+
+public class HeartOnFire : SpellCardData
 {
     public HeartOnFire()
     {
@@ -12,4 +14,20 @@ public class HeartOnFire : CardData
         cardTargetType = ECardTargetType.Select;
     
     }
+
+
+	public override bool IsSpellUsable(BattleManager bm)
+	{
+		return true;
+	}
+
+	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	{
+		bm.DrawCard();
+		bm.DrawCard();
+		bm.DrawCard();
+
+		yield return null;
+	}
+
 }

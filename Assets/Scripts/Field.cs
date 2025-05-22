@@ -5,7 +5,7 @@ using TMPro;
 public class Field : MonoBehaviour
 {
     public FieldArea fieldArea;
-    public CardData cardData;
+    public ServentCardData cardData;
     public List<EServentCondition> conditions;
     public EServentAttribute serventAttribute;
     
@@ -155,7 +155,7 @@ public class Field : MonoBehaviour
         }
     }
 
-    public void Summon(CardData cardData, GameObject gameObject)
+    public void Summon(ServentCardData cardData, GameObject gameObject)
     {
 
         filled = true;
@@ -245,7 +245,7 @@ public class Field : MonoBehaviour
 
     public void SetAttacked(bool value)
     {this.attacked = value;}
-    public CardData GetCardData()
+    public ServentCardData GetCardData()
     {return cardData;}
 
     public void SetSuicide(bool value)
