@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class WindCrest : ServentCardData
 {
@@ -31,6 +34,18 @@ public class WindCrest : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
+		List<Field> playerFields = bm.GetPlayerFields();
+
+		foreach (Field field in playerFields)
+		{
+			if (!field.GetFilled()) continue;
+
+			if (field.GetServentAttribute() == EServentAttribute.Wind)
+			{
+				field.GainForce(1);
+				yield return new WaitForSeconds(0.1f);
+			}
+		}
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

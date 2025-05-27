@@ -1,4 +1,4 @@
-public class Wild : CardData
+public class Wild : EnemyServentCardData
 {
     public Wild()
     {

@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEngine;
 
 public class PriceOfBlood : SpellCardData
 {
@@ -27,8 +28,9 @@ public class PriceOfBlood : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
-		bm.DrawCard();
-		bm.DrawCard();
+
+		bm.PlayerTakeDamage(4);
+		yield return new WaitForSeconds(0.3f);
 		bm.DrawCard();
 
 		yield return null;

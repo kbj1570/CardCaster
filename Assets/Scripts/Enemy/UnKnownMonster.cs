@@ -19,7 +19,7 @@ public class UnknownMonster : Enemy
         };
 
         
-        serventList = new List<CardData>
+        serventList = new List<EnemyServentCardData>
         {
             new ChaoticCorvus(),
             new Wild()

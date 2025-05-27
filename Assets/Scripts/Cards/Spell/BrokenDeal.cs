@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BrokenDeal : SpellCardData
 {
@@ -30,9 +31,13 @@ public class BrokenDeal : SpellCardData
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
         bm.DrawCard();
+        yield return new WaitForSeconds(0.3f);
 		bm.DrawCard();
+		yield return new WaitForSeconds(0.3f);
 		bm.DrawCard();
+		yield return new WaitForSeconds(0.2f);
+		bm.SetEnemyDamageBlock(true);
 
-        yield return null;
+		yield return null;
 	}
 }

@@ -11,7 +11,7 @@ public class Enemy
     protected Dictionary<Item, int> enemyRewards;
     protected KeyValuePair<Item, int> rewards;
     protected int enemyGold;
-    protected List<CardData> serventList;
+    protected List<EnemyServentCardData> serventList;
     protected EnemyAbility enemyAbility;
 
 
@@ -33,7 +33,7 @@ public class Enemy
     {return enemyGold;}
 
     
-    public List<CardData> GetServentList()
+    public List<EnemyServentCardData> GetServentList()
     {return serventList;}
     public EnemyAbility GetEnemyAbility()
     {return enemyAbility;}

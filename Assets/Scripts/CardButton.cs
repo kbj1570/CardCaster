@@ -23,14 +23,14 @@ public class CardButton : MonoBehaviour
     
     public void Setup(CardData cardData)
     {
-        this.cardData = cardData;
-        // character.sprite = this.cardData.GetSprite();
-        nameTMP.text = this.cardData.GetCardName();
-        if(cardData.GetCardType() == ECardType.Servent)
-            healthTMP.text = this.cardData.GetForce().ToString();
+        //this.cardData = cardData;
+        //// character.sprite = this.cardData.GetSprite();
+        //nameTMP.text = this.cardData.GetCardName();
+        //if(cardData.GetCardType() == ECardType.Servent)
+        //    healthTMP.text = this.cardData.GetForce().ToString();
         
-        descriptionTMP.text = this.cardData.GetCardAbility();
-        costTMP.text = this.cardData.GetCardCost().ToString();
-        currentCost = this.cardData.GetCardCost();
+        //descriptionTMP.text = this.cardData.GetCardAbility();
+        //costTMP.text = this.cardData.GetCardCost().ToString();
+        //currentCost = this.cardData.GetCardCost();
     }
 }

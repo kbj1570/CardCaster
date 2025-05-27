@@ -2,16 +2,12 @@ using System.Collections;
 
 public abstract class ServentCardData : BattleCardData, IServentCardEffect
 {
-
 	protected int serventNum;
-
-
 	protected EServentAttribute serventAttribute;
 	protected EServentSize serventSize;
 	protected EServentType serventType;
 
 	protected int force;
-
 
 	protected bool hasAbility;
 	protected bool canUseAbility;
@@ -23,7 +19,6 @@ public abstract class ServentCardData : BattleCardData, IServentCardEffect
 	protected bool windImmune;
 	protected bool darkImmune;
 	protected bool lightImmune;
-
 
 	public int GetForce() { return force; }
 	public EServentType GetServentType() { return serventType; }

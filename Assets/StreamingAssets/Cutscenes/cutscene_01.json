@@ -1,0 +1,14 @@
+[
+  {
+    "commandType": "ShowText",
+    "parameters": [ "dialogue_001" ]
+  },
+  {
+    "commandType": "ShowText",
+    "parameters": [ "dialogue_001" ]
+  },
+  {
+    "commandType": "ShowText",
+    "parameters": [ "dialogue_001" ]
+  }
+]

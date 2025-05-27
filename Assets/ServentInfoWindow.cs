@@ -24,7 +24,7 @@ public class ServentInfoWindow : MonoBehaviour
         ScaleZero();
     }
 
-    public void UpdateCardData(CardData cardData)
+    public void UpdateCardData(ServentCardData cardData)
     {
         originForce.text = cardData.GetForce().ToString();
         serventName.text = cardData.GetCardName();

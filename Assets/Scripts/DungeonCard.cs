@@ -105,13 +105,6 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public ECardType GetCardType()
     {return cardType;}
 
-    public void UpdateCardCost(int cost)
-    {
-        currentCost = this.cardData.GetCardCost() - cost;
-        if(currentCost < 0){currentCost = 0;}
-        costTMP.text = currentCost.ToString();
-    }
-
     public void SetLock(bool value)
     {this.locked = value;}
 

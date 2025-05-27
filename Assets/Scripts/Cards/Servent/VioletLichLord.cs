@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
+using UnityEngine;
 
 public class VioletLichLord : ServentCardData
 {
@@ -26,6 +28,29 @@ public class VioletLichLord : ServentCardData
     }
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
+		//ShowSelectedCards(trashList, ECardType.Spell, 1);
+		//yield return new WaitUntil(() => isActionDone);
+
+		//SpellCardData card = selectedCards[0] as SpellCardData;
+		//RemoveTrash(card);
+		//cardPrefab = cardPrefabList[card.GetCardNum()];
+
+		//GameObject cardObject = Instantiate(cardPrefab, new Vector3(), Utils.QI);
+		//cardObject.transform.SetParent(canvas.transform);
+		//cardObjectList.Add(cardObject);
+
+		//cardObject.GetComponent<BattleCardObject>().Setup(card);
+
+		//cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
+		//handList.Add(card);
+
+		//selectedCards = new();
+
+		//isActionDone = false;
+
+		//CardAlignmentAlt();
+
+		//ShotDrawMissile(cardObject.transform);
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

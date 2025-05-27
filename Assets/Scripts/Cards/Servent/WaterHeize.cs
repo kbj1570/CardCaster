@@ -29,6 +29,7 @@ public class WaterHeize : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
+		bm.SearchCardInDeck(new FireCrimson());
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

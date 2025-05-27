@@ -1,3 +1,5 @@
+using System.Collections;
+
 public class FlameLizard : ServentCardData
 {
     public FlameLizard()

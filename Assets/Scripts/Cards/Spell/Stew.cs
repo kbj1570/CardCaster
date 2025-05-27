@@ -27,10 +27,7 @@ public class Stew : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
-		bm.DrawCard();
-		bm.DrawCard();
-		bm.DrawCard();
-
+		bm.HealPlayer(1);
 		yield return null;
 	}
 

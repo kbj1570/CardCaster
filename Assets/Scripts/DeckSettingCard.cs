@@ -17,33 +17,33 @@ public class DeckSettingCard : MonoBehaviour
     public TMP_Text cardName;
     public TMP_Text cardCount;
     public CardData cardData;
-    public void UpdateCard(CardData value, int count)
-    {
-        cardData = value;
-        cardName.text = cardData.GetCardName();
-        cardPower.text = cardData.GetForce().ToString();
-        cardText.text = cardData.GetCardAbility();
+    //public void UpdateCard(CardData value, int count)
+    //{
+    //    cardData = value;
+    //    cardName.text = cardData.GetCardName();
+    //    cardPower.text = cardData.GetForce().ToString();
+    //    cardText.text = cardData.GetCardAbility();
 
-        switch(cardData.GetCardCost())
-        {
-            case 0:
-            cardCost.sprite = null;
-            break;
+    //    switch(cardData.GetCardCost())
+    //    {
+    //        case 0:
+    //        cardCost.sprite = null;
+    //        break;
 
-            case 1:
-            cardCost.sprite = oneStar;
-            break;
+    //        case 1:
+    //        cardCost.sprite = oneStar;
+    //        break;
 
-            case 2:
-            cardCost.sprite = twoStar;
-            break;
+    //        case 2:
+    //        cardCost.sprite = twoStar;
+    //        break;
 
-            case 3:
-            cardCost.sprite = threeStar;
-            break;
-        }
-        cardCount.text = count.ToString();
-    }
+    //        case 3:
+    //        cardCost.sprite = threeStar;
+    //        break;
+    //    }
+    //    cardCount.text = count.ToString();
+    //}
 
     // public void CountUp()
     // {DeckManager.Inst.AddCard(cardData);}

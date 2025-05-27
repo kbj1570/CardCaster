@@ -1,4 +1,4 @@
-public class ChaoticCorvus : CardData
+public class ChaoticCorvus : EnemyServentCardData
 {
     public ChaoticCorvus()
     {

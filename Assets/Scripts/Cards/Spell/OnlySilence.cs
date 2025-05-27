@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 
 public class OnlySilence : SpellCardData
 {
@@ -7,7 +8,7 @@ public class OnlySilence : SpellCardData
         cardNum = 6;
         spellNum = 5;
         cardName = "오직 침묵만이";
-        cardCost = 0;
+        cardCost = 1;
         cardType = ECardType.Spell;
         cardGuideDescription = "";
         cardAbility = "자신의 HP가 1일때만 사용할 수 있다. 서로의 소횐수들을 전부 소멸시킨다";
@@ -33,15 +34,17 @@ public class OnlySilence : SpellCardData
 
 	public override bool IsSpellUsable(BattleManager bm)
 	{
-		return true;
+		return bm.playerHealth == 1;
 	}
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
-		bm.DrawCard();
-		bm.DrawCard();
-		bm.DrawCard();
-
+		List<Field> allFields = bm.GetAllFields();
+		foreach (Field field in allFields)
+		{
+            if (field.GetFilled())
+                field.Kill();
+		}
 		yield return null;
 	}
 

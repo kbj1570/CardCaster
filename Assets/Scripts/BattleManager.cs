@@ -92,9 +92,9 @@ public class BattleManager : MonoBehaviour
 	public Transform selectedTargetLineEnd;
 
 	public EMouseOnArea mouseOnArea;
-	public List<CardData> deckList;
-	public List<CardData> trashList;
-	public List<CardData> handList;
+	public List<BattleCardData> deckList;
+	public List<BattleCardData> trashList;
+	public List<BattleCardData> handList;
 	private List<GameObject> cardObjectList;
 	private Dictionary<ItemSO, int> inventory;
 	WaitForSeconds delay05 = new WaitForSeconds(0.5f);
@@ -162,8 +162,8 @@ public class BattleManager : MonoBehaviour
 
 	float parryWindowTime = 0.3f;
 	float circleSpeed = 1f;
-	private int playerHealth;
-	private int enemyHealth;
+	public int playerHealth;
+	public int enemyHealth;
 
 	private List<int> currentAbilities;
 
@@ -204,6 +204,13 @@ public class BattleManager : MonoBehaviour
 		{card.GetComponent<BattleCardObject>().SetLock(false);}
 
 	}
+
+	public List<Field> GetPlayerFields()
+	{ return new List<Field> { field_1, field_2, field_3 }; }
+	public List<Field> GetEnemyFields()
+	{ return new List<Field> { field_4, field_5, field_6 }; }
+	public List<Field> GetAllFields()
+	{ return new List<Field> { field_1, field_2, field_3, field_4, field_5, field_6 }; }
 
 	public void ActionDone()
 	{isActionDone = true;}
@@ -305,7 +312,7 @@ public class BattleManager : MonoBehaviour
 			Debug.Log("카드를 선택하세요.");
 		}
 	}
-	public void ShowSelectedCards(List<CardData> targetList,ECardType cardType, int limit)
+	public void ShowSelectedCards(List<BattleCardData> targetList,ECardType cardType, int limit)
 	{
 		isActionDone = false;
 		selectedLimit = limit;
@@ -386,165 +393,6 @@ public class BattleManager : MonoBehaviour
 
 
 
-	IEnumerator ActivateSummonAbility(ServentCardData cardData, int currentCost, Field field)
-	{
-		yield return new WaitForSeconds(.3f);
-		if(CheckCardUsable(cardData, currentCost, field))
-		switch(cardData.GetServentNum())
-		{
-			case 1: //바이올렛 리치 로드
-			{
-				ShowSelectedCards(trashList, ECardType.Spell, 1);
-				yield return new WaitUntil(() => isActionDone);
-				
-				SpellCardData card = selectedCards[0] as SpellCardData;
-				RemoveTrash(card);
-				cardPrefab = cardPrefabList[card.GetCardNum()];
-
-				GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-				cardObject.transform.SetParent(canvas.transform);
-				cardObjectList.Add(cardObject);
-				
-				cardObject.GetComponent<BattleCardObject>().Setup(card);
-				
-				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
-				handList.Add(card);
-
-				selectedCards = new();
-
-				isActionDone = false;
-
-				CardAlignmentAlt();
-				
-				ShotDrawMissile(cardObject.transform);
-				break;
-			}
-
-			case 2: //암흑요리사
-			{
-				SpellCardData card = new Stew();
-				CardData targetCard = new();
-				int count = 0;
-
-				foreach(CardData value in deckList)
-				{
-					if(value.GetCardNum() == 7)
-					{
-						targetCard = value;
-						count++;
-					}
-				}
-
-				if(count > 3)
-				{count = 2;}
-
-				for(int i = 0; i < count; ++i)
-				{
-					deckList.Remove(targetCard);
-					cardPrefab = cardPrefabList[card.GetCardNum()];
-
-					GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-					cardObject.transform.SetParent(canvas.transform);
-					cardObjectList.Add(cardObject);
-					
-					cardObject.GetComponent<BattleCardObject>().Setup(card);
-					
-					cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
-					handList.Add(card);
-				}
-				
-
-				CardAlignmentAlt();
-				break;
-			}
-
-			case 4: //불의 정령 크림슨
-			{
-				ServentCardData card = new WaterHeize();
-				CardData targetCard = new();
-
-				foreach(CardData value in deckList)
-				{
-					if(value.GetCardNum() == 14)
-					targetCard = value;
-				}
-				deckList.Remove(targetCard);
-				cardPrefab = cardPrefabList[card.GetCardNum()];
-
-				GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-				cardObject.transform.SetParent(canvas.transform);
-				cardObjectList.Add(cardObject);
-				
-				cardObject.GetComponent<BattleCardObject>().Setup(card);
-				
-				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
-				handList.Add(card);
-
-				CardAlignmentAlt();
-
-				ShotDrawMissile(cardObject.transform);
-				break;
-			}
-
-			
-
-			
-
-			case 5: //물의 정령 헤이즈
-			{
-				ServentCardData card = new FireCrimson();
-				BattleCardData targetCard = new();
-
-				foreach(BattleCardData value in deckList)
-				{
-					if(value.GetCardNum() == 13)
-					targetCard = value;
-					
-				}
-				deckList.Remove(targetCard);
-				cardPrefab = cardPrefabList[card.GetCardNum()];
-
-				GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-				cardObject.transform.SetParent(canvas.transform);
-				cardObjectList.Add(cardObject);
-				
-				cardObject.GetComponent<BattleCardObject>().Setup(card);
-				
-				cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
-				handList.Add(card);
-
-				CardAlignmentAlt();
-				
-				ShotDrawMissile(cardObject.transform);
-				break;
-			}
-
-			case 6: //바람의 정령 크래스트
-			{
-				if(field_1.GetFilled())
-				{
-					if(field_1.GetServentAttribute() == EServentAttribute.Wind)
-					{field_1.GainForce(1);}
-				}
-
-				if(field_2.GetFilled())
-				{
-					if(field_2.GetServentAttribute() == EServentAttribute.Wind)
-					{field_2.GainForce(1);}
-				}
-
-				if(field_3.GetFilled())
-				{
-					if(field_3.GetServentAttribute() == EServentAttribute.Wind)
-					{field_3.GainForce(1);}
-				}
-
-				break;
-			}
-		}
-		isActionDone = false;
-	}
-
 		
 	IEnumerator ActivateSpell(SpellCardData cardData, Field selectedField)
 	{
@@ -558,62 +406,7 @@ public class BattleManager : MonoBehaviour
 			Shuffle();
 
 			break;
-
-			case 1: //엘리멘탈 부스트
-			{
-				 List<EServentAttribute> attributes = new();
-				if(field_1.GetFilled())
-				{
-					if(!attributes.Contains(field_1.GetServentAttribute()))
-					{attributes.Add(field_1.GetServentAttribute());}
-				}
-
-				if(field_2.GetFilled())
-				{
-					if(!attributes.Contains(field_2.GetComponent<Field>().GetServentAttribute()))
-					{attributes.Add(field_2.GetComponent<Field>().GetServentAttribute());}
-				}
-
-				if(field_3.GetFilled())
-				{
-					if(!attributes.Contains(field_3.GetServentAttribute()))
-					{attributes.Add(field_3.GetServentAttribute());}
-				}
-
-				int value = attributes.Count;
-
-				if(field_1.GetFilled())
-				{field_1.GainForce(value);}
-
-				if(field_2.GetFilled())
-				{field_2.GainForce(value);}
-
-				if(field_3.GetFilled())
-				{field_3.GainForce(value);}
-				break;
-			}
 		   
-
-			case 2: //악을 멸하는 등불
-			if(field_1.GetServentAttribute() == EServentAttribute.Dark)
-			{field_1.Kill();}
-
-			if(field_2.GetServentAttribute() == EServentAttribute.Dark)
-			{field_2.Kill();}
-
-			if(field_3.GetServentAttribute() == EServentAttribute.Dark)
-			{field_3.Kill();}
-
-			if(field_4.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-			{field_4.Kill();}
-
-			if(field_5.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-			{field_5.Kill();}
-
-			if(field_6.GetComponent<Field>().GetServentAttribute() == EServentAttribute.Dark)
-			{field_6.Kill();}
-
-			break;
 
 			case 3: //타오르는 심장
 			selectedField.GainForce(selectedField.GetForce());
@@ -623,7 +416,7 @@ public class BattleManager : MonoBehaviour
 			
 			int x = trashCount;
 			
-			foreach(CardData card in trashList)
+			foreach(BattleCardData card in trashList)
 			{deckList.Add(card);}
 			trashList.Clear();
 
@@ -649,25 +442,6 @@ public class BattleManager : MonoBehaviour
 
 			if(field_6.GetComponent<Field>().GetFilled())
 			{field_6.GetComponent<Field>().Kill();}
-			break;
-
-			case 6: // 스튜
-			playerHealth += 1; 
-			break;
-
-			case 7: // 피의 대가
-			PlayerTakeDamage(4);
-			DrawCard();
-			break;
-
-			case 8: // 무너진 계약
-			for(int i = 0; i < 3; ++i)
-			{
-				yield return new WaitForSeconds(0.35f);
-				DrawCard();
-			}
-
-			enemyDamageBlock = true;
 			break;
 
 			case 9: // 마스크월드
@@ -709,6 +483,11 @@ public class BattleManager : MonoBehaviour
 
 		}
 
+	}
+
+	public void HealPlayer(int value)
+	{
+		playerHealth += value;
 	}
 
 	IEnumerator CheckEnemyCondition(float delay)
@@ -889,19 +668,19 @@ public class BattleManager : MonoBehaviour
 		currentEnemy = enemies[enemyIndex];
 		enemyHealth = currentEnemy.GetHealth();
 
-		Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
+		Dictionary<BattleCardData, int> deck = new Dictionary<BattleCardData, int>();
 		List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
 		Dictionary<string, int> myDeck = PlayerData.saveData.deck;
 
 
 		foreach(KeyValuePair<string, int> value in myDeck)
-		{deck.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value);}
+		{deck.Add(cardDatabase[Convert.ToInt32(value.Key)] as BattleCardData, value.Value);}
 
 		deckList = new();
 		cardObjectList = new();
 		trashList = new();
 		
-		foreach(KeyValuePair<CardData, int> value in deck)
+		foreach(KeyValuePair<BattleCardData, int> value in deck)
 		{
 			for(int i = 0; i < value.Value; ++i)
 			{deckList.Add(value.Key);}
@@ -920,7 +699,7 @@ public class BattleManager : MonoBehaviour
 		{
 			int a = Random.Range(0, deckList.Count);
 			int b = Random.Range(0, deckList.Count);
-			CardData c = deckList[a];
+			BattleCardData c = deckList[a];
 			deckList[a] = deckList[b];
 			deckList[b] = c;
 		}
@@ -981,6 +760,9 @@ public class BattleManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(1f);
 	}
+
+	public void SetEnemyDamageBlock(bool value)
+	{ this.enemyDamageBlock = value; }
 
 	IEnumerator StartTurnCo()
 	{        
@@ -1084,6 +866,7 @@ public class BattleManager : MonoBehaviour
 
 		cardObject.GetComponent<BattleCardObject>().SetCardOrder(handList.Count);
 		handList.Add(battleCardData);
+		CardAlignmentAlt();
 
 		ShotDrawMissile(cardObject.transform);
 		return cardObject;
@@ -1094,8 +877,10 @@ public class BattleManager : MonoBehaviour
 
 		var cardDataToRemove = deckList.Find(cardData => cardData.GetCardNum() == targetCardData.GetCardNum());
 		if (cardDataToRemove != null)
-		{deckList.Remove(cardDataToRemove);}
-		InstantiateCard(targetCardData);
+		{
+			deckList.Remove(cardDataToRemove);
+			InstantiateCard(targetCardData);
+		}
 	}
 
 
@@ -1159,12 +944,12 @@ public class BattleManager : MonoBehaviour
 
 					Field field = unfilledField[randomNum];
 					field.locked = true;
-					List<CardData> serventList = currentEnemy.GetServentList();
+					List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
 
-					CardData randomServent = serventList[Random.Range(0, serventList.Count)];
+					EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
 
 					field.Summon(randomServent,
-					Instantiate(enemyServentPrefabList[randomServent.GetServentNum() - 1000],
+					Instantiate(enemyServentPrefabList[0],
 					field.transform.position , Utils.QI));
 					soundEffect.PlayOneShot(serventSummon);
 					field.locked = false;
@@ -1466,6 +1251,17 @@ public class BattleManager : MonoBehaviour
 	{
 		myTurn = !myTurn;
 		StartCoroutine(StartTurnCo());
+	}
+
+	public bool CheckCardUsable()
+	{
+		if (mouseOnArea == EMouseOnArea.Hole)
+		{ return true; }
+
+		if (ReturnMouseOnField() == null)
+		{ return false; }
+
+		return false;
 	}
 	public bool CheckCardUsable(CardData cardData, int currentCost, Field targetField)
 	{
@@ -1974,14 +1770,21 @@ public class BattleManager : MonoBehaviour
 			);
 		}
 		else{
+
+			SpellCardData spellCardData = cardObject.GetComponent<BattleCardObject>().GetCardData() as SpellCardData;
+			//DrawDragLine(cardObject.transform.position,
+			//CheckCardUsable(cardObject.GetComponent<BattleCardObject>().GetCardData(),
+			//cardObject.GetComponent<BattleCardObject>().GetCurrentCost(),ReturnMouseOnField())
+			//);
 			DrawDragLine(cardObject.transform.position,
-			CheckCardUsable(cardObject.GetComponent<BattleCardObject>().GetCardData(),
-			cardObject.GetComponent<BattleCardObject>().GetCurrentCost(),ReturnMouseOnField())
-			);
+				spellCardData.IsSpellUsable(this) && CheckCardUsable());
+
+
 		}
-		
-	
 	}
+
+	public bool IsOnEmptyField()
+	{ return !ReturnMouseOnField().GetFilled(); }
 
 	public bool CheckServentSummonable(CardData cardData, int currentCost, Field targetField)
 	{
@@ -2000,9 +1803,6 @@ public class BattleManager : MonoBehaviour
 		if(targetField == field_4)
 		{return false;}
 
-		if(targetField == field_4)
-		{return false;}
-
 		if(targetField == field_5)
 		{return false;}
 
@@ -2016,7 +1816,6 @@ public class BattleManager : MonoBehaviour
 		if(targetField.GetFilled())
 		{return false;}
 		return true;
-
 	}
 
 	public void PlayServentDeathSound()
@@ -2064,9 +1863,9 @@ public class BattleManager : MonoBehaviour
 			card.SendMissile(alertPoint, hole.transform);
 			costCount++;
 
-			List<CardData> newHandList = new List<CardData>();
+			List<BattleCardData> newHandList = new List<BattleCardData>();
 
-			foreach(CardData cardData in handList)
+			foreach(BattleCardData cardData in handList)
 			{newHandList.Add(cardData);}
 
 			for(int i = 0; i < cardObjectList.Count; ++i)
@@ -2108,11 +1907,12 @@ public class BattleManager : MonoBehaviour
 
 					soundEffect.PlayOneShot(serventSummon);
 
-					StartCoroutine(ActivateSummonAbility(
-						serventCardData,
-						card.GetComponent<BattleCardObject>().GetCurrentCost(),
-						targetField
-					));
+					//StartCoroutine(ActivateSummonAbility(
+					//	serventCardData,
+					//	card.GetComponent<BattleCardObject>().GetCurrentCost(),
+					//	targetField
+					//));
+					StartCoroutine(serventCardData.SummonEffectExecute(this));
 
 					for (int i = 0; i < cardObjectList.Count; ++i)
 					{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
@@ -2120,14 +1920,17 @@ public class BattleManager : MonoBehaviour
 					CardAlignmentAlt();
 				}
 			}
-
-			if(CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCardObject>().GetCurrentCost(), targetField))
+			else
 			{
-				switch(card.GetCardType())
+				SpellCardData spellCardData = card.GetCardData() as SpellCardData;
+
+				if(spellCardData.IsSpellUsable(this) && card.GetComponent<BattleCardObject>().GetCurrentCost() == 0)
 				{
-					case ECardType.Spell:
-					costCount -= card.GetCardData().GetCardCost();
-					StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
+					costCount -= spellCardData.GetCardCost();
+					// StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
+					spellCardData.SpellEffectExecute(this);
+
+					StartCoroutine(spellCardData.SpellEffectExecute(this));
 
 
 					AddTrash(card.GetCardData());
@@ -2136,16 +1939,24 @@ public class BattleManager : MonoBehaviour
 
 					card.SendMissile(alertPoint, hole.transform);
 
-					for(int i = 0; i < cardObjectList.Count; ++i)
-					{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
+					for (int i = 0; i < cardObjectList.Count; ++i)
+					{ cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i); }
 
 					CardAlignmentAlt();
-					break;
-
-					default:
-					break;
+					StartCoroutine(spellCardData.SpellEffectExecute(this));
 				}
+
 			}
+
+				//if (CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCardObject>().GetCurrentCost(), targetField))
+				//{
+				//	switch (card.GetCardType())
+				//	{
+				//		case ECardType.Spell:
+							
+				//			break;
+				//	}
+				//}
 
 			
 		}
@@ -2159,7 +1970,7 @@ public class BattleManager : MonoBehaviour
 		{return;}
 
 
-		List<CardData> targetList;
+		List<BattleCardData> targetList;
 
 		if(deckList.Count != 0)
 		{targetList = deckList;}
@@ -2169,7 +1980,7 @@ public class BattleManager : MonoBehaviour
 			targetList = trashList;
 		}
 
-		CardData cardData = targetList[targetList.Count - 1];
+		BattleCardData cardData = targetList[targetList.Count - 1];
 
 		cardPrefab = cardPrefabList[cardData.GetCardNum()];
 
@@ -2627,12 +2438,12 @@ public class BattleManager : MonoBehaviour
 		trashWindow.GetComponent<Window>().OnOff();
 	}
 
-	public void AddTrash(CardData cardData)
+	public void AddTrash(BattleCardData cardData)
 	{    
 		trashList.Add(cardData);
 	}
 
-	public void RemoveTrash(CardData cardData)
+	public void RemoveTrash(BattleCardData cardData)
 	{
 		trashList.Remove(cardData);
 	}

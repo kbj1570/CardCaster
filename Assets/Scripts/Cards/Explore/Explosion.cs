@@ -4,7 +4,6 @@ public class Explosion : CardData
     {
         cardNum = 100;
         cardName = "익스플로전";
-        cardCost = 100;
         cardType = ECardType.Explore;
         cardGuideDescription = "";
         cardAbility = "반경 1칸 내의 벽을 하나 선택하고 파괴한다";

@@ -4,7 +4,6 @@ public class RandomTeleporter : CardData
     {
         cardNum = 99;
         cardName = "랜덤 텔레포터";
-        cardCost = 120;
         cardType = ECardType.Explore;
         cardAbility = "해당 층의 무작위의 장소로 이동한다";
     }
