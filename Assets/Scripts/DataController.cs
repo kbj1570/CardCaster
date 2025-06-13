@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using LitJson;
+using Newtonsoft.Json;
 using System.IO;
 
 public class  DataController : MonoBehaviour
@@ -32,27 +33,51 @@ public class  DataController : MonoBehaviour
         File.WriteAllText(Path.Combine(Application.dataPath , "SaveData.json"), info.ToString());
     }
 
-   
+    public List<CutSceneNode> LoadCutScene(string cutSceneNum)
+    {
+		TextAsset jsonFile = Resources.Load<TextAsset>("CutScenes/cutscene_" + cutSceneNum +".json");
+		if (jsonFile == null)
+		{
+			Debug.LogError("dialogues.json 파일을 찾을 수 없습니다.");
+			return null;
+		}
 
-    // public void SaveCard(CardData value)
-    // {
-    //     JsonData info = JsonMapper.ToJson(value);
+		return JsonConvert.DeserializeObject<List<CutSceneNode>>(jsonFile.text);
+	}
 
-    //     File.WriteAllText(Path.Combine(Application.dataPath , "Card.json"), info.ToString());
-    // }
+    public Dictionary<string, Dialogue> LoadDialogues(string fileName)
+    {
+		TextAsset jsonFile = Resources.Load<TextAsset>("Dialogues/" + fileName);
+		if (jsonFile == null)
+		{
+			Debug.LogError("dialogues.json 파일을 찾을 수 없습니다.");
+			return null;
+		}
 
-    // public CardData LoadCard()
-    // {
-    //     if(File.Exists(Path.Combine(Application.dataPath , "Card.json")))
-    //     {
-    //         CardData data = JsonMapper.ToObject<CardData>(File.ReadAllText(Path.Combine(Application.dataPath , "Card.json")));
-    //         return data;
-    //     }
-    //     return null;
-    // }
+		return JsonConvert.DeserializeObject<Dictionary<string, Dialogue>>(jsonFile.text);
+	}
 
 
-    public Dictionary<string, int> LoadDeck()
+
+	// public void SaveCard(CardData value)
+	// {
+	//     JsonData info = JsonMapper.ToJson(value);
+
+	//     File.WriteAllText(Path.Combine(Application.dataPath , "Card.json"), info.ToString());
+	// }
+
+	// public CardData LoadCard()
+	// {
+	//     if(File.Exists(Path.Combine(Application.dataPath , "Card.json")))
+	//     {
+	//         CardData data = JsonMapper.ToObject<CardData>(File.ReadAllText(Path.Combine(Application.dataPath , "Card.json")));
+	//         return data;
+	//     }
+	//     return null;
+	// }
+
+
+	public Dictionary<string, int> LoadDeck()
     {
         if(File.Exists(Path.Combine(Application.dataPath , "Deck.json")))
         {

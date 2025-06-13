@@ -1,0 +1,62 @@
+[
+	{
+		"commandType": "FadeInScreen",
+		"parameters": "1.0"
+	},
+	{
+		"commandType": "Wait",
+		"parameters": "0.4"
+	},
+	{
+		"commandType": "ShowCharacterRightSide",
+		"parameters": "Brodie_01"
+	},
+	{
+		"commandType": "Wait",
+		"parameters": "2.0"
+	},
+	{
+		"commandType": "ShowCharacterLeftSide",
+		"parameters": "Id_01"
+	},
+	{
+		"commandType": "Wait",
+		"parameters": "0.2"
+	},
+	{
+		"commandType": "HighLightCharacterRightSide",
+		"parameters": ""
+	},
+	{
+		"commandType": "Wait",
+		"parameters": "0.3"
+	},
+	{
+		"commandType": "ShowText",
+		"parameters": "01"
+	},
+	{
+		"commandType": "HighLightCharacterLeftSide",
+		"parameters": ""
+	},
+	{
+		"commandType": "ShowText",
+		"parameters": "03"
+	},
+	{
+		"commandType": "HighLightCharacterRightSide",
+		"parameters": ""
+	},
+	{
+		"commandType": "ShowText",
+		"parameters": "04"
+	},
+	{
+		"commandType": "ShowText",
+		"parameters": "05"
+	},
+	{
+		"commandType": "HideText",
+		"parameters": ""
+	}
+]
