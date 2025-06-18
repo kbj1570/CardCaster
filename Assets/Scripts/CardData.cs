@@ -11,6 +11,7 @@ public class CardData
 	protected string cardGuideDescription;
 	protected ECardType cardType;
 	protected ECardTargetType cardTargetType;
+	protected ECardRarity cardRarity;
 	protected List<PreRequisite> preRequisites;
 
 
@@ -19,6 +20,7 @@ public class CardData
 	public string GetCardName(){return cardName;}
 	public string GetCardAbility(){return cardAbility;}
 	public ECardType GetCardType(){return cardType;}
+	public ECardRarity GetCardRarity() { return cardRarity; }
 	public ECardTargetType GetCardTargetType(){return cardTargetType;}
 	public List<PreRequisite> GetPreRequisites(){return preRequisites;}
 }

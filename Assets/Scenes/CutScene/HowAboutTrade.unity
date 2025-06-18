@@ -385,10 +385,15 @@ MonoBehaviour:
   textBox: {fileID: 2110769026}
   nameBox: {fileID: 2028403591}
   soundManager: {fileID: 0}
-  cutsceneNum: 1
+  cutsceneNum: 
   characters:
   - {fileID: 21300000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
   - {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+  characterList:
+  - name: Brodie_01
+    sprite: {fileID: 21300000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
+  - name: Id_01
+    sprite: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
   soundEffects: []
   backgroundMusic: []
   characterOnLeftSide: {fileID: 386016463}

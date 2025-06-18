@@ -12,8 +12,8 @@ using Random = UnityEngine.Random;
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
-public enum ECardType{None ,Servent, Spell, Explore}
-public enum ECardRarity{None, Common, Uncommon, Rare}
+public enum ECardType{None ,Servent, Spell, Adventure}
+public enum ECardRarity{None, Normal, Rare}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}

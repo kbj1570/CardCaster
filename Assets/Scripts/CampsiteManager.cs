@@ -69,34 +69,6 @@ public class CampsiteManager : MonoBehaviour
 		Debug.Log("데이터를 저장했습니다.");
 	}
 
-	public void OpenCardPack()
-	{
-		ECardRarity eCardRarity;
-		int randomNum = Random.Range(0, 10);
-
-		if(randomNum < 6)
-		{eCardRarity = ECardRarity.Common;}
-		else if(randomNum < 9)
-		{eCardRarity = ECardRarity.Uncommon;}
-		else
-		{eCardRarity = ECardRarity.Rare;}
-
-		switch(eCardRarity)
-		{
-			case ECardRarity.None:
-				break;
-
-			case ECardRarity.Common:
-				break;
-
-			case ECardRarity.Uncommon:
-				break;
-
-			case ECardRarity.Rare:
-				break;
-		}
-
-	}
 
 	public void PlayInventoryOpen()
 	{audioSource.PlayOneShot(inventoryOpen);}
