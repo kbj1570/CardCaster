@@ -4,8 +4,7 @@ public class FlameLizard : ServentCardData
 {
     public FlameLizard()
     {
-        cardNum = 10;
-        serventNum = 3;
+        cardNum = "10";
         cardName = "플레임리자드";
         cardCost = 0;
         cardType = ECardType.Servent;

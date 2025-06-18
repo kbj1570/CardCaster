@@ -7,8 +7,7 @@ public class VioletLichLord : ServentCardData
 {
     public VioletLichLord()
     {
-        cardNum = 4;
-        serventNum = 1;
+        cardNum = "4";
         cardName = "바이올렛 리치로드";
         cardCost = 1;
         cardType = ECardType.Servent;

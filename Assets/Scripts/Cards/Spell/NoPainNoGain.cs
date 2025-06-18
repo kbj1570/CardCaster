@@ -5,8 +5,7 @@ public class NoPainNoGain : SpellCardData
 {
     public NoPainNoGain()
     {
-        cardNum = 5;
-        spellNum = 4;
+        cardNum = "5";
         cardName = "작은 것을 위한 희생";
         cardCost = 1;
         cardType = ECardType.Spell;

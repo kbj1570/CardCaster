@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CardData
 {
 
-	protected int cardNum;
+	protected string cardNum;
 	protected string cardName;
 	protected string cardAbility;
 	protected string cardGuideDescription;
@@ -16,7 +16,7 @@ public class CardData
 
 
 
-	public int GetCardNum(){return cardNum;}
+	public string GetCardNum(){return cardNum;}
 	public string GetCardName(){return cardName;}
 	public string GetCardAbility(){return cardAbility;}
 	public ECardType GetCardType(){return cardType;}
@@ -37,7 +37,7 @@ public class BattleCardData : CardData
 	public EServentAttribute serventAttribute;
 	public ECardType cardType;
 	public int count;
-	public int cardNum;
+	public string cardNum;
 }
 
 public interface IServentCardEffect

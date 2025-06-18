@@ -5,8 +5,7 @@ public class FireCrimson : ServentCardData
 {
     public FireCrimson()
     {
-        cardNum = 13;
-        serventNum = 4;
+        cardNum = "13";
         cardName = "불의 정령 크림슨";
         cardCost = 0;
         cardType = ECardType.Servent;
@@ -24,7 +23,7 @@ public class FireCrimson : ServentCardData
         preRequisite.preRequisite = EPreRequisite.DeckCountOver;
         preRequisite.count = 0;
         preRequisite.cardType = ECardType.None;
-        preRequisite.cardNum = 14;
+        preRequisite.cardNum = "14";
 
         preRequisites.Add(preRequisite);
     }

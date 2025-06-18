@@ -6,8 +6,7 @@ public class GloriousLight : SpellCardData
 {
 	public GloriousLight()
 	{
-		cardNum = 3;
-		spellNum = 2;
+		cardNum = "3";
 		cardName = "악을 멸하는 등불";
 		cardCost = 1;
 		cardType = ECardType.Spell;

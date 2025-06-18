@@ -4,8 +4,7 @@ public class WaterHeize : ServentCardData
 {
     public WaterHeize()
     {
-        cardNum = 14;
-        serventNum = 5;
+        cardNum = "14";
         cardName = "물의 정령 헤이즈";
         cardCost = 0;
         cardType = ECardType.Servent;
@@ -22,7 +21,7 @@ public class WaterHeize : ServentCardData
         preRequisite.preRequisite = EPreRequisite.DeckCountOver;
         preRequisite.count = 0;
         preRequisite.cardType = ECardType.None;
-        preRequisite.cardNum = 13;
+        preRequisite.cardNum = "13";
 
         preRequisites.Add(preRequisite);
     }

@@ -1754,11 +1754,11 @@ public class DungeonManager : MonoBehaviour
 	{
 		switch(cardData.GetCardNum())
 		{
-			case 99: //랜덤 텔레포터
+			case "99": //랜덤 텔레포터
 			ActivateTeleport();
 			break;
 
-			case 100: //익스플로전
+			case "100": //익스플로전
 			nodeMap[nodeNum].GetComponent<RoomNode>().SetRoomType(ERoomType.None);
 			break;
 		}

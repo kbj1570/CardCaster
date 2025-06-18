@@ -40,6 +40,8 @@ public class BattleManager : MonoBehaviour
 	int playerDamageIncrease;
 	int enemyDamageIncrease;
 
+	Dictionary<string, int> cardHashMap = new() { { "101", 0 } };
+
 
 
 	
@@ -320,7 +322,7 @@ public class BattleManager : MonoBehaviour
 		{
 			if(cardType == null ||cardData.GetCardType() == cardType)
 			{
-				GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], selectedCardLayoutGroup.transform);
+				GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], selectedCardLayoutGroup.transform);
 				GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
 				
 				cardObject.GetComponent<DummyCard>().SetLock(true);
@@ -394,96 +396,96 @@ public class BattleManager : MonoBehaviour
 
 
 		
-	IEnumerator ActivateSpell(SpellCardData cardData, Field selectedField)
-	{
-		yield return new WaitForSeconds(.5f);
-		switch(cardData.GetSpellNum())
-		{
-			case 0: //듀플리케이트
+	//IEnumerator ActivateSpell(SpellCardData cardData, Field selectedField)
+	//{
+	//	yield return new WaitForSeconds(.5f);
+	//	switch(cardData.GetCardNum())
+	//	{
+	//		case 0: //듀플리케이트
 
-			deckList.Add(selectedField.GetCardData());
-			deckList.Add(selectedField.GetCardData());
-			Shuffle();
+	//		deckList.Add(selectedField.GetCardData());
+	//		deckList.Add(selectedField.GetCardData());
+	//		Shuffle();
 
-			break;
+	//		break;
 		   
 
-			case 3: //타오르는 심장
-			selectedField.GainForce(selectedField.GetForce());
-			break;
+	//		case 3: //타오르는 심장
+	//		selectedField.GainForce(selectedField.GetForce());
+	//		break;
 
-			case 4: //작은 것을 위한 희생
+	//		case 4: //작은 것을 위한 희생
 			
-			int x = trashCount;
+	//		int x = trashCount;
 			
-			foreach(BattleCardData card in trashList)
-			{deckList.Add(card);}
-			trashList.Clear();
+	//		foreach(BattleCardData card in trashList)
+	//		{deckList.Add(card);}
+	//		trashList.Clear();
 
-			playerHealth -= x;
-			break;
+	//		playerHealth -= x;
+	//		break;
 
-			case 5: //오직 침묵만이
+	//		case 5: //오직 침묵만이
 
-			if(field_1.GetComponent<Field>().GetFilled())
-			{field_1.GetComponent<Field>().Kill();}
+	//		if(field_1.GetComponent<Field>().GetFilled())
+	//		{field_1.GetComponent<Field>().Kill();}
 
-			if(field_2.GetComponent<Field>().GetFilled())
-			{field_2.GetComponent<Field>().Kill();}
+	//		if(field_2.GetComponent<Field>().GetFilled())
+	//		{field_2.GetComponent<Field>().Kill();}
 
-			if(field_3.GetComponent<Field>().GetFilled())
-			{field_3.GetComponent<Field>().Kill();}
+	//		if(field_3.GetComponent<Field>().GetFilled())
+	//		{field_3.GetComponent<Field>().Kill();}
 
-			if(field_4.GetComponent<Field>().GetFilled())
-			{field_4.GetComponent<Field>().Kill();}
+	//		if(field_4.GetComponent<Field>().GetFilled())
+	//		{field_4.GetComponent<Field>().Kill();}
 
-			if(field_5.GetComponent<Field>().GetFilled())
-			{field_5.GetComponent<Field>().Kill();}
+	//		if(field_5.GetComponent<Field>().GetFilled())
+	//		{field_5.GetComponent<Field>().Kill();}
 
-			if(field_6.GetComponent<Field>().GetFilled())
-			{field_6.GetComponent<Field>().Kill();}
-			break;
+	//		if(field_6.GetComponent<Field>().GetFilled())
+	//		{field_6.GetComponent<Field>().Kill();}
+	//		break;
 
-			case 9: // 마스크월드
-			{
-				if(field_1.GetFilled())
-				{field_1.GainForce(1);}
+	//		case 9: // 마스크월드
+	//		{
+	//			if(field_1.GetFilled())
+	//			{field_1.GainForce(1);}
 
-				if(field_2.GetFilled())
-				{field_2.GainForce(1);}
+	//			if(field_2.GetFilled())
+	//			{field_2.GainForce(1);}
 
-				if(field_3.GetFilled())
-				{field_3.GainForce(1);}
+	//			if(field_3.GetFilled())
+	//			{field_3.GainForce(1);}
 
-				if(field_4.GetFilled())
-				{field_4.GainForce(1);}
+	//			if(field_4.GetFilled())
+	//			{field_4.GainForce(1);}
 
-				if(field_5.GetFilled())
-				{field_5.GainForce(1);}
+	//			if(field_5.GetFilled())
+	//			{field_5.GainForce(1);}
 
-				if(field_6.GetFilled())
-				{field_6.GainForce(1);}
+	//			if(field_6.GetFilled())
+	//			{field_6.GainForce(1);}
 				
-				break;
-			}
+	//			break;
+	//		}
 
-			case 10: // 투사의 의지
-			{
-				selectedField.GainForce(selectedField.GetForce());
-				selectedField.SetSuicide(true);
-				break;
-			}
+	//		case 10: // 투사의 의지
+	//		{
+	//			selectedField.GainForce(selectedField.GetForce());
+	//			selectedField.SetSuicide(true);
+	//			break;
+	//		}
 
-			case 11: // 절규하는 투사
-			{
-				selectedField.GainForce(selectedField.GetForce());
-				selectedField.AddCondition(EServentCondition.Madness);
-				break;
-			}
+	//		case 11: // 절규하는 투사
+	//		{
+	//			selectedField.GainForce(selectedField.GetForce());
+	//			selectedField.AddCondition(EServentCondition.Madness);
+	//			break;
+	//		}
 
-		}
+	//	}
 
-	}
+	//}
 
 	public void HealPlayer(int value)
 	{
@@ -746,14 +748,14 @@ public class BattleManager : MonoBehaviour
 	IEnumerator CheckBattleAbility(Field start, Field end)
 	{
 		yield return new WaitForSeconds(0.5f);
-		switch(end.GetCardData().GetServentNum())
-		{
-			case 1000:
-			end.SetHealth(0);
-			Debug.Log("뚜쉬뚜쉬");
-			yield return new WaitForSeconds(0.5f);
-			break;
-		}
+		//switch(end.GetCardData().GetServentNum())
+		//{
+		//	case 1000:
+		//	end.SetHealth(0);
+		//	Debug.Log("뚜쉬뚜쉬");
+		//	yield return new WaitForSeconds(0.5f);
+		//	break;
+		//}
 	}
 
 	IEnumerator CheckDeathAbility(int serventNum)
@@ -856,7 +858,7 @@ public class BattleManager : MonoBehaviour
 
 	public GameObject InstantiateCard(BattleCardData battleCardData)
 	{
-		GameObject cardPrefab = cardPrefabList[battleCardData.GetCardNum()];
+		GameObject cardPrefab = cardPrefabList[cardHashMap[battleCardData.GetCardNum()]];
 		GameObject cardObject = Instantiate(cardPrefab, new Vector3(), Utils.QI);
 		cardObject.transform.SetParent(canvas.transform);
 		cardObjectList.Add(cardObject);
@@ -1695,7 +1697,7 @@ public class BattleManager : MonoBehaviour
 						{
 							case ECardType.None:
 							{
-								if(value.cardNum == 0)
+								if(value.cardNum == "0")
 								{flag = deckCount > value.count;}
 								else
 								{
@@ -1843,6 +1845,26 @@ public class BattleManager : MonoBehaviour
 		return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
 	}
 
+	public void DiscardCard(BattleCardObject card)
+	{
+		handList.RemoveAt(card.GetCardOrder());
+		cardObjectList.Remove(card.gameObject);
+		AddTrash(card.GetCardData());
+		card.SendMissile(alertPoint, hole.transform);
+		costCount++;
+
+		List<BattleCardData> newHandList = new List<BattleCardData>();
+
+		foreach (BattleCardData cardData in handList)
+		{ newHandList.Add(cardData); }
+
+		for (int i = 0; i < cardObjectList.Count; ++i)
+		{ cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i); }
+
+		handList = newHandList;
+		CardAlignmentAlt();
+	}
+
 	public IEnumerator CardEndDrag(BattleCardObject card, Field targetField)
 	{
 		foreach(GameObject gameObject in anyWhereAreas)
@@ -1857,22 +1879,7 @@ public class BattleManager : MonoBehaviour
 
 		if(mouseOnArea == EMouseOnArea.Hole)
 		{
-			handList.RemoveAt(card.GetCardOrder());
-			cardObjectList.Remove(card.gameObject);
-			AddTrash(card.GetCardData());
-			card.SendMissile(alertPoint, hole.transform);
-			costCount++;
-
-			List<BattleCardData> newHandList = new List<BattleCardData>();
-
-			foreach(BattleCardData cardData in handList)
-			{newHandList.Add(cardData);}
-
-			for(int i = 0; i < cardObjectList.Count; ++i)
-			{cardObjectList[i].GetComponent<BattleCardObject>().SetCardOrder(i);}
-
-			handList = newHandList;
-			CardAlignmentAlt();
+			DiscardCard(card);
 		}
 		else
 		{
@@ -1899,7 +1906,7 @@ public class BattleManager : MonoBehaviour
 					targetField.Summon(
 						serventCardData,
 						Instantiate(
-							playerServentPrefabList[serventCardData.GetServentNum()],
+							playerServentPrefabList[cardHashMap[serventCardData.GetCardNum()]],
 							targetField.transform.position,
 							Utils.QI
 						)
@@ -1982,7 +1989,7 @@ public class BattleManager : MonoBehaviour
 
 		BattleCardData cardData = targetList[targetList.Count - 1];
 
-		cardPrefab = cardPrefabList[cardData.GetCardNum()];
+		cardPrefab = cardPrefabList[cardHashMap[cardData.GetCardNum()]];
 
 
 
@@ -2406,7 +2413,7 @@ public class BattleManager : MonoBehaviour
 	{
 		foreach(CardData cardData in trashList)
 		{
-			GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()], trashLayoutGroup.transform);
+			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], trashLayoutGroup.transform);
 			GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
 			
 			cardObject.GetComponent<DummyCard>().SetLock(true);

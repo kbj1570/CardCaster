@@ -8,8 +8,7 @@ public class ElementalBoost : SpellCardData
 	
 	public ElementalBoost()
 	{
-		cardNum = 1;
-		spellNum = 1;
+		cardNum = "1";
 		cardName = "엘리멘탈 부스트";
 		cardCost = 2;
 		cardType = ECardType.Spell;

@@ -2,8 +2,6 @@ public class ChaoticCorvus : EnemyServentCardData
 {
     public ChaoticCorvus()
     {
-        cardNum = 0;
-        serventNum = 1000;
         cardName = "까마귀";
         cardCost = 0;
         cardType = ECardType.Servent;

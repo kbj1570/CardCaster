@@ -4,8 +4,7 @@ public class CrescentLancer : ServentCardData
 {
     public CrescentLancer()
     {
-        cardNum = 0;
-        serventNum = 0;
+        cardNum = "101";
         cardName = "크레센트 랜서";
         cardCost = 1;
         cardType = ECardType.Servent;

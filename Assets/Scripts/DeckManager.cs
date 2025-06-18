@@ -40,6 +40,8 @@ public class DeckManager : MonoBehaviour
 	public GameObject nextButton;
 	public ScrollRect scrollRect;
 
+	public Dictionary<string, int> cardHashMap;
+
 	void Start()
 	{
 		saveData = DataController.Inst.LoadData();
@@ -50,6 +52,8 @@ public class DeckManager : MonoBehaviour
 		myDeckList = new();
 		deckCardObjectList = new();
 		//scrollRect.normalizedPosition = new Vector2(1, 1);
+
+		cardHashMap = DataController.Inst.LoadCardHashMap();
 
 		foreach (KeyValuePair<string, int> value in saveData.cardList)
 		{ myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
@@ -70,7 +74,7 @@ public class DeckManager : MonoBehaviour
 
 	public void FocusOnCard(CardData cardData)
 	{
-		focusOnCard = Instantiate(dummyCardPrefabList[cardData.GetCardNum()],
+		focusOnCard = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]],
 			new Vector3(0,0,0) , Utils.QI);
 			focusOnCard.transform.SetParent(focusOnCardPosition);
 			focusOnCard.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
@@ -155,7 +159,7 @@ public class DeckManager : MonoBehaviour
 
 		foreach(KeyValuePair<CardData, int> item in currentCardList)
 		{
-			GameObject cardObject = Instantiate(dummyCardPrefabList[item.Key.GetCardNum()],
+			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[item.Key.GetCardNum()]],
 			new Vector3(0,0,0) , Utils.QI);
 			cardObject.transform.SetParent(cardLocation[count].transform);
 			cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
@@ -257,7 +261,7 @@ public class DeckManager : MonoBehaviour
 			PlayerData.saveData.deck[value.GetCardNum().ToString()]++;
 		}
 
-		GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], cardLocation[order].position , Utils.QI);
+		GameObject gameObject = Instantiate(dummyCardPrefabList[cardHashMap[value.GetCardNum()]], cardLocation[order].position , Utils.QI);
 		gameObject.transform.SetParent(window.transform);
 		gameObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
 		UpdatePage();
@@ -275,7 +279,7 @@ public class DeckManager : MonoBehaviour
 			PlayerData.saveData.deck.Remove(value.GetCardNum().ToString());
 		}
 
-		GameObject gameObject = Instantiate(dummyCardPrefabList[value.GetCardNum()], gridlayoutPosition.position , Utils.QI);
+		GameObject gameObject = Instantiate(dummyCardPrefabList[cardHashMap[value.GetCardNum()]], gridlayoutPosition.position , Utils.QI);
 		gameObject.transform.SetParent(window.transform);
 		gameObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
 

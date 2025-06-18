@@ -4,8 +4,7 @@ public class AbyssSeeker : ServentCardData
 {
     public AbyssSeeker()
     {
-        cardNum = 18;
-        serventNum = 7;
+        cardNum = "18";
         cardName = "심연의 탐구자";
         cardCost = 2;
         cardType = ECardType.Servent;

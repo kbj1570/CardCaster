@@ -2,7 +2,6 @@ using System.Collections;
 
 public abstract class ServentCardData : BattleCardData, IServentCardEffect
 {
-	protected int serventNum;
 	protected EServentAttribute serventAttribute;
 	protected EServentSize serventSize;
 	protected EServentType serventType;
@@ -24,7 +23,6 @@ public abstract class ServentCardData : BattleCardData, IServentCardEffect
 	public EServentType GetServentType() { return serventType; }
 	public EServentAttribute GetAttribute() { return serventAttribute; }
 	public EServentSize GetSize() { return serventSize; }
-	public int GetServentNum() { return serventNum; }
 	public bool GetPenetrate() { return penetrate; }
 	public bool GetVoidWalker() { return voidWalker; }
 	public bool GetHasAbility() { return hasAbility; }

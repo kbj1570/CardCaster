@@ -5,8 +5,7 @@ public class CookOfDarkness : ServentCardData
 {
     public CookOfDarkness()
     {
-        cardNum = 9;
-        serventNum = 2;
+        cardNum = "9";
         cardName = "암흑요리사";
         cardCost = 0;
         cardType = ECardType.Servent;
@@ -23,7 +22,7 @@ public class CookOfDarkness : ServentCardData
         preRequisite.preRequisite = EPreRequisite.DeckCountOver;
         preRequisite.count = 0;
         preRequisite.cardType = ECardType.None;
-        preRequisite.cardNum = 7;
+        preRequisite.cardNum = "7";
 
         preRequisites.Add(preRequisite);
     }

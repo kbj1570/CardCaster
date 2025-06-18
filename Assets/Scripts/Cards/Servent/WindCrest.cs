@@ -7,8 +7,7 @@ public class WindCrest : ServentCardData
 {
     public WindCrest()
     {
-        cardNum = 16;
-        serventNum = 6;
+        cardNum = "16";
         cardName = "바람의 정령 크래스트";
         cardCost = 0;
         cardType = ECardType.Servent;

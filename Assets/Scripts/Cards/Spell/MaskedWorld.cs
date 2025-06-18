@@ -6,10 +6,9 @@ public class MaskedWorld : SpellCardData
 {
 	public MaskedWorld()
 	{
-		cardNum = 15;
+		cardNum = "15";
 		cardName = "마스크월드";
 		cardCost = 1;
-		spellNum = 9;
 		cardType = ECardType.Spell;
 		cardGuideDescription = ""; 
 		cardAbility = "모든 소환수들의 포스를 1 증가시킨다.";

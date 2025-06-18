@@ -26,6 +26,9 @@ public class CollectorManager : MonoBehaviour
 	public TMP_Text cardCountText;
 	ECardType selectedCardType = ECardType.None;
 
+
+	public Dictionary<string, int> cardHashMap;
+
 	int adventureCardCount = 0;
 	int totalCardCount = 0;
 	int serventCardCount = 0;
@@ -55,6 +58,8 @@ public class CollectorManager : MonoBehaviour
 	//카드도감
 	void Awake()
 	{
+
+		cardHashMap = DataController.Inst.LoadCardHashMap();
 		CreatePage();
 	}
 
@@ -72,7 +77,6 @@ public class CollectorManager : MonoBehaviour
 	public void InitiatePage()
 	{
 		currentPage = 0;
-
 		UpdatePage();
 	}
 
@@ -125,7 +129,7 @@ public class CollectorManager : MonoBehaviour
 
 		foreach (CardData  cardData in currentCardList)
 		{
-			GameObject cardObject = Instantiate(dummyCardPrefabList[cardData.GetCardNum()],
+			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]],
 			new Vector3(0, 0, 0), Utils.QI);
 			cardObject.transform.SetParent(cardLocations[count].transform);
 			cardObject.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);

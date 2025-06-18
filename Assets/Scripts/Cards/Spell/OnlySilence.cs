@@ -5,8 +5,7 @@ public class OnlySilence : SpellCardData
 {
     public OnlySilence()
     {
-        cardNum = 6;
-        spellNum = 5;
+        cardNum = "6";
         cardName = "오직 침묵만이";
         cardCost = 1;
         cardType = ECardType.Spell;

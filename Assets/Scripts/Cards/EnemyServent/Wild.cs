@@ -2,8 +2,6 @@ public class Wild : EnemyServentCardData
 {
     public Wild()
     {
-        cardNum = 0;
-        serventNum = 1001;
         cardName = "야생동물";
         cardCost = 0;
         cardType = ECardType.Servent;

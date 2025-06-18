@@ -33,6 +33,17 @@ public class  DataController : MonoBehaviour
         File.WriteAllText(Path.Combine(Application.dataPath , "SaveData.json"), info.ToString());
     }
 
+    public Dictionary<string, int> LoadCardHashMap()
+    {
+        Dictionary<string, int> cardHashMap = new() {
+            { "101", 0 },
+			{ "102", 1 },
+            { "103", 2 },
+			{ "104", 3 }
+		};
+        return cardHashMap;
+	}
+
     public List<CutSceneNode> LoadCutScene(string cutSceneNum)
     {
 		TextAsset jsonFile = Resources.Load<TextAsset>("CutScenes/cutscene_" + cutSceneNum +".json");

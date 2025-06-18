@@ -9,7 +9,7 @@ using Coffee.UIEffects;
 
 
 
-public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 	public UIEffect uIEffect;
 	public TMP_Text nameTMP;
@@ -246,6 +246,14 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 		currentSequence = DOTween.Sequence()
 			.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
 			.Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+	}
+
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		if (eventData.button == PointerEventData.InputButton.Right)
+		{
+			BattleManager.Inst.DiscardCard(this);
+		}
 	}
 
 	public void SetOriginPosition(Vector3 value)

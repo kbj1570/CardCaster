@@ -4,8 +4,7 @@ public class HeartOnFire : SpellCardData
 {
     public HeartOnFire()
     {
-        cardNum = 12;
-        spellNum = 3;
+        cardNum = "12";
         cardName = "타오르는 심장";
         cardCost = 1;
         cardType = ECardType.Spell;

@@ -2,7 +2,7 @@ public class Explosion : CardData
 {
     public Explosion()
     {
-        cardNum = 100;
+        cardNum = "100";
         cardName = "익스플로전";
         cardType = ECardType.Adventure;
         cardGuideDescription = "";
