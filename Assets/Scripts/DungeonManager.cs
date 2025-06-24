@@ -77,7 +77,7 @@ public class DungeonManager : MonoBehaviour
 	public GameObject popUpMessage;
 
 
-	private Encounter currentEncounter;
+	private RandomEvent currentEncounter;
 	public GameObject encounterWindow;
 	public TMP_Text encounterName;
 	public TMP_Text encounterDescription;
@@ -844,84 +844,34 @@ public class DungeonManager : MonoBehaviour
 		}
 	}
 
-	public bool Foo(SelectionNode selectionNode)
-	{
-		if(selectionNode == null)
-		return false;
+	//public bool Foo(EventSelection selectionNode)
+	//{
+	//	if(selectionNode == null)
+	//	return false;
 
-		switch(selectionNode.GetRequireType())
-		{
-			case ERequireType.None:
-			return true;
+	//	switch(selectionNode.GetRequireType())
+	//	{
+	//		case ERequireType.None:
+	//		return true;
 
-			case ERequireType.EGold:
-			return selectionNode.GetRequireGold() <= PlayerManager.Inst.GetGold();
+	//		case ERequireType.EGold:
+	//		return selectionNode.GetRequireGold() <= PlayerManager.Inst.GetGold();
 
-			case ERequireType.EHealth:
-			return selectionNode.GetRequireHealth() <= PlayerManager.Inst.GetHealth();
+	//		case ERequireType.EHealth:
+	//		return selectionNode.GetRequireHealth() <= PlayerManager.Inst.GetHealth();
 
-			// case ERequireType.EItem:
-			// return myItemList.Contains(selectionNode.GetRequireItem());
+	//		// case ERequireType.EItem:
+	//		// return myItemList.Contains(selectionNode.GetRequireItem());
 
-			case ERequireType.ECard:
-			return true;
-		}
-		return false;
+	//		case ERequireType.ECard:
+	//		return true;
+	//	}
+	//	return false;
 
-		//아이템 종류
+	//	//아이템 종류
 		
-	}
+	//}
 
-	public void ShowEncounter()
-	{
-		encounterWindow.GetComponent<Window>().OnOff();
-		currentEncounter = new FunnyCookingTime();
-		
-		firstSelectionButton.SetActive(false);
-		secondSelectionButton.SetActive(false);
-		thirdSelectionButton.SetActive(false);
-		hiddenSelectionButton.SetActive(false);
-
-		encounterName.text = currentEncounter.GetName();
-		encounterDescription.text = currentEncounter.GetText();
-
-		if(currentEncounter.GetFirstSelection() != null)
-		{
-			if(Foo(currentEncounter.GetFirstSelection()))
-			{
-				firstSelectionButton.SetActive(true);
-				firstSelection.text = currentEncounter.GetFirstSelection().GetSelectionTitle();
-			}
-		}
-
-		if(currentEncounter.GetSecondSelection() == null)
-		{
-			if(Foo(currentEncounter.GetSecondSelection()))
-			{
-				secondSelectionButton.SetActive(true);
-				secondSelection.text = currentEncounter.GetSecondSelection().GetSelectionTitle();
-			}
-		}
-
-		if(currentEncounter.GetThirdSelection() == null)
-		{
-			if(Foo(currentEncounter.GetThirdSelection()))
-			{
-				thirdSelectionButton.SetActive(true);
-				thirdSelection.text = currentEncounter.GetThirdSelection().GetSelectionTitle();
-			}
-		}
-
-		if(currentEncounter.GetHiddenSelection() == null)
-		{
-			if(Foo(currentEncounter.GetHiddenSelection()))
-			{
-				hiddenSelectionButton.SetActive(true);
-				hiddenSelection.text = currentEncounter.GetHiddenSelection().GetSelectionTitle();
-			}
-		}
-
-	}
 
 	
 	private void SetNodeRoom()
@@ -1654,6 +1604,11 @@ public class DungeonManager : MonoBehaviour
 	private void GainItem(Node node)
 	{
 		AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
+
+		if(node.GetItem().GetItemCategory() == EItemCategory.EOthers)
+		{ }
+		else if (node.GetItem().GetItemCategory() == EItemCategory.ETool)
+		{ }
 
 		//if (myItemList.ContainsKey(node.GetItem()))
 		//{myItemList[node.GetItem()]++;}

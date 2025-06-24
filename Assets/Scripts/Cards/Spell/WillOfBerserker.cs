@@ -4,11 +4,11 @@ public class WillOfBerserker : SpellCardData
 {
     public WillOfBerserker()
     {
-        cardNum = "17";
+        cardNum = "110";
         cardName = "투사의 의지";
         cardCost = 0;
         cardType = ECardType.Spell;
-        cardGuideDescription = ""; 
+        cardStoryDesc = ""; 
         cardAbility = "자신의 소환수 하나의 포스를 2배로 한다. 그 소환수는 이 턴이 끝나면 소멸한다.";
         cardTargetType = ECardTargetType.Select;
 

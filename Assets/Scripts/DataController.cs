@@ -181,11 +181,11 @@ public class  DataController : MonoBehaviour
         return null;
     }
 
-    public List<Encounter> LoadEncounterList()
+    public List<RandomEvent> LoadEncounterList()
     {
         if(File.Exists(Path.Combine(Application.dataPath , "Encounter.json")))
         {
-            List<Encounter> data = JsonMapper.ToObject<List<Encounter>>(File.ReadAllText(Path.Combine(Application.dataPath , "Encounter.json")));
+            List<RandomEvent> data = JsonMapper.ToObject<List<RandomEvent>>(File.ReadAllText(Path.Combine(Application.dataPath , "Encounter.json")));
             return data;
         }
         return null;

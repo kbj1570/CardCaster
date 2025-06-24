@@ -24,7 +24,7 @@ public class Graveyard : Dungeon
         };
 
         encounterList = new(){
-            {new MeetInTheDark(), 1}
+
         };
 
         maxGold = 20;

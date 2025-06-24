@@ -9,7 +9,7 @@ public class Duplicate : SpellCardData
         cardName = "듀플리케이트";
         cardCost = 1;
         cardType = ECardType.Spell;
-        cardGuideDescription = "";
+        cardStoryDesc = "";
         cardAbility = "자신의 소환수 하나를 선택하고 2장 복사해서 덱에 넣는다";
         cardTargetType = ECardTargetType.Select;
 

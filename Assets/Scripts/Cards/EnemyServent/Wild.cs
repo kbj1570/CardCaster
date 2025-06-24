@@ -7,7 +7,7 @@ public class Wild : EnemyServentCardData
         cardType = ECardType.Servent;
         serventType = EServentType.Enemy;
         force = 2;
-        cardGuideDescription = "";
+        cardStoryDesc = "";
         cardAbility = "";
         canUseAbility = true;
         hasAbility = true;

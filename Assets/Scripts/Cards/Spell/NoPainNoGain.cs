@@ -9,7 +9,7 @@ public class NoPainNoGain : SpellCardData
         cardName = "작은 것을 위한 희생";
         cardCost = 1;
         cardType = ECardType.Spell;
-        cardGuideDescription = "";
+        cardStoryDesc = "";
         cardAbility = "자신의 묘지의 카드를 전부 덱으로 되돌린다. 그리고 그 수만큼 자신은 HP를 잃는다.";
         cardTargetType = ECardTargetType.Selected;
 

@@ -8,7 +8,7 @@ public class CardData
 	protected string cardNum;
 	protected string cardName;
 	protected string cardAbility;
-	protected string cardGuideDescription;
+	protected string cardStoryDesc;
 	protected ECardType cardType;
 	protected ECardTargetType cardTargetType;
 	protected ECardRarity cardRarity;

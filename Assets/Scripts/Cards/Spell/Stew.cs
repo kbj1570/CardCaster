@@ -8,7 +8,7 @@ public class Stew : SpellCardData
 		cardName = "스튜";
 		cardCost = 0;
 		cardType = ECardType.Spell;
-		cardGuideDescription = "";
+		cardStoryDesc = "";
 		cardAbility = "자신의 HP를 1 회복한다.";
 		cardTargetType = ECardTargetType.Selected;
 

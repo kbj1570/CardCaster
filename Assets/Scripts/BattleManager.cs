@@ -3,10 +3,12 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
@@ -111,7 +113,6 @@ public class BattleManager : MonoBehaviour
 	public GameObject invisibleImage;
 
 	private bool myTurn;
-	private bool isLoading;
 
 
 	public GameObject battleWindowLeftSide;
@@ -157,6 +158,8 @@ public class BattleManager : MonoBehaviour
 
 
 	public GameObject alertMessage;
+
+	public GameObject gameOverWindow;
 
 	private int selectedLimit;
 	private bool isActionDone = false;
@@ -242,7 +245,6 @@ public class BattleManager : MonoBehaviour
 		Inst = this;
 		enemies = BattleData.enemies;
 		GameSetup();
-		isLoading = true;
 
 		handList = new();
 		selectedCards = new();
@@ -573,6 +575,49 @@ public class BattleManager : MonoBehaviour
 
 	public IEnumerator GameOver()
 	{
+		List<string> items = PlayerData.saveData.items;
+		Dictionary<string, int> others = PlayerData.saveData.others;
+
+		int itemCount = items.Count / 2;
+		int othersCount = others.Count / 2;
+		int randomNum = 0;
+
+		for (int i = 0; i < itemCount; ++i)
+		{
+			randomNum = Random.Range(0, items.Count);
+			items.RemoveAt(randomNum);
+		}
+
+
+		List<int> othersList = others.Values.ToList();
+
+		int discardCount = 0;
+
+		while(discardCount < othersCount)
+		{
+			randomNum = Random.Range(0, othersList.Count);
+
+			if(othersList[randomNum] > 0)
+			{
+				othersList[randomNum]--;
+				discardCount++;
+			}
+		}
+		List<string> keys = others.Keys.ToList();
+
+		int count = 0;
+		foreach (string key in keys)
+		{
+			if(othersList[count] == 0)
+			{
+				others.Remove(key);
+			}
+			else
+			{
+				others[key] = othersList[count];
+			}
+			count++;
+		}
 
 		yield return null;
 	}
@@ -649,7 +694,6 @@ public class BattleManager : MonoBehaviour
 	public IEnumerator StartGameCo()
 	{
 		//GameSetup();
-		isLoading = true;
 
 		yield return new WaitForSeconds(0.35f);
 		StartCoroutine(StartTurnCo());
@@ -768,7 +812,6 @@ public class BattleManager : MonoBehaviour
 
 	IEnumerator StartTurnCo()
 	{        
-		isLoading = true;
 		turnState = ETurnState.None;
 
 		field_1.GetComponent<Field>().SetAttacked(false);
@@ -804,7 +847,6 @@ public class BattleManager : MonoBehaviour
 
 
 		yield return delay07;
-		isLoading = false;
 	}
 
 	public void StartEnemyTurn()

@@ -10,7 +10,7 @@ public class MaskedWorld : SpellCardData
 		cardName = "마스크월드";
 		cardCost = 1;
 		cardType = ECardType.Spell;
-		cardGuideDescription = ""; 
+		cardStoryDesc = ""; 
 		cardAbility = "모든 소환수들의 포스를 1 증가시킨다.";
 		cardTargetType = ECardTargetType.Selected;
 

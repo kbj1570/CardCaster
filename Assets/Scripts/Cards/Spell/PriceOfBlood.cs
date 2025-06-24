@@ -9,7 +9,7 @@ public class PriceOfBlood : SpellCardData
         cardName = "피의 대가";
         cardCost = 0;
         cardType = ECardType.Spell;
-        cardGuideDescription = ""; 
+        cardStoryDesc = ""; 
         cardAbility = "자신의 HP를 4 잃는다. 1장 드로우한다.";
         cardTargetType = ECardTargetType.Selected;
 

@@ -10,7 +10,7 @@ public class FlameLizard : ServentCardData
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
-        cardGuideDescription = "";
+        cardStoryDesc = "";
         cardAbility = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
