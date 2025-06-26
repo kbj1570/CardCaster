@@ -13,7 +13,7 @@ public class Dungeon
     protected Dictionary<Enemy, int> enemyList;
     protected Dictionary<Item, int> itemList;
 	protected Dictionary<int, string> safeFloorList;
-	protected Dictionary<RandomEvent, int> encounterList;
+	protected Dictionary<RandomEvent, int> randomEventList;
     protected List<RandomEvent> bannedEncounterList;
     public string GetDungeonName()
     {return dungeonName;}
@@ -44,8 +44,8 @@ public class Dungeon
     public Dictionary<Item, int> GetItemList()
     {return itemList;}
 
-    public Dictionary<RandomEvent, int> GetEncounterList()
-    {return encounterList;}
+    public Dictionary<RandomEvent, int> GetRandomEventList()
+    {return randomEventList;}
     public List<RandomEvent> GetBannedEncounterList()
     {return bannedEncounterList;}
 

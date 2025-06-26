@@ -29,110 +29,125 @@ public class RandomEventManager : MonoBehaviour
 	Dictionary<string, EventNode> eventNodes;
 
 
+	void Start()
+	{
+
+	}
+
+	void Awake()
+	{
+		randomEvent = new FunnyCookingTime();
+		Initiate();
+	}
+
+
+
+
 	public void Initiate()
 	{
 		eventNameText.text = randomEvent.GetName();
-		eventDescText.text = randomEvent.GetDesc();
-
+		eventDescText.text = randomEvent.GetDesc()[0];
 		eventNodes = randomEvent.GetEventNodes();
+
+		Load("node_00");
 	}
 
-	public void Load()
+	public void Load(string nodeNum)
 	{
-		currentNode = eventNodes["node_01"];
-		List<EventSelection> eventSelections = currentNode.eventSelections;
 
+		selectionButton_0.SetActive(false);
+		selectionButton_1.SetActive(false);
+		selectionButton_2.SetActive(false);
+		selectionButton_3.SetActive(false);
 
+		endButton.SetActive(false);
 
-		switch (eventSelections.Count)
-		{
-			case 0:
-				endButton.SetActive(true);
-				break;
-
-			case 1:
-				selectionButton_0.SetActive(true);
-				selectionText_0.text = eventSelections[0].text;
-				break;
-
-			case 2:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-
-				selectionText_0.text = eventSelections[0].text;
-				selectionText_1.text = eventSelections[1].text;
-				break;
-
-			case 3:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-				selectionButton_2.SetActive(true);
-
-				selectionText_0.text = eventSelections[0].text;
-				selectionText_1.text = eventSelections[1].text;
-				selectionText_2.text = eventSelections[2].text;
-				break;
-
-			case 4:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-				selectionButton_2.SetActive(true);
-				selectionButton_3.SetActive(true);
-
-				selectionText_0.text = eventSelections[0].text;
-				selectionText_1.text = eventSelections[1].text;
-				selectionText_2.text = eventSelections[2].text;
-				selectionText_3.text = eventSelections[3].text;
-				break;
-		}
-	}
-
-	public void LoadNextNode(string nodeNum)
-	{
 		currentNode = eventNodes[nodeNum];
+		currentEventSelections = currentNode.eventSelections;
+		eventDescText.text = currentNode.desc[0];
 
-		switch (currentEventSelections.Count)
+		if (currentEventSelections == null)
 		{
-			case 0:
-				endButton.SetActive(true);
-				break;
-
-			case 1:
-				selectionButton_0.SetActive(true);
-				selectionText_0.text = currentEventSelections[0].text;
-				break;
-
-			case 2:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-
-				selectionText_0.text = currentEventSelections[0].text;
-				selectionText_1.text = currentEventSelections[1].text;
-				break;
-
-			case 3:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-				selectionButton_2.SetActive(true);
-
-				selectionText_0.text = currentEventSelections[0].text;
-				selectionText_1.text = currentEventSelections[1].text;
-				selectionText_2.text = currentEventSelections[2].text;
-				break;
-
-			case 4:
-				selectionButton_0.SetActive(true);
-				selectionButton_1.SetActive(true);
-				selectionButton_2.SetActive(true);
-				selectionButton_3.SetActive(true);
-
-				selectionText_0.text = currentEventSelections[0].text;
-				selectionText_1.text = currentEventSelections[1].text;
-				selectionText_2.text = currentEventSelections[2].text;
-				selectionText_3.text = currentEventSelections[3].text;
-				break;
+			eventDescText.text = randomEvent.GetResult();
+			endButton.SetActive(true);
 		}
+		else
+		{
+			switch (currentEventSelections.Count)
+			{
+				case 0:
+					endButton.SetActive(true);
+					break;
 
+				case 1:
+					selectionButton_0.SetActive(true);
+					selectionText_0.text = currentEventSelections[0].text;
+					break;
+
+				case 2:
+					selectionButton_0.SetActive(true);
+					selectionButton_1.SetActive(true);
+
+					selectionText_0.text = currentEventSelections[0].text;
+					selectionText_1.text = currentEventSelections[1].text;
+					break;
+
+				case 3:
+					selectionButton_0.SetActive(true);
+					selectionButton_1.SetActive(true);
+					selectionButton_2.SetActive(true);
+
+					selectionText_0.text = currentEventSelections[0].text;
+					selectionText_1.text = currentEventSelections[1].text;
+					selectionText_2.text = currentEventSelections[2].text;
+					break;
+
+				case 4:
+					selectionButton_0.SetActive(true);
+					selectionButton_1.SetActive(true);
+					selectionButton_2.SetActive(true);
+					selectionButton_3.SetActive(true);
+
+					selectionText_0.text = currentEventSelections[0].text;
+					selectionText_1.text = currentEventSelections[1].text;
+					selectionText_2.text = currentEventSelections[2].text;
+					selectionText_3.text = currentEventSelections[3].text;
+					break;
+			}
+		}
 	}
 
+	public void LoadNextNode(int nodeOrder)
+	{
+
+		
+
+	
+		switch(currentEventSelections[nodeOrder].effect)
+		{
+			case EEventEffectType.None:
+				break;
+
+			case EEventEffectType.EGainItem:
+				break;
+
+			case EEventEffectType.EGainGold:
+				break;
+
+			case EEventEffectType.EAddValue:
+
+				int value = Int32.Parse(currentEventSelections[nodeOrder].effectValue);
+
+				randomEvent.resultValue += value ;
+
+
+				break;
+		}
+		Load(currentEventSelections[nodeOrder].nextNodeId);
+	}
+
+	public void EndRandomEvent()
+	{
+		Debug.Log("이벤트 종료");
+	}
 }

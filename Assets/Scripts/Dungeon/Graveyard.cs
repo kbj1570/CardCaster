@@ -23,7 +23,7 @@ public class Graveyard : Dungeon
             {new UnknownMonster(), 3}
         };
 
-        encounterList = new(){
+        randomEventList = new(){
 
         };
 
