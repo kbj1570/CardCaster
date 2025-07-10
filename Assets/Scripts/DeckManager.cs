@@ -1,8 +1,12 @@
-using UnityEngine;
+using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
+using static UnityEditor.Progress;
+using static UnityEngine.Rendering.DebugUI;
 public class DeckManager : MonoBehaviour
 {
 	private int deckCount;
@@ -16,16 +20,21 @@ public class DeckManager : MonoBehaviour
 	public GameObject cardFrame;
 	private GameObject focusOnCard;
 	public GridLayoutGroup gridLayout;
-	private Dictionary<CardData, int> myCardList;
-	private Dictionary<CardData, int> myDeckList;
+	private Dictionary<BattleCardData, int> myCardList;
+	private Dictionary<BattleCardData, int> myDeckList;
 	private List<CardData> cardDatabase;
-	private List<CardData> currentPageCardList;
+	private List<BattleCardData> currentPageCardList;
 	public List<GameObject> dummyCardObjectList;
-	public List<GameObject> dummyCardPrefabList;
 	private List<GameObject> deckCardObjectList;
 
 
-	private Dictionary<CardData, int> currentCardList;
+
+	public GameObject dummyServentCardPrefab;
+	public GameObject dummySpellCardPrefab;
+	public GameObject dummyAdventureCardPrefab;
+
+
+	private Dictionary<BattleCardData, int> currentCardList;
 	private int currentPage;
 	private int pageLimit;
 
@@ -56,10 +65,10 @@ public class DeckManager : MonoBehaviour
 		cardHashMap = DataController.Inst.LoadCardHashMap();
 
 		foreach (KeyValuePair<string, int> value in saveData.cardList)
-		{ myCardList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+		{ myCardList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
 
 		foreach (KeyValuePair<string, int> value in saveData.deck)
-		{ myDeckList.Add(cardDatabase[Convert.ToInt32(value.Key)], value.Value); }
+		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
 		CreatePage();
 	}
 
@@ -72,13 +81,36 @@ public class DeckManager : MonoBehaviour
 
 
 
-	public void FocusOnCard(CardData cardData)
+	public void FocusOnCard(BattleCardData cardData)
 	{
-		focusOnCard = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]],
-			new Vector3(0,0,0) , Utils.QI);
-			focusOnCard.transform.SetParent(focusOnCardPosition);
-			focusOnCard.transform.localScale = new Vector3(0.8f,0.8f,0.8f);
+		//focusOnCard = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]],
+		//	new Vector3(0,0,0) , Utils.QI);
+
+		GameObject selectedCardPrefab = null;
+
+		switch (cardData.GetCardType())
+		{
+			case ECardType.Servent:
+				selectedCardPrefab = dummyServentCardPrefab;
+				break;
+			case ECardType.Spell:
+				selectedCardPrefab = dummySpellCardPrefab;
+				break;
+			case ECardType.Adventure:
+				selectedCardPrefab = dummyAdventureCardPrefab;
+				break;
+
+		}
+
+		focusOnCard = Instantiate(selectedCardPrefab,
+		new Vector3(0, 0, 0), Utils.QI);
+
+		focusOnCard.GetComponent<BattleCard>().SetCard(cardData);
+
+		focusOnCard.transform.SetParent(focusOnCardPosition);
+			focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 			focusOnCard.transform.localPosition = new Vector3(0,0,0);
+
 	}
 
 	
@@ -92,14 +124,14 @@ public class DeckManager : MonoBehaviour
 	{
 		AlertPopUpMessage("해당 덱을 저장했습니다");
 		Dictionary<string, int> dumb = new Dictionary<string, int>();
-		foreach(KeyValuePair<CardData, int> value in myDeckList)
+		foreach(KeyValuePair<BattleCardData, int> value in myDeckList)
 		{dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
 
 		PlayerData.saveData.deck = dumb;
 
 		dumb = new Dictionary<string, int>();
 
-		foreach (KeyValuePair<CardData, int> value in myCardList)
+		foreach (KeyValuePair<BattleCardData, int> value in myCardList)
 		{ dumb.Add(value.Key.GetCardNum().ToString(), value.Value); }
 
 
@@ -120,7 +152,7 @@ public class DeckManager : MonoBehaviour
 	}
 	public void CreatePage()
 	{
-		currentCardList = new Dictionary<CardData, int>();
+		currentCardList = new Dictionary<BattleCardData, int>();
 
 		UpdatePage();
 		UpdateDeckPage();
@@ -138,73 +170,103 @@ public class DeckManager : MonoBehaviour
 		onMessage.GetComponent<PopUpMessage>().SetText(value);
 	}
 
-	public void UpdatePage()
+	
+
+public void UpdatePage()
 	{
 		int count = 0;
 
-		pageLimit = myCardList.Count / 6;
+		pageLimit = myCardList.Count / 6 + 1;
 		int remainder = myCardList.Count % 6;
+
+		if(remainder == 0)
+		{ pageLimit--; }
 
 		currentCardList.Clear();
 		foreach(GameObject gameObject in dummyCardObjectList)
 		{Destroy(gameObject);}
 
-		List<CardData> cardList = new List<CardData>(myCardList.Keys);
+		List<BattleCardData> cardList = new List<BattleCardData>(myCardList.Keys);
 
 		if(currentPage != pageLimit)
 		{remainder = 6;}
 
 		for(int i = 0; i < remainder; ++i)
-		{currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);}
-
-		foreach(KeyValuePair<CardData, int> item in currentCardList)
 		{
-			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[item.Key.GetCardNum()]],
-			new Vector3(0,0,0) , Utils.QI);
+			currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);
+		}
+
+		foreach (KeyValuePair<BattleCardData, int> item in currentCardList)
+		{
+			bool locked = false;
+
+			if (item.Value == 0)
+			{ locked = true; }
+
+			if (myDeckList.ContainsKey(item.Key))
+			{
+				if (myDeckList[item.Key] == item.Value)
+				{ locked = true; }
+
+				if (myDeckList[item.Key] == 3)
+				{ locked = true; }
+			}
+			GameObject selectedCardPrefab = null;
+
+			switch (item.Key.GetCardType())
+			{
+				case ECardType.Servent:
+					selectedCardPrefab = dummyServentCardPrefab;
+					break;
+				case ECardType.Spell:
+					selectedCardPrefab = dummySpellCardPrefab;
+					break;
+				case ECardType.Adventure:
+					selectedCardPrefab = dummyAdventureCardPrefab;
+					break;
+
+			}
+
+
+			GameObject cardObject = Instantiate(selectedCardPrefab,
+			new Vector3(0, 0, 0), Utils.QI);
+
+			cardObject.GetComponent<BattleCard>().Init(item.Key, count, (clickedSlot, eventData) => {
+				AddCard(clickedSlot.cardData, clickedSlot.slotCount, locked);
+			});
+			cardObject.GetComponent<BattleCard>().SetCard(item.Key);
+
+
 			cardObject.transform.SetParent(cardLocation[count].transform);
-			cardObject.transform.localScale = new Vector3(0.55f,0.55f,0.55f);
+			cardObject.transform.localScale = new Vector3(0.7f,0.7f, 1f);
 			cardObject.transform.localPosition = new Vector3(0,0,0);
 			
 			dummyCardObjectList.Add(cardObject);
 
-			bool locked = false;
-
-			if(item.Value == 0)
-			{locked = true;}
-
-			if(myDeckList.ContainsKey(item.Key))
-			{
-				if(myDeckList[item.Key]  == item.Value)
-				{locked = true;}
-
-				if(myDeckList[item.Key]  == 3)
-				{locked = true;}
-			}
+			
 
 			
 
-			GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
-			cardFrameObject.transform.SetParent(cardLocation[count].transform);
-			cardFrameObject.transform.localPosition = new Vector3(0,0,0);
-			cardFrameObject.GetComponent<CardFrame>().
-			SetCardData(item.Key, item.Value, count, locked);
+			//GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
+			//cardFrameObject.transform.SetParent(cardLocation[count].transform);
+			//cardFrameObject.transform.localPosition = new Vector3(0,0,0);
+			//cardFrameObject.GetComponent<CardFrame>().
+			//SetCardData(item.Key, item.Value, count, locked);
 
-			dummyCardObjectList.Add(cardFrameObject);
+			//dummyCardObjectList.Add(cardFrameObject);
 			count++;
-
-			
 		}
 		if(currentPage == 0)
 		backButton.SetActive(false);
 		else
 		backButton.SetActive(true);
 
-		if(currentPage == pageLimit)
+		if(currentPage == pageLimit - 1)
 		nextButton.SetActive(false);
 		else
 		nextButton.SetActive(true);
 
-		pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
+		pageNumber.text = (currentPage + 1) + " / " + (pageLimit);        
 	}
 
 	public void ChangePage(bool value)
@@ -228,7 +290,7 @@ public class DeckManager : MonoBehaviour
 		foreach(GameObject gameObject in deckCardObjectList)
 		{Destroy(gameObject);}
 
-		foreach(KeyValuePair<CardData, int> value in myDeckList)
+		foreach(KeyValuePair<BattleCardData, int> value in myDeckList)
 		{
 			GameObject gameObject = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
 			deckCardObjectList.Add(gameObject);
@@ -242,11 +304,17 @@ public class DeckManager : MonoBehaviour
 		deckCountText.text = deckCount.ToString() + "  /  30"; 
 	}
 
-	public void AddCard(CardData value, int order)
+	public void AddCard(BattleCardData value, int order, bool locked)
 	{
 		if(deckCount == 30)
 		{
 			AlertPopUpMessage("덱이 가득 차서 더 이상 카드를 추가할 수 없습니다");
+			return;
+		}
+
+		if(locked)
+		{
+			AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
 			return;
 		}
 
@@ -261,14 +329,36 @@ public class DeckManager : MonoBehaviour
 			PlayerData.saveData.deck[value.GetCardNum().ToString()]++;
 		}
 
-		GameObject gameObject = Instantiate(dummyCardPrefabList[cardHashMap[value.GetCardNum()]], cardLocation[order].position , Utils.QI);
-		gameObject.transform.SetParent(window.transform);
-		gameObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
+
+		GameObject selectedCardPrefab = null;
+
+		switch (value.GetCardType())
+		{
+			case ECardType.Servent:
+				selectedCardPrefab = dummyServentCardPrefab;
+				break;
+			case ECardType.Spell:
+				selectedCardPrefab = dummySpellCardPrefab;
+				break;
+			case ECardType.Adventure:
+				selectedCardPrefab = dummyAdventureCardPrefab;
+				break;
+
+		}
+
+
+		GameObject cardObject = Instantiate(selectedCardPrefab,
+		cardLocation[order].position, Utils.QI);
+
+		cardObject.GetComponent<DummyCard>().SetCard(value);
+
+		cardObject.transform.SetParent(window.transform);
+		cardObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
 		UpdatePage();
 		UpdateDeckPage();
 	}
 
-	public void DeleteCard(CardData value)
+	public void DeleteCard(BattleCardData value)
 	{
 		myDeckList[value]--;
 		PlayerData.saveData.deck[value.GetCardNum().ToString()]--;
@@ -279,9 +369,33 @@ public class DeckManager : MonoBehaviour
 			PlayerData.saveData.deck.Remove(value.GetCardNum().ToString());
 		}
 
-		GameObject gameObject = Instantiate(dummyCardPrefabList[cardHashMap[value.GetCardNum()]], gridlayoutPosition.position , Utils.QI);
-		gameObject.transform.SetParent(window.transform);
-		gameObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
+
+		GameObject selectedCardPrefab = null;
+
+		switch (value.GetCardType())
+		{
+			case ECardType.Servent:
+				selectedCardPrefab = dummyServentCardPrefab;
+				break;
+			case ECardType.Spell:
+				selectedCardPrefab = dummySpellCardPrefab;
+				break;
+			case ECardType.Adventure:
+				selectedCardPrefab = dummyAdventureCardPrefab;
+				break;
+
+		}
+
+
+		GameObject cardObject = Instantiate(selectedCardPrefab,
+		gridlayoutPosition.position, Utils.QI);
+
+		cardObject.GetComponent<DummyCard>().SetCard(value);
+
+
+
+		cardObject.transform.SetParent(window.transform);
+		cardObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
 
 		UpdatePage();
 		UpdateDeckPage();

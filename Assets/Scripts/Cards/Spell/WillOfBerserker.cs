@@ -9,7 +9,7 @@ public class WillOfBerserker : SpellCardData
         cardCost = 0;
         cardType = ECardType.Spell;
         cardStoryDesc = ""; 
-        cardAbility = "자신의 소환수 하나의 포스를 2배로 한다. 그 소환수는 이 턴이 끝나면 소멸한다.";
+        cardDesc = "자신의 소환수 하나의 포스를 \r\n 2배로 한다. 그 소환수는 \r\n 이 턴이 끝나면 소멸한다.";
         cardTargetType = ECardTargetType.Select;
 
         preRequisites = new();
@@ -27,9 +27,6 @@ public class WillOfBerserker : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
-		bm.DrawCard();
-		bm.DrawCard();
-		bm.DrawCard();
 
 		yield return null;
 	}

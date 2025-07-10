@@ -15,7 +15,7 @@ public class VioletLichLord : ServentCardData
         serventAttribute = EServentAttribute.Dark;
         force = 1;
         cardStoryDesc = "";
-        cardAbility = "소환시 묘지에서 원하는 마법카드를 1장 가져온다";
+        cardDesc = "소환시 묘지에서 원하는 마법카드를 1장 가져온다";
         cardTargetType = ECardTargetType.Select;
         
         preRequisites = new();

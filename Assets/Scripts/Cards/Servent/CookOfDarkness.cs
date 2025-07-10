@@ -12,7 +12,7 @@ public class CookOfDarkness : ServentCardData
         serventType = EServentType.Player;
         force = 1;
         cardStoryDesc = "";
-        cardAbility = "소환시 자신의 덱에서 [스튜]를 2장 가져온다.";
+        cardDesc = "소환시 자신의 덱에서 [스튜]를 2장 가져온다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
@@ -30,9 +30,9 @@ public class CookOfDarkness : ServentCardData
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
 
-        bm.SearchCardInDeck(new Stew());
+        bm.SearchCardInDeck(new OddedStew());
         yield return new WaitForSeconds(0.4f);
-		bm.SearchCardInDeck(new Stew());
+		bm.SearchCardInDeck(new OddedStew());
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

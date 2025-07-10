@@ -11,7 +11,7 @@ public class BrokenDeal : SpellCardData
         cardCost = 1;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardAbility = "3장 드로우한다. 이 턴에 상대는 대미지를 받지 않는다.";
+        cardDesc = "3장 드로우한다. 이 턴에 상대는 대미지를 받지 않는다.";
         cardTargetType = ECardTargetType.Selected;
 
 

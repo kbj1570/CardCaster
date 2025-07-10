@@ -1,27 +1,26 @@
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
 using DG.Tweening;
+using NUnit.Framework.Interfaces;
+using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 
 
-public class DummyCard : MonoBehaviour
+public class DummyCard : MonoBehaviour, IPointerClickHandler
 {
 	public TMP_Text nameTMP;
 	public TMP_Text forceTMP;
-	public TMP_Text descriptionTMP;
+	public TMP_Text descTMP;
 	public TMP_Text costTMP;
-	public Sprite cardBack;
 	public CardData cardData;
-	public GameObject cardHighlightBorder;
 
 	public GridLayoutGroup forceAttribute;
-	bool isFront;
 	bool isUsable;
 	int currentCost;
-	public int cardOrder;
-	public PRS originPRS;
-	public Vector3 originPosition;
+	int cardOrder;
 	public ECardType cardType;
 
 	public Image fireElement;
@@ -31,10 +30,28 @@ public class DummyCard : MonoBehaviour
 	public Image darknessElement;
 	public Image lightElement;
 
-	public bool locked = false;
+	bool locked = false;
 
 	float duration = 0.35f; // 전체 이동 시간
 	float scaleFactor = 0.7f; // 최대 커지는 배율
+
+
+	public Action<DummyCard> OnClickAction;
+
+	public int slotCount;
+
+	public void Init(CardData data, int slotCount, Action<DummyCard> clickAction)
+	{
+		cardData = data;
+		this.slotCount = slotCount;
+		OnClickAction = clickAction;
+	}
+
+
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		OnClickAction?.Invoke(this);
+	}
 
 	public void StartMoveAndScale(Vector3 targetPosition)
 	{
@@ -44,10 +61,8 @@ public class DummyCard : MonoBehaviour
 
 		Sequence sequence = DOTween.Sequence();
 
-		// 1. 처음 20% 동안 크기가 커짐
 		sequence.Append(transform.DOScale(scaleFactor, growTime));
 
-		// 2. 크기 작아지면서 목표 위치로 이동
 		sequence.Append(transform.DOScale(0, shrinkTime).SetEase(Ease.InQuad));
 		sequence.Join(transform.DOMove(targetPosition, shrinkTime).SetEase(Ease.InOutQuad));
 		sequence.AppendCallback(() => Destroy(gameObject));
@@ -71,14 +86,35 @@ public class DummyCard : MonoBehaviour
 	public void UpdateIsUsable()
 	{isUsable = (currentCost == 0);}
 
-	public void Setup(CardData cardData)
+	public void SetCard(CardData cardData)
 	{
 		this.cardData = cardData;
 		nameTMP.text = this.cardData.GetCardName();
 		cardType = cardData.GetCardType();
-		costTMP.text = (this.cardData as ServentCardData).GetCardCost().ToString();
+		costTMP.text = this.cardData.GetCardCost().ToString();
+		descTMP.text = this.cardData.GetCardDesc();
 
-		if(cardData.GetCardType() == ECardType.Servent)
+		int fontSize = 0;
+
+
+		switch (this.cardData.GetCardDesc().Split(new string[] { "\r\n" }, StringSplitOptions.None).Length)
+		{
+			case 1:
+				fontSize = 33;
+				break;
+
+			case 2:
+				fontSize = 29;
+				break;
+
+			case 3:
+				fontSize = 25;
+				break;
+		}
+
+		descTMP.fontSize = fontSize;
+
+		if (cardData.GetCardType() == ECardType.Servent)
 		{
 			ServentCardData serventCardData = this.cardData as ServentCardData;
 
@@ -111,24 +147,9 @@ public class DummyCard : MonoBehaviour
 				break;
 
 			}
-			
-
-			for (int i = 0; i < serventCardData.GetForce(); ++i)
-			{
-				Image gameObject = Instantiate(image, forceAttribute.transform.position, Utils.QI);
-
-				gameObject.transform.SetParent(forceAttribute.transform);
-
-				gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
-			}
 		}
-		// currentCost = this.cardData.GetCardCost();
-		// UpdateIsUsable();
 	}
 
 	public void SetLock(bool value)
 	{this.locked = value;}
-
-	public void SetOriginPosition(Vector3 value)
-	{originPosition = value;}
 }

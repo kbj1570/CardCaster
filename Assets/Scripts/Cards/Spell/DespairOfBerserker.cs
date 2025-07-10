@@ -9,7 +9,7 @@ public class DespairOfBerserker : SpellCardData
         cardCost = 0;
         cardType = ECardType.Spell;
         cardStoryDesc = ""; 
-        cardAbility = "자신의 소환수 하나의 포스를 2배로 한다. 그 소환수를 광란 상태로 한다.";
+        cardDesc = "자신의 소환수 하나의 포스를 2배로 한다.\r\n그 소환수를 광란 상태로 한다.";
         cardTargetType = ECardTargetType.Select;
 
         preRequisites = new();

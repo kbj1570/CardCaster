@@ -10,7 +10,7 @@ public class OnlySilence : SpellCardData
         cardCost = 1;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardAbility = "자신의 HP가 1일때만 사용할 수 있다. 서로의 소횐수들을 전부 소멸시킨다";
+        cardDesc = "자신의 HP가 1일때만 사용할 수 있다. 서로의 소횐수들을 전부 소멸시킨다";
         cardTargetType = ECardTargetType.Selected;
 
         preRequisites = new();

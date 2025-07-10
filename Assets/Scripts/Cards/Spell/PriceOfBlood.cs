@@ -5,12 +5,12 @@ public class PriceOfBlood : SpellCardData
 {
     public PriceOfBlood()
     {
-        cardNum = "8";
+        cardNum = "108";
         cardName = "피의 대가";
         cardCost = 0;
         cardType = ECardType.Spell;
-        cardStoryDesc = ""; 
-        cardAbility = "자신의 HP를 4 잃는다. 1장 드로우한다.";
+        cardStoryDesc = "익명의 요리사가 만든 스튜. 한 입이면 누구든지 미소를 짓게 만든다. 다만 그 재료는 어디서도 본 적 없는 것들이다. "; 
+        cardDesc = "자신의 HP를 4 잃는다. 1장 드로우한다.";
         cardTargetType = ECardTargetType.Selected;
 
         preRequisites = new();

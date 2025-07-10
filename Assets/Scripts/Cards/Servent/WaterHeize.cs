@@ -11,7 +11,7 @@ public class WaterHeize : ServentCardData
         serventType = EServentType.Player;
         force = 1;
         cardStoryDesc = "장난치는 것을 좋아하는 푸른 색의 정령. 불을 좋아하는 친구와 항상 같이 붙어다닌다.";
-        cardAbility = "소환시 덱에서 [불의 정령 크림슨]를 1장 가져온다.";
+        cardDesc = "소환시 덱에서 [불의 정령 크림슨]를 1장 가져온다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Water;

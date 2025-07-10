@@ -7,18 +7,21 @@ public class CardData
 
 	protected string cardNum;
 	protected string cardName;
-	protected string cardAbility;
+	protected string cardDesc;
 	protected string cardStoryDesc;
 	protected ECardType cardType;
 	protected ECardTargetType cardTargetType;
 	protected ECardRarity cardRarity;
 	protected List<PreRequisite> preRequisites;
+	protected int cardCost;
 
+	protected int fontSize;
+	public int GetCardCost() { return cardCost; }
 
 
 	public string GetCardNum(){return cardNum;}
 	public string GetCardName(){return cardName;}
-	public string GetCardAbility(){return cardAbility;}
+	public string GetCardDesc(){return cardDesc;}
 	public ECardType GetCardType(){return cardType;}
 	public ECardRarity GetCardRarity() { return cardRarity; }
 	public ECardTargetType GetCardTargetType(){return cardTargetType;}
@@ -27,9 +30,7 @@ public class CardData
 
 public class BattleCardData : CardData
 {
-
-	protected int cardCost;
-	public int GetCardCost() { return cardCost; }
+	
 }
 	public struct PreRequisite
 {

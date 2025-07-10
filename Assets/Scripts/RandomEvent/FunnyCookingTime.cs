@@ -5,12 +5,12 @@ public class FunnyCookingTime : RandomEvent
 	{
 		eventName = "즐거운 요리시간";
 		eventNum = "001";
-		eventDesc = "냄비를 발견했다. 요리를 해보자.";
+		eventDesc = new List<string>() { "냄비를 발견했다."," 요리를 해보자." };
 
 
 		eventNodes = new Dictionary<string, EventNode>() {
 			{"node_00", new EventNode(){id = "",
-				desc = new List<string>(){"어떤 재료를 넣어볼까?" },
+				desc = new List<string>(){"여러가지 재료들이 보인다.","어떤 재료를 넣어볼까?" },
 				eventSelections = new()
 				{new EventSelection(){text = "대파",
 					resultText = new List<string>(){"맛있는 냄새가 난다" },

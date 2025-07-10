@@ -5,11 +5,11 @@ public class BannedOne : SpellCardData
 {
     public BannedOne()
     {
-        cardName = "금지된 자";
+        cardName = "금지된 카드";
         cardCost = 99;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardAbility = "자신의 소환수를 모두 소멸시키고 그 수만큼 드로우한다";
+        cardDesc = "자신의 소환수를 모두 소멸시키고 그 수만큼 드로우한다";
         cardTargetType = ECardTargetType.Select;
     }
 

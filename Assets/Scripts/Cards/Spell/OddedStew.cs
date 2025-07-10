@@ -1,15 +1,15 @@
 using System.Collections;
 
-public class Stew : SpellCardData
+public class OddedStew : SpellCardData
 {
-	public Stew()
+	public OddedStew()
 	{
-		cardNum = "7";
-		cardName = "스튜";
+		cardNum = "107";
+		cardName = "수상한 스튜";
 		cardCost = 0;
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
-		cardAbility = "자신의 HP를 1 회복한다.";
+		cardDesc = "자신의 HP를 1 회복한다.";
 		cardTargetType = ECardTargetType.Selected;
 
 		preRequisites = new();

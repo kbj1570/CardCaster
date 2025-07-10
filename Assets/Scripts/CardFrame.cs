@@ -26,9 +26,9 @@ public class CardFrame : MonoBehaviour, IPointerClickHandler
 	
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		if(!locked)
-		DeckManager.Inst.AddCard(cardData, order);
-		else
-		DeckManager.Inst.AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
+		//if(!locked)
+		//DeckManager.Inst.AddCard(cardData, order);
+		//else
+		//DeckManager.Inst.AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
 	}
 }

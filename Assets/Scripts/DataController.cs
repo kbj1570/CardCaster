@@ -39,7 +39,19 @@ public class  DataController : MonoBehaviour
             { "101", 0 },
 			{ "102", 1 },
             { "103", 2 },
-			{ "104", 3 }
+			{ "104", 3 },
+            { "105", 4 },
+			{ "106", 5 },
+			{ "107", 6 },
+			{ "108", 7 },
+			{ "109", 8 },
+			{ "110", 9 },
+			{ "111", 10 },
+			{ "112", 11 },
+			{ "113", 12 },
+			{ "114", 13 },
+			{ "115", 14 },
+			{ "116", 15 }
 		};
         return cardHashMap;
 	}
@@ -126,26 +138,23 @@ public class  DataController : MonoBehaviour
 
         List<CardData> cardDatas = new();
 
-        cardDatas.Add(new CrescentLancer()); //0
-        cardDatas.Add(new ElementalBoost());//1
-        cardDatas.Add(new Duplicate()); //2
-        cardDatas.Add(new GloriousLight());//3
-        cardDatas.Add(new VioletLichLord());//4
-        cardDatas.Add(new NoPainNoGain());//5
-        cardDatas.Add(new OnlySilence());//6
-        cardDatas.Add(new Stew());//7
-        cardDatas.Add(new PriceOfBlood());//8
-        cardDatas.Add(new CookOfDarkness());//9
-        cardDatas.Add(new FlameLizard());//10
-        cardDatas.Add(new BrokenDeal());//11
-        cardDatas.Add(new HeartOnFire());//12
-        cardDatas.Add(new FireCrimson());//13
-        cardDatas.Add(new WaterHeize());//14
-        cardDatas.Add(new MaskedWorld());//15
-        cardDatas.Add(new WindCrest());//16
-        cardDatas.Add(new WillOfBerserker());//17
-        cardDatas.Add(new AbyssSeeker());//18
-        cardDatas.Add(new DespairOfBerserker());//19
+        cardDatas.Add(new CrescentLancer()); //101
+        cardDatas.Add(new InvisibleCape());//102
+        cardDatas.Add(new BlueSlime()); //103
+        cardDatas.Add(new RedSlime());//104
+        cardDatas.Add(new GreenSlime());//105
+        cardDatas.Add(new RandomTeleporter());//106
+        cardDatas.Add(new OddedStew());//107
+        cardDatas.Add(new PriceOfBlood());//108
+        cardDatas.Add(new NoWayToReturn());//109
+        cardDatas.Add(new WillOfBerserker());//110
+        cardDatas.Add(new MonsterMask());//111
+
+        cardDatas.Add(new PurpleCenser());//112
+        cardDatas.Add(new BrownSlime());//113
+        cardDatas.Add(new WhiteSlime());//114
+        cardDatas.Add(new BlackSlime());//115
+        cardDatas.Add(new GraySlime());//116
         
         return cardDatas;
     }

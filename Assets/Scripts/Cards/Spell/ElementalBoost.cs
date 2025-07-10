@@ -13,7 +13,7 @@ public class ElementalBoost : SpellCardData
 		cardCost = 2;
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
-		cardAbility = "자신의 소환수들의 속성의 종류 수만큼 자신의 소환수들은 포스를 얻는다";
+		cardDesc = "자신의 소환수들의 속성의 종류 수만큼 자신의 소환수들은 포스를 얻는다";
 		cardTargetType = ECardTargetType.Selected;
 		
 		preRequisites = new();

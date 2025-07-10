@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -49,10 +50,10 @@ public class RandomEventManager : MonoBehaviour
 		eventDescText.text = randomEvent.GetDesc()[0];
 		eventNodes = randomEvent.GetEventNodes();
 
-		Load("node_00");
+		StartCoroutine(Load("node_00"));
 	}
 
-	public void Load(string nodeNum)
+	public IEnumerator Load(string nodeNum)
 	{
 
 		selectionButton_0.SetActive(false);
@@ -63,8 +64,30 @@ public class RandomEventManager : MonoBehaviour
 		endButton.SetActive(false);
 
 		currentNode = eventNodes[nodeNum];
+
+
 		currentEventSelections = currentNode.eventSelections;
-		eventDescText.text = currentNode.desc[0];
+		//eventDescText.text = currentNode.desc[0];
+
+		float typingSpeed = 0f;
+
+		for (int p = 0; p < currentNode.desc.Count; ++p)
+		{
+			for (int q = 0; q < currentNode.desc[p].Length; q++)
+			{
+				if (currentNode.desc[p][q] == '.' ||
+				currentNode.desc[p][q] == '!' ||
+				currentNode.desc[p][q] == '?')
+				{ typingSpeed = 0.17f; }
+				else
+				{ typingSpeed = 0.05f; }
+				eventDescText.text = currentNode.desc[p].Substring(0, q + 1);
+				yield return new WaitForSeconds(typingSpeed);
+
+			}
+		}
+
+		
 
 		if (currentEventSelections == null)
 		{
@@ -119,9 +142,6 @@ public class RandomEventManager : MonoBehaviour
 
 	public void LoadNextNode(int nodeOrder)
 	{
-
-		
-
 	
 		switch(currentEventSelections[nodeOrder].effect)
 		{
@@ -143,7 +163,7 @@ public class RandomEventManager : MonoBehaviour
 
 				break;
 		}
-		Load(currentEventSelections[nodeOrder].nextNodeId);
+		StartCoroutine(Load(currentEventSelections[nodeOrder].nextNodeId));
 	}
 
 	public void EndRandomEvent()

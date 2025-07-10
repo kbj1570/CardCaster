@@ -15,7 +15,7 @@ public abstract class RandomEvent
 	{return eventName;}
 	public string GetNum()
 	{return eventNum;}
-	public string GetDesc()
+	public List<string> GetDesc()
 	{return eventDesc;}
 	public Dictionary<string, EventNode> GetEventNodes()
 	{ return eventNodes; }

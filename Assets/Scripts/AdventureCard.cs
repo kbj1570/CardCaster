@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 
 
-public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class AdventureCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
     public Image energyFillImage; // 육각형 에너지 UI 이미지
@@ -18,14 +18,13 @@ public class DungeonCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public TMP_Text forceTMP;
     public TMP_Text descriptionTMP;
     public TMP_Text costTMP;
-    public Sprite cardBack;
     public CardData cardData;
     public GameObject cardHighlightBorder;
     bool isUsable;
     int currentCost;
-    public int cardOrder;
-    public PRS originPRS;
-    public Vector3 originPosition;
+    int cardOrder;
+    PRS originPRS;
+    Vector3 originPosition;
     public ECardType cardType;
     public bool locked = false;
     private Sequence currentSequence;

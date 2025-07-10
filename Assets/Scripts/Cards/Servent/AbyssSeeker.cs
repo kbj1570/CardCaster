@@ -12,7 +12,7 @@ public class AbyssSeeker : ServentCardData
         force = 5;
         cardStoryDesc = "";
         voidWalker = true;
-        cardAbility = "이 소환수는 다른 소환수나 마법의 효과를 받지 않는다";
+        cardDesc = "이 소환수는 다른 소환수나 마법의 효과를 받지 않는다";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;

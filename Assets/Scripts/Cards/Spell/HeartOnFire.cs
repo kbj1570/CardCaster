@@ -9,7 +9,7 @@ public class HeartOnFire : SpellCardData
         cardCost = 1;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardAbility = "소환수 하나의 포스를 2배로 하고 그 소환수는 이 턴이 끝나면 소멸한다";
+        cardDesc = "소환수 하나의 포스를 2배로 하고 \r\n 그 소환수는 이 턴이 끝나면 소멸한다";
         cardTargetType = ECardTargetType.Select;
     
     }

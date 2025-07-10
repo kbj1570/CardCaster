@@ -15,7 +15,7 @@ public class DungeonManager : MonoBehaviour
 
 	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
-	public AudioClip runningInGrass;
+	public List<AudioClip> runningInGrassSound;
 	public Image fadeImage;
 	int lineCount;
 	int mouseOnRoomNum;
@@ -812,8 +812,10 @@ public class DungeonManager : MonoBehaviour
 
 			
 			SetEnemyCourse();
-			
-			soundEffect.PlayOneShot(runningInGrass);
+
+			soundEffect.PlayOneShot(runningInGrassSound[Random.Range(0, runningInGrassSound.Count)]);
+
+
 
 			player.transform.DOMove(targetPosition, moveDuration)
 				.SetEase(Ease.OutQuad) // 부드러운 감속 효과
@@ -1473,8 +1475,8 @@ public class DungeonManager : MonoBehaviour
 
 	public void MovePlayer(int roomNum)
 	{
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<DungeonCard>().AddEnergy(1f);}
+		//foreach(GameObject card in cardObjectList)
+		//{card.GetComponent<DungeonCard>().AddEnergy(1f);}
 
 		nodeMap[roomNum].SetActive(true);
 		nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
@@ -1556,7 +1558,6 @@ public class DungeonManager : MonoBehaviour
 			switch(map[roomNum].GetItem().GetItemCategory())
 			{
 				case EItemCategory.ETool:
-					Debug.Log(PlayerData.saveData.items.Count);
 					if (PlayerData.saveData.items.Count <= 7)
 					{
 						PlayerData.saveData.items.Add(map[roomNum].GetItem().GetNum());
@@ -1631,8 +1632,8 @@ public class DungeonManager : MonoBehaviour
 	public void CardBeginDrag(GameObject cardObject)
 	{
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<DungeonCard>().SetLock(true);}
-		cardObject.GetComponent<DungeonCard>().SetLock(false);
+		{card.GetComponent<AdventureCard>().SetLock(true);}
+		cardObject.GetComponent<AdventureCard>().SetLock(false);
 
 		CameraController.Inst.SetFollowing();
 		CameraController.Inst.SetDragLock(true);
@@ -1640,7 +1641,7 @@ public class DungeonManager : MonoBehaviour
 	}
 
 	public void CardOnDrag(GameObject cardObject)
-	{DrawDragLine(cardObject.transform.position,CheckCardUsable(cardObject.GetComponent<DungeonCard>().GetCardData(),ReturnMouseOnNode()));}
+	{DrawDragLine(cardObject.transform.position,CheckCardUsable(cardObject.GetComponent<AdventureCard>().GetCardData(),ReturnMouseOnNode()));}
 
 	public void DrawDragLine(Vector2 startPoint, bool isUsuable)
 	{
@@ -1727,11 +1728,11 @@ public class DungeonManager : MonoBehaviour
 		cardDragLine.endColor = Color.blue;
 	}
 
-	public IEnumerator CardEndDrag(DungeonCard dungeonCard, int nodeNum)
+	public IEnumerator CardEndDrag(AdventureCard dungeonCard, int nodeNum)
 	{
 
 		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<DungeonCard>().SetLock(false);}
+		{cardObject.GetComponent<AdventureCard>().SetLock(false);}
 
 		DeleteDragLine();
 
@@ -1741,13 +1742,13 @@ public class DungeonManager : MonoBehaviour
 			// card.SendMissile(alertPoint, hole.transform);
 
 			for(int i = 0; i < cardObjectList.Count; ++i)
-			{cardObjectList[i].GetComponent<DungeonCard>().SetCardOrder(i);}
+			{cardObjectList[i].GetComponent<AdventureCard>().SetCardOrder(i);}
 			// CardAlignmentAlt();
 		}
 		else
 		{
 			foreach(GameObject cardObject in cardObjectList)
-			{cardObject.GetComponent<DungeonCard>().SetLock(false);}
+			{cardObject.GetComponent<AdventureCard>().SetLock(false);}
 		}
 
 		
@@ -1768,7 +1769,7 @@ public class DungeonManager : MonoBehaviour
 	public void GainEnergyToMax()
 	{
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<DungeonCard>().AddEnergy(1000);}
+		{card.GetComponent<AdventureCard>().AddEnergy(1000);}
 	}
 	public int ReturnMouseOnNode()
 	{return mouseOnRoomNum;}

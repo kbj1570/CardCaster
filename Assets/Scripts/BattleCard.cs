@@ -1,24 +1,27 @@
-using UnityEngine;
-using TMPro;
-using DG.Tweening;
-using UnityEngine.EventSystems;
-using System;
-using UnityEngine.UI;
-using System.Collections;
 using Coffee.UIEffects; 
+using DG.Tweening;
+using System;
+using System.Collections;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 
-public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 	public UIEffect uIEffect;
 	public TMP_Text nameTMP;
-	public TMP_Text forceTMP;
-	public TMP_Text descriptionTMP;
+	public TMP_Text descTMP;
 	public TMP_Text costTMP;
 	public Sprite cardBack;
 	public BattleCardData cardData;
 	public GameObject cardHighlightBorder;
+
+
+	float duration = 0.35f; // 전체 이동 시간
+	float scaleFactor = 0.7f; // 최대 커지는 배율
 
 	public GridLayoutGroup forceAttribute;
 	bool isFront;
@@ -29,6 +32,9 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 	public Vector3 originPosition;
 	public ECardType cardType;
 
+
+	public int slotCount;
+
 	public Image fireElement;
 	public Image waterElement;
 	public Image earthElement;
@@ -37,13 +43,51 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 	public Image lightElement;
 
 	public bool locked = false;
-	private Sequence currentSequence;
+	public Sequence currentSequence;
+
+
+	public Action<BattleCard, PointerEventData> OnClickAction;
+	public Action<BattleCard, PointerEventData> OnBeginDragAction;
+	public Action<BattleCard, PointerEventData> OnDragAction;
+	public Action<BattleCard, PointerEventData> OnEndDragAction;
+	public Action<BattleCard, PointerEventData> OnPointerEnterAction;
+	public Action<BattleCard, PointerEventData> OnPointerExitAction;
 
 	void Start()
+	{
+		
+	}
+
+	public void InitiateActionInBattle()
 	{
 		this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
 		StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
 	}
+
+	public void Init(Action<BattleCard, PointerEventData> clickAction,
+					Action<BattleCard, PointerEventData> beginDragAction,
+					Action<BattleCard, PointerEventData> dragAction,
+					Action<BattleCard, PointerEventData> endDragAction,
+					Action<BattleCard, PointerEventData> enterAction,
+					Action<BattleCard, PointerEventData> exitAction
+
+		)
+	{
+		OnClickAction = clickAction;
+		OnBeginDragAction = beginDragAction;
+		OnDragAction = dragAction;
+		OnEndDragAction = endDragAction;
+		OnPointerEnterAction = enterAction;
+		OnPointerExitAction = exitAction;
+	}
+
+	public void Init(BattleCardData data, int slotCount, Action<BattleCard, PointerEventData> clickAction)
+	{
+		cardData = data;
+		this.slotCount = slotCount;
+		OnClickAction = clickAction;
+	}
+
 
 	public void HideAndReveal(bool flag)
 	{
@@ -52,20 +96,116 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 		
 		if (flag)
 		{
-			// 숨기기: 더 빠르게 사라지도록 Ease.InBack 사용
 			currentSequence = DOTween.Sequence()
 			.Append(transform.DOMoveY(originPRS.pos.y - 330, 0.5f).SetEase(Ease.InBack));
 		}
 		else
 		{
-			// 나타나기: 목표 위치를 살짝 넘었다가 돌아오는 효과
 			currentSequence = DOTween.Sequence()
-			.Append(transform.DOMoveY(originPRS.pos.y + 30, 0.3f).SetEase(Ease.OutQuad)) // 살짝 위로 넘기기
-			.Append(transform.DOMoveY(originPRS.pos.y, 0.2f).SetEase(Ease.OutBack)); // 부드럽게 착지
+			.Append(transform.DOMoveY(originPRS.pos.y + 30, 0.3f).SetEase(Ease.OutQuad))
+			.Append(transform.DOMoveY(originPRS.pos.y, 0.2f).SetEase(Ease.OutBack));
 		}
 	}
 
-	
+	public void StartMoveAndScale(Vector3 targetPosition)
+	{
+		Vector3 startPosition = transform.position;
+		float growTime = duration * 0.2f;
+		float shrinkTime = duration * 0.8f;
+
+		Sequence sequence = DOTween.Sequence();
+
+		sequence.Append(transform.DOScale(scaleFactor, growTime));
+
+		sequence.Append(transform.DOScale(0, shrinkTime).SetEase(Ease.InQuad));
+		sequence.Join(transform.DOMove(targetPosition, shrinkTime).SetEase(Ease.InOutQuad));
+		sequence.AppendCallback(() => Destroy(gameObject));
+	}
+
+
+	public bool GetIsUsable() { return isUsable; }
+
+	public void SetCardOrder(int value)
+	{ this.cardOrder = value; }
+
+	public int GetCardOrder()
+	{ return cardOrder; }
+
+	public ECardType GetCardType()
+	{ return cardType; }
+
+	public int GetCurrentCost()
+	{ return currentCost; }
+	public void UpdateIsUsable()
+	{ isUsable = (currentCost == 0); }
+
+	public void SetCard(BattleCardData cardData)
+	{
+		this.cardData = cardData;
+		nameTMP.text = this.cardData.GetCardName();
+		cardType = cardData.GetCardType();
+		costTMP.text = this.cardData.GetCardCost().ToString();
+		descTMP.text = this.cardData.GetCardDesc();
+
+		int fontSize = 0;
+
+
+		switch (this.cardData.GetCardDesc().Split(new string[] { "\r\n" }, StringSplitOptions.None).Length)
+		{
+			case 1:
+				fontSize = 33;
+				break;
+
+			case 2:
+				fontSize = 29;
+				break;
+
+			case 3:
+				fontSize = 25;
+				break;
+		}
+
+		descTMP.fontSize = fontSize;
+
+		if (cardData.GetCardType() == ECardType.Servent)
+		{
+			ServentCardData serventCardData = this.cardData as ServentCardData;
+
+			Image image = null;
+			switch (serventCardData.GetAttribute())
+			{
+				case EServentAttribute.Fire:
+					image = fireElement;
+					break;
+
+				case EServentAttribute.Water:
+					image = waterElement;
+					break;
+
+				case EServentAttribute.Earth:
+					image = earthElement;
+					break;
+
+				case EServentAttribute.Dark:
+					image = darknessElement;
+					break;
+
+				case EServentAttribute.Wind:
+					image = windElement;
+					break;
+
+				case EServentAttribute.Light:
+					image = lightElement;
+					break;
+
+			}
+		}
+	}
+
+	public void SetLock(bool value)
+	{ this.locked = value; }
+
+
 
 	IEnumerator AppearAfterDelay(float delay)
 	{
@@ -81,16 +221,8 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 	}
 
 	public BattleCardData GetCardData(){return cardData;}
-	public bool GetIsUsable(){return isUsable;}
 
-	public void SetCardOrder(int value)
-	{this.cardOrder = value;}
 
-	public int GetCardOrder()
-	{return cardOrder;}
-
-	public ECardType GetCardType()
-	{return cardType;}
 
 	public void UpdateCardCost(int cost)
 	{
@@ -122,10 +254,6 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 		DOTween.Kill(seq);
 	}
 
-	public int GetCurrentCost()
-	{return currentCost;}
-	public void UpdateIsUsable()
-	{isUsable = (currentCost == 0);}
 
 	public void Setup(SpellCardData cardData)
 	{
@@ -180,8 +308,6 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 		}
 	}
 
-	public void SetLock(bool value)
-	{this.locked = value;}
 
 	public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
 	{
@@ -201,59 +327,32 @@ public class BattleCardObject : MonoBehaviour, IDragHandler, IBeginDragHandler, 
 
 	public void OnBeginDrag(PointerEventData eventData)
 	{
-		if(locked)
-		{return;}
-
-		BattleManager.Inst.CardBeginDrag(this.gameObject);
+		OnBeginDragAction?.Invoke(this, eventData);
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		if(locked)
-		{return;}
-
-		StartCoroutine(BattleManager.Inst.CardEndDrag(this, BattleManager.Inst.ReturnMouseOnField()));
+		OnEndDragAction?.Invoke(this, eventData);
 	}
 
 	public void OnDrag(PointerEventData eventData)
 	{
-		if(locked)
-		{return;}
-		this.transform.localScale = new Vector3(0.4f, 0.4f, 1);
-		this.transform.position = originPRS.pos;
-		BattleManager.Inst.CardOnDrag(this.gameObject);
+		
+		OnDragAction?.Invoke(this, eventData);
 	}
 	public void OnPointerEnter(PointerEventData eventData)
 	{
-		if (locked) return;
-
-		if (currentSequence != null && currentSequence.IsActive())
-			currentSequence.Kill();
-		
-
-		currentSequence = DOTween.Sequence()
-			.Append(transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.13f).SetEase(Ease.InOutQuad))
-			.Append(transform.DOMoveY(originPRS.pos.y + 130, 0.13f).SetEase(Ease.OutCirc));
+		OnPointerEnterAction?.Invoke(this, eventData);
 	}
 
 	public void OnPointerExit(PointerEventData eventData)
 	{
-		if (locked) return;
-
-		if (currentSequence != null && currentSequence.IsActive())
-			currentSequence.Kill();
-
-		currentSequence = DOTween.Sequence()
-			.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
-			.Append(transform.DOMove(originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+		OnPointerExitAction?.Invoke(this, eventData);
 	}
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		if (eventData.button == PointerEventData.InputButton.Right)
-		{
-			BattleManager.Inst.DiscardCard(this);
-		}
+		OnClickAction?.Invoke(this, eventData);
 	}
 
 	public void SetOriginPosition(Vector3 value)

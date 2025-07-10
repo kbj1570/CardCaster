@@ -17,19 +17,34 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public TMP_Text countText;
     public Image itemImage;
 
-    public void OnPointerClick(PointerEventData eventData)
+	public Action<DungeonItem, PointerEventData> OnClickAction;
+	public Action<DungeonItem, PointerEventData> OnPointerEnterAction;
+	public Action<DungeonItem, PointerEventData> OnPointerExitAction;
+
+	public void OnPointerClick(PointerEventData eventData)
     {
-        if(item.GetItemCategory() == EItemCategory.ETool)
-        ItemWindow.Inst.SelectUsingItem(item);
-    }
+        if (item.GetItemCategory() == EItemCategory.ETool)
+            ItemWindow.Inst.SelectUsingItem(item);
+
+		OnClickAction?.Invoke(this, eventData);
+	}
     public void OnPointerEnter(PointerEventData eventData)
     {ItemWindow.Inst.ShowItemDescription(itemNum);}
     public void OnPointerExit(PointerEventData eventData)
     {ItemWindow.Inst.HideItemDescription();}
 
-    
 
-    public void SetUp(Item item, int count, Sprite sprite)
+	public void Init(Action<DungeonItem, PointerEventData> clickAction,
+					Action<DungeonItem, PointerEventData> enterAction,
+					Action<DungeonItem, PointerEventData> exitAction)
+	{
+		OnClickAction = clickAction;
+		OnPointerEnterAction = enterAction;
+		OnPointerExitAction = exitAction;
+	}
+
+
+	public void SetUp(Item item, int count, Sprite sprite)
     {
         this.item = item;
         itemNum = Int32.Parse(item.GetNum());

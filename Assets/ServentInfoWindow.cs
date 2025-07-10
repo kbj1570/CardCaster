@@ -28,7 +28,7 @@ public class ServentInfoWindow : MonoBehaviour
     {
         originForce.text = cardData.GetForce().ToString();
         serventName.text = cardData.GetCardName();
-        serventAbility.text = cardData.GetCardAbility();
+        serventAbility.text = cardData.GetCardDesc();
         switch(cardData.GetAttribute())
         {
             case EServentAttribute.Fire:

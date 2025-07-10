@@ -7,7 +7,7 @@ using TMPro;
 using DG.Tweening;
 public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandler,  IPointerExitHandler
 {
-	private CardData cardData;
+	private BattleCardData cardData;
 	private string cardName;
 	private int count;
 	private int cardCost;
@@ -28,15 +28,13 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandl
 
 		Sequence sequence = DOTween.Sequence();
 
-		// 1. 처음 20% 동안 크기가 커짐
 		sequence.Append(transform.DOScale(scaleFactor, growTime));
 
-		// 2. 크기 작아지면서 목표 위치로 이동
 		sequence.Append(transform.DOScale(0, shrinkTime).SetEase(Ease.InQuad));
 		sequence.Join(transform.DOMove(targetPosition, shrinkTime).SetEase(Ease.InOutQuad));
 	}
 
-	public void SetCard(CardData value, int count)
+	public void SetCard(BattleCardData value, int count)
 	{
 		cardData = value;
 		this.count = count;
