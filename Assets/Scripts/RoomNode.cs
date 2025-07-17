@@ -5,6 +5,8 @@ public class RoomNode : MonoBehaviour
     Node nodeData;
     public int roomNum;
 
+    public bool filled;
+
     
     public ERoomType roomType;
     public GameObject roomMark;
@@ -39,6 +41,12 @@ public class RoomNode : MonoBehaviour
         renderer.GetComponent<SpriteRenderer>().color = Color.gray;
     }
 
+    public void Decorate(Sprite sprite)
+    {
+		renderer.GetComponent<SpriteRenderer>().sprite = sprite;
+
+	}
+
     public Node GetNodeData()
     {return nodeData;}
 
@@ -56,11 +64,6 @@ public class RoomNode : MonoBehaviour
         this.rightBlocked = rightBlocked;
 
         UpdateNodeFrame();
-    }
-
-    public void CheckUsuable()
-    {
-        
     }
 
     public void SetRoomType(ERoomType roomType)

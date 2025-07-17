@@ -66,7 +66,7 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 
 	public void Init(Action<BattleCard, PointerEventData> clickAction,
 					Action<BattleCard, PointerEventData> beginDragAction,
-					Action<BattleCard, PointerEventData> dragAction,
+					Action<BattleCard, PointerEventData> onDragAction,
 					Action<BattleCard, PointerEventData> endDragAction,
 					Action<BattleCard, PointerEventData> enterAction,
 					Action<BattleCard, PointerEventData> exitAction
@@ -75,7 +75,7 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 	{
 		OnClickAction = clickAction;
 		OnBeginDragAction = beginDragAction;
-		OnDragAction = dragAction;
+		OnDragAction = onDragAction;
 		OnEndDragAction = endDragAction;
 		OnPointerEnterAction = enterAction;
 		OnPointerExitAction = exitAction;

@@ -112,6 +112,11 @@ public class CampsiteManager : MonoBehaviour
 		fadeImage.gameObject.SetActive(false);
 	}
 
+	public void OpenStorage()
+	{
+
+	}
+
 	public void GoToShop()
 	{SceneManager.LoadScene("Shop");}
 

@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -69,10 +68,6 @@ public class DungeonManager : MonoBehaviour
 
 	public Transform verticalItemScroll;
 	public LineRenderer cardDragLine;
-
-	//private Dictionary<Item, int> currentItemList;
-	//private Dictionary<Item, int> myItemList;
-
 	public GameObject popUpMessageWindow;
 	public GameObject popUpMessage;
 
@@ -120,17 +115,22 @@ public class DungeonManager : MonoBehaviour
 
 	public Transform toolLocation;
 
-
-
-
-
-
-
-
-
+	List<GameObject> itemObjectList;
+	List<GameObject> enemyObjectList;
+	public List<GameObject> cardObjectList;
+	public Sprite decorateBlock;
+	private float moveDistance = 2f; // 한 번에 이동할 거리
+	private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
+	private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
+	private bool isMoving = false;
+	private float energyGainLimit = 40;
+	private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
 	public static DungeonManager Inst{get; private set;}
 	int currentPage;
+
+
+
 	void Awake()
 	{
 		moveLocked = true;
@@ -165,19 +165,15 @@ public class DungeonManager : MonoBehaviour
 			//UpdateItemPage();
 		}
 		else
-		{
-			ReCreateFloor();
-		}
+		{ReCreateFloor();}
 
-		StartCoroutine(FadeIn()); //밝아짐
+		StartCoroutine(FadeIn());
 		
 		//DontDestroyOnLoad(this);
-		
 	}
 
 	private IEnumerator FadeIn()
 	{
-		
 		float time = 0;
 		Color color = fadeImage.color;
 		
@@ -208,17 +204,7 @@ public class DungeonManager : MonoBehaviour
 		}
 	}
 
-	List<GameObject> itemObjectList;
-	List<GameObject> enemyObjectList;
-	public List<GameObject> cardObjectList;
-
-
-	private float moveDistance = 2f; // 한 번에 이동할 거리
-	private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
-	private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
-	private bool isMoving = false;
-	private float energyGainLimit = 40;
-	private Dictionary<DungeonEnemy, int> dungeonEnemies;
+	
 	public IEnumerator FindPath(int target)
 	{
 		if(moveLocked)
@@ -1015,6 +1001,26 @@ public class DungeonManager : MonoBehaviour
 		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
 		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
 		CreateEnemy();
+		DecorateFloor();
+	}
+
+	public void DecorateFloor()
+	{
+		
+		for (int i = 0; i < nodeMap.Count; ++i)
+		{
+			if (Random.Range(0, 2) == 1)
+				continue;
+
+			
+			if(nodeMap[i] != null && !nodeMap[i].GetComponent<RoomNode>().filled && nodeMap[i].GetComponent<RoomNode>().GetRoomType() == ERoomType.EWall)
+			{
+				nodeMap[i].GetComponent<RoomNode>().filled = true;
+				nodeMap[i].GetComponent<SpriteRenderer>().sprite = decorateBlock;
+				nodeMap[i].GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1f);
+			}
+		}
+
 	}
 	
 	public void ReCreateEnemy()
@@ -1194,6 +1200,7 @@ public class DungeonManager : MonoBehaviour
 				gameObject.transform.position = mapObject.transform.position;
 				gameObject.GetComponent<RoomNode>().SetNodeNum(i);
 				gameObject.GetComponent<RoomNode>().SetRoomType(map[i].GetRoomType());
+				gameObject.GetComponent<RoomNode>().filled = true;
 				gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
 				gameObject.SetActive(false);
 
@@ -1399,7 +1406,7 @@ public class DungeonManager : MonoBehaviour
 				PlayerData.saveData.health += 5;
 				if (PlayerData.saveData.health > 30)
 					PlayerData.saveData.health = 30;
-			break;
+				break;
 
 			case "2": // 황금주사위
 			
@@ -1418,10 +1425,11 @@ public class DungeonManager : MonoBehaviour
 			break;
 
 			case "6": // 빨간 포션
-			PlayerData.saveData.health += 2;
-			if (PlayerData.saveData.health > 30)
-				PlayerData.saveData.health = 30;
-			break;
+				PlayerData.saveData.health += 2;
+
+				if (PlayerData.saveData.health > 30)
+					PlayerData.saveData.health = 30;
+				break;
 		}
 
 		AlertPopUpMessage(clickedItem.GetName() + "을(를) 사용하였습니다.");
@@ -1438,7 +1446,6 @@ public class DungeonManager : MonoBehaviour
 			PlayerData.saveData.health = 0;
 
 			StopAllCoroutines();
-
 			StartCoroutine(GameOver());
 		}
 	}
@@ -1468,9 +1475,7 @@ public class DungeonManager : MonoBehaviour
 	}
 
 	public void MoveLock(bool value)
-	{
-		moveLocked = value;
-	}
+	{ moveLocked = value; }
 	
 
 	public void MovePlayer(int roomNum)
@@ -1489,52 +1494,57 @@ public class DungeonManager : MonoBehaviour
 				
 			// }
 
-			if(nodeMap[roomNum + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+			if(nodeMap[roomNum + 1].GetComponent<RoomNode>().filled)
 			{
-				if(!nodeMap[roomNum + 1].activeSelf)
+				if (!nodeMap[roomNum + 1].activeSelf)
 				{
 					nodeMap[roomNum + 1].SetActive(true);
 					StartCoroutine(nodeMap[roomNum + 1].GetComponent<RoomNode>().FadeOut());
 				}
 			}
+			
 		}
 
 		if(CheckOutOfIndex(roomNum + width))
 		{
-			if(nodeMap[roomNum + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+			if(nodeMap[roomNum + width].GetComponent<RoomNode>().filled)
 			{
-				if(!nodeMap[roomNum + width].activeSelf)
+				if (!nodeMap[roomNum + width].activeSelf)
 				{
 					nodeMap[roomNum + width].SetActive(true);
 					StartCoroutine(nodeMap[roomNum + width].GetComponent<RoomNode>().FadeOut());
 				}
+
 			}
+			
 		}
 
 		if(CheckOutOfIndex(roomNum - 1) && roomNum % width != 0)
 		{
-			if(nodeMap[roomNum - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+			if(nodeMap[roomNum - 1].GetComponent<RoomNode>().filled)
 			{
-				if(!nodeMap[roomNum - 1].activeSelf)
+				if (!nodeMap[roomNum - 1].activeSelf)
 				{
 					nodeMap[roomNum - 1].SetActive(true);
 					StartCoroutine(nodeMap[roomNum - 1].GetComponent<RoomNode>().FadeOut());
 				}
 			}
-
 			
+
+
 		}
 
 		if(CheckOutOfIndex(roomNum - width))
 		{
-			if(nodeMap[roomNum - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+			if(nodeMap[roomNum - width].GetComponent<RoomNode>().filled)
 			{
-				if(!nodeMap[roomNum - width].activeSelf)
+				if (!nodeMap[roomNum - width].activeSelf)
 				{
 					nodeMap[roomNum - width].SetActive(true);
 					StartCoroutine(nodeMap[roomNum - width].GetComponent<RoomNode>().FadeOut());
 				}
 			}
+			
 		}
 
 		if(map[roomNum].GetRoomType() == ERoomType.EStair)
@@ -1718,7 +1728,6 @@ public class DungeonManager : MonoBehaviour
 			nodeMap[nodeNum].GetComponent<RoomNode>().SetRoomType(ERoomType.None);
 			break;
 		}
-
 		yield return new WaitForSeconds(1.5f);
 	}
 
@@ -1730,7 +1739,6 @@ public class DungeonManager : MonoBehaviour
 
 	public IEnumerator CardEndDrag(AdventureCard dungeonCard, int nodeNum)
 	{
-
 		foreach(GameObject cardObject in cardObjectList)
 		{cardObject.GetComponent<AdventureCard>().SetLock(false);}
 
@@ -1740,7 +1748,6 @@ public class DungeonManager : MonoBehaviour
 		{
 			StartCoroutine(ActivateExploreCard(dungeonCard.GetCardData(), nodeNum));
 			// card.SendMissile(alertPoint, hole.transform);
-
 			for(int i = 0; i < cardObjectList.Count; ++i)
 			{cardObjectList[i].GetComponent<AdventureCard>().SetCardOrder(i);}
 			// CardAlignmentAlt();

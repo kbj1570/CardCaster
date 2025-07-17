@@ -21,6 +21,9 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	public Action<DungeonItem, PointerEventData> OnPointerEnterAction;
 	public Action<DungeonItem, PointerEventData> OnPointerExitAction;
 
+	public Action<DungeonItem, PointerEventData> OnBeginDragAction;
+	public Action<DungeonItem, PointerEventData> OnDragAction;
+	public Action<DungeonItem, PointerEventData> OnEndDragAction;
 	public void OnPointerClick(PointerEventData eventData)
     {
         if (item.GetItemCategory() == EItemCategory.ETool)
@@ -36,7 +39,11 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
 	public void Init(Action<DungeonItem, PointerEventData> clickAction,
 					Action<DungeonItem, PointerEventData> enterAction,
-					Action<DungeonItem, PointerEventData> exitAction)
+					Action<DungeonItem, PointerEventData> exitAction,
+					Action<DungeonItem, PointerEventData> beginDragAction,
+					Action<DungeonItem, PointerEventData> onDragAction,
+					Action<DungeonItem, PointerEventData> endDragAntion
+		)
 	{
 		OnClickAction = clickAction;
 		OnPointerEnterAction = enterAction;
