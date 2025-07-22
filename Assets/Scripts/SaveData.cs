@@ -8,7 +8,7 @@ public class SaveData
 	public Dictionary<string, int> storage;
 	public int gold;
     public Dictionary<string, int> cardList;
-	public Dictionary<string, bool> cardBookList;
+	public Dictionary<string, bool> cardArchiveList;
 	public Dictionary<string, int> deck;
     public Dictionary<string, bool> adventureCardList;
     public Dictionary<string, bool> cutsceneVIewed;

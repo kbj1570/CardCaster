@@ -9,14 +9,14 @@ using UnityEngine.UI;
 
 
 
-public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 	public UIEffect uIEffect;
 	public TMP_Text nameTMP;
 	public TMP_Text descTMP;
 	public TMP_Text costTMP;
-	public Sprite cardBack;
-	public BattleCardData cardData;
+
+	public CardData cardData;
 	public GameObject cardHighlightBorder;
 
 
@@ -46,12 +46,12 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 	public Sequence currentSequence;
 
 
-	public Action<BattleCard, PointerEventData> OnClickAction;
-	public Action<BattleCard, PointerEventData> OnBeginDragAction;
-	public Action<BattleCard, PointerEventData> OnDragAction;
-	public Action<BattleCard, PointerEventData> OnEndDragAction;
-	public Action<BattleCard, PointerEventData> OnPointerEnterAction;
-	public Action<BattleCard, PointerEventData> OnPointerExitAction;
+	public Action<Card, PointerEventData> OnClickAction;
+	public Action<Card, PointerEventData> OnBeginDragAction;
+	public Action<Card, PointerEventData> OnDragAction;
+	public Action<Card, PointerEventData> OnEndDragAction;
+	public Action<Card, PointerEventData> OnPointerEnterAction;
+	public Action<Card, PointerEventData> OnPointerExitAction;
 
 	void Start()
 	{
@@ -64,12 +64,12 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 		StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
 	}
 
-	public void Init(Action<BattleCard, PointerEventData> clickAction,
-					Action<BattleCard, PointerEventData> beginDragAction,
-					Action<BattleCard, PointerEventData> onDragAction,
-					Action<BattleCard, PointerEventData> endDragAction,
-					Action<BattleCard, PointerEventData> enterAction,
-					Action<BattleCard, PointerEventData> exitAction
+	public void Init(Action<Card, PointerEventData> clickAction,
+					Action<Card, PointerEventData> beginDragAction,
+					Action<Card, PointerEventData> onDragAction,
+					Action<Card, PointerEventData> endDragAction,
+					Action<Card, PointerEventData> enterAction,
+					Action<Card, PointerEventData> exitAction
 
 		)
 	{
@@ -81,7 +81,7 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 		OnPointerExitAction = exitAction;
 	}
 
-	public void Init(BattleCardData data, int slotCount, Action<BattleCard, PointerEventData> clickAction)
+	public void Init(BattleCardData data, int slotCount, Action<Card, PointerEventData> clickAction)
 	{
 		cardData = data;
 		this.slotCount = slotCount;
@@ -138,6 +138,13 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 	{ return currentCost; }
 	public void UpdateIsUsable()
 	{ isUsable = (currentCost == 0); }
+
+	public void SetCard(CardData cardData)
+	{
+		this.cardData = cardData;
+		nameTMP.text = this.cardData.GetCardName();
+		cardType = cardData.GetCardType();
+	}
 
 	public void SetCard(BattleCardData cardData)
 	{
@@ -220,7 +227,7 @@ public class BattleCard : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDr
 		}
 	}
 
-	public BattleCardData GetCardData(){return cardData;}
+	public CardData GetCardData(){return cardData;}
 
 
 

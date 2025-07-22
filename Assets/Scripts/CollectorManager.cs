@@ -82,7 +82,7 @@ public class CollectorManager : MonoBehaviour
 
 	public void CreatePage()
 	{
-		cardBookList = PlayerData.saveData.cardBookList;
+		cardBookList = PlayerData.saveData.cardArchiveList;
 
 		totalCardCount = cardDatabase.Count;
 

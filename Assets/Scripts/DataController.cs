@@ -130,13 +130,8 @@ public class  DataController : MonoBehaviour
 
      public List<CardData> LoadCardDatabase()
     {
-        // if(File.Exists(Path.Combine(Application.dataPath, "CardDatabase.json")))
-        // {
-        //     List<CardData> data = JsonMapper.ToObject<List<CardData>>(File.ReadAllText(Path.Combine(Application.dataPath , "CardDatabase.json")));
-        //     return data;
-        // }
 
-        List<CardData> cardDatas = new();
+		List<CardData> cardDatas = new();
 
         cardDatas.Add(new CrescentLancer()); //101
         cardDatas.Add(new InvisibleCape());//102

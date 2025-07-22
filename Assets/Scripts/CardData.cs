@@ -22,6 +22,8 @@ public class CardData
 	public string GetCardNum(){return cardNum;}
 	public string GetCardName(){return cardName;}
 	public string GetCardDesc(){return cardDesc;}
+
+	public string GetCardStoryDesc() { return cardStoryDesc; }
 	public ECardType GetCardType(){return cardType;}
 	public ECardRarity GetCardRarity() { return cardRarity; }
 	public ECardTargetType GetCardTargetType(){return cardTargetType;}

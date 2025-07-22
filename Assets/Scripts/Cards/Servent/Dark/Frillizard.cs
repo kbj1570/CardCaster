@@ -1,18 +1,17 @@
 using System.Collections;
 
-public class GraySlime : ServentCardData
+public class Frillizard : ServentCardData
 {
-    public GraySlime()
+    public Frillizard()
     {
-        cardNum = "116";
-        cardName = "그레이 슬라임";
+        cardNum = "117";
+        cardName = "목도리 슬라임";
         cardCost = 1;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
-        force = 3;
-        cardStoryDesc = "하얀색 액체로 구성되어 있으며,\r\n흐물거리는 몸을 이용해 움직인다.\r\n전설 속에 존재하는 천공 섬이라는 곳에서\r\n지상으로 내려왔다고 하지만 실제로 어떤지는 아무도 모른다.";
-        cardDesc = "능력 없음";
-        penetrate = true;
+        force = 1;
+        cardStoryDesc = "주로 척박한 사막지대에서 서식하는 도마뱀 몬스터이다.\r\n항상 배가 고파 사막을 횡단하는 모험가들을 공격한다고 알려져 있다.\r\n먹이감을 포착하면 목에있는 프릴을 펼치면서 쫓아온다.";
+        cardDesc = "소환 시 상대 소환수 1마리를 혼란 상태로 만든다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;

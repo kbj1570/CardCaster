@@ -105,7 +105,7 @@ public class DeckManager : MonoBehaviour
 		focusOnCard = Instantiate(selectedCardPrefab,
 		new Vector3(0, 0, 0), Utils.QI);
 
-		focusOnCard.GetComponent<BattleCard>().SetCard(cardData);
+		focusOnCard.GetComponent<Card>().SetCard(cardData);
 
 		focusOnCard.transform.SetParent(focusOnCardPosition);
 			focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -172,7 +172,7 @@ public class DeckManager : MonoBehaviour
 
 	
 
-public void UpdatePage()
+	public void UpdatePage()
 	{
 		int count = 0;
 
@@ -231,10 +231,10 @@ public void UpdatePage()
 			GameObject cardObject = Instantiate(selectedCardPrefab,
 			new Vector3(0, 0, 0), Utils.QI);
 
-			cardObject.GetComponent<BattleCard>().Init(item.Key, count, (clickedSlot, eventData) => {
+			cardObject.GetComponent<Card>().Init(item.Key, count, (clickedSlot, eventData) => {
 				AddCard(clickedSlot.cardData, clickedSlot.slotCount, locked);
 			});
-			cardObject.GetComponent<BattleCard>().SetCard(item.Key);
+			cardObject.GetComponent<Card>().SetCard(item.Key);
 
 
 			cardObject.transform.SetParent(cardLocation[count].transform);
@@ -242,18 +242,6 @@ public void UpdatePage()
 			cardObject.transform.localPosition = new Vector3(0,0,0);
 			
 			dummyCardObjectList.Add(cardObject);
-
-			
-
-			
-
-			//GameObject cardFrameObject = Instantiate(cardFrame,new Vector3(0,0,0) , Utils.QI);
-			//cardFrameObject.transform.SetParent(cardLocation[count].transform);
-			//cardFrameObject.transform.localPosition = new Vector3(0,0,0);
-			//cardFrameObject.GetComponent<CardFrame>().
-			//SetCardData(item.Key, item.Value, count, locked);
-
-			//dummyCardObjectList.Add(cardFrameObject);
 			count++;
 		}
 		if(currentPage == 0)
@@ -304,7 +292,7 @@ public void UpdatePage()
 		deckCountText.text = deckCount.ToString() + "  /  30"; 
 	}
 
-	public void AddCard(BattleCardData value, int order, bool locked)
+	public void AddCard(CardData value, int order, bool locked)
 	{
 		if(deckCount == 30)
 		{
@@ -317,15 +305,16 @@ public void UpdatePage()
 			AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
 			return;
 		}
+		BattleCardData battleCardData = value as BattleCardData;
 
-		if(!myDeckList.ContainsKey(value))
+		if (!myDeckList.ContainsKey(battleCardData))
 		{
-			myDeckList.Add(value, 1);
+			myDeckList.Add(battleCardData, 1);
 			PlayerData.saveData.deck.Add(value.GetCardNum().ToString(), 1);
 		}
 		else
 		{
-			myDeckList[value]++;
+			myDeckList[battleCardData]++;
 			PlayerData.saveData.deck[value.GetCardNum().ToString()]++;
 		}
 
