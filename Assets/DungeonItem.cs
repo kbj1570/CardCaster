@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using System;
 
 
-public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     int itemNum;
     int itemOrder;
@@ -26,15 +26,28 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	public Action<DungeonItem, PointerEventData> OnEndDragAction;
 	public void OnPointerClick(PointerEventData eventData)
     {
-        if (item.GetItemCategory() == EItemCategory.ETool)
-            ItemWindow.Inst.SelectUsingItem(item);
-
 		OnClickAction?.Invoke(this, eventData);
 	}
     public void OnPointerEnter(PointerEventData eventData)
-    {ItemWindow.Inst.ShowItemDescription(itemNum);}
+    { OnPointerEnterAction?.Invoke(this, eventData); }
     public void OnPointerExit(PointerEventData eventData)
-    {ItemWindow.Inst.HideItemDescription();}
+    { OnPointerExitAction?.Invoke(this, eventData); }
+
+
+	public void OnBeginDrag(PointerEventData eventData)
+	{
+		OnBeginDragAction?.Invoke(this, eventData);
+	}
+
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		OnEndDragAction?.Invoke(this, eventData);
+	}
+
+	public void OnDrag(PointerEventData eventData)
+	{
+		OnDragAction?.Invoke(this, eventData);
+	}
 
 
 	public void Init(Action<DungeonItem, PointerEventData> clickAction,
@@ -48,6 +61,9 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 		OnClickAction = clickAction;
 		OnPointerEnterAction = enterAction;
 		OnPointerExitAction = exitAction;
+		OnBeginDragAction = beginDragAction;
+		OnDragAction = onDragAction;
+		OnEndDragAction = endDragAntion;
 	}
 
 

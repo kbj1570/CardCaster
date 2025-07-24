@@ -344,7 +344,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
 	public void OnDrag(PointerEventData eventData)
 	{
-		
 		OnDragAction?.Invoke(this, eventData);
 	}
 	public void OnPointerEnter(PointerEventData eventData)

@@ -1,9 +1,13 @@
+using DG.Tweening;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class ItemWindow : Window
 {
@@ -89,6 +93,31 @@ public class ItemWindow : Window
 
 				itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
 
+				itemObject.GetComponent<DungeonItem>().Init(
+					(item, eventData) => {
+						ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+					}
+				, // 클릭 시
+				(itemSlot, eventData) => {
+					//ShowItemDescription(Int32.Parse(itemSlot.GetItem().GetNum()));
+				} // 마우스 입장
+				,
+				(itemSlot, eventData) => {
+					HideItemDescription();
+				} // 마우스 퇴장
+				,
+				(itemSlot, eventData) => {
+
+				}, // 드래그 시작
+				(itemSlot, eventData) => {
+					itemSlot.transform.position = Input.mousePosition;
+				}, // 드래그 중
+				(itemSlot, eventData) => {
+					itemSlot.transform.localPosition = Vector3.zero;
+				} // 드래그 끝
+
+				);
+
 				itemObject.transform.SetParent(itemLocations[index]);
 				itemObject.transform.localScale = Vector3.one;
 				itemObject.transform.localPosition = Vector3.zero;
@@ -107,6 +136,34 @@ public class ItemWindow : Window
 
 				itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value, itemSpriteList[Int32.Parse(itemPair.Key.GetNum())]);
 
+				itemObject.GetComponent<DungeonItem>().Init(
+				(item, eventData) => {
+					ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+				}
+				, // 클릭 시
+				(item, eventData) => {
+					//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+				} // 마우스 입장
+				,
+				(item, eventData) => {
+					HideItemDescription();
+				} // 마우스 퇴장
+				,
+				(item, eventData) => {
+
+				}, // 드래그 시작
+				(itemSlot, eventData) => {
+					itemSlot.transform.position = Input.mousePosition;
+				}, // 드래그 중
+				(itemSlot, eventData) => {
+					itemSlot.transform.localPosition = Vector3.zero;
+				} // 드래그 끝
+
+			);
+
+
+
+
 				itemObject.transform.SetParent(itemLocations[index]);
 				itemObject.transform.localScale = Vector3.one;
 				itemObject.transform.localPosition = Vector3.zero;
@@ -115,21 +172,6 @@ public class ItemWindow : Window
 				index++;
 			}
 		}
-
-
-		//foreach (KeyValuePair<Item, int> itemPair in myItemList)
-		//	{
-		//		if (itemPair.Key.GetItemCategory() == selectedItemCategory)
-		//		{
-		//			GameObject itemObject = Instantiate(itemPrefabList[0], new Vector3(0, 0, 0), Utils.QI);
-
-		//			itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value,
-		//			itemImageList[Int32.Parse(itemPair.Key.GetNum())]);
-
-		//			itemObject.transform.SetParent(verticalItemScroll);
-		//			itemObjectList.Add(itemObject);
-		//		}
-		//	}
 	}
 
 	public void ShowItemDescription(int itemNum)

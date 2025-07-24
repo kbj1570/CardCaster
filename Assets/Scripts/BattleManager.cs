@@ -29,13 +29,12 @@ public enum EParryState{Idle, Parry, Succecced, Failed}
 
 public class BattleManager : MonoBehaviour
 {
-
-
 	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
 	public AudioClip serventDeath;
 	public AudioClip serventSummon;
 
+	Dictionary<string, int> cardHashMap;
 
 	EParryState parryState;
 	bool playerDamageBlock;
@@ -44,11 +43,6 @@ public class BattleManager : MonoBehaviour
 	int enemyDamageDecrease;
 	int playerDamageIncrease;
 	int enemyDamageIncrease;
-
-	Dictionary<string, int> cardHashMap = DataController.Inst.LoadCardHashMap();
-
-
-
 
 
 	ETurnState turnState;
@@ -247,6 +241,11 @@ public class BattleManager : MonoBehaviour
 
 		sequence.OnComplete(() => {flashImage.gameObject.SetActive(false);});
 		sequence.Play();
+	}
+
+	void Start()
+	{
+		cardHashMap = DataController.Inst.LoadCardHashMap();
 	}
 
 	void Awake()
@@ -2080,18 +2079,6 @@ public class BattleManager : MonoBehaviour
 				}
 
 			}
-
-				//if (CheckCardUsable(card.GetCardData(), card.GetComponent<BattleCardObject>().GetCurrentCost(), targetField))
-				//{
-				//	switch (card.GetCardType())
-				//	{
-				//		case ECardType.Spell:
-							
-				//			break;
-				//	}
-				//}
-
-			
 		}
 
 		foreach(GameObject cardObject in cardObjectList)
@@ -2240,7 +2227,7 @@ public class BattleManager : MonoBehaviour
 		cardDragLine.endColor = Color.blue;
 	}
 
-	public void EnemyTakeDamage(int damage)
+	public void DealDamageToEnemy(int damage)
 	{
 		
 		GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
@@ -2252,7 +2239,7 @@ public class BattleManager : MonoBehaviour
 		StartCoroutine(CheckEnemyCondition(0.3f));
 	}
 
-	public void EnemyTakeAttack(int damage)
+	public void AttackToEnemy(int damage)
 	{
 		StartCoroutine(ShowBattleWindow());
 		GameObject damageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
@@ -2323,7 +2310,7 @@ public class BattleManager : MonoBehaviour
 			{attackerForce = 0;}
 			
 
-			EnemyTakeAttack(attackerForce);
+			AttackToEnemy(attackerForce);
 
 			
 			
@@ -2350,12 +2337,12 @@ public class BattleManager : MonoBehaviour
 					if(enemyDamageBlock)
 					{
 						defenderDamage = 0;
-						EnemyTakeDamage(defenderDamage);
+						DealDamageToEnemy(defenderDamage);
 					}
 					else if(defenderDamage == 0)
 					{}
 					else
-					{EnemyTakeDamage(defenderDamage);}
+					{DealDamageToEnemy(defenderDamage);}
 
 				}
 				

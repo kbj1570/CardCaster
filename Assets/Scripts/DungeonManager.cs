@@ -1568,7 +1568,7 @@ public class DungeonManager : MonoBehaviour
 			switch(map[roomNum].GetItem().GetItemCategory())
 			{
 				case EItemCategory.ETool:
-					if (PlayerData.saveData.items.Count <= 7)
+					if (PlayerData.saveData.items.Count <= 8)
 					{
 						PlayerData.saveData.items.Add(map[roomNum].GetItem().GetNum());
 						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
@@ -1589,7 +1589,7 @@ public class DungeonManager : MonoBehaviour
 						map[roomNum].SetRoomType(ERoomType.None);
 						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 					}
-					else if(PlayerData.saveData.others.Count <= 7)
+					else if(PlayerData.saveData.others.Count <= 9)
 					{
 						PlayerData.saveData.others.Add(map[roomNum].GetItem().GetNum(), 1);
 						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
