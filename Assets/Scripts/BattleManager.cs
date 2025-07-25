@@ -1,11 +1,8 @@
 using DG.Tweening;
-using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,7 +18,7 @@ public enum ECardType{None ,Servent, Spell, Adventure}
 public enum ECardRarity{None, Normal, Rare}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
-public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole}
+public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole, Inventory, Storage}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
 public enum EServentSize{Small, Middle, Big}
@@ -583,8 +580,8 @@ public class BattleManager : MonoBehaviour
 
 	public IEnumerator GameOver()
 	{
-		List<string> items = PlayerData.saveData.items;
-		Dictionary<string, int> others = PlayerData.saveData.others;
+		List<string> items = PlayerData.saveData.inventory_items;
+		Dictionary<string, int> others = PlayerData.saveData.inventory_others;
 
 		int itemCount = items.Count / 2;
 		int othersCount = others.Count / 2;

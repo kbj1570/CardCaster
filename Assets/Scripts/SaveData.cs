@@ -3,9 +3,10 @@ using System.Collections.Generic;
 public class SaveData
 {
     public int health;
-    public Dictionary<string, int> others;
-    public List<string> items;
-	public Dictionary<string, int> storage;
+    public Dictionary<string, int> inventory_others;
+    public List<string> inventory_items;
+	public Dictionary<string, int> storage_others;
+	public List<string> storage_items;
 	public int gold;
     public Dictionary<string, int> cardList;
 	public Dictionary<string, bool> cardArchiveList;

@@ -1,30 +1,21 @@
-using NUnit.Framework.Interfaces;
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
-using static UnityEditor.Progress;
-using static UnityEngine.Rendering.DebugUI;
 public class DeckManager : MonoBehaviour
 {
 	private int deckCount;
 	public Transform focusOnCardPosition;
-	public Transform gridlayoutPosition;
+	Transform gridlayoutPosition;
 	public Transform popUpPosition;
 	public List<Transform> cardLocation;
-	public GameObject window;
-	public GameObject cardPrefab;
 	public GameObject smallCardPrefab;
-	public GameObject cardFrame;
 	private GameObject focusOnCard;
 	public GridLayoutGroup gridLayout;
 	private Dictionary<BattleCardData, int> myCardList;
 	private Dictionary<BattleCardData, int> myDeckList;
 	private List<CardData> cardDatabase;
-	private List<BattleCardData> currentPageCardList;
-	public List<GameObject> dummyCardObjectList;
+	private List<GameObject> dummyCardObjectList;
 	private List<GameObject> deckCardObjectList;
 
 
@@ -60,6 +51,7 @@ public class DeckManager : MonoBehaviour
 		myCardList = new();
 		myDeckList = new();
 		deckCardObjectList = new();
+		dummyCardObjectList = new();
 		//scrollRect.normalizedPosition = new Vector2(1, 1);
 
 		cardHashMap = DataController.Inst.LoadCardHashMap();
@@ -73,19 +65,12 @@ public class DeckManager : MonoBehaviour
 	}
 
 	void Awake()
-	{
-		Inst = this;
-
-		
-	}
+	{Inst = this;}
 
 
 
 	public void FocusOnCard(BattleCardData cardData)
 	{
-		//focusOnCard = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]],
-		//	new Vector3(0,0,0) , Utils.QI);
-
 		GameObject selectedCardPrefab = null;
 
 		switch (cardData.GetCardType())
@@ -99,17 +84,15 @@ public class DeckManager : MonoBehaviour
 			case ECardType.Adventure:
 				selectedCardPrefab = dummyAdventureCardPrefab;
 				break;
-
 		}
 
 		focusOnCard = Instantiate(selectedCardPrefab,
 		new Vector3(0, 0, 0), Utils.QI);
 
 		focusOnCard.GetComponent<Card>().SetCard(cardData);
-
 		focusOnCard.transform.SetParent(focusOnCardPosition);
-			focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-			focusOnCard.transform.localPosition = new Vector3(0,0,0);
+		focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		focusOnCard.transform.localPosition = new Vector3(0,0,0);
 
 	}
 
@@ -139,17 +122,7 @@ public class DeckManager : MonoBehaviour
 		DataController.Inst.SaveData(PlayerData.saveData);
 	}
 	public void LoadDeck()
-	{
-	   Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();
-	}
-	public void SaveCardList()
-	{
-		
-	}
-	public void LoadCardList()
-	{
-		
-	}
+	{Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();}
 	public void CreatePage()
 	{
 		currentCardList = new Dictionary<BattleCardData, int>();
@@ -341,7 +314,7 @@ public class DeckManager : MonoBehaviour
 
 		cardObject.GetComponent<DummyCard>().SetCard(value);
 
-		cardObject.transform.SetParent(window.transform);
+		cardObject.transform.SetParent(this.transform);
 		cardObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
 		UpdatePage();
 		UpdateDeckPage();
@@ -383,8 +356,8 @@ public class DeckManager : MonoBehaviour
 
 
 
-		cardObject.transform.SetParent(window.transform);
-		cardObject.GetComponent<DummyCard>().StartMoveAndScale(window.transform.position);
+		cardObject.transform.SetParent(this.transform);
+		cardObject.GetComponent<DummyCard>().StartMoveAndScale(this.transform.position);
 
 		UpdatePage();
 		UpdateDeckPage();

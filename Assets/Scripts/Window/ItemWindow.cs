@@ -1,13 +1,7 @@
-using DG.Tweening;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ItemWindow : Window
 {
@@ -59,10 +53,10 @@ public class ItemWindow : Window
 		toolList.Clear();
 		othersList.Clear();
 
-		foreach (KeyValuePair<string, int> value in PlayerData.saveData.others)
+		foreach (KeyValuePair<string, int> value in PlayerData.saveData.inventory_others)
 		{ othersList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
 
-		foreach (string value in PlayerData.saveData.items)
+		foreach (string value in PlayerData.saveData.inventory_items)
 		{ toolList.Add(itemDatabase[Int32.Parse(value)]);}
 	}
 

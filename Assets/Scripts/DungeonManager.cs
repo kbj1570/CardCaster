@@ -1568,9 +1568,9 @@ public class DungeonManager : MonoBehaviour
 			switch(map[roomNum].GetItem().GetItemCategory())
 			{
 				case EItemCategory.ETool:
-					if (PlayerData.saveData.items.Count <= 8)
+					if (PlayerData.saveData.inventory_items.Count <= 8)
 					{
-						PlayerData.saveData.items.Add(map[roomNum].GetItem().GetNum());
+						PlayerData.saveData.inventory_items.Add(map[roomNum].GetItem().GetNum());
 						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
 						map[roomNum].SetRoomType(ERoomType.None);
 						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
@@ -1582,16 +1582,16 @@ public class DungeonManager : MonoBehaviour
 					break;
 				case EItemCategory.EOthers:
 
-					if (PlayerData.saveData.others.ContainsKey(map[roomNum].GetItem().GetNum()))
+					if (PlayerData.saveData.inventory_others.ContainsKey(map[roomNum].GetItem().GetNum()))
 					{ 
-						PlayerData.saveData.others[map[roomNum].GetItem().GetNum()]++;
+						PlayerData.saveData.inventory_others[map[roomNum].GetItem().GetNum()]++;
 						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
 						map[roomNum].SetRoomType(ERoomType.None);
 						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 					}
-					else if(PlayerData.saveData.others.Count <= 9)
+					else if(PlayerData.saveData.inventory_others.Count <= 9)
 					{
-						PlayerData.saveData.others.Add(map[roomNum].GetItem().GetNum(), 1);
+						PlayerData.saveData.inventory_others.Add(map[roomNum].GetItem().GetNum(), 1);
 						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
 						map[roomNum].SetRoomType(ERoomType.None);
 						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
