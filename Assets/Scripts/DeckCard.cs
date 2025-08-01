@@ -1,24 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using TMPro;
 using DG.Tweening;
-public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandler,  IPointerExitHandler
+using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
 	private BattleCardData cardData;
+	private Item itemData;
 	private string cardName;
 	private int count;
 	private int cardCost;
 	public TMP_Text cardNameText;
 	public TMP_Text cardCountText;
 	public TMP_Text cardCostText;
+
 	public Image image;
 	public Color purpleColor;
+	public float duration = 2f;
+	public float scaleFactor = 2f;
 
-		public float duration = 2f; // 전체 이동 시간
-	public float scaleFactor = 2f; // 최대 커지는 배율
+
+	public Action<DeckCard, PointerEventData> OnClickAction;
+	public Action<DeckCard, PointerEventData> OnPointerEnterAction;
+	public Action<DeckCard, PointerEventData> OnPointerExitAction;
+
+	public Action<DeckCard, PointerEventData> OnBeginDragAction;
+	public Action<DeckCard, PointerEventData> OnDragAction;
+	public Action<DeckCard, PointerEventData> OnEndDragAction;
 
 	public void StartMoveAndScale(Vector3 targetPosition)
 	{
@@ -27,11 +36,43 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandl
 		float shrinkTime = duration * 0.8f;
 
 		Sequence sequence = DOTween.Sequence();
-
 		sequence.Append(transform.DOScale(scaleFactor, growTime));
-
 		sequence.Append(transform.DOScale(0, shrinkTime).SetEase(Ease.InQuad));
 		sequence.Join(transform.DOMove(targetPosition, shrinkTime).SetEase(Ease.InOutQuad));
+	}
+
+	public void Init(Action<DeckCard, PointerEventData> clickAction,
+					Action<DeckCard, PointerEventData> enterAction,
+					Action<DeckCard, PointerEventData> exitAction,
+					Action<DeckCard, PointerEventData> beginDragAction,
+					Action<DeckCard, PointerEventData> onDragAction,
+					Action<DeckCard, PointerEventData> endDragAntion
+		)
+	{
+		OnClickAction = clickAction;
+		OnPointerEnterAction = enterAction;
+		OnPointerExitAction = exitAction;
+		OnBeginDragAction = beginDragAction;
+		OnDragAction = onDragAction;
+		OnEndDragAction = endDragAntion;
+	}
+
+	public void SetItem(Item item, int count)
+	{
+		itemData = item;
+		this.count = count;
+		cardNameText.text = item.GetName();
+		cardCountText.text = count.ToString();
+	}
+
+	public Item GetItem()
+	{ return itemData; }
+
+	public void SetItem(Item item)
+	{
+		itemData = item;
+		cardNameText.text = item.GetName();
+		cardCountText.text = "";
 	}
 
 	public void SetCard(BattleCardData value, int count)
@@ -45,22 +86,40 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler , IPointerEnterHandl
 		image.color = purpleColor;
 		if(value.GetCardType() == ECardType.Servent || value.GetCardType() == ECardType.Spell)
 		{
-			
 			this.cardCost = (value as BattleCardData).GetCardCost();
 			cardCostText.text = (value as BattleCardData).GetCardCost().ToString();
 		}
 		
 	}
 
-	public void OnPointerClick(PointerEventData eventData)
+	public BattleCardData GetCardData()
 	{
-		DeckManager.Inst.DeleteCard(cardData);
-		DeckManager.Inst.UnFocusCard();
+		return cardData;
 	}
 
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		OnClickAction?.Invoke(this, eventData);
+	}
 	public void OnPointerEnter(PointerEventData eventData)
-	{DeckManager.Inst.FocusOnCard(cardData);}
-
+	{ OnPointerEnterAction?.Invoke(this, eventData); }
 	public void OnPointerExit(PointerEventData eventData)
-	{DeckManager.Inst.UnFocusCard();}
+	{ OnPointerExitAction?.Invoke(this, eventData); }
+
+
+	public void OnBeginDrag(PointerEventData eventData)
+	{
+		OnBeginDragAction?.Invoke(this, eventData);
+	}
+
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		OnEndDragAction?.Invoke(this, eventData);
+	}
+
+	public void OnDrag(PointerEventData eventData)
+	{
+		OnDragAction?.Invoke(this, eventData);
+	}
+
 }

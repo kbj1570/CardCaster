@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class StorageWindow : Window
 {
@@ -12,6 +13,8 @@ public class StorageWindow : Window
 	public Transform storageLocationParent;
 	private List<Transform> invnetoryLocations;
 	private List<Transform> storageLocations;
+
+	public GameObject scrollView;
 
 	public  GridLayoutGroup gridLayout;
 
@@ -43,7 +46,7 @@ public class StorageWindow : Window
 
 	public GameObject storageArea;
 	public GameObject inventoryArea;
-
+	private Vector3 velocity = Vector3.zero;
 	public bool itemLocked;
 
 	public static StorageWindow Inst { get; private set; }
@@ -100,6 +103,9 @@ public class StorageWindow : Window
 		foreach (GameObject gameObject in itemObjectList)
 		{ Destroy(gameObject); }
 
+		foreach (GameObject gameObject in storageItemObjectList)
+		{ Destroy(gameObject); }
+
 		LoadItemList();
 
 		EItemCategory selectedItemCategory = EItemCategory.ETool;
@@ -123,7 +129,7 @@ public class StorageWindow : Window
 
 				itemObject.GetComponent<DungeonItem>().Init(
 					(item, eventData) => {
-						ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+						//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
 					}
 				, // 클릭 시
 				(itemSlot, eventData) => {
@@ -131,15 +137,19 @@ public class StorageWindow : Window
 				} // 마우스 입장
 				,
 				(itemSlot, eventData) => {
-					HideItemDescription();
+					//HideItemDescription();
 				} // 마우스 퇴장
 				,
 				(itemSlot, eventData) => {
 					storageArea.SetActive(true);
 					inventoryArea.SetActive(true);
+					inventoryArea.transform.SetSiblingIndex(transform.childCount - 1);
+					storageArea.transform.SetSiblingIndex(transform.childCount - 2);
+					itemLocationParent.transform.SetSiblingIndex(transform.childCount - 3);
 				}, // 드래그 시작
 				(itemSlot, eventData) => {
-					itemSlot.transform.position = Input.mousePosition;
+					//itemSlot.transform.position = Input.mousePosition;
+					itemSlot.transform.position = Vector3.SmoothDamp(itemSlot.transform.position, Input.mousePosition, ref velocity, 0.015f);
 				}, // 드래그 중
 				(itemSlot, eventData) => {
 
@@ -179,8 +189,55 @@ public class StorageWindow : Window
 				GameObject inventoryItemObject = Instantiate(storageItemPrefab, new Vector3(0, 0, 0), Utils.QI);
 				storageItemObjectList.Add(inventoryItemObject);
 
+				inventoryItemObject.GetComponent<DeckCard>().Init(
+				(deckCard, eventData) => {
+
+				}
+				, // 클릭 시
+				(deckCard, eventData) => {
+
+				} // 마우스 입장
+				,
+				(deckCard, eventData) => {
+
+				} // 마우스 퇴장
+				,
+				(deckCard, eventData) => {
+					storageArea.SetActive(true);
+					inventoryArea.SetActive(true);
+					deckCard.transform.SetParent(transform);
+
+					storageArea.transform.SetSiblingIndex(transform.childCount - 1);
+					inventoryArea.transform.SetSiblingIndex(transform.childCount - 2);
+					deckCard.transform.SetSiblingIndex(transform.childCount - 3);
+				}, // 드래그 시작
+				(deckCard, eventData) => {
+					deckCard.transform.position = Vector3.SmoothDamp(deckCard.transform.position, Input.mousePosition, ref velocity, 0.015f);
+				}, // 드래그 중
+				(deckCard, eventData) => {
+					if (mouseOnArea == EMouseOnArea.Storage)
+					{
+						UpdateItemPage();
+					}
+					else if (mouseOnArea == EMouseOnArea.Inventory && inventoryToolList.Count < 9)
+					{
+						PlayerData.saveData.storage_items.Remove(deckCard.GetItem().GetNum());
+						PlayerData.saveData.inventory_items.Add(deckCard.GetItem().GetNum());
+						UpdateItemPage();
+					}
+					else
+					{UpdateItemPage();}
+
+					storageArea.SetActive(false);
+					inventoryArea.SetActive(false);
+					ResetMouseOnArea();
+				} // 드래그 끝
+
+			);
+
 				inventoryItemObject.transform.SetParent(gridLayout.transform);
-				//gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
+				inventoryItemObject.transform.localScale = Vector3.one;
+				inventoryItemObject.GetComponent<DeckCard>().SetItem(value);
 			}
 
 		}
@@ -209,6 +266,9 @@ public class StorageWindow : Window
 				(item, eventData) => {
 					storageArea.SetActive(true);
 					inventoryArea.SetActive(true);
+					inventoryArea.transform.SetSiblingIndex(transform.childCount - 1);
+					storageArea.transform.SetSiblingIndex(transform.childCount - 2);
+					itemLocationParent.transform.SetSiblingIndex(transform.childCount - 3);
 				}, // 드래그 시작
 				(itemSlot, eventData) => {
 					itemSlot.transform.position = Input.mousePosition;
@@ -236,24 +296,66 @@ public class StorageWindow : Window
 
 			);
 
-			foreach (KeyValuePair<Item, int> value in storageOthersList)
-			{
-				GameObject storageItemObject = Instantiate(storageItemPrefab, new Vector3(0, 0, 0), Utils.QI);
-				storageItemObjectList.Add(storageItemObject);
-
-				storageItemObject.transform.SetParent(gridLayout.transform);
-				//gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
-			}
-
-
-
-
 				itemObject.transform.SetParent(invnetoryLocations[index]);
 				itemObject.transform.localScale = Vector3.one;
 				itemObject.transform.localPosition = Vector3.zero;
 				itemObjectList.Add(itemObject);
 
 				index++;
+			}
+			foreach (KeyValuePair<Item, int> value in storageOthersList)
+			{
+				GameObject storageItemObject = Instantiate(storageItemPrefab, new Vector3(0, 0, 0), Utils.QI);
+				storageItemObject.GetComponent<DeckCard>().Init(
+				(deckCard, eventData) => {
+					
+				}
+				, // 클릭 시
+				(deckCard, eventData) => {
+					
+				} // 마우스 입장
+				,
+				(deckCard, eventData) => {
+					
+				} // 마우스 퇴장
+				,
+				(deckCard, eventData) => {
+					storageArea.SetActive(true);
+					inventoryArea.SetActive(true);
+
+
+				}, // 드래그 시작
+				(deckCard, eventData) => {
+					deckCard.transform.position = Input.mousePosition;
+				}, // 드래그 중
+				(deckCard, eventData) => {
+					if (mouseOnArea == EMouseOnArea.Storage)
+					{
+						PlayerData.saveData.storage_others.Remove(deckCard.GetItem().GetNum());
+						StoreItem(deckCard.GetItem());
+						UpdateItemPage();
+					}
+					else if (mouseOnArea == EMouseOnArea.Inventory)
+					{
+						deckCard.transform.SetParent(gridLayout.transform);
+					}
+					else
+					{
+						deckCard.transform.SetParent(gridLayout.transform);
+					}
+					storageArea.SetActive(false);
+					inventoryArea.SetActive(false);
+
+					ResetMouseOnArea();
+				} // 드래그 끝
+
+			);
+
+				storageItemObjectList.Add(storageItemObject);
+
+				storageItemObject.transform.SetParent(gridLayout.transform);
+				storageItemObject.transform.localScale = Vector3.one;
+				storageItemObject.GetComponent<DeckCard>().SetItem(value.Key, value.Value);
 			}
 		}
 

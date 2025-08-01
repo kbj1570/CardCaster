@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 public class DeckManager : MonoBehaviour
@@ -253,13 +254,36 @@ public class DeckManager : MonoBehaviour
 
 		foreach(KeyValuePair<BattleCardData, int> value in myDeckList)
 		{
-			GameObject gameObject = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
-			deckCardObjectList.Add(gameObject);
+			GameObject smallCard = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
+			deckCardObjectList.Add(smallCard);
 
-			gameObject.transform.SetParent(gridLayout.transform);
-			gameObject.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
+			smallCard.transform.SetParent(gridLayout.transform);
+			smallCard.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
 
-			deckCount += value.Value;
+
+			smallCard.GetComponent<DeckCard>().Init(
+			(deckCard, eventData) =>
+			{
+				DeleteCard(deckCard.GetCardData());
+				UnFocusCard();
+			}
+			, // 클릭 시
+			(deckCard, eventData) =>
+			{
+				FocusOnCard(deckCard.GetCardData());
+			} // 마우스 입장
+			,
+			(deckCard, eventData) =>
+			{
+				UnFocusCard();
+			} // 마우스 퇴장
+			,
+			null, // 드래그 시작
+			null, // 드래그 중
+			null// 드래그 끝
+			);
+
+		deckCount += value.Value;
 		}
 
 		deckCountText.text = deckCount.ToString() + "  /  30"; 
