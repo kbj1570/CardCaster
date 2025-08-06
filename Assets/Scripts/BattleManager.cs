@@ -94,8 +94,6 @@ public class BattleManager : MonoBehaviour
 	public List<BattleCardData> trashList;
 	public List<BattleCardData> handList;
 	private List<GameObject> cardObjectList;
-	private Dictionary<ItemSO, int> inventory;
-	WaitForSeconds delay05 = new WaitForSeconds(0.5f);
 	WaitForSeconds delay07 = new WaitForSeconds(0.7f);
 	public LineRenderer cardDragLine;
 	public LineRenderer attackDragLine;
@@ -179,8 +177,6 @@ public class BattleManager : MonoBehaviour
 
 	private IEnumerator ShowBattleWindow()
 	{
-		//InOutElastic
-		//OutBack
 		foreach(GameObject card in cardObjectList)
 		{card.GetComponent<Card>().SetLock(true);}
 
@@ -242,7 +238,7 @@ public class BattleManager : MonoBehaviour
 
 	void Start()
 	{
-		cardHashMap = DataController.Inst.LoadCardHashMap();
+		
 	}
 
 	void Awake()
@@ -718,6 +714,7 @@ public class BattleManager : MonoBehaviour
 
 		currentEnemy = enemies[enemyIndex];
 		enemyHealth = currentEnemy.GetHealth();
+		cardHashMap = DataController.Inst.LoadCardHashMap();
 
 		Dictionary<BattleCardData, int> deck = new Dictionary<BattleCardData, int>();
 		List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
@@ -725,7 +722,9 @@ public class BattleManager : MonoBehaviour
 
 
 		foreach(KeyValuePair<string, int> value in myDeck)
-		{deck.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value);}
+		{
+			deck.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value);
+		}
 
 		deckList = new();
 		cardObjectList = new();
@@ -2072,7 +2071,6 @@ public class BattleManager : MonoBehaviour
 					{ cardObjectList[i].GetComponent<Card>().SetCardOrder(i); }
 
 					CardAlignmentAlt();
-					StartCoroutine(spellCardData.SpellEffectExecute(this));
 				}
 
 			}

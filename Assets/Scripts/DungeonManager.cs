@@ -12,6 +12,11 @@ using Random = UnityEngine.Random;
 public class DungeonManager : MonoBehaviour
 {
 
+	public EDirection currentDirection;
+	public Sprite directionSprite;
+
+	public List<Transform> directionLocations;
+
 	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
 	public List<AudioClip> runningInGrassSound;
@@ -127,7 +132,98 @@ public class DungeonManager : MonoBehaviour
 	private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
 	public static DungeonManager Inst{get; private set;}
+
 	int currentPage;
+
+
+	void Update()
+	{
+		if (updateLock)
+			return;
+
+		ShowMessage();
+		UpdatePlayerData();
+		if (Input.GetKeyDown(KeyCode.W) && !moveLocked)
+		{
+			if (player.GetComponent<Player>().GetDirection() != EDirection.North) { player.GetComponent<Player>().SetDirection(EDirection.North); }
+			else if (CheckOutOfIndex(currentPlayerLocation - width))
+			{
+				if (nodeMap[currentPlayerLocation - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation -= width;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.up);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+		}
+		else if (Input.GetKeyDown(KeyCode.A) && !moveLocked)
+		{
+			if (currentPlayerLocation % width == 0)
+				return;
+
+			if (player.GetComponent<Player>().GetDirection() != EDirection.West) { player.GetComponent<Player>().SetDirection(EDirection.West); }
+			else if(CheckOutOfIndex(currentPlayerLocation - 1))
+			{
+				if (nodeMap[currentPlayerLocation - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation -= 1;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.left);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+		}
+		else if (Input.GetKeyDown(KeyCode.S) && !moveLocked)
+		{
+			if (player.GetComponent<Player>().GetDirection() != EDirection.South) { player.GetComponent<Player>().SetDirection(EDirection.South); }
+			else if(CheckOutOfIndex(currentPlayerLocation + width))
+			{
+				if (nodeMap[currentPlayerLocation + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation += width;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.down);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+		}
+		else if (Input.GetKeyDown(KeyCode.D) && !moveLocked)
+		{
+			if (currentPlayerLocation % width == width - 1)
+				return;
+
+			if (player.GetComponent<Player>().GetDirection() != EDirection.East) { player.GetComponent<Player>().SetDirection(EDirection.East); }
+			else if(CheckOutOfIndex(currentPlayerLocation + 1))
+			{
+				if (nodeMap[currentPlayerLocation + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation += 1;
+					MovePlayer(currentPlayerLocation);
+
+					EnqueueMove(Vector2.right);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+		}
+		else if (Input.GetKeyDown(KeyCode.Space))
+		{
+			CameraController.Inst.ZoomIn(2f);
+		}
+		else if (Input.GetKeyUp(KeyCode.Space))
+		{
+			CameraController.Inst.ZoomOut(2f);
+		}
+		else if (Input.GetKeyUp(KeyCode.Z))
+		{
+			PlayerData.saveData.health -= 1;
+		}
+
+	}
 
 
 
@@ -688,97 +784,6 @@ public class DungeonManager : MonoBehaviour
 	}
 
 
-	void Update()
-	{
-		if (updateLock)
-			return;
-
-		ShowMessage();
-		UpdatePlayerData();
-
-		if (Input.GetKeyDown(KeyCode.W) && !moveLocked)
-		{
-			if(CheckOutOfIndex(currentPlayerLocation - width))
-			{
-				if(nodeMap[currentPlayerLocation - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation -= width;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.up);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-
-
-		if(Input.GetKeyDown(KeyCode.A) && !moveLocked)
-		{
-			if(currentPlayerLocation % width == 0)
-			return;
-
-			if(CheckOutOfIndex(currentPlayerLocation - 1))
-			{
-				if(nodeMap[currentPlayerLocation - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation -= 1;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.left);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-
-		if(Input.GetKeyDown(KeyCode.S) && !moveLocked)
-		{
-			if(CheckOutOfIndex(currentPlayerLocation + width))
-			{
-				if(nodeMap[currentPlayerLocation + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation += width;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.down);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-
-		if(Input.GetKeyDown(KeyCode.D) && !moveLocked)
-		{
-			if(currentPlayerLocation % width == width - 1)
-			return;
-
-			if(CheckOutOfIndex(currentPlayerLocation + 1))
-			{
-				if(nodeMap[currentPlayerLocation + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation += 1;
-					MovePlayer(currentPlayerLocation);
-					
-					EnqueueMove(Vector2.right);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			CameraController.Inst.ZoomIn(2f);
-		}
-
-		if (Input.GetKeyUp(KeyCode.Space))
-		{
-			CameraController.Inst.ZoomOut(2f);
-		}
-		if (Input.GetKeyUp(KeyCode.Z))
-		{
-			PlayerData.saveData.health -= 1;
-		}
-
-	}
 
 	void EnqueueMove(Vector2 direction)
 	{
@@ -1480,19 +1485,12 @@ public class DungeonManager : MonoBehaviour
 
 	public void MovePlayer(int roomNum)
 	{
-		//foreach(GameObject card in cardObjectList)
-		//{card.GetComponent<DungeonCard>().AddEnergy(1f);}
 
 		nodeMap[roomNum].SetActive(true);
 		nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
 		if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
 		{
-			// if(nodeMap[roomNum + 1] != null)
-			// {
-				
-				
-			// }
 
 			if(nodeMap[roomNum + 1].GetComponent<RoomNode>().filled)
 			{
@@ -1799,7 +1797,6 @@ public class DungeonManager : MonoBehaviour
 				break;
 
 				case 1:
-				PlayerManager.Inst.AddAdditionalHealth(5);
 				break;
 
 				case 2:

@@ -9,6 +9,10 @@ public class CardData
 	protected string cardName;
 	protected string cardDesc;
 	protected string cardStoryDesc;
+	protected List<string> strengthChallengeSuccessCommentary;
+	protected List<string> strengthChallengeFailCommentary;
+	protected List<string> intelligenceChallengeSuccessCommentary;
+	protected List<string> intelligenceChallengeFailCommentary;
 	protected ECardType cardType;
 	protected ECardTargetType cardTargetType;
 	protected ECardRarity cardRarity;
@@ -24,6 +28,7 @@ public class CardData
 	public string GetCardDesc(){return cardDesc;}
 
 	public string GetCardStoryDesc() { return cardStoryDesc; }
+	public List<string> GetStrengthChallengeSuccessCommentary() { return strengthChallengeSuccessCommentary; }
 	public ECardType GetCardType(){return cardType;}
 	public ECardRarity GetCardRarity() { return cardRarity; }
 	public ECardTargetType GetCardTargetType(){return cardTargetType;}

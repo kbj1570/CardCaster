@@ -34,7 +34,6 @@ public class CameraEdgeMove : MonoBehaviour
 
 		targetX = Mathf.Clamp(targetX, minMaxX.x, minMaxX.y);
 
-		// SmoothDamp로 자연스럽게 이동
 		float newX = Mathf.SmoothDamp(transform.position.x, targetX, ref velocity, smoothTime);
 		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
 	}

@@ -8,6 +8,12 @@ public abstract class ServentCardData : BattleCardData, IServentCardEffect
 
 	protected int force;
 
+	protected int strength;
+	protected int intelligence;
+	protected int height;
+	protected int weight;
+
+
 	protected bool hasAbility;
 	protected bool canUseAbility;
 	protected bool penetrate;

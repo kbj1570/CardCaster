@@ -3,52 +3,10 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections;
 
-//  public class CameraController : MonoBehaviour
-//     {
-//         public GameObject camera;
-//         public float moveRate;
-
-//         private Vector3 tmpClickPos;
-//         private Vector3 tempCameraPos;
-
-//         public Transform player; // 플레이어
-//         private float followSpeed = 0.7f; // 카메라 이동 속도
-
-//         void LateUpdate()
-//         {
-//             Vector3 targetPosition = new Vector3(player.position.x, player.position.y, camera.transform.position.z);
-//             camera.transform.DOMove(targetPosition, followSpeed).SetEase(Ease.OutSine);
-//         }
-//         void Start()
-//         {
-
-//         }
-//         void Update()
-//         {
-//             MouseMovement();
-//         }
-
-//         private void MouseMovement()
-//         {
-//             if(Input.GetMouseButtonDown(0))
-//             {
-//                 tmpClickPos = Input.mousePosition;
-//                 tempCameraPos = camera.transform.position;
-//             }
-//             else if(Input.GetMouseButton(0))
-//             {
-//                 Vector3 movePos = Camera.main.ScreenToViewportPoint(tmpClickPos - Input.mousePosition);
-//                 camera.transform.position = tempCameraPos + (movePos * moveRate);
-
-//             }
-//         }
-//     }
-
-
 public class CameraController : MonoBehaviour
 {
 	public GameObject camera;
-	public Transform player;
+	public GameObject player;
 	private float followSpeed = 0.7f;
 	private float returnToFollowDelay = 3f;
 	private bool isFollowing = true;
@@ -81,7 +39,22 @@ public class CameraController : MonoBehaviour
 	{
 		if (isFollowing)
 		{
-			Vector3 targetPosition = new Vector3(player.position.x, player.position.y, camera.transform.position.z);
+			Vector3 targetPosition = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
+			switch (player.GetComponent<Player>().direction)
+			{
+				case EDirection.North:
+					targetPosition = targetPosition + new Vector3(0, 1, 0);
+					break;
+				case EDirection.East:
+					targetPosition = targetPosition + new Vector3(1, 0, 0);
+					break;
+				case EDirection.South:
+					targetPosition = targetPosition + new Vector3(0, -1, 0);
+					break;
+				case EDirection.West:
+					targetPosition = targetPosition + new Vector3(-1, 0, 0);
+					break;
+			}
 			camera.transform.DOMove(targetPosition, followSpeed).SetEase(Ease.OutSine);
 		}
 	}

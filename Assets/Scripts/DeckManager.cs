@@ -7,7 +7,7 @@ public class DeckManager : MonoBehaviour
 {
 	private int deckCount;
 	public Transform focusOnCardPosition;
-	Transform gridlayoutPosition;
+	public Transform gridlayoutPosition;
 	public Transform popUpPosition;
 	public List<Transform> cardLocation;
 	public GameObject smallCardPrefab;
@@ -358,6 +358,8 @@ public class DeckManager : MonoBehaviour
 
 		GameObject selectedCardPrefab = null;
 
+		Debug.Log(value.GetCardType());
+
 		switch (value.GetCardType())
 		{
 			case ECardType.Servent:
@@ -373,15 +375,16 @@ public class DeckManager : MonoBehaviour
 		}
 
 
-		GameObject cardObject = Instantiate(selectedCardPrefab,
+		GameObject cardObject = Instantiate(
+			selectedCardPrefab,
 		gridlayoutPosition.position, Utils.QI);
 
 		cardObject.GetComponent<DummyCard>().SetCard(value);
 
 
 
-		cardObject.transform.SetParent(this.transform);
-		cardObject.GetComponent<DummyCard>().StartMoveAndScale(this.transform.position);
+		cardObject.transform.SetParent(transform);
+		cardObject.GetComponent<DummyCard>().StartMoveAndScale(transform.position);
 
 		UpdatePage();
 		UpdateDeckPage();

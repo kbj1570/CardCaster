@@ -23,6 +23,7 @@ public class ItemWindow : Window
 	public GameObject itemDescriptionWindow;
 	public GameObject itemUsingAlert;
 
+
 	public bool itemLocked;
 
 	public static ItemWindow Inst { get; private set; }
@@ -62,7 +63,6 @@ public class ItemWindow : Window
 
 	public void UpdateItemPage()
 	{
-
 		foreach (GameObject gameObject in itemObjectList)
 		{ Destroy(gameObject); }
 

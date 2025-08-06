@@ -4,9 +4,9 @@ public class Graveyard : Dungeon
     {
         dungeonName = "옛 무덤";
         dungeonEndFloor = 5;
-        dungeonFloorSize = 200;
+        dungeonFloorSize = 140;
         dungeonHeight = 10;
-        dungeonWidth = 20;
+        dungeonWidth = 14;
         enemyLimit = 3;
 
         itemList = new(){

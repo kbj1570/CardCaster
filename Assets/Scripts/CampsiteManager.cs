@@ -16,6 +16,7 @@ public static class DungeonData
 	public static Dictionary<DungeonEnemy, int> dungeonEnemies;
 	public static int currentFloor;
 
+	
 
 	public static void Reset()
 	{
@@ -51,9 +52,16 @@ public class CampsiteManager : MonoBehaviour
 	List<CardData> uncommonCards;
 	List<CardData> rareCards;
 
+	public Window dungeonSelectWindow;
+	public Window storageWindow;
+
+	public static CampsiteManager Inst { get; private set; }
+
+
 	void Start()
 	{
 		PlayerData.saveData = DataController.Inst.LoadData();
+		Inst = this;
 		StartCoroutine(FadeIn());
 	}
 
@@ -77,7 +85,15 @@ public class CampsiteManager : MonoBehaviour
 	{audioSource.PlayOneShot(inventoryClose);}
 
 	public void PlayMapOpen()
-	{audioSource.PlayOneShot(mapOpen);}
+	{
+		audioSource.PlayOneShot(mapOpen);
+		
+	}
+
+	public void OpenMap()
+	{
+		dungeonSelectWindow.OnOff();
+	}
 
 
 	private IEnumerator FadeOut()
@@ -114,7 +130,8 @@ public class CampsiteManager : MonoBehaviour
 
 	public void OpenStorage()
 	{
-
+		storageWindow.GetComponent<StorageWindow>().UpdateItemPage();
+		storageWindow.OnOff();
 	}
 
 	public void GoToShop()

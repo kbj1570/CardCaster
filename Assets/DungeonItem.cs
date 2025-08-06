@@ -20,14 +20,12 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	public Action<DungeonItem, PointerEventData> OnClickAction;
 	public Action<DungeonItem, PointerEventData> OnPointerEnterAction;
 	public Action<DungeonItem, PointerEventData> OnPointerExitAction;
-
 	public Action<DungeonItem, PointerEventData> OnBeginDragAction;
 	public Action<DungeonItem, PointerEventData> OnDragAction;
 	public Action<DungeonItem, PointerEventData> OnEndDragAction;
+
 	public void OnPointerClick(PointerEventData eventData)
-    {
-		OnClickAction?.Invoke(this, eventData);
-	}
+    {OnClickAction?.Invoke(this, eventData);}
     public void OnPointerEnter(PointerEventData eventData)
     { OnPointerEnterAction?.Invoke(this, eventData); }
     public void OnPointerExit(PointerEventData eventData)
@@ -35,19 +33,13 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
 
 	public void OnBeginDrag(PointerEventData eventData)
-	{
-		OnBeginDragAction?.Invoke(this, eventData);
-	}
+	{OnBeginDragAction?.Invoke(this, eventData);}
 
 	public void OnEndDrag(PointerEventData eventData)
-	{
-		OnEndDragAction?.Invoke(this, eventData);
-	}
+	{OnEndDragAction?.Invoke(this, eventData);}
 
 	public void OnDrag(PointerEventData eventData)
-	{
-		OnDragAction?.Invoke(this, eventData);
-	}
+	{OnDragAction?.Invoke(this, eventData);}
 
 
 	public void Init(Action<DungeonItem, PointerEventData> clickAction,

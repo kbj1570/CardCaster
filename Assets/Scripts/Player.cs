@@ -1,21 +1,22 @@
-public class Player
+using UnityEngine;
+
+public class Player : MonoBehaviour
 {
-    private int health;
-    private int gold;
+	public EDirection direction;
+	public Direction directionArrow;
 
+	void Update()
+	{
+		direction = directionArrow.GetDirection();
+	}
 
-    public int GetHealth()
-    {return health;}
-
-    public void SetHealth(int value)
-    {health = value;}
-
-    public int GetGold()
-    {return gold;}
-
-    public void SetGold(int value)
-    {gold = value;}
-
-    public void GainItem(Item item)
-    {}
+	public EDirection GetDirection()
+	{
+		return direction;
+	}
+	public void SetDirection(EDirection newDirection)
+	{
+		direction = newDirection;
+		directionArrow.SetDirection(newDirection);
+	}
 }
