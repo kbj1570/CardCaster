@@ -267,8 +267,8 @@ MonoBehaviour:
   m_ChildAlignment: 5
   m_StartCorner: 3
   m_StartAxis: 0
-  m_CellSize: {x: 37, y: 37}
-  m_Spacing: {x: 2, y: 1}
+  m_CellSize: {x: 33, y: 33}
+  m_Spacing: {x: 3, y: 1}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &4962625469503026121
@@ -549,7 +549,6 @@ MonoBehaviour:
   nameTMP: {fileID: 664345565945116137}
   descTMP: {fileID: 8221799803271859746}
   costTMP: {fileID: 367451032921137738}
-  cardBack: {fileID: 0}
   cardHighlightBorder: {fileID: 0}
   forceAttribute: {fileID: 5311901821716322660}
   cardOrder: 0
@@ -560,12 +559,12 @@ MonoBehaviour:
   originPosition: {x: 0, y: 0, z: 0}
   cardType: 1
   slotCount: 0
-  fireElement: {fileID: 0}
-  waterElement: {fileID: 0}
-  earthElement: {fileID: 0}
-  windElement: {fileID: 0}
-  darknessElement: {fileID: 0}
-  lightElement: {fileID: 0}
+  fireElement: {fileID: 3248067141370871734, guid: 034473961b8afa2438217986ef587195, type: 3}
+  waterElement: {fileID: 4719065515679193010, guid: 19fc9df600444154ca077c72d4229a0a, type: 3}
+  earthElement: {fileID: 5253448962454466996, guid: ce3e10265c709884792080510a5548ab, type: 3}
+  windElement: {fileID: 2578098926357323650, guid: 8338e5adea376e24490e3174357df421, type: 3}
+  darknessElement: {fileID: 5563156162451677595, guid: a004302d70210d44d94668f4e908dd6d, type: 3}
+  lightElement: {fileID: 4869821591411520033, guid: 52c175ed1027ac748b8b804b30dd3243, type: 3}
   locked: 0
 --- !u!1 &9201726132868512375
 GameObject:
@@ -601,7 +600,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.85300004}
   m_AnchorMax: {x: 0.20933336, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.17999268}
+  m_AnchoredPosition: {x: 3.699997, y: -0.17999268}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5537420615138986136

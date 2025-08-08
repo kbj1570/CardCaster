@@ -20,4 +20,4 @@ public class Item
 
 }
 public enum EItemCategory
-{ETool, EDocument, EImportantItem, EOthers}
+{ETool, EDocument, EImportantItem}

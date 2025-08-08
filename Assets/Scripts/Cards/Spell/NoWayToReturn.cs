@@ -21,6 +21,7 @@ public class NoWayToReturn : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
+        bm.DrawCard();
 		yield return null;
 	}
 }

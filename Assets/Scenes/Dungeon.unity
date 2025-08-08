@@ -4995,7 +4995,7 @@ MonoBehaviour:
   encounterNodePrefab: {fileID: 8866241803749357964, guid: abb5104f892f17646ab82614a5d90195, type: 3}
   monsterNodePrefab: {fileID: 8866241803749357964, guid: 95c6ab567a1df054ea5deb0cd39c1862, type: 3}
   stairNodePrefab: {fileID: 8866241803749357964, guid: 2e924e2376aa06e44a17067654a533ff, type: 3}
-  mapObject: {fileID: 2059413162}
+  mapObject: {fileID: 2059413164}
   buttonPrefab: {fileID: 0}
   player: {fileID: 1624984907}
   dungeonEnemyPrefab: {fileID: 6506548777204989005, guid: a46010afe11e0f148a88f1252e6e874d, type: 3}
@@ -9108,6 +9108,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8835281365559264998}
   m_SourcePrefab: {fileID: 100100000, guid: 314605da4f3ab694491425a0f88c4dd0, type: 3}
+--- !u!114 &1716241889723676778 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5529381238703659222, guid: 314605da4f3ab694491425a0f88c4dd0, type: 3}
+  m_PrefabInstance: {fileID: 1716241889723676777}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6453277778997483359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9199,15 +9210,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a18e313294c59ef45bc65a8d2b563f41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1490661301}
   focusOnCardPosition: {fileID: 0}
-  gridlayoutPosition: {fileID: 0}
-  smallCardPrefab: {fileID: 0}
-  gridLayout: {fileID: 0}
+  smallCardPrefab: {fileID: 8822816853248534152, guid: 5e858e05a1c76864692039a3b6627ecb, type: 3}
+  gridLayoutGroup: {fileID: 1716241889723676778}
   movePosition: {fileID: 1583635227}
   originPosition: {fileID: 1760075830}
-  dummyServentCardPrefab: {fileID: 0}
-  dummySpellCardPrefab: {fileID: 0}
-  dummyAdventureCardPrefab: {fileID: 0}
+  dummyServentCardPrefab: {fileID: 8357732725725720325, guid: bf4c77bfca310bb4993d7e46890f4eb9, type: 3}
+  dummySpellCardPrefab: {fileID: 8357732725725720325, guid: 9df33df545c1f6d41ae58c6ea580fc85, type: 3}
+  dummyAdventureCardPrefab: {fileID: 8357732725725720325, guid: f9f7cb6d695f27c469152ddc0873012e, type: 3}
   deckCountText: {fileID: 0}
   popUpMessage: {fileID: 0}
   scrollRect: {fileID: 8835281365559264997}

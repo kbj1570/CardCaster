@@ -18,7 +18,7 @@ public class CrescentLancer : ServentCardData
 		{
 			"크레센트 랜서가 밀자 천천히 움직이기 시작했다.",
 			"크레센트 랜서가 일을 마치자 다시 카드 안으로 돌아갔다.",
-			"얼굴이 헬멧에 가려져 제대로 보이지는 않았지만 도움이 되어 매우 기뻐하는듯 하다."
+			"얼굴이 헬멧에 가려져 제대로 보이지는 않았지만 도움이 되어 매우 기뻐하는듯하다."
 		};
 		strengthChallengeFailCommentary = new List<string>
 		{
@@ -37,17 +37,17 @@ public class CrescentLancer : ServentCardData
 		};
 		intelligenceChallengeFailCommentary = new List<string>
 		{
-			"소환된 크레센트 랜서는 눈앞의 수식에 당황한듯 머리를 긁적이더니 천천히 버튼을 누르기 시작했다.",
-			"자세히보니 그냥 대각선을따라 순서대로 누르는것 같다.",
-			"패널이 붉은색으로 깜빡이며 그의 낮은 지능을 완강하게 거부했다.",
-			"크레센트 랜서는 억울하다는 듯이 벽을 주먹으로 몇 번 치더니 다시 카드 안으로 돌아갔다.",
-			"나를 원망하는듯한 그 눈빛이 잊혀지지 않는다....",
+			"소환된 크레센트 랜서는 눈앞의 수식에 당황한듯 머리를 긁적이더니, 천천히 버튼을 누르기 시작했다.",
+			"자세히보니 그냥 대각선을 따라 순서대로 누르는것 같다.",
+			"패널이 붉은색으로 깜빡이며, 그의 낮은 지능을 완강하게 거부했다.",
+			"크레센트 랜서는 분한건지 벽을 주먹으로 몇 번 치더니, 다시 카드 안으로 돌아갔다.",
+			"방금 나를 원망하는듯한 그 눈빛이 잊혀지지 않는다....",
 			"괜히 불러냈나?"
 		};
 
 
 		penetrate = true;
-        serventSize = EServentSize.Middle;
+        serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Light;
     }

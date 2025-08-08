@@ -23,7 +23,7 @@ public class DeckManager : MonoBehaviour
 
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
-	public GameObject dummyAdventureCardPrefab;
+
 
 
 	private Dictionary<BattleCardData, int> currentCardList;
@@ -81,9 +81,6 @@ public class DeckManager : MonoBehaviour
 				break;
 			case ECardType.Spell:
 				selectedCardPrefab = dummySpellCardPrefab;
-				break;
-			case ECardType.Adventure:
-				selectedCardPrefab = dummyAdventureCardPrefab;
 				break;
 		}
 
@@ -150,7 +147,7 @@ public class DeckManager : MonoBehaviour
 	{
 		int count = 0;
 
-		pageLimit = myCardList.Count / 6 + 1;
+		pageLimit = myCardList.Count / 6;
 		int remainder = myCardList.Count % 6;
 
 		if(remainder == 0)
@@ -165,7 +162,7 @@ public class DeckManager : MonoBehaviour
 		if(currentPage != pageLimit)
 		{remainder = 6;}
 
-		for(int i = 0; i < remainder; ++i)
+		for (int i = 0; i < remainder; ++i)
 		{
 			currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);
 		}
@@ -195,9 +192,7 @@ public class DeckManager : MonoBehaviour
 				case ECardType.Spell:
 					selectedCardPrefab = dummySpellCardPrefab;
 					break;
-				case ECardType.Adventure:
-					selectedCardPrefab = dummyAdventureCardPrefab;
-					break;
+
 
 			}
 
@@ -223,12 +218,12 @@ public class DeckManager : MonoBehaviour
 		else
 		backButton.SetActive(true);
 
-		if(currentPage == pageLimit - 1)
+		if(currentPage == pageLimit)
 		nextButton.SetActive(false);
 		else
 		nextButton.SetActive(true);
 
-		pageNumber.text = (currentPage + 1) + " / " + (pageLimit);        
+		pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
 	}
 
 	public void ChangePage(bool value)
@@ -326,9 +321,6 @@ public class DeckManager : MonoBehaviour
 			case ECardType.Spell:
 				selectedCardPrefab = dummySpellCardPrefab;
 				break;
-			case ECardType.Adventure:
-				selectedCardPrefab = dummyAdventureCardPrefab;
-				break;
 
 		}
 
@@ -336,10 +328,13 @@ public class DeckManager : MonoBehaviour
 		GameObject cardObject = Instantiate(selectedCardPrefab,
 		cardLocation[order].position, Utils.QI);
 
-		cardObject.GetComponent<DummyCard>().SetCard(value);
+		if(cardObject == null)
+		{ Debug.LogError("Card object is null!"); return; }
+
+		cardObject.GetComponent<Card>().SetCard(value);
 
 		cardObject.transform.SetParent(this.transform);
-		cardObject.GetComponent<DummyCard>().StartMoveAndScale(gridlayoutPosition.position);
+		cardObject.GetComponent<Card>().StartMoveAndScale(gridlayoutPosition.position);
 		UpdatePage();
 		UpdateDeckPage();
 	}
@@ -358,8 +353,6 @@ public class DeckManager : MonoBehaviour
 
 		GameObject selectedCardPrefab = null;
 
-		Debug.Log(value.GetCardType());
-
 		switch (value.GetCardType())
 		{
 			case ECardType.Servent:
@@ -367,9 +360,6 @@ public class DeckManager : MonoBehaviour
 				break;
 			case ECardType.Spell:
 				selectedCardPrefab = dummySpellCardPrefab;
-				break;
-			case ECardType.Adventure:
-				selectedCardPrefab = dummyAdventureCardPrefab;
 				break;
 
 		}
@@ -379,12 +369,12 @@ public class DeckManager : MonoBehaviour
 			selectedCardPrefab,
 		gridlayoutPosition.position, Utils.QI);
 
-		cardObject.GetComponent<DummyCard>().SetCard(value);
+		cardObject.GetComponent<Card>().SetCard(value);
 
 
 
 		cardObject.transform.SetParent(transform);
-		cardObject.GetComponent<DummyCard>().StartMoveAndScale(transform.position);
+		cardObject.GetComponent<Card>().StartMoveAndScale(transform.position);
 
 		UpdatePage();
 		UpdateDeckPage();

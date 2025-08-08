@@ -17,6 +17,11 @@ public class CameraEdgeMove : MonoBehaviour
 
 	void Update()
 	{
+
+		if (CampsiteManager.Inst.screenLocked)
+			return;
+
+
 		float mouseX = Input.mousePosition.x;
 		float screenWidth = Screen.width;
 

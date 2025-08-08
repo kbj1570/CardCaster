@@ -55,6 +55,8 @@ public class CampsiteManager : MonoBehaviour
 	public Window dungeonSelectWindow;
 	public Window storageWindow;
 
+	public bool screenLocked = false;
+
 	public static CampsiteManager Inst { get; private set; }
 
 
@@ -93,6 +95,11 @@ public class CampsiteManager : MonoBehaviour
 	public void OpenMap()
 	{
 		dungeonSelectWindow.OnOff();
+	}
+
+	public void LockScreen(bool value)
+	{
+		screenLocked = value;
 	}
 
 

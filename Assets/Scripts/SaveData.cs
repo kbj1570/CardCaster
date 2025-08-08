@@ -11,8 +11,7 @@ public class SaveData
     public Dictionary<string, int> cardList;
 	public Dictionary<string, bool> cardArchiveList;
 	public Dictionary<string, int> deck;
-    public Dictionary<string, bool> adventureCardList;
-    public Dictionary<string, bool> cutsceneVIewed;
+    public Dictionary<string, bool> cutsceneWatched;
     public ELocation currentLocation;
     public int currentFloor;
 }

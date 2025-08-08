@@ -206,6 +206,14 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 					break;
 
 			}
+
+			for (int i = 0; i < serventCardData.GetForce(); i++)
+			{
+				Image forceImage = Instantiate(image, forceAttribute.transform);
+				forceImage.gameObject.SetActive(true);
+				forceImage.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+				forceImage.transform.localPosition = new Vector3(0, 0, 0);
+			}
 		}
 	}
 
@@ -278,42 +286,43 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		costTMP.text = this.cardData.GetCardCost().ToString();
 	}
 
-	public void Setup(ServentCardData cardData)
-	{
-		this.cardData = cardData;
-		nameTMP.text = this.cardData.GetCardName();
-		cardType = cardData.GetCardType();
-		costTMP.text = this.cardData.GetCardCost().ToString();
+	//public void Setup(ServentCardData cardData)
+	//{
+	//	this.cardData = cardData;
+	//	nameTMP.text = this.cardData.GetCardName();
+	//	cardType = cardData.GetCardType();
+	//	costTMP.text = this.cardData.GetCardCost().ToString();
 
-		Image image = null;
-		switch (cardData.GetAttribute())
-		{
-			case EServentAttribute.Fire:
-				image = fireElement;
-				break;
+	//	Sprite image = null;
+	//	switch (cardData.GetAttribute())
+	//	{
+	//		case EServentAttribute.Fire:
+	//			image = fireElement;
+	//			break;
 
-			case EServentAttribute.Water:
-				image = waterElement;
-				break;
+	//		case EServentAttribute.Water:
+	//			image = waterElement;
+	//			break;
 
-			case EServentAttribute.Earth:
-				image = earthElement;
-				break;
+	//		case EServentAttribute.Earth:
+	//			image = earthElement;
+	//			break;
 
-			case EServentAttribute.Dark:
-				image = darknessElement;
-				break;
+	//		case EServentAttribute.Dark:
+	//			image = darknessElement;
+	//			break;
 
-			case EServentAttribute.Wind:
-				image = windElement;
-				break;
+	//		case EServentAttribute.Wind:
+	//			image = windElement;
+	//			break;
 
-			case EServentAttribute.Light:
-				image = lightElement;
-				break;
+	//		case EServentAttribute.Light:
+	//			image = lightElement;
+	//			break;
 
-		}
-	}
+	//	}
+
+	//}
 
 
 	public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)

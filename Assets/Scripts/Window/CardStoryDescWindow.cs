@@ -15,7 +15,6 @@ public class CardStoryDescWindow : Window
 
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
-	public GameObject dummyAdventureCardPrefab;
 
 
 
@@ -37,9 +36,6 @@ public class CardStoryDescWindow : Window
             case ECardType.Spell:
 				cardTypeText.text = "Spell";
 				break;
-            case ECardType.Adventure:
-				cardTypeText.text = "Adventure";
-				break;
 		}
 
 		GameObject selectedCardPrefab = null;
@@ -51,9 +47,6 @@ public class CardStoryDescWindow : Window
 				break;
 			case ECardType.Spell:
 				selectedCardPrefab = dummySpellCardPrefab;
-				break;
-			case ECardType.Adventure:
-				selectedCardPrefab = dummyAdventureCardPrefab;
 				break;
 
 		}

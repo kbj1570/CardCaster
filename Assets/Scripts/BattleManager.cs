@@ -14,7 +14,7 @@ using Random = UnityEngine.Random;
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
-public enum ECardType{None ,Servent, Spell, Adventure}
+public enum ECardType{None ,Servent, Spell}
 public enum ECardRarity{None, Normal, Rare}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
@@ -2078,6 +2078,16 @@ public class BattleManager : MonoBehaviour
 
 		foreach(GameObject cardObject in cardObjectList)
 		{cardObject.GetComponent<Card>().SetLock(false);}
+	}
+
+	public void DiscardAllHands()
+	{
+		int count = cardObjectList.Count;
+
+		for(int i = 0; i < count; ++i)
+		{
+			DiscardCard(cardObjectList[cardObjectList.Count].GetComponent<Card>());
+		}
 	}
 	public void DrawCard()
 	{

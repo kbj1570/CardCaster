@@ -8,16 +8,16 @@ using UnityEngine.UI;
 
 public class DeckScrollView : MonoBehaviour
 {
-
+	public Canvas canvas;
 	private int deckCount;
 	public Transform focusOnCardPosition;
-	public Transform gridlayoutPosition;
 	public GameObject smallCardPrefab;
 	private GameObject focusOnCard;
-	public GridLayoutGroup gridLayout;
 	private Dictionary<BattleCardData, int> myDeckList;
 	private List<CardData> cardDatabase;
 	private List<GameObject> deckCardObjectList;
+
+	public GridLayoutGroup gridLayoutGroup;
 
 	public Transform movePosition;
 	public Transform originPosition;
@@ -38,18 +38,18 @@ public class DeckScrollView : MonoBehaviour
 
 	void Start()
 	{
-		//saveData = DataController.Inst.LoadData();
-		//cardDatabase = DataController.Inst.LoadCardDatabase();
+		saveData = DataController.Inst.LoadData();
+		cardDatabase = DataController.Inst.LoadCardDatabase();
 
-		//myDeckList = new();
-		////scrollRect.normalizedPosition = new Vector2(1, 1);
+		myDeckList = new();
+		//scrollRect.normalizedPosition = new Vector2(1, 1);
 
-		//cardHashMap = DataController.Inst.LoadCardHashMap();
-		//deckCardObjectList = new List<GameObject>();
+		cardHashMap = DataController.Inst.LoadCardHashMap();
+		deckCardObjectList = new List<GameObject>();
 
-		//foreach (KeyValuePair<string, int> value in saveData.deck)
-		//{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
-		//UpdateDeckScroll();
+		foreach (KeyValuePair<string, int> value in saveData.deck)
+		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+		UpdateDeckScroll();
 	}
 
 
@@ -65,9 +65,6 @@ public class DeckScrollView : MonoBehaviour
 				break;
 			case ECardType.Spell:
 				selectedCardPrefab = dummySpellCardPrefab;
-				break;
-			case ECardType.Adventure:
-				selectedCardPrefab = dummyAdventureCardPrefab;
 				break;
 		}
 
@@ -101,13 +98,6 @@ public class DeckScrollView : MonoBehaviour
 		yield return new WaitForSeconds(0.1f);
 	}
 
-	private void IECloseScrollView()
-	{
-		
-	}
-
-
-
 	public void UnFocusCard()
 	{
 		if (focusOnCard != null)
@@ -126,24 +116,44 @@ public class DeckScrollView : MonoBehaviour
 			GameObject smallCard = Instantiate(smallCardPrefab, new Vector3(0, 0, 0), Utils.QI);
 			deckCardObjectList.Add(smallCard);
 
-			smallCard.transform.SetParent(gridLayout.transform);
-			smallCard.GetComponent<DeckCard>().SetCard(value.Key, value.Value);
+			smallCard.transform.SetParent(gridLayoutGroup.transform);
+			DeckCard deckCardComponent = smallCard.GetComponent<DeckCard>();
+			deckCardComponent.SetCard(value.Key, value.Value);
 
-			smallCard.GetComponent<DeckCard>().Init(
+			Vector3 originalPosition = Vector3.zero;
+
+			deckCardComponent.Init(
 			(deckCard, eventData) =>
 			{
-				UnFocusCard();
+				//UnFocusCard();
 			}
 			, // 클릭 시
-			(deckCard, eventData) =>
+			(deckCard, eventData) => // 마우스 입장 (OnPointerEnter)
 			{
-				FocusOnCard(deckCard.GetCardData());
-			} // 마우스 입장
+				originalPosition = deckCard.transform.position;
+
+				LayoutElement layoutElement = deckCard.GetComponent<LayoutElement>();
+				if (layoutElement != null)
+				{
+					layoutElement.ignoreLayout = true;
+				}
+
+				deckCard.transform.position += new Vector3(30f, 0, 0);
+			}
 			,
-			(deckCard, eventData) =>
+			(deckCard, eventData) => // 마우스 퇴장 (OnPointerExit)
 			{
+
+				deckCard.transform.position = originalPosition;
+
+				LayoutElement layoutElement = deckCard.GetComponent<LayoutElement>();
+				if (layoutElement != null)
+				{
+					layoutElement.ignoreLayout = false;
+				}
+
 				UnFocusCard();
-			} // 마우스 퇴장
+			}
 			,
 			null, // 드래그 시작
 			null, // 드래그 중
@@ -153,6 +163,6 @@ public class DeckScrollView : MonoBehaviour
 			deckCount += value.Value;
 		}
 
-		deckCountText.text = deckCount.ToString() + "  /  30";
+		//deckCountText.text = deckCount.ToString() + "  /  30";
 	}
 }

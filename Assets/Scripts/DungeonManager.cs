@@ -54,7 +54,7 @@ public class DungeonManager : MonoBehaviour
 	public GameObject encounterNodePrefab;
 	public GameObject monsterNodePrefab;
 	public GameObject stairNodePrefab;
-	public GameObject mapObject;
+	public Transform mapObject;
 	public GameObject buttonPrefab;
 	public GameObject player;
 	public GameObject dungeonEnemyPrefab;
@@ -64,14 +64,9 @@ public class DungeonManager : MonoBehaviour
 	public GameObject dungeonClearWindow;
 	public GameObject gameOverWindow;
 
-	public List<GameObject> itemPrefabList;
-
-	public List<Transform> itemLocation;
-	public List<Sprite> itemImageList;
+	public List<Sprite> itemSpriteList;
 
 	
-
-	public Transform verticalItemScroll;
 	public LineRenderer cardDragLine;
 	public GameObject popUpMessageWindow;
 	public GameObject popUpMessage;
@@ -116,6 +111,10 @@ public class DungeonManager : MonoBehaviour
 	int previousPlayerLocation;
 
 	private bool updateLock;
+
+
+	private List<int> secretRoomNodes = new List<int>();
+	private int obstacleNodeIndex = -1;
 
 
 	public Transform toolLocation;
@@ -266,6 +265,69 @@ public class DungeonManager : MonoBehaviour
 		StartCoroutine(FadeIn());
 		
 		//DontDestroyOnLoad(this);
+	}
+
+
+
+	private void CreateSecretRoom()
+	{
+		// 1) 비밀방 시작 위치: 맵의 빈 공간 중 하나
+		int start;
+		do
+		{
+			start = Random.Range(0, map.Count);
+		}
+		while (map[start] != null); // 기존 맵과 겹치지 않는 곳
+
+		// 2) 비밀방 크기 (4~6개의 노드)
+		int secretRoomCount = Random.Range(4, 7);
+		List<int> tempSecretNodes = new List<int>();
+
+		// 첫 노드 생성
+		map[start] = new Node();
+		map[start].SetRoomType(ERoomType.None);
+		tempSecretNodes.Add(start);
+
+		// 연결된 비밀방 확장
+		for (int i = 1; i < secretRoomCount; ++i)
+		{
+			int dir = Random.Range(0, 4); // 상하좌우
+			int next = GetNextIndex(tempSecretNodes[tempSecretNodes.Count - 1], dir);
+			if (IsValidIndex(next) && map[next] == null)
+			{
+				map[next] = new Node();
+				map[next].SetRoomType(ERoomType.None);
+				tempSecretNodes.Add(next);
+			}
+		}
+
+		// 3) 입구 노드와 장애물 노드 생성
+		int entrance = tempSecretNodes[0]; // 첫 방을 입구로 설정
+		int obstaclePos = GetNextIndex(entrance, Random.Range(0, 4));
+
+		if (IsValidIndex(obstaclePos) && map[obstaclePos] == null)
+		{
+			map[obstaclePos] = new Node();
+			map[obstaclePos].SetRoomType(ERoomType.EObstacle); // 장애물 노드
+			obstacleNodeIndex = obstaclePos;
+
+			
+		}
+		// 비밀방 노드 저장
+		secretRoomNodes = tempSecretNodes;
+	}
+	private bool IsValidIndex(int index)
+	{
+		// 먼저 전체 범위 체크
+		if (!CheckOutOfIndex(index))
+			return false;
+
+		// 1차원 배열이므로 x, y 계산
+		int x = index % width;
+		int y = index / width;
+
+		// 가로/세로 범위 확인 (사실 CheckOutOfIndex가 이미 y 범위도 보장함)
+		return (x >= 0 && x < width && y >= 0 && y < (floorSize / width));
 	}
 
 	private IEnumerator FadeIn()
@@ -445,58 +507,101 @@ public class DungeonManager : MonoBehaviour
 
 		//UpdateItemPage();
 	}
-
 	public void SetEnemyCourse()
-	{
 
+	{
 		List<DungeonEnemy> keys = dungeonEnemies.Keys.ToList();
 
+
+
 		for (int index = 0; index < keys.Count; index++)
+
 		{
+
 			DungeonEnemy enemy = keys[index];
+
+
 
 			List<EEnemyDirection> dummy = new();
 
-			if(nodeNumList.Contains(enemy.GetCurrentNodeNum() + 1) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() + 1)) 
+
+
+			if (nodeNumList.Contains(enemy.GetCurrentNodeNum() + 1) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() + 1))
+
 				dummy.Add(EEnemyDirection.East);
-			
-			if(nodeNumList.Contains(enemy.GetCurrentNodeNum() - 1) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() - 1)) 
+
+
+			if (nodeNumList.Contains(enemy.GetCurrentNodeNum() - 1) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() - 1))
+
 				dummy.Add(EEnemyDirection.West);
-			
-			if(nodeNumList.Contains(enemy.GetCurrentNodeNum() + width) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() + width)) 
+
+
+			if (nodeNumList.Contains(enemy.GetCurrentNodeNum() + width) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() + width))
+
 				dummy.Add(EEnemyDirection.South);
-			
-			if(nodeNumList.Contains(enemy.GetCurrentNodeNum() - width) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() - width)) 
+
+
+			if (nodeNumList.Contains(enemy.GetCurrentNodeNum() - width) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() - width))
+
 				dummy.Add(EEnemyDirection.North);
 
-			if(dummy.Count == 0)
+
+
+			if (dummy.Count == 0)
+
 			{
 
+
+
 			}
-			else if(enemy.GetMoveLock())
+
+			else if (enemy.GetMoveLock())
+
 			{
-				
+
+
 			}
-			else if(dummy.Count == 1) 
+
+			else if (dummy.Count == 1)
+
 			{
+
 				enemy.SetCurrentNodeNum(ReturnForwardNode(dummy[0], enemy.GetCurrentNodeNum()));
+
 				dungeonEnemies[enemy] = enemy.GetCurrentNodeNum();
+
 				enemy.SetEnemyDirection(dummy[0]);
+
 			}
-			else 
+
+			else
+
 			{
+
 				dummy.Remove(ReturnReverseDirection(enemy.GetEnemyDirection()));
+
 				int randomNum = Random.Range(0, dummy.Count);
+
 				enemy.SetCurrentNodeNum(ReturnForwardNode(dummy[randomNum], enemy.GetCurrentNodeNum()));
+
 				dungeonEnemies[enemy] = enemy.GetCurrentNodeNum();
+
 				enemy.SetEnemyDirection(dummy[randomNum]);
+
 			}
+
+
 
 			enemy.SetMoveLock(enemy.GetCurrentNodeNum() + 1 == currentPlayerLocation
+
 			|| enemy.GetCurrentNodeNum() - 1 == currentPlayerLocation
+
 			|| enemy.GetCurrentNodeNum() + width == currentPlayerLocation
+
 			|| enemy.GetCurrentNodeNum() - width == currentPlayerLocation);
+
 		}
+
 	}
 
 	public void BackToCampsite()
@@ -716,37 +821,6 @@ public class DungeonManager : MonoBehaviour
 	}
 
 
-	//public void UpdateItemPage()
-	//{
-
-	//	currentItemList.Clear();
-
-	//	foreach(GameObject gameObject in itemObjectList)
-	//	{Destroy(gameObject);}
-
-	//	EItemCategory selectedItemCategory = EItemCategory.ETool;
-
-	//	if(toolToggle.isOn)
-	//	{selectedItemCategory = EItemCategory.ETool;}
-	//	else if(othersToggle.isOn)
-	//	{selectedItemCategory = EItemCategory.EOthers;}
-
-
-	//	foreach (KeyValuePair<Item, int> itemPair in myItemList)
-	//	{
-	//		if(itemPair.Key.GetItemCategory() == selectedItemCategory)
-	//		{
-	//			GameObject itemObject = Instantiate(itemPrefabList[0], new Vector3(0,0,0), Utils.QI);
-
-	//			itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value,
-	//			itemImageList[Int32.Parse(itemPair.Key.GetNum())]);
-
-	//			itemObject.transform.SetParent(verticalItemScroll);
-	//			itemObjectList.Add(itemObject);
-	//		}
-	//	}
-	//}
-
 	public void ShowItemDescription(int itemNum)
 	{
 		itemDescriptionWindow.SetActive(true);
@@ -867,52 +941,6 @@ public class DungeonManager : MonoBehaviour
 
 
 	
-	private void SetNodeRoom()
-	{
-		int x = Random.Range(0, nodeNumList.Count);
-		map[nodeNumList[x]].SetRoomType(ERoomType.EEncount);
-
-		List<int> usedNumbers = new List<int>();
-
-		for(int i = 0; i < 20; ++i)
-		{
-			int num;
-			do {num = Random.Range(0, nodeNumList.Count);}
-			while (usedNumbers.Contains(num));
-			
-			usedNumbers.Add(nodeNumList[num]);
-		}
-
-		for(int i = 0; i < usedNumbers.Count; ++i)
-		{
-
-			if(Random.Range(0, 10) == 0)
-			{
-				map[usedNumbers[i]].SetRoomType(ERoomType.EItem);
-				map[usedNumbers[i]].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
-
-			}else
-			{
-				map[usedNumbers[i]].SetRoomType(ERoomType.EGold);
-				map[usedNumbers[i]].SetGold(Random.Range(1, maxGold + 1));
-			}
-		}
-
-
-
-		x = Random.Range(0, nodeNumList.Count);
-		map[nodeNumList[x]].SetRoomType(ERoomType.EStair);
-
-		x = Random.Range(0, nodeNumList.Count);
-
-		while(map[nodeNumList[x]].GetRoomType() != ERoomType.None)
-		{x = Random.Range(0, nodeNumList.Count);}
-
-
-		currentPlayerLocation = nodeNumList[x];
-		
-		previousPlayerLocation = currentPlayerLocation;
-	}
 
 	private Item ReturnDungeonItem()
 	{
@@ -986,48 +1014,211 @@ public class DungeonManager : MonoBehaviour
 
 	public void CreateFloor()
 	{
-		nodeNumList = new List<int>();
-		while(nodeNumList.Count < 40) // 생성된 층의 크기가 10보다 작으면 다시 만듬
+		// 맵 생성 재시도 제한
+		const int MAX_ATTEMPTS = 10;
+		int attempts = 0;
+
+		do
 		{
-			map = new(); // Node들의 정보를 담은 map
-			for(int i = 0; i < floorSize; ++i)
-			{map.Add(null);} // 플로어의 크기만큼 null로 채워넣음
+			map = new List<Node>(new Node[floorSize]);
 			CreateFirstRoom();
 			CreateNodeNumList();
+			attempts++;
+		}
+		while (nodeNumList.Count < 40 && attempts < MAX_ATTEMPTS);
+
+		if (nodeNumList.Count < 40)
+		{
+			Debug.LogWarning("Dungeon generation failed to meet minimum node count.");
 		}
 
-		floorText.text = floor.ToString() + "F";
+		// 층 표시
+		floorText.text = floor + "F";
+
+		// 복도 추가 및 노드 설정
 		AddLoopCorridor();
 		CreateNodeNumList();
+
+		CreateSecretRoom();
 		SetNodeRoom();
+
+		// 프리팹 생성
 		InstantiateNode();
-		
+
+		// 플레이어 위치 설정
 		MovePlayer(currentPlayerLocation);
-		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
+		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.position;
 		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
+
+		// 적 및 장식 생성
 		CreateEnemy();
 		DecorateFloor();
 	}
 
-	public void DecorateFloor()
+	private void InstantiateNode()
 	{
-		
-		for (int i = 0; i < nodeMap.Count; ++i)
-		{
-			if (Random.Range(0, 2) == 1)
-				continue;
+		nodeMap = new List<GameObject>(new GameObject[floorSize]);
 
-			
-			if(nodeMap[i] != null && !nodeMap[i].GetComponent<RoomNode>().filled && nodeMap[i].GetComponent<RoomNode>().GetRoomType() == ERoomType.EWall)
+		for (int i = 0; i < map.Count; ++i)
+		{
+			GameObject prefab;
+			ERoomType roomType = map[i] != null ? map[i].GetRoomType() : ERoomType.EWall;
+
+			prefab = GetPrefabByRoomType(roomType);
+
+			GameObject nodeObj = Instantiate(prefab, Vector3.zero, Utils.QI);
+			nodeObj.transform.SetParent(mapObject);
+			nodeObj.transform.position = mapObject.position + CalculateNodePosition(i);
+
+			RoomNode roomNode = nodeObj.GetComponent<RoomNode>();
+			roomNode.SetNodeNum(i);
+			roomNode.SetRoomType(roomType);
+			roomNode.filled = (roomType != ERoomType.EWall);
+
+			nodeObj.SetActive(false);
+
+			nodeMap[i] = nodeObj;
+		}
+	}
+
+	private GameObject GetPrefabByRoomType(ERoomType roomType)
+	{
+		switch (roomType)
+		{
+			case ERoomType.EStair: return stairNodePrefab;
+			case ERoomType.EEncount: return encounterNodePrefab;
+			case ERoomType.EGold: return itemNodePrefab;
+			case ERoomType.EItem: return itemNodePrefab;
+			case ERoomType.EObstacle: return monsterNodePrefab;
+			case ERoomType.None: return roomNodePrefab;
+			case ERoomType.EWall:
+			default: return wallNodePrefab;
+		}
+	}
+
+	private void SetNodeRoom()
+	{
+		if (nodeNumList.Count == 0) return;
+
+		// 첫 방은 전투 방으로
+		int encounterIdx = Random.Range(0, nodeNumList.Count);
+		map[nodeNumList[encounterIdx]].SetRoomType(ERoomType.EEncount);
+
+		// 아이템/골드 방 설정
+		HashSet<int> used = new HashSet<int>();
+		for (int i = 0; i < 10 && used.Count < nodeNumList.Count; ++i)
+		{
+			int num;
+			do { num = Random.Range(0, nodeNumList.Count); }
+			while (used.Contains(num));
+
+			used.Add(num);
+
+			int node = nodeNumList[num];
+			if (Random.Range(0, 10) == 0)
 			{
-				nodeMap[i].GetComponent<RoomNode>().filled = true;
-				nodeMap[i].GetComponent<SpriteRenderer>().sprite = decorateBlock;
-				nodeMap[i].GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1f);
+				map[node].SetRoomType(ERoomType.EItem);
+				map[node].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
+			}
+			else
+			{
+				map[node].SetRoomType(ERoomType.EGold);
+				map[node].SetGold(Random.Range(1, maxGold + 1));
 			}
 		}
 
+		// 계단 방 설정
+		int stairIdx;
+		do
+		{
+			stairIdx = Random.Range(0, nodeNumList.Count);
+		}
+		// 계단은 None 타입 + 비밀방 영역 제외
+		while (map[nodeNumList[stairIdx]].GetRoomType() != ERoomType.None
+			   || secretRoomNodes.Contains(nodeNumList[stairIdx]));
+
+		map[nodeNumList[stairIdx]].SetRoomType(ERoomType.EStair);
+
+		// 플레이어 시작 위치 설정
+		int startIdx;
+		do { startIdx = Random.Range(0, nodeNumList.Count); }
+		while (map[nodeNumList[startIdx]].GetRoomType() != ERoomType.None);
+
+		currentPlayerLocation = nodeNumList[startIdx];
+		previousPlayerLocation = currentPlayerLocation;
 	}
-	
+
+	public void AddLoopCorridor()
+	{
+		if (nodeNumList.Count < 2) return;
+
+		int random = Random.Range(0, 3);
+		int first = nodeNumList[random];
+		int last = nodeNumList[nodeNumList.Count - 1];
+
+		// 항상 작은 값 → 큰 값 순서로 정렬
+		if (first > last) (first, last) = (last, first);
+
+		int startRow = first / width;
+		int endRow = last / width;
+
+		int current = first;
+
+		// 세로로 이동
+		for (int row = startRow; row < endRow; ++row)
+		{
+			current += width;
+			if (map[current] == null) map[current] = new Node();
+			if (!nodeNumList.Contains(current)) nodeNumList.Add(current);
+		}
+
+		// 가로로 이동
+		for (int col = current; col < last; ++col)
+		{
+			current += 1;
+			if (map[current] == null) map[current] = new Node();
+			if (!nodeNumList.Contains(current)) nodeNumList.Add(current);
+		}
+	}
+
+	private void CreateFirstRoom()
+	{
+		int roomNum = floorSize / 2;
+		map[roomNum] = new Node();
+		map[roomNum].SetRoomType(ERoomType.None);
+
+		CreateRoomNode(roomNum + 1);
+		CreateRoomNode(roomNum - 1);
+		CreateRoomNode(roomNum + width);
+		CreateRoomNode(roomNum - width);
+	}
+
+	private void CreateNodeNumList()
+	{
+		nodeNumList = new List<int>();
+		for (int i = 0; i < map.Count; ++i)
+		{
+			if (map[i] != null)
+				nodeNumList.Add(i);
+		}
+	}
+
+	public void DecorateFloor()
+	{
+		for (int i = 0; i < nodeMap.Count; ++i)
+		{
+			if (Random.Range(0, 2) == 1) continue;
+
+			RoomNode node = nodeMap[i]?.GetComponent<RoomNode>();
+			if (node != null && !node.filled && node.GetRoomType() == ERoomType.EWall)
+			{
+				node.filled = true;
+				var sr = node.GetComponent<SpriteRenderer>();
+				sr.sprite = decorateBlock;
+				sr.color = Color.red; // 나중에 테마 기반 색상 적용 가능
+			}
+		}
+	}
 	public void ReCreateEnemy()
 	{
 
@@ -1127,120 +1318,8 @@ public class DungeonManager : MonoBehaviour
 
 	}
 
-	public void AddLoopCorridor()
-	{
-		int random = Random.Range(0,3);
-		int first = nodeNumList[random];
-		int last = nodeNumList[nodeNumList.Count - 1];
 
-		int x = (last / width) - (first / width);
-		int z = first;
 
-		for(int p = 0; p < x; ++p)
-		{
-			z = z + width;
-			if(map[z] == null)
-			{map[z] = new();}
-
-			if(!nodeNumList.Contains(z))
-			{nodeNumList.Add(z);}
-		}
-
-		for(int q = z; q < last; ++q)
-		{
-			z = z + 1;
-			if(map[z] == null)
-			{map[z] = new();}
-
-			if(!nodeNumList.Contains(z))
-			{nodeNumList.Add(z);}
-		}
-	}
-	private void InstantiateNode()
-	{
-		nodeMap = new();
-
-		for(int i = 0; i < floorSize; ++i)
-		{nodeMap.Add(null);}
-
-		for(int i = 0; i < map.Count; ++i)
-		{
-			GameObject prefab = null;
-			if(map[i] != null)
-			{
-				switch(map[i].GetRoomType())
-				{
-					case ERoomType.EStair:
-					prefab = stairNodePrefab;
-					break;
-
-					case ERoomType.EEncount:
-					prefab = encounterNodePrefab;
-					break;
-
-					case ERoomType.EGold:
-					prefab = itemNodePrefab;
-					break;
-
-					case ERoomType.EItem:
-					prefab = itemNodePrefab;
-					break;
-
-					case ERoomType.EMonster:
-					prefab = monsterNodePrefab;
-					break;
-
-					case ERoomType.EWall:
-					prefab = monsterNodePrefab;
-					break;
-
-					case ERoomType.None:
-					prefab = roomNodePrefab;
-					break;
-
-				}
-
-				GameObject gameObject = Instantiate(prefab,new Vector3(), Utils.QI);
-				gameObject.transform.SetParent(mapObject.transform);
-				gameObject.transform.position = mapObject.transform.position;
-				gameObject.GetComponent<RoomNode>().SetNodeNum(i);
-				gameObject.GetComponent<RoomNode>().SetRoomType(map[i].GetRoomType());
-				gameObject.GetComponent<RoomNode>().filled = true;
-				gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
-				gameObject.SetActive(false);
-
-				nodeMap[i] = gameObject;
-			}
-			else
-			{
-				prefab = wallNodePrefab;
-
-				GameObject gameObject = Instantiate(prefab,new Vector3(), Utils.QI);
-				gameObject.transform.SetParent(mapObject.transform);
-				gameObject.transform.position = mapObject.transform.position;
-				gameObject.GetComponent<RoomNode>().SetNodeNum(i);
-				// gameObject.GetComponent<RoomNode>().SetRoomType(map[i].GetRoomType());
-				gameObject.GetComponent<RoomNode>().SetRoomType(ERoomType.EWall);
-				gameObject.transform.position = mapObject.transform.position + CalculateNodePosition(i);
-				gameObject.SetActive(false);
-
-				nodeMap[i] = gameObject;
-			}
-
-			
-		}
-	}
-
-	private void CreateFirstRoom()
-	{
-		int roomNum = floorSize / 2;
-		map[roomNum] = new Node();
-		map[roomNum].SetRoomType(ERoomType.None);
-		CreateRoomNode(roomNum + 1);
-		CreateRoomNode(roomNum - 1);
-		CreateRoomNode(roomNum + width);
-		CreateRoomNode(roomNum - width);
-	}
 
 
 	private void CreateRoomNode(int roomNum)
@@ -1319,15 +1398,43 @@ public class DungeonManager : MonoBehaviour
 		return true;
 	}
 
-	private void CreateNodeNumList()
+	private int GetNextIndex(int currentIndex, int direction)
 	{
-		nodeNumList = new List<int>();
-		for(int i = 0; i < map.Count; ++i)
+		// direction: 0=위, 1=아래, 2=왼쪽, 3=오른쪽
+		int nextIndex = currentIndex;
+
+		switch (direction)
 		{
-			if(map[i] != null)
-			{nodeNumList.Add(i);}
+			case 0: // 위
+				nextIndex = currentIndex - width;
+				break;
+			case 1: // 아래
+				nextIndex = currentIndex + width;
+				break;
+			case 2: // 왼쪽
+					// 같은 행에 있을 때만 이동
+				if (currentIndex % width != 0)
+					nextIndex = currentIndex - 1;
+				else
+					return -1; // 왼쪽 끝이면 이동 불가
+				break;
+			case 3: // 오른쪽
+					// 같은 행에 있을 때만 이동
+				if (currentIndex % width != width - 1)
+					nextIndex = currentIndex + 1;
+				else
+					return -1; // 오른쪽 끝이면 이동 불가
+				break;
 		}
+
+		// 범위 밖 체크
+		if (!CheckOutOfIndex(nextIndex))
+			return -1;
+
+		return nextIndex;
 	}
+
+
 
 	private bool CheckCorridor(int value)
 	{
@@ -1547,8 +1654,6 @@ public class DungeonManager : MonoBehaviour
 
 		if(map[roomNum].GetRoomType() == ERoomType.EStair)
 		{ShowStairAlert();}
-		else if(map[roomNum].GetRoomType() == ERoomType.EMonster)
-		{map[roomNum].SetRoomType(ERoomType.None);}
 		else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
 		{
 			// ShowEncounter();
@@ -1578,25 +1683,6 @@ public class DungeonManager : MonoBehaviour
 						AlertPopUpMessage("아이템을 얻을 수 없습니다.");
 					}
 					break;
-				case EItemCategory.EOthers:
-
-					if (PlayerData.saveData.inventory_others.ContainsKey(map[roomNum].GetItem().GetNum()))
-					{ 
-						PlayerData.saveData.inventory_others[map[roomNum].GetItem().GetNum()]++;
-						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
-						map[roomNum].SetRoomType(ERoomType.None);
-						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
-					}
-					else if(PlayerData.saveData.inventory_others.Count <= 9)
-					{
-						PlayerData.saveData.inventory_others.Add(map[roomNum].GetItem().GetNum(), 1);
-						AlertPopUpMessage(map[roomNum].GetItem().GetName() + " " + " 획득");
-						map[roomNum].SetRoomType(ERoomType.None);
-						nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
-					}
-					else
-					{ AlertPopUpMessage("아이템을 얻을 수 없습니다."); }
-					break;
 			}
 			
 		}
@@ -1613,12 +1699,6 @@ public class DungeonManager : MonoBehaviour
 	private void GainItem(Node node)
 	{
 		AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
-
-		if(node.GetItem().GetItemCategory() == EItemCategory.EOthers)
-		{ }
-		else if (node.GetItem().GetItemCategory() == EItemCategory.ETool)
-		{ }
-
 		//if (myItemList.ContainsKey(node.GetItem()))
 		//{myItemList[node.GetItem()]++;}
 		//else
@@ -1636,20 +1716,6 @@ public class DungeonManager : MonoBehaviour
 		moveLocked = false;
 		stairAlert.GetComponent<Window>().OnOff();
 	}
-
-	public void CardBeginDrag(GameObject cardObject)
-	{
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<AdventureCard>().SetLock(true);}
-		cardObject.GetComponent<AdventureCard>().SetLock(false);
-
-		CameraController.Inst.SetFollowing();
-		CameraController.Inst.SetDragLock(true);
-
-	}
-
-	public void CardOnDrag(GameObject cardObject)
-	{DrawDragLine(cardObject.transform.position,CheckCardUsable(cardObject.GetComponent<AdventureCard>().GetCardData(),ReturnMouseOnNode()));}
 
 	public void DrawDragLine(Vector2 startPoint, bool isUsuable)
 	{
@@ -1714,54 +1780,12 @@ public class DungeonManager : MonoBehaviour
 
 	}
 
-	IEnumerator ActivateExploreCard(CardData cardData, int nodeNum)
-	{
-		switch(cardData.GetCardNum())
-		{
-			case "99": //랜덤 텔레포터
-			ActivateTeleport();
-			break;
-
-			case "100": //익스플로전
-			nodeMap[nodeNum].GetComponent<RoomNode>().SetRoomType(ERoomType.None);
-			break;
-		}
-		yield return new WaitForSeconds(1.5f);
-	}
-
 	public void DeleteDragLine()
 	{
 		cardDragLine.positionCount = 0;
 		cardDragLine.endColor = Color.blue;
 	}
 
-	public IEnumerator CardEndDrag(AdventureCard dungeonCard, int nodeNum)
-	{
-		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<AdventureCard>().SetLock(false);}
-
-		DeleteDragLine();
-
-		if(CheckCardUsable(dungeonCard.GetCardData(), nodeNum))
-		{
-			StartCoroutine(ActivateExploreCard(dungeonCard.GetCardData(), nodeNum));
-			// card.SendMissile(alertPoint, hole.transform);
-			for(int i = 0; i < cardObjectList.Count; ++i)
-			{cardObjectList[i].GetComponent<AdventureCard>().SetCardOrder(i);}
-			// CardAlignmentAlt();
-		}
-		else
-		{
-			foreach(GameObject cardObject in cardObjectList)
-			{cardObject.GetComponent<AdventureCard>().SetLock(false);}
-		}
-
-		
-		CameraController.Inst.SetDragLock(false);
-		
-		yield return new WaitForSeconds(0.5f);
-
-	}
 
 	public bool CheckCardUsable(CardData cardData, int nodeNum)
 	{
@@ -1771,11 +1795,7 @@ public class DungeonManager : MonoBehaviour
 		return true;
 	}
 
-	public void GainEnergyToMax()
-	{
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<AdventureCard>().AddEnergy(1000);}
-	}
+
 	public int ReturnMouseOnNode()
 	{return mouseOnRoomNum;}
 
@@ -1818,6 +1838,14 @@ public class DungeonManager : MonoBehaviour
 }
 
 public enum ERoomType
-{None, EStair, ESafe, EMonster, EEncount, EItem, EGold, EWall}
+{
+	None,
+	EStair,
+	EEncount,
+	EGold,
+	EItem,
+	EWall,
+	EObstacle // 퍼즐로 제거될 장애물
+}
 public enum EDirection
 {North,South,West,East}

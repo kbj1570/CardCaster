@@ -9,6 +9,7 @@ public class SafeZone
 	protected int safeZoneNum;
 	protected List<Lore> lores;
 	protected List<string> commentaries;
+	protected int firstCutSceneIndex;
 	public List<Lore> GetLores()
 	{ return lores;}
 	public List<string> GetCommentaries()

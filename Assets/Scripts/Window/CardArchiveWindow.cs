@@ -24,13 +24,10 @@ public class CardArchiveWindow : Window
 
 	private Dictionary<CardData, bool> serventCardList;
 	private Dictionary<CardData, bool> spellCardList;
-	private Dictionary<CardData, bool> adventureCardList;
-
 	private Dictionary<CardData, bool> selectedCardList;
 
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
-	public GameObject dummyAdventureCardPrefab;
 	public GameObject dummyCardPrefab;
 
 	public List<Transform> cardLocation;
@@ -53,7 +50,6 @@ public class CardArchiveWindow : Window
 
 		serventCardList = new Dictionary<CardData, bool>();
 		spellCardList = new Dictionary<CardData, bool>();
-		adventureCardList = new Dictionary<CardData, bool>();
 
 		currentCardList = new Dictionary<CardData, bool>();
 		cardObjectList = new List<GameObject>();
@@ -70,9 +66,6 @@ public class CardArchiveWindow : Window
 					break;
 				case ECardType.Spell:
 					spellCardList.Add(value.Key, value.Value);
-					break;
-				case ECardType.Adventure:
-					adventureCardList.Add(value.Key, value.Value);
 					break;
 			}
 		}
@@ -102,10 +95,6 @@ public class CardArchiveWindow : Window
 
 			case ECardType.Spell:	
 				selectedCardList = spellCardList;
-				break;
-				
-			case ECardType.Adventure:
-				selectedCardList = adventureCardList;
 				break;
 
 			case ECardType.None:
@@ -160,9 +149,6 @@ public class CardArchiveWindow : Window
 						break;
 					case ECardType.Spell:
 						selectedCardPrefab = dummySpellCardPrefab;
-						break;
-					case ECardType.Adventure:
-						selectedCardPrefab = dummyAdventureCardPrefab;
 						break;
 				}
 			}

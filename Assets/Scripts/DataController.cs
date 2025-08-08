@@ -141,24 +141,26 @@ public class  DataController : MonoBehaviour
 		List<CardData> cardDatas = new();
 
         cardDatas.Add(new CrescentLancer()); //101
-        cardDatas.Add(new InvisibleCape());//102
-        cardDatas.Add(new BlueSlime()); //103
+		cardDatas.Add(new BlueSlime()); //103
+		cardDatas.Add(new BlueSlime()); //103
         cardDatas.Add(new RedSlime());//104
         cardDatas.Add(new GreenSlime());//105
-        cardDatas.Add(new RandomTeleporter());//106
-        cardDatas.Add(new OddedStew());//107
+		cardDatas.Add(new OddedStew());//107
+		cardDatas.Add(new OddedStew());//107
         cardDatas.Add(new PriceOfBlood());//108
         cardDatas.Add(new NoWayToReturn());//109
         cardDatas.Add(new WillOfBerserker());//110
-        cardDatas.Add(new MonsterMask());//111
-
-        cardDatas.Add(new PurpleCenser());//112
-        cardDatas.Add(new BrownSlime());//113
+		cardDatas.Add(new BrownSlime());//113
+		cardDatas.Add(new BrownSlime());//113
+		cardDatas.Add(new BrownSlime());//113
         cardDatas.Add(new WhiteSlime());//114
         cardDatas.Add(new BlackSlime());//115
         cardDatas.Add(new GraySlime());//116
-        
-        return cardDatas;
+		cardDatas.Add(new ForbiddenedSavior());//119
+		cardDatas.Add(new ForbiddenedSavior());//119
+		cardDatas.Add(new ForbiddenedSavior());//119
+
+		return cardDatas;
     }
 
     public List<Item> LoadItemDatabase()

@@ -15,7 +15,7 @@ public class BlackSlime : ServentCardData
         penetrate = true;
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Light;
+        serventAttribute = EServentAttribute.Dark;
     }
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)

@@ -6,7 +6,7 @@ public class OddedStew : SpellCardData
 	{
 		cardNum = "107";
 		cardName = "수상한 스튜";
-		cardCost = 0;
+		cardCost = 1;
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
 		cardDesc = "자신의 HP를 1 회복한다.";

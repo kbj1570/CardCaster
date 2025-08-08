@@ -6,7 +6,7 @@ public class GreenSlime : ServentCardData
     {
         cardNum = "105";
         cardName = "그린 슬라임";
-        cardCost = 1;
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
@@ -15,7 +15,7 @@ public class GreenSlime : ServentCardData
         penetrate = true;
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Dark;
+        serventAttribute = EServentAttribute.Wind;
     }
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)

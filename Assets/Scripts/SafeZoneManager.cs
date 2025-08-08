@@ -13,9 +13,12 @@ public class SafeZoneManager : MonoBehaviour
 	public GameObject textBoxObject;
 	public TMP_Text textBox;
 	public TMP_Text nameBox;
+
+	public TMP_Text goldBox;
+	public TMP_Text healthBox;
+
 	public AudioSource soundManager;
 	public SafeZone safeZone;
-
 
 	public List<Sprite> characters;
 
@@ -33,6 +36,9 @@ public class SafeZoneManager : MonoBehaviour
 	{
 		safeZone = new CabinSafeZone();
 
+		goldBox.text = PlayerData.saveData.gold.ToString();
+		healthBox.text = PlayerData.saveData.health.ToString();
+
 		StartCoroutine(FadeIn());
 	}
 	public void Heal()
@@ -40,6 +46,20 @@ public class SafeZoneManager : MonoBehaviour
 		PlayerData.saveData.health = 30;
 		GameObject onMessage = Instantiate(commentaryPreFab, commentaryLocation);
 		onMessage.GetComponent<PopUpMessage>().SetText("체력이 전부 회복되었다.");
+		healthBox.text = PlayerData.saveData.health.ToString();
+	}
+
+	public void FirstVisitEvent()
+	{
+		if (!PlayerData.saveData.cutsceneWatched["0"])
+		{
+			PlayerData.saveData.cutsceneWatched["0"] = true;
+			ShowCommentary(3);
+		}
+		else
+		{
+			ShowCommentary(1);
+		}
 	}
 
 	public void OpenStorage()
@@ -79,22 +99,25 @@ public class SafeZoneManager : MonoBehaviour
 
 	IEnumerator ShowCutSceneCoroutine(string cutSceneNum)
 	{
-		if (!PlayerData.saveData.cutsceneVIewed[cutSceneNum])
+		if (!PlayerData.saveData.cutsceneWatched[cutSceneNum])
 		{
-			switch (cutSceneNum)
-			{
-				case "0":
-					StartCoroutine(FadeOut());
-					yield return new WaitForSeconds(1f);
-					SceneManager.LoadScene("HowAboutTrade");
-					break;
+			PlayerData.saveData.cutsceneWatched[cutSceneNum] = true;
+			Debug.Log("Cutscene " + cutSceneNum + " Played");
+			yield return new WaitForSeconds(1f);
+			//switch (cutSceneNum)
+			//{
+			//	case "0":
+			//		StartCoroutine(FadeOut());
+			//		yield return new WaitForSeconds(1f);
+			//		SceneManager.LoadScene("HowAboutTrade");
+			//		break;
 
-				case "2":
-					StartCoroutine(FadeOut());
-					yield return new WaitForSeconds(1f);
-					SceneManager.LoadScene("SmallTalk");
-					break;
-			}
+			//	case "2":
+			//		StartCoroutine(FadeOut());
+			//		yield return new WaitForSeconds(1f);
+			//		SceneManager.LoadScene("SmallTalk");
+			//		break;
+			//}
 		}
 	}
 
@@ -113,6 +136,8 @@ public class SafeZoneManager : MonoBehaviour
 			yield return null;
 		}
 		fadeImage.gameObject.SetActive(false);
+
+		FirstVisitEvent();
 	}
 
 	private IEnumerator FadeOut()

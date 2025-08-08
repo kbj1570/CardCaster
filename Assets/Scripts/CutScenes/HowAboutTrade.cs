@@ -1,19 +1,16 @@
 public class HowAboutTrade : CutScenes
 {
-
 	//public HowAboutTrade()
 	//{
 	//	cutSceneNodes = new();
 
 	//	CutSceneNode cutSceneNode = new();
-
-		
-	//	cutSceneNode.cutSceneCommand = ECommandType.FadeInScreen;
-	//	cutSceneNode.waitTime = 1f;
+	//	cutSceneNode.commandType = ECommandType.FadeInScreen;
+	//	cutSceneNode.parameters = "1f";
 	//	cutSceneNodes.Add(cutSceneNode);
 
 	//	cutSceneNode = new();
-	//	cutSceneNode.cutSceneCommand = ECommandType.Wait;
+	//	cutSceneNode.commandType = ECommandType.Wait;
 	//	cutSceneNode.waitTime = 0.4f;
 	//	cutSceneNodes.Add(cutSceneNode);
 
@@ -92,7 +89,7 @@ public class HowAboutTrade : CutScenes
 	//	cutSceneNode.cutSceneCommand = ECommandType.FadeOutScreen;
 	//	cutSceneNode.waitTime = 0.8f;
 	//	cutSceneNodes.Add(cutSceneNode);
-	
+
 	//	cutSceneNode = new();
 	//	cutSceneNode.cutSceneCommand = ECommandType.Wait;
 	//	cutSceneNode.waitTime = 1.5f;
@@ -153,10 +150,8 @@ public class HowAboutTrade : CutScenes
 	//	cutSceneNode.cutSceneCommand = ECommandType.HideCharacterLeftSide;
 	//	cutSceneNodes.Add(cutSceneNode);
 	//}
-	void Update()
-	{
+	//void Update()
+	//{
 		
-	}
-
-
+	//}
 }

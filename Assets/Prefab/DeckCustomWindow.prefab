@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -595.96533, y: 240.96545}
-  m_SizeDelta: {x: 296.4842, y: 378.3522}
+  m_AnchoredPosition: {x: -600, y: 240.96545}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4054239069568661084
 CanvasRenderer:
@@ -117,13 +117,13 @@ RectTransform:
   - {fileID: 312111677231209523}
   - {fileID: 8915769807349646313}
   - {fileID: 3869413748570372226}
+  - {fileID: 8089172669917939973}
   - {fileID: 3109597799714925613}
   - {fileID: 3944193457259591423}
   - {fileID: 7029612078019500676}
   - {fileID: 6237570832020673842}
   - {fileID: 5760433406618978241}
   - {fileID: 5621919683064542838}
-  - {fileID: 8089172669917939973}
   - {fileID: 5886351504987583518}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -196,6 +196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   focusOnCardPosition: {fileID: 8089172669917939973}
+  gridlayoutPosition: {fileID: 0}
   popUpPosition: {fileID: 5886351504987583518}
   cardLocation:
   - {fileID: 1959364423095874293}
@@ -206,7 +207,6 @@ MonoBehaviour:
   - {fileID: 3869413748570372226}
   smallCardPrefab: {fileID: 8822816853248534152, guid: 5e858e05a1c76864692039a3b6627ecb, type: 3}
   gridLayout: {fileID: 1806984801999012931}
-  dummyCardObjectList: []
   dummyServentCardPrefab: {fileID: 8357732725725720325, guid: bf4c77bfca310bb4993d7e46890f4eb9, type: 3}
   dummySpellCardPrefab: {fileID: 8357732725725720325, guid: 9df33df545c1f6d41ae58c6ea580fc85, type: 3}
   dummyAdventureCardPrefab: {fileID: 8357732725725720325, guid: f9f7cb6d695f27c469152ddc0873012e, type: 3}

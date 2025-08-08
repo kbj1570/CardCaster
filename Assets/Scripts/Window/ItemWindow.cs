@@ -13,7 +13,6 @@ public class ItemWindow : Window
 	public GameObject itemPrefab;
 
 	public Toggle toolToggle;
-	public Toggle othersToggle;
 
 	List<Item> toolList;
 	Dictionary<Item, int> othersList;
@@ -70,101 +69,49 @@ public class ItemWindow : Window
 
 		EItemCategory selectedItemCategory = EItemCategory.ETool;
 
-		if (toolToggle.isOn)
-		{ selectedItemCategory = EItemCategory.ETool; }
-		else if (othersToggle.isOn)
-		{ selectedItemCategory = EItemCategory.EOthers; }
+
 
 		int index = 0;
 
-		if (selectedItemCategory == EItemCategory.ETool)
+		foreach (Item item in toolList)
 		{
-			foreach(Item item in toolList)
-			{
 
-				GameObject itemObject = Instantiate(itemPrefab, Vector3.zero, Utils.QI);
-				itemObject.transform.localScale = Vector3.one;
+			GameObject itemObject = Instantiate(itemPrefab, Vector3.zero, Utils.QI);
+			itemObject.transform.localScale = Vector3.one;
 
-				itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
+			itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
 
-				itemObject.GetComponent<DungeonItem>().Init(
-					(item, eventData) => {
-						ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
-					}
-				, // 클릭 시
-				(itemSlot, eventData) => {
-					//ShowItemDescription(Int32.Parse(itemSlot.GetItem().GetNum()));
-				} // 마우스 입장
-				,
-				(itemSlot, eventData) => {
-					HideItemDescription();
-				} // 마우스 퇴장
-				,
-				(itemSlot, eventData) => {
-
-				}, // 드래그 시작
-				(itemSlot, eventData) => {
-					itemSlot.transform.position = Input.mousePosition;
-				}, // 드래그 중
-				(itemSlot, eventData) => {
-					itemSlot.transform.localPosition = Vector3.zero;
-				} // 드래그 끝
-
-				);
-
-				itemObject.transform.SetParent(itemLocations[index]);
-				itemObject.transform.localScale = Vector3.one;
-				itemObject.transform.localPosition = Vector3.zero;
-				itemObjectList.Add(itemObject);
-
-				index++;
-			}
-
-		}
-		else if (selectedItemCategory == EItemCategory.EOthers)
-		{
-			foreach (KeyValuePair<Item, int> itemPair in othersList)
-			{
-				GameObject itemObject = Instantiate(itemPrefab, Vector3.zero, Utils.QI);
-				itemObject.transform.localScale = Vector3.one;
-
-				itemObject.GetComponent<DungeonItem>().SetUp(itemPair.Key, itemPair.Value, itemSpriteList[Int32.Parse(itemPair.Key.GetNum())]);
-
-				itemObject.GetComponent<DungeonItem>().Init(
+			itemObject.GetComponent<DungeonItem>().Init(
 				(item, eventData) => {
 					ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
 				}
-				, // 클릭 시
-				(item, eventData) => {
-					//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
-				} // 마우스 입장
-				,
-				(item, eventData) => {
-					HideItemDescription();
-				} // 마우스 퇴장
-				,
-				(item, eventData) => {
+			, // 클릭 시
+			(itemSlot, eventData) => {
+				//ShowItemDescription(Int32.Parse(itemSlot.GetItem().GetNum()));
+			} // 마우스 입장
+			,
+			(itemSlot, eventData) => {
+				HideItemDescription();
+			} // 마우스 퇴장
+			,
+			(itemSlot, eventData) => {
 
-				}, // 드래그 시작
-				(itemSlot, eventData) => {
-					itemSlot.transform.position = Input.mousePosition;
-				}, // 드래그 중
-				(itemSlot, eventData) => {
-					itemSlot.transform.localPosition = Vector3.zero;
-				} // 드래그 끝
+			}, // 드래그 시작
+			(itemSlot, eventData) => {
+				itemSlot.transform.position = Input.mousePosition;
+			}, // 드래그 중
+			(itemSlot, eventData) => {
+				itemSlot.transform.localPosition = Vector3.zero;
+			} // 드래그 끝
 
 			);
 
+			itemObject.transform.SetParent(itemLocations[index]);
+			itemObject.transform.localScale = Vector3.one;
+			itemObject.transform.localPosition = Vector3.zero;
+			itemObjectList.Add(itemObject);
 
-
-
-				itemObject.transform.SetParent(itemLocations[index]);
-				itemObject.transform.localScale = Vector3.one;
-				itemObject.transform.localPosition = Vector3.zero;
-				itemObjectList.Add(itemObject);
-
-				index++;
-			}
+			index++;
 		}
 	}
 
