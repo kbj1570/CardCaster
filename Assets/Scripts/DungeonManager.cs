@@ -1007,10 +1007,6 @@ public class DungeonManager : MonoBehaviour
 		//UpdateItemPage();
 	}
 
-	public void LoadData()
-	{
-
-	}
 
 	public void CreateFloor()
 	{

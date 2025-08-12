@@ -29,8 +29,6 @@ public class DeckManager : MonoBehaviour
 	private Dictionary<BattleCardData, int> currentCardList;
 	private int currentPage;
 	private int pageLimit;
-
-	private SaveData saveData;
 	public static DeckManager Inst{get; private set;}
 	public TMP_Text pageNumber;
 	public TMP_Text searchText;
@@ -45,24 +43,7 @@ public class DeckManager : MonoBehaviour
 
 	void Start()
 	{
-		saveData = DataController.Inst.LoadData();
-		cardDatabase = DataController.Inst.LoadCardDatabase();
-
-		currentPage = 0;
-		myCardList = new();
-		myDeckList = new();
-		deckCardObjectList = new();
-		dummyCardObjectList = new();
-		//scrollRect.normalizedPosition = new Vector2(1, 1);
-
-		cardHashMap = DataController.Inst.LoadCardHashMap();
-
-		foreach (KeyValuePair<string, int> value in saveData.cardList)
-		{ myCardList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
-
-		foreach (KeyValuePair<string, int> value in saveData.deck)
-		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
-		CreatePage();
+		
 	}
 
 	void Awake()
@@ -94,7 +75,28 @@ public class DeckManager : MonoBehaviour
 
 	}
 
-	
+	public void LoadDeck()
+	{
+		cardDatabase = DataController.Inst.LoadCardDatabase();
+
+		currentPage = 0;
+		myCardList = new();
+		myDeckList = new();
+		deckCardObjectList = new();
+		dummyCardObjectList = new();
+		//scrollRect.normalizedPosition = new Vector2(1, 1);
+
+		cardHashMap = DataController.Inst.LoadCardHashMap();
+
+		foreach (KeyValuePair<string, int> value in PlayerData.saveData.cardList)
+		{ myCardList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+
+		foreach (KeyValuePair<string, int> value in PlayerData.saveData.deck)
+		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+		CreatePage();
+	}
+
+
 
 	public void UnFocusCard()
 	{
@@ -119,8 +121,7 @@ public class DeckManager : MonoBehaviour
 		PlayerData.saveData.cardList = dumb;
 		DataController.Inst.SaveData(PlayerData.saveData);
 	}
-	public void LoadDeck()
-	{Dictionary<CardData, int> dumb = new Dictionary<CardData, int>();}
+	
 	public void CreatePage()
 	{
 		currentCardList = new Dictionary<BattleCardData, int>();

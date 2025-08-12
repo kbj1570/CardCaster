@@ -4,7 +4,7 @@ public class RedSlime : ServentCardData
 {
     public RedSlime()
     {
-        cardNum = "104";
+        cardNum = "103";
         cardName = "레드 슬라임";
         cardCost = 0;
         cardType = ECardType.Servent;

@@ -63,8 +63,15 @@ public class CampsiteManager : MonoBehaviour
 	void Start()
 	{
 		PlayerData.saveData = DataController.Inst.LoadData();
+
+		DeckManager.Inst.LoadDeck();
 		Inst = this;
 		StartCoroutine(FadeIn());
+	}
+
+	void Awake()
+	{
+		
 	}
 
 	public void GoToDungeon()

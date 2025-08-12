@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BigTent : MonoBehaviour
 {
@@ -6,6 +7,13 @@ public class BigTent : MonoBehaviour
 	{
 		if (CampsiteManager.Inst.screenLocked)
 			return;
+
+		if (EventSystem.current.IsPointerOverGameObject())
+		{
+			return;
+		}
+
+		CampsiteManager.Inst.LockScreen(true);
 		CampsiteManager.Inst.OpenStorage();
 	}
 }

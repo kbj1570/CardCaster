@@ -4,7 +4,7 @@ public class BlueSlime : ServentCardData
 {
     public BlueSlime()
     {
-        cardNum = "103";
+        cardNum = "102";
         cardName = "블루 슬라임";
         cardCost = 0;
         cardType = ECardType.Servent;

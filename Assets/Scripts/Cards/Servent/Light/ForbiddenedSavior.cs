@@ -4,7 +4,7 @@ public class ForbiddenedSavior : ServentCardData
 {
     public ForbiddenedSavior()
     {
-        cardNum = "119";
+        cardNum = "116";
         cardName = "봉인된 수호자";
         cardCost = 2;
         cardType = ECardType.Servent;

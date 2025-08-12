@@ -35,11 +35,6 @@ public class ItemWindow : Window
 		toolList = new();
 		ScaleZero();
 	}
-	void Update()
-	{
-		
-	}
-
 	void Awake()
 	{
 		Inst = this;
@@ -51,10 +46,6 @@ public class ItemWindow : Window
 	private void LoadItemList()
 	{
 		toolList.Clear();
-		othersList.Clear();
-
-		foreach (KeyValuePair<string, int> value in PlayerData.saveData.inventory_others)
-		{ othersList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
 
 		foreach (string value in PlayerData.saveData.inventory_items)
 		{ toolList.Add(itemDatabase[Int32.Parse(value)]);}
@@ -82,9 +73,9 @@ public class ItemWindow : Window
 			itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
 
 			itemObject.GetComponent<DungeonItem>().Init(
-				(item, eventData) => {
-					ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
-				}
+			(item, eventData) => {
+				ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+			}
 			, // Å¬¸¯ ½Ã
 			(itemSlot, eventData) => {
 				//ShowItemDescription(Int32.Parse(itemSlot.GetItem().GetNum()));

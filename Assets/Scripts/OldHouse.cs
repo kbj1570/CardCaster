@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class OldHouse : MonoBehaviour
 {
@@ -10,7 +11,13 @@ public class OldHouse : MonoBehaviour
 		if (CampsiteManager.Inst.screenLocked)
 			return;
 
+		if (EventSystem.current.IsPointerOverGameObject())
+		{
+			return;
+		}
 
+
+		CampsiteManager.Inst.LockScreen(true);
 		CampsiteManager.Inst.PlayMapOpen();
 		CampsiteManager.Inst.OpenMap();
 	}

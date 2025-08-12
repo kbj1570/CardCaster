@@ -1,6 +1,13 @@
 using System;
 using System.Collections.Generic;
 
+
+public enum EnemyType
+{
+    Normal,
+    Elite,
+    Boss
+}
 public class Enemy
 {
     protected string enemyName;
@@ -13,7 +20,6 @@ public class Enemy
     protected int enemyGold;
     protected List<EnemyServentCardData> serventList;
     protected EnemyAbility enemyAbility;
-
 
     public string GetName()
     {return enemyName;}

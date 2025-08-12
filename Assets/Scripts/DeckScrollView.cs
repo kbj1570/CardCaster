@@ -29,7 +29,6 @@ public class DeckScrollView : MonoBehaviour
 	public GameObject dummyAdventureCardPrefab;
 
 
-	private SaveData saveData;
 	public TMP_Text deckCountText;
 	public GameObject popUpMessage;
 	public ScrollRect scrollRect;
@@ -38,7 +37,6 @@ public class DeckScrollView : MonoBehaviour
 
 	void Start()
 	{
-		saveData = DataController.Inst.LoadData();
 		cardDatabase = DataController.Inst.LoadCardDatabase();
 
 		myDeckList = new();
@@ -47,7 +45,7 @@ public class DeckScrollView : MonoBehaviour
 		cardHashMap = DataController.Inst.LoadCardHashMap();
 		deckCardObjectList = new List<GameObject>();
 
-		foreach (KeyValuePair<string, int> value in saveData.deck)
+		foreach (KeyValuePair<string, int> value in PlayerData.saveData.deck)
 		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
 		UpdateDeckScroll();
 	}

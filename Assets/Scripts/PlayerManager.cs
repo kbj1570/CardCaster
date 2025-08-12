@@ -13,11 +13,6 @@ public class PlayerManager : MonoBehaviour
 
     private int health;
 
-    public List<ItemSO> inventory;
-    public Dictionary<ItemSO, int> importantItem;
-    public Dictionary<ItemSO, int> usableItem;
-    public Dictionary<ItemSO, int> unusableItem;
-
     public Dictionary<CardData, int> myCardList;
 
     public GridLayoutGroup gridLayout;

@@ -35,32 +35,12 @@ public class  DataController : MonoBehaviour
 
     public Dictionary<string, int> LoadCardHashMap()
     {
-        Dictionary<string, int> cardHashMap = new() {
-            { "101", 0 },
-			{ "102", 1 },
-            { "103", 2 },
-			{ "104", 3 },
-            { "105", 4 },
-			{ "106", 5 },
-			{ "107", 6 },
-			{ "108", 7 },
-			{ "109", 8 },
-			{ "110", 9 },
-			{ "111", 10 },
-			{ "112", 11 },
-			{ "113", 12 },
-			{ "114", 13 },
-			{ "115", 14 },
-			{ "116", 15 },
-			{ "117", 16 },
-			{ "118", 17 },
-			{ "119", 18 },
-			{ "120", 19 },
-			{ "121", 20 },
-			{ "122", 21 },
-			{ "123", 22 }
-		};
-        return cardHashMap;
+        Dictionary<string, int> cardHashMap = new();
+
+        for(int i = 1; i < 200; i++)
+        {cardHashMap.Add((i + 100).ToString(), i - 1);}
+
+		return cardHashMap;
 	}
 
     public List<CutSceneNode> LoadCutScene(string cutSceneNum)
@@ -141,23 +121,23 @@ public class  DataController : MonoBehaviour
 		List<CardData> cardDatas = new();
 
         cardDatas.Add(new CrescentLancer()); //101
-		cardDatas.Add(new BlueSlime()); //103
-		cardDatas.Add(new BlueSlime()); //103
-        cardDatas.Add(new RedSlime());//104
-        cardDatas.Add(new GreenSlime());//105
-		cardDatas.Add(new OddedStew());//107
-		cardDatas.Add(new OddedStew());//107
-        cardDatas.Add(new PriceOfBlood());//108
+		cardDatas.Add(new BlueSlime()); //102
+        cardDatas.Add(new RedSlime());//103
+        cardDatas.Add(new GreenSlime());//104
+		cardDatas.Add(new OddedStew());//105
+		cardDatas.Add(new OddedStew());//106
+		cardDatas.Add(new NoWayToReturn());//107
+		cardDatas.Add(new WillOfWarrior());//108
         cardDatas.Add(new NoWayToReturn());//109
-        cardDatas.Add(new WillOfBerserker());//110
-		cardDatas.Add(new BrownSlime());//113
-		cardDatas.Add(new BrownSlime());//113
+        cardDatas.Add(new BrownSlime());//110
+		cardDatas.Add(new BrownSlime());//111
+		cardDatas.Add(new BrownSlime());//112
 		cardDatas.Add(new BrownSlime());//113
         cardDatas.Add(new WhiteSlime());//114
         cardDatas.Add(new BlackSlime());//115
         cardDatas.Add(new GraySlime());//116
-		cardDatas.Add(new ForbiddenedSavior());//119
-		cardDatas.Add(new ForbiddenedSavior());//119
+		cardDatas.Add(new ForbiddenedSavior());//117
+		cardDatas.Add(new Griffin());//118
 		cardDatas.Add(new ForbiddenedSavior());//119
 
 		return cardDatas;
@@ -176,10 +156,6 @@ public class  DataController : MonoBehaviour
         items.Add(new RedPotion());
         items.Add(new RustyKnife());
         items.Add(new TrickGlove());
-        items.Add(new DirtyPatch());
-        items.Add(new OldStick());
-        items.Add(new ShardOfStarlight());
-        items.Add(new SharpFang());
 
         return items;
     }

@@ -15,6 +15,7 @@ public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
 public enum ECardType{None ,Servent, Spell}
+public enum ESpellType {None, Normal, Field}
 public enum ECardRarity{None, Normal, Rare}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
@@ -577,47 +578,14 @@ public class BattleManager : MonoBehaviour
 	public IEnumerator GameOver()
 	{
 		List<string> items = PlayerData.saveData.inventory_items;
-		Dictionary<string, int> others = PlayerData.saveData.inventory_others;
 
 		int itemCount = items.Count / 2;
-		int othersCount = others.Count / 2;
 		int randomNum = 0;
 
 		for (int i = 0; i < itemCount; ++i)
 		{
 			randomNum = Random.Range(0, items.Count);
 			items.RemoveAt(randomNum);
-		}
-
-
-		List<int> othersList = others.Values.ToList();
-
-		int discardCount = 0;
-
-		while(discardCount < othersCount)
-		{
-			randomNum = Random.Range(0, othersList.Count);
-
-			if(othersList[randomNum] > 0)
-			{
-				othersList[randomNum]--;
-				discardCount++;
-			}
-		}
-		List<string> keys = others.Keys.ToList();
-
-		int count = 0;
-		foreach (string key in keys)
-		{
-			if(othersList[count] == 0)
-			{
-				others.Remove(key);
-			}
-			else
-			{
-				others[key] = othersList[count];
-			}
-			count++;
 		}
 
 		yield return null;
@@ -1940,6 +1908,7 @@ public class BattleManager : MonoBehaviour
 		{return false;}
 		return true;
 	}
+
 
 	public void PlayServentDeathSound()
 	{

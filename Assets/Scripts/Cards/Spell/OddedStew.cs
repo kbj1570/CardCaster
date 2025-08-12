@@ -4,7 +4,7 @@ public class OddedStew : SpellCardData
 {
 	public OddedStew()
 	{
-		cardNum = "107";
+		cardNum = "105";
 		cardName = "수상한 스튜";
 		cardCost = 1;
 		cardType = ECardType.Spell;
