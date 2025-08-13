@@ -1,20 +1,27 @@
 using System.Collections;
+using UnityEngine;
 
-public class GraySlime : ServentCardData
+public class Hypnotist : ServentCardData
 {
-    public GraySlime()
+    public Hypnotist()
     {
-        cardNum = "116";
-        cardName = "그레이 슬라임";
-        cardCost = 1;
+        cardNum = "125";
+        cardName = "최면술사";
+        cardCost = 3;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 3;
-        cardStoryDesc = "하얀색 액체로 구성되어 있으며,\r\n흐물거리는 몸을 이용해 움직인다.\r\n전설 속에 존재하는 천공 섬이라는 곳에서\r\n지상으로 내려왔다고 하지만 실제로 어떤지는 아무도 모른다.";
-        cardDesc = "";
+        cardStoryDesc = "";
+        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 대미지 1을 준다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Light;
+        serventAttribute = EServentAttribute.Dark;
+
+        preRequisites = new();
+        PreRequisite preRequisite = new();
+        preRequisite.preRequisite = EPreRequisite.None;
+
+        preRequisites.Add(preRequisite);
     }
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)

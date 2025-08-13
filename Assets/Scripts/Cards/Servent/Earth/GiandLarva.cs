@@ -1,20 +1,20 @@
 using System.Collections;
 
-public class Frillizard : ServentCardData
+public class GiantLarva : ServentCardData
 {
-    public Frillizard()
+    public GiantLarva()
     {
-        cardNum = "113";
-        cardName = "목도리 슬라임";
-        cardCost = 1;
+        cardNum = "128";
+        cardName = "거대한 애벌레";
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
-        cardStoryDesc = "주로 척박한 사막지대에서 서식하는 도마뱀 몬스터이다.\r\n항상 배가 고파 사막을 횡단하는 모험가들을 공격한다고 알려져 있다.\r\n먹이감을 포착하면 목에있는 프릴을 펼치면서 쫓아온다.";
-        cardDesc = "소환 시 상대 소환수 1마리를 혼란 상태로 만든다.";
+        cardStoryDesc = "갈색 액체로 구성되어 있으며, 흐물거리는 몸을 이용해 움직인다. 주로 가파른 산 정상에서 자주 발견된다.\r\n슬라임들 중에서 움직임 거의 없는 특이한 개체라고 알려져 있다. ";
+        cardDesc = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
-        serventAttribute = EServentAttribute.Dark;
+        serventAttribute = EServentAttribute.Earth;
     }
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)

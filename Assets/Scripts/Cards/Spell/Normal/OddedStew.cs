@@ -11,6 +11,7 @@ public class OddedStew : SpellCardData
 		cardStoryDesc = "";
 		cardDesc = "자신의 HP를 1 회복한다.";
 		cardTargetType = ECardTargetType.Selected;
+		spellType = ESpellType.Normal;
 
 		preRequisites = new();
 		PreRequisite preRequisite = new();

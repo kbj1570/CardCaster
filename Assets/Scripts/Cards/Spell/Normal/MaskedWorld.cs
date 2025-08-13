@@ -11,8 +11,9 @@ public class MaskedWorld : SpellCardData
 		cardCost = 1;
 		cardType = ECardType.Spell;
 		cardStoryDesc = ""; 
-		cardDesc = "모든 소환수들의 포스를 1 증가시킨다.";
+		cardDesc = "모든 소환수들은 포스를 1 얻는다";
 		cardTargetType = ECardTargetType.Selected;
+		spellType = ESpellType.Normal;
 
 		preRequisites = new();
 		PreRequisite preRequisite = new();

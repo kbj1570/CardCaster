@@ -1,16 +1,17 @@
 using System.Collections;
 
-public class AtTheEdgeOfPledge : SpellCardData
+public class Celestia : SpellCardData
 {
-	public AtTheEdgeOfPledge()
+	public Celestia()
 	{
-		cardNum = "134";
-		cardName = "맹세의 칼끝에서";
+		cardNum = "";
+		cardName = "���� �ձ� ������Ƽ��";
 		cardCost = 1;
 		cardType = ECardType.Spell;
-		cardStoryDesc = "왕 앞에 무릎 꿇은 그는, 왕국의 정식 기사가 되었다.\r\n검이 어깨를 스치는 순간. 그는 맹세한다.\r\n-나의 검은 모두를 위한 검이니.-";
-		cardDesc = "소환수 하나는 포스를 1 얻는다.그 소환수가 빛 속성이라면 포스를 2 얻는다.";
+		cardStoryDesc = "";
+		cardDesc = "�� �Ǵ� �������� [ũ����Ʈ ����]�� �����´�.";
 		cardTargetType = ECardTargetType.Selected;
+		spellType = ESpellType.Field;
 
 		preRequisites = new();
 		PreRequisite preRequisite = new();
@@ -26,6 +27,7 @@ public class AtTheEdgeOfPledge : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
+		bm.HealPlayer(1);
 		yield return null;
 	}
 

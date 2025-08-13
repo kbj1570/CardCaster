@@ -1,38 +1,31 @@
 using System.Collections;
 using UnityEngine;
 
-public class CookOfDarkness : ServentCardData
+public class StrayCat : ServentCardData
 {
-    public CookOfDarkness()
+    public StrayCat()
     {
-        cardNum = "122";
-        cardName = "암흑요리사";
-        cardCost = 0;
+        cardNum = "124";
+        cardName = "최면술사";
+        cardCost = 3;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
-        force = 1;
+        force = 3;
         cardStoryDesc = "";
-        cardDesc = "소환시 자신의 덱에서 [스튜]를 2장 가져온다.";
+        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 대미지 1을 준다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
 
         preRequisites = new();
         PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.DeckCountOver;
-        preRequisite.count = 0;
-        preRequisite.cardType = ECardType.None;
-        preRequisite.cardNum = "107";
+        preRequisite.preRequisite = EPreRequisite.None;
 
         preRequisites.Add(preRequisite);
     }
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-
-        bm.SearchCardInDeck(new OddedStew());
-        yield return new WaitForSeconds(0.4f);
-		bm.SearchCardInDeck(new OddedStew());
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

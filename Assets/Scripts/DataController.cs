@@ -128,17 +128,34 @@ public class  DataController : MonoBehaviour
 		cardDatas.Add(new OddedStew());//106
 		cardDatas.Add(new NoWayToReturn());//107
 		cardDatas.Add(new WillOfWarrior());//108
-        cardDatas.Add(new NoWayToReturn());//109
-        cardDatas.Add(new BrownSlime());//110
-		cardDatas.Add(new BrownSlime());//111
-		cardDatas.Add(new BrownSlime());//112
-		cardDatas.Add(new BrownSlime());//113
-        cardDatas.Add(new WhiteSlime());//114
-        cardDatas.Add(new BlackSlime());//115
-        cardDatas.Add(new GraySlime());//116
-		cardDatas.Add(new ForbiddenedSavior());//117
-		cardDatas.Add(new Griffin());//118
+        cardDatas.Add(new BrownSlime());//109
+        cardDatas.Add(new WhiteSlime());//110
+		cardDatas.Add(new BlackSlime());//111
+		cardDatas.Add(new GraySlime());//112
+		cardDatas.Add(new Frillizard());//113
+        cardDatas.Add(new Griffin());//114
+        cardDatas.Add(new Georgius());//115
+        cardDatas.Add(new ForbiddenedSavior());//116
+		cardDatas.Add(new KnightOfTheRedFlame());//117
+		cardDatas.Add(new KnightOfTheAzure());//118
 		cardDatas.Add(new ForbiddenedSavior());//119
+		cardDatas.Add(new FireBat());//120
+		cardDatas.Add(new TheSacredBeast());//121
+		cardDatas.Add(new CookOfDarkness());//122
+		cardDatas.Add(new BrownSlime());//123
+		cardDatas.Add(new StrayCat());//124
+		cardDatas.Add(new Hypnotist());//125
+		cardDatas.Add(new BurningSouls());//126
+		cardDatas.Add(new NamelessTraveler());//127
+		cardDatas.Add(new GiantLarva());//128
+		cardDatas.Add(new SilentFog());//129
+		cardDatas.Add(new ForbiddenedSavior());//130
+		cardDatas.Add(new GloriousVictory());//131
+		cardDatas.Add(new HolyPowerBoost());//132
+		cardDatas.Add(new BrokenBless());//133
+		cardDatas.Add(new AtTheEdgeOfPledge());//134
+		cardDatas.Add(new ForbiddenedSavior());//135
+
 
 		return cardDatas;
     }
