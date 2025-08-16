@@ -5,17 +5,18 @@ public class Frillizard : ServentCardData
     public Frillizard()
     {
         cardNum = "113";
-        cardName = "목도리 슬라임";
+        cardName = "목도리도마뱀";
         cardCost = 1;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
-        cardStoryDesc = "주로 척박한 사막지대에서 서식하는 도마뱀 몬스터이다.\r\n항상 배가 고파 사막을 횡단하는 모험가들을 공격한다고 알려져 있다.\r\n먹이감을 포착하면 목에있는 프릴을 펼치면서 쫓아온다.";
+        cardStoryDesc = "척박한 사막지대에서 서식하는 도마뱀.\r\n먹이감을 포착하면 목에있는 프릴을 펼치면서 쫓아온다.";
         cardDesc = "소환 시 상대 소환수 1마리를 혼란 상태로 만든다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
-    }
+		abilityType = EAbilityType.Summon;
+	}
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
@@ -29,8 +30,14 @@ public class Frillizard : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

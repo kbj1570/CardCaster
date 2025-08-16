@@ -12,12 +12,13 @@ public class Hypnotist : ServentCardData
         serventType = EServentType.Player;
         force = 3;
         cardStoryDesc = "";
-        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 대미지 1을 준다.";
+        cardDesc = "소환 시 다른 소환수를 혼란 상태로 한다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
+		abilityType = EAbilityType.Summon;
 
-        preRequisites = new();
+		preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.None;
 
@@ -36,8 +37,13 @@ public class Hypnotist : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

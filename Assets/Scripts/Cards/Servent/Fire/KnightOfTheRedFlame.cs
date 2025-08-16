@@ -7,13 +7,14 @@ public class KnightOfTheRedFlame : ServentCardData
     {
         cardNum = "117";
         cardName = "홍염의 기사";
-        cardCost = 3;
+        cardCost = 1;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
-        force = 3;
+        force = 2;
         cardStoryDesc = "";
-        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 대미지 1을 준다.";
-        serventSize = EServentSize.Small;
+        cardDesc = "소멸될 때, 덱에서 [창해의 기사]를 1장 가져온다.";
+		abilityType = EAbilityType.Death;
+		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Fire;
 
@@ -36,8 +37,14 @@ public class KnightOfTheRedFlame : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		bm.SearchCardInDeck(new KnightOfTheAzure());
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

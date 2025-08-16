@@ -6,18 +6,19 @@ public class StrayCat : ServentCardData
     public StrayCat()
     {
         cardNum = "124";
-        cardName = "최면술사";
-        cardCost = 3;
+        cardName = "도둑고양이";
+        cardCost = 1;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
-        force = 3;
+        force = 1;
         cardStoryDesc = "";
-        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 대미지 1을 준다.";
+        cardDesc = "소환시 가진 골드에 따라 포스를 얻는다. (100G / 1)";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
+        abilityType = EAbilityType.Summon;
 
-        preRequisites = new();
+		preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.None;
 
@@ -36,8 +37,13 @@ public class StrayCat : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

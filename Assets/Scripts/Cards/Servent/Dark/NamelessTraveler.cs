@@ -17,7 +17,9 @@ public class NamelessTraveler : ServentCardData
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;
 
-        preRequisites = new();
+        abilityType = EAbilityType.Attack;
+
+		preRequisites = new();
         PreRequisite preRequisite = new();
         preRequisite.preRequisite = EPreRequisite.None;
 
@@ -36,8 +38,13 @@ public class NamelessTraveler : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

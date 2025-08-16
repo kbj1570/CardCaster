@@ -15,7 +15,9 @@ public class CrescentLancer : ServentCardData
         cardDesc = "공격 시 이 소환수의 포스가 \r\n 상대 소환수의 포스보다 높다면 \r\n 그 차이만큼 상대에게 대미지를 준다";
 
 		penetrate = true;
-        serventSize = EServentSize.Small;
+
+        abilityType = EAbilityType.Attack;
+		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Light;
     }
@@ -32,8 +34,13 @@ public class CrescentLancer : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

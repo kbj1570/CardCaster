@@ -16,7 +16,8 @@ public class ForbiddenedSavior : ServentCardData
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Light;
-    }
+		abilityType = EAbilityType.Normal;
+	}
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
@@ -30,8 +31,13 @@ public class ForbiddenedSavior : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return false;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

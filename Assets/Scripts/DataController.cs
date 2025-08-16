@@ -131,18 +131,18 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new BrownSlime());//109
         cardDatas.Add(new WhiteSlime());//110
 		cardDatas.Add(new BlackSlime());//111
-		cardDatas.Add(new GraySlime());//112
+		cardDatas.Add(new ShapeShifter());//112
 		cardDatas.Add(new Frillizard());//113
         cardDatas.Add(new Griffin());//114
         cardDatas.Add(new Georgius());//115
         cardDatas.Add(new ForbiddenedSavior());//116
 		cardDatas.Add(new KnightOfTheRedFlame());//117
 		cardDatas.Add(new KnightOfTheAzure());//118
-		cardDatas.Add(new ForbiddenedSavior());//119
+		cardDatas.Add(new ToddleyWoodley());//119
 		cardDatas.Add(new FireBat());//120
 		cardDatas.Add(new TheSacredBeast());//121
 		cardDatas.Add(new CookOfDarkness());//122
-		cardDatas.Add(new BrownSlime());//123
+		cardDatas.Add(new Boomsquirrel());//123
 		cardDatas.Add(new StrayCat());//124
 		cardDatas.Add(new Hypnotist());//125
 		cardDatas.Add(new BurningSouls());//126
@@ -154,9 +154,7 @@ public class  DataController : MonoBehaviour
 		cardDatas.Add(new HolyPowerBoost());//132
 		cardDatas.Add(new BrokenBless());//133
 		cardDatas.Add(new AtTheEdgeOfPledge());//134
-		cardDatas.Add(new ForbiddenedSavior());//135
-
-
+		cardDatas.Add(new RunTogether());//135
 		return cardDatas;
     }
 

@@ -17,6 +17,8 @@ public enum ETurnState{None, Player, Enemy}
 public enum ECardType{None ,Servent, Spell}
 public enum ESpellType {None, Normal, Field}
 public enum ECardRarity{None, Normal, Rare}
+
+public enum EAbilityType{None, Normal, Active, Defend, Summon, Attack, Death}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
 public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole, Inventory, Storage}
@@ -976,208 +978,139 @@ public class BattleManager : MonoBehaviour
 
 
 
-	public IEnumerator EnemyTurnCo()
+	private IEnumerator EnemyTurnCo()
 	{
 		turnState = ETurnState.Enemy;
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<Card>().HideAndReveal(true);}
+		foreach (GameObject card in cardObjectList)
+			card.GetComponent<Card>().HideAndReveal(true);
 
 		yield return new WaitForSeconds(0.3f);
 		int actionToken = currentEnemy.GetActionToken();
 
-		for(int i = 0; i < actionToken; ++i)
+		for (int i = 0; i < actionToken; ++i)
 		{
-			currentAbilities.Clear();
-			isActionDone = false;
-
-			if(currentEnemy.GetEnemyAbility() != null)
-			{currentAbilities.Add(0);}
-
+			// 1. 현재 상태 분석
 			List<Field> filledField = new();
-			if(field_4.GetFilled())
-			{
-				filledField.Add(field_4);
+			List<Field> emptyField = new();
+			List<Field> attackableField = new();
+			currentAbilities.Clear();
 
-				if(field_4.canUseAbility)
-				currentAbilities.Add(1);
+			Field[] enemyFields = { field_4, field_5, field_6 };
+
+			for (int idx = 0; idx < enemyFields.Length; idx++)
+			{
+				if (enemyFields[idx].GetFilled())
+				{
+					filledField.Add(enemyFields[idx]);
+					if (!enemyFields[idx].GetAttacked())
+						attackableField.Add(enemyFields[idx]);
+					if (enemyFields[idx].GetAbilityType() == EAbilityType.Active)
+						currentAbilities.Add(idx + 1);
+				}
+				else
+				{emptyField.Add(enemyFields[idx]);}
 			}
 
-			if(field_5.GetFilled())
-			{
-				filledField.Add(field_5);
-				if(field_5.canUseAbility)
-				currentAbilities.Add(2);
-			}
+			if (currentEnemy.GetEnemyAbility() != null)
+				currentAbilities.Insert(0, 0);
 
-			if(field_6.GetFilled())
-			{
-				filledField.Add(field_6);
-				if(field_6.canUseAbility)
-				currentAbilities.Add(3);
-			}
+			bool abilityUsable = currentAbilities.Count > 0;
 
-			switch(SelectEnemyAction())
+			isActionDone = false;
+			EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableField.Count, abilityUsable);
+
+			switch (action)
 			{
 				case EEnemyAction.Summon:
-				{
-					AlertMessage("적이 동료를 부릅니다.");
-					List<Field> unfilledField = new();
+					if (emptyField.Count > 0)
+					{
+						AlertMessage("적이 동료를 부릅니다.");
+						Field field = emptyField[Random.Range(0, emptyField.Count)];
+						field.locked = true;
 
-					if(!field_4.GetFilled())
-					unfilledField.Add(field_4);
+						List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
+						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
 
-					if(!field_5.GetFilled())
-					unfilledField.Add(field_5);
-
-					if(!field_6.GetFilled())
-					unfilledField.Add(field_6);
-					int randomNum = Random.Range(0, unfilledField.Count);
-
-					Field field = unfilledField[randomNum];
-					field.locked = true;
-					List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
-
-					EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
-
-					field.Summon(randomServent,
-					Instantiate(enemyServentPrefabList[0],
-					field.transform.position , Utils.QI));
-					soundEffect.PlayOneShot(serventSummon);
-					field.locked = false;
-
+						field.Summon(randomServent,
+							Instantiate(enemyServentPrefabList[0], field.transform.position, Utils.QI));
+						soundEffect.PlayOneShot(serventSummon);
+						field.locked = false;
+					}
 					isActionDone = true;
 					break;
-				}
+
 				case EEnemyAction.Attack:
-				{
-					AlertMessage("적이 공격합니다.");
-					
-					List<Field> fields = new List<Field>(){playerField};
-
-					if(field_1.GetFilled())
-					fields.Add(field_1);
-
-					if(field_2.GetFilled())
-					fields.Add(field_2);
-
-					if(field_3.GetFilled())
-					fields.Add(field_3);
-
-					List<Field> unAttackedField = new();
-
-					foreach(Field field in filledField)
+					if (attackableField.Count > 0)
 					{
-						if(!field.GetAttacked())
-						unAttackedField.Add(field);
+						AlertMessage("적이 공격합니다.");
+						List<Field> playerTargets = new List<Field> { playerField };
+						if (field_1.GetFilled()) playerTargets.Add(field_1);
+						if (field_2.GetFilled()) playerTargets.Add(field_2);
+						if (field_3.GetFilled()) playerTargets.Add(field_3);
+
+						Field startField = attackableField[Random.Range(0, attackableField.Count)];
+						Field targetField = playerTargets[Random.Range(0, playerTargets.Count)];
+
+						StartCoroutine(EnemyAttack(startField, targetField));
 					}
-
-					Field startField = unAttackedField[Random.Range(0, unAttackedField.Count)];
-					Field targetField = fields[Random.Range(0, fields.Count)];
-
-					StartCoroutine(EnemyAttack(startField, targetField));
+					else
+					{
+						isActionDone = true;
+					}
 					break;
-				}
+
 				case EEnemyAction.Ability:
-				{
-					AlertMessage("적이 능력을 사용합니다.");
-					int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
-					switch(randomNum)
+					if (abilityUsable)
 					{
-						case 0:
-						Debug.Log("대장이 능력을 사용합니다.");
-						break;
-
-						case 1:
-						Debug.Log("1번 필드의 적이 능력을 사용합니다.");
-						break;
-
-						case 2:
-						Debug.Log("2번 필드의 적이 능력을 사용합니다.");
-						break;
-
-						case 3:
-						Debug.Log("3번 필드의 적이 능력을 사용합니다.");
-						break;
+						AlertMessage("적이 능력을 사용합니다.");
+						int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
+						switch (randomNum)
+						{
+							case 0: Debug.Log("대장이 능력을 사용합니다."); break;
+							case 1: Debug.Log("1번 필드의 적이 능력을 사용합니다."); break;
+							case 2: Debug.Log("2번 필드의 적이 능력을 사용합니다."); break;
+							case 3: Debug.Log("3번 필드의 적이 능력을 사용합니다."); break;
+						}
 					}
-
 					isActionDone = true;
 					break;
-				}
+
 				case EEnemyAction.None:
-				{
 					AlertMessage("적이 아무것도 할 수 없습니다.");
 					isActionDone = true;
 					break;
-				}
 			}
 
-			yield return new WaitForSeconds(2.5f);
-			
 			yield return new WaitUntil(() => isActionDone);
-			
+			yield return new WaitForSeconds(2.5f);
 		}
-		isActionDone = false;
 
+		isActionDone = false;
 		StartCoroutine(StartTurnCo());
-		
 	}
 
-	private EEnemyAction SelectEnemyAction()
+	private EEnemyAction SelectEnemyAction(int emptyCount, int attackableCount, bool abilityUsable)
 	{
-		List<Field> filledField = new();
-		List<Field> attackedField = new();
+		int summonWeight = (emptyCount > 0) ? emptyCount * 3 : 0;
+		int attackWeight = (attackableCount > 0) ? attackableCount * 2 : 0;
+		int abilityWeight = abilityUsable ? 2 : 0;
 
+		if (playerHealth <= 10) attackWeight = Mathf.CeilToInt(attackWeight * 1.5f);
+		if (emptyCount >= 2) summonWeight *= 2;
 
-		bool enemySummonable = true;
-		bool enemyAttackable = true;
-		bool abilityUsuable = currentAbilities.Count != 0;
+		int totalWeight = summonWeight + attackWeight + abilityWeight;
+		if (totalWeight == 0) return EEnemyAction.None;
 
-		int probability = 0;
-		
-		if(field_4.GetFilled())
-		{filledField.Add(field_4);}
+		int roll = Random.Range(0, totalWeight);
 
-		if(field_5.GetFilled())
-		{filledField.Add(field_5);}
+		if (roll < summonWeight) return EEnemyAction.Summon;
+		roll -= summonWeight;
 
-		if(field_6.GetFilled())
-		{filledField.Add(field_6);}
+		if (roll < attackWeight) return EEnemyAction.Attack;
+		roll -= attackWeight;
 
-		if(filledField.Count == 3)
-		{enemySummonable = false;}
-
-		probability += filledField.Count * 3;
-
-		if(field_4.GetAttacked())
-		{attackedField.Add(field_4);}
-
-		if(field_5.GetAttacked())
-		{attackedField.Add(field_5);}
-
-		if(field_6.GetAttacked())
-		{attackedField.Add(field_6);}
-
-		if(attackedField.Count == filledField.Count || filledField.Count == 0)
-		{enemyAttackable = false;}
-
-
-
-		int randomNum = Random.Range(1,10);
-
-		if(enemySummonable && probability < randomNum)
-		return EEnemyAction.Summon;
-
-		randomNum = Random.Range(0,2);
-
-		if(enemyAttackable && randomNum == 1)
-		return EEnemyAction.Attack;
-
-		if(abilityUsuable)
 		return EEnemyAction.Ability;
-
-		return EEnemyAction.None;
-	} 
-
+	}
 	IEnumerator EnemyAttack(Field startField,Field targetField)
 	{
 		parryState  = EParryState.Parry;

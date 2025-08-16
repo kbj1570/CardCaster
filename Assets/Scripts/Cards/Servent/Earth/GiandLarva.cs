@@ -10,7 +10,7 @@ public class GiantLarva : ServentCardData
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
-        cardStoryDesc = "갈색 액체로 구성되어 있으며, 흐물거리는 몸을 이용해 움직인다. 주로 가파른 산 정상에서 자주 발견된다.\r\n슬라임들 중에서 움직임 거의 없는 특이한 개체라고 알려져 있다. ";
+        cardStoryDesc = "";
         cardDesc = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
@@ -29,8 +29,14 @@ public class GiantLarva : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
 	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
+
 }

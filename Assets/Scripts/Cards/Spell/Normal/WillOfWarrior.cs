@@ -6,10 +6,10 @@ public class WillOfWarrior : SpellCardData
     {
         cardNum = "108";
         cardName = "투사의 의지";
-        cardCost = 0;
+        cardCost = 2;
         cardType = ECardType.Spell;
         cardStoryDesc = "달의 기사는 왕국을 지키기 위해 어둠에 맞선다.";
-        cardDesc = "소환된 빛 속성 소환수들은 포스를 1 얻는다.";
+        cardDesc = "소환수 하나의 포스를 2배로 한다, 그 소환수는 턴이 끝나면 소멸한다.";
         cardTargetType = ECardTargetType.Select;
 		spellType = ESpellType.Normal;
 

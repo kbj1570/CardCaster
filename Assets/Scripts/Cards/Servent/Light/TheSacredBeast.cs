@@ -11,9 +11,10 @@ public class TheSacredBeast : ServentCardData
 		cardType = ECardType.Servent;
 		serventType = EServentType.Player;
 		force = 3;
-		cardStoryDesc = "언제나 전투의 선봉에 서서 용감하게 싸워나가는 전사.\r\n정의로운 심성과 올곧은 의지를 지닌 전사는,\r\n오늘도 왕국을 수호하기 위해 발걸음을 나선다.";
-		cardDesc = "소환시, 의지 상태를 갖는다. (의지: 치명적인 피해를 입을 경우 포스가 1이 되고, 이 상태는 해제된다.)";
+		cardStoryDesc = "";
+		cardDesc = "소환 시 자신의 Hp가 5 이하라면 상대 소환수를 무작위로 소멸시킨다.";
 
+		abilityType = EAbilityType.Summon;
 
 		serventSize = EServentSize.Small;
 		cardTargetType = ECardTargetType.Select;
@@ -32,8 +33,13 @@ public class TheSacredBeast : ServentCardData
 	{
 		yield return null;
 	}
-	public override bool IsAbilityUsable(BattleManager bm)
+	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
-		return true;
+		yield return null;
+	}
+
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

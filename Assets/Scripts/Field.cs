@@ -8,11 +8,11 @@ public class Field : MonoBehaviour
     public ServentCardData cardData;
     public List<EServentCondition> conditions;
     public EServentAttribute serventAttribute;
-    
-    public bool filled;
+
+    public EAbilityType abilityType;
+
+	public bool filled;
     public bool locked;
-    public bool hasAbility;
-    public bool canUseAbility;
     public bool isDragable;
     private bool attacked;
     public TMP_Text forceTMP;
@@ -133,7 +133,12 @@ public class Field : MonoBehaviour
     }
     
 
-    public void UpdateHealth()
+    public EAbilityType GetAbilityType()
+    {
+        return abilityType;
+	}
+
+	public void UpdateHealth()
     {
 
         if(!filled)
@@ -169,10 +174,10 @@ public class Field : MonoBehaviour
         voidWalker = cardData.GetVoidWalker();
         serventAttribute = cardData.GetAttribute();
         summonedServent = gameObject;
-        hasAbility = cardData.GetHasAbility();
-        canUseAbility = cardData.GetCanUseAbility();
 
-        gameObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
+        abilityType = cardData.GetAbilityType();
+
+		gameObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
 
 
         // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);

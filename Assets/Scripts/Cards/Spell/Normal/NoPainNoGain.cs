@@ -10,7 +10,7 @@ public class NoPainNoGain : SpellCardData
         cardCost = 1;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardDesc = "자신의 묘지의 카드를 전부 덱으로 되돌린다. 그리고 그 수만큼 자신은 HP를 잃는다.";
+        cardDesc = "자신의 묘지의 카드를 전부 덱으로 되돌린다.\r\n그 수만큼 자신은 HP를 잃는다.";
         cardTargetType = ECardTargetType.Selected;
 
 		spellType = ESpellType.Normal;
@@ -30,10 +30,6 @@ public class NoPainNoGain : SpellCardData
 
 	public override IEnumerator SpellEffectExecute(BattleManager bm)
 	{
-		bm.DrawCard();
-		bm.DrawCard();
-		bm.DrawCard();
-
 		yield return null;
 	}
 

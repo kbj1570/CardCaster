@@ -6,8 +6,7 @@ public class ChaoticCorvus : EnemyServentCardData
         cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Enemy;
-        force = 3;
-        hasAbility = true;
+        force = 1;
         cardStoryDesc = "";
         cardDesc = "공격을 받으면 소멸한다";
         serventSize = EServentSize.Small;
