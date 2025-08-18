@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class StorageWindow : Window
 {
@@ -12,7 +11,6 @@ public class StorageWindow : Window
 	public Transform itemLocationParent;
 	public Transform storageLocationParent;
 	private List<Transform> invnetoryLocations;
-	private List<Transform> storageLocations;
 
 	public GameObject scrollView;
 
@@ -24,19 +22,15 @@ public class StorageWindow : Window
 	private List<GameObject> storageItemObjectList;
 	public List<Sprite> itemSpriteList;
 
-	public Dictionary<Item, int> itemStorageList;
+	public Dictionary<ItemData, int> itemStorageList;
 
 	public GameObject itemPrefab;
-	public GameObject smallItemPrefab;
 
-	public Toggle toolToggle;
-	public Toggle othersToggle;
-
-	List<Item> inventoryToolList;
-	List<Item> storageToolList;
+	List<ItemData> inventoryToolList;
+	List<ItemData> storageToolList;
 
 
-	List<Item> itemDatabase;
+	List<ItemData> itemDatabase;
 
 	public GameObject itemDescriptionWindow;
 	public GameObject itemUsingAlert;
@@ -104,15 +98,15 @@ public class StorageWindow : Window
 
 		int index = 0;
 
-		foreach (Item item in inventoryToolList)
+		foreach (ItemData item in inventoryToolList)
 		{
 
 			GameObject itemObject = Instantiate(itemPrefab, Vector3.zero, Utils.QI);
 			itemObject.transform.localScale = Vector3.one;
 
-			itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
+			itemObject.GetComponent<Item>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
 
-			itemObject.GetComponent<DungeonItem>().Init(
+			itemObject.GetComponent<Item>().Init(
 				(item, eventData) => {
 					//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
 				}
@@ -169,7 +163,7 @@ public class StorageWindow : Window
 			index++;
 		}
 
-		foreach (Item value in storageToolList)
+		foreach (ItemData value in storageToolList)
 		{
 			GameObject inventoryItemObject = Instantiate(storageItemPrefab, new Vector3(0, 0, 0), Utils.QI);
 			storageItemObjectList.Add(inventoryItemObject);
@@ -229,7 +223,7 @@ public class StorageWindow : Window
 
 	}
 
-	public void StoreItem(Item item)
+	public void StoreItem(ItemData item)
 	{
 		PlayerData.saveData.storage_items.Add(item.GetNum());
 	}
@@ -244,7 +238,7 @@ public class StorageWindow : Window
 	public void HideItemDescription()
 	{ itemDescriptionWindow.SetActive(false); }
 
-	public void SelectUsingItem(Item item)
+	public void SelectUsingItem(ItemData item)
 	{
 		if(!itemLocked)
 		{

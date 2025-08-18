@@ -1,4 +1,4 @@
-public class GoldenDice : Item
+public class GoldenDice : ItemData
 {
     public GoldenDice()
     {

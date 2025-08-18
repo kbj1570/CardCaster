@@ -2,7 +2,7 @@ public class Node
 {
     private ERoomType roomType;
     private int gold;
-    private Item item;
+    private ItemData item;
     private int itemCount;
 
     private Enemy enemy;
@@ -16,13 +16,13 @@ public class Node
     public void SetRoomType(ERoomType value)
     {this.roomType = value;}
 
-    public Item GetItem()
+    public ItemData GetItem()
     {return item;}
 
     public int GetGold()
     {return gold;}
 
-    public void SetItem(Item item, int count)
+    public void SetItem(ItemData item, int count)
     {
         this.item = item;
         this.itemCount = count;

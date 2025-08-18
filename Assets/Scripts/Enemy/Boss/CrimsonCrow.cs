@@ -10,9 +10,10 @@ public class CrimsonCrow : Enemy
 		enemyHealth = 30;
 		enemyGold = 500;
 		actionToken = 4;
-		enemyRewards = new Dictionary<Item, int>()
+		enemyRewards = new Dictionary<ItemData, int>()
 		{
-			{new ShardOfStarlight(), 3}
+			{new ShardOfStarlight(), 3},
+			{new RedPotion(), 10}
 		};
 		serventList = new List<EnemyServentCardData>
 		{

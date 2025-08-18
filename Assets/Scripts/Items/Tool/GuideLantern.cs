@@ -1,4 +1,4 @@
-public class GuideLantern : Item
+public class GuideLantern : ItemData
 {
     public GuideLantern()
     {

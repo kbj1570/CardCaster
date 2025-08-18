@@ -1,4 +1,4 @@
-public class Item
+public class ItemData
 {
     protected string itemName;//아이템의 이름
     protected string itemNum;//아이템의 고유번호

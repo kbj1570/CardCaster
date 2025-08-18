@@ -6,14 +6,14 @@ public class UnknownMonster : Enemy
     {
         enemyName = "정체불명의 괴물";
         enemyNum = "0";
-        enemyHealth = 10;
+        enemyHealth = 3;
         enemyGold = 300;
         actionToken = 3;
 
-        enemyRewards = new Dictionary<Item, int>()
+        enemyRewards = new Dictionary<ItemData, int>()
         {
-            {new ShardOfStarlight(), 2}
-        };
+            {new RedPotion(), 5}
+		};
 
         
         serventList = new List<EnemyServentCardData>

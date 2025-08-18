@@ -1,4 +1,4 @@
-public class TrickGlove : Item
+public class TrickGlove : ItemData
 {
     public TrickGlove()
     {

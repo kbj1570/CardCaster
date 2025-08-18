@@ -10,7 +10,7 @@ public class Boomsquirrel : ServentCardData
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
-        cardStoryDesc = "턴이 끝날 때 패로 돌아온다.";
+        cardStoryDesc = "패로 돌아온다.";
         cardDesc = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;

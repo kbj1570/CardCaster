@@ -1,4 +1,5 @@
 using DG.Tweening;
+using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
@@ -21,7 +21,7 @@ public enum ECardRarity{None, Normal, Rare}
 public enum EAbilityType{None, Normal, Active, Defend, Summon, Attack, Death}
 public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
 public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
-public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole, Inventory, Storage}
+public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole, Inventory, Storage, Trash}
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
 public enum EServentSize{Small, Middle, Big}
@@ -35,6 +35,9 @@ public class BattleManager : MonoBehaviour
 	public AudioClip serventSummon;
 
 	Dictionary<string, int> cardHashMap;
+
+	List<ItemData> reward;
+
 
 	EParryState parryState;
 	bool playerDamageBlock;
@@ -52,6 +55,8 @@ public class BattleManager : MonoBehaviour
 
 	public Image playerActor;
 	public Image enemyActor;
+
+	public GameObject runawayButton;
 
 	public List<Sprite> actorSpriteList;
 	
@@ -102,16 +107,16 @@ public class BattleManager : MonoBehaviour
 	public LineRenderer attackDragLine;
 	public int lineCount;
 	public List<GameObject> conditionMarkList;
-	public List<GameObject> cardPrefabList;
-	public List<GameObject> dummyCardPrefabList;
 
-	public GameObject invisibleImage;
 
 	private bool myTurn;
 
 
+	public GameObject invisibleImage;
 	public GameObject battleWindowLeftSide;
 	public GameObject battleWindowRightSide;
+
+	public GameObject itemOrganizeWindow;
 
 	public Transform battleWindowLeftSideFloatTextLocation;
 
@@ -250,6 +255,7 @@ public class BattleManager : MonoBehaviour
 		enemies = BattleData.enemies;
 		GameSetup();
 
+		reward = new();
 		handList = new();
 		selectedCards = new();
 		mouseOnArea = EMouseOnArea.None;
@@ -267,7 +273,7 @@ public class BattleManager : MonoBehaviour
 
 		return foo;
 	}
-	private IEnumerator FadeIn()
+	private IEnumerator FadeIn() 
 	{
 		
 		float time = 0;
@@ -276,7 +282,7 @@ public class BattleManager : MonoBehaviour
 		while (time < 1f)
 		{
 			time += Time.deltaTime;
-			color.a = Mathf.Lerp(1, 0, time / 1f); // 알파 값을 1 → 0으로 변경
+			color.a = Mathf.Lerp(1, 0, time / 1f);
 			fadeImage.color = color;
 			yield return null;
 		}
@@ -293,7 +299,7 @@ public class BattleManager : MonoBehaviour
 		while (time < 1f)
 		{
 			time += Time.deltaTime;
-			color.a = Mathf.Lerp(0, 1, time / 1f); // 알파 값을 0 → 1로 변경
+			color.a = Mathf.Lerp(0, 1, time / 1f);
 			fadeImage.color = color;
 			yield return null;
 		}
@@ -320,33 +326,33 @@ public class BattleManager : MonoBehaviour
 			Debug.Log("카드를 선택하세요.");
 		}
 	}
-	public void ShowSelectedCards(List<BattleCardData> targetList,ECardType cardType, int limit)
-	{
-		isActionDone = false;
-		selectedLimit = limit;
-		foreach(CardData cardData in targetList)
-		{
-			if(cardType == null ||cardData.GetCardType() == cardType)
-			{
-				GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], selectedCardLayoutGroup.transform);
-				GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+	//public void ShowSelectedCards(List<BattleCardData> targetList,ECardType cardType, int limit)
+	//{
+	//	isActionDone = false;
+	//	selectedLimit = limit;
+	//	foreach(CardData cardData in targetList)
+	//	{
+	//		if(cardType == null ||cardData.GetCardType() == cardType)
+	//		{
+	//			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], selectedCardLayoutGroup.transform);
+	//			GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
 				
-				cardObject.GetComponent<DummyCard>().SetLock(true);
-				cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
-				cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
-				cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
-			}
+	//			cardObject.GetComponent<DummyCard>().SetLock(true);
+	//			cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+	//			cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+	//			cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+	//		}
 
 			
-		}
+	//	}
 
-		RectTransform rectTransform = selectedCardLayoutGroup.GetComponent<RectTransform>();
+	//	RectTransform rectTransform = selectedCardLayoutGroup.GetComponent<RectTransform>();
 
-		int height = ((selectedCardLayoutGroup.transform.childCount / 2) * 680) +  550;
-		rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
+	//	int height = ((selectedCardLayoutGroup.transform.childCount / 2) * 680) +  550;
+	//	rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
 
-		cardSelectWindow.GetComponent<Window>().OnOff();
-	}
+	//	cardSelectWindow.GetComponent<Window>().OnOff();
+	//}
 
 	
 	IEnumerator ActivateEnemyAbility(EnemyAbility enemyAbility)
@@ -398,101 +404,6 @@ public class BattleManager : MonoBehaviour
 
 	}
 
-
-
-
-		
-	//IEnumerator ActivateSpell(SpellCardData cardData, Field selectedField)
-	//{
-	//	yield return new WaitForSeconds(.5f);
-	//	switch(cardData.GetCardNum())
-	//	{
-	//		case 0: //듀플리케이트
-
-	//		deckList.Add(selectedField.GetCardData());
-	//		deckList.Add(selectedField.GetCardData());
-	//		Shuffle();
-
-	//		break;
-		   
-
-	//		case 3: //타오르는 심장
-	//		selectedField.GainForce(selectedField.GetForce());
-	//		break;
-
-	//		case 4: //작은 것을 위한 희생
-			
-	//		int x = trashCount;
-			
-	//		foreach(BattleCardData card in trashList)
-	//		{deckList.Add(card);}
-	//		trashList.Clear();
-
-	//		playerHealth -= x;
-	//		break;
-
-	//		case 5: //오직 침묵만이
-
-	//		if(field_1.GetComponent<Field>().GetFilled())
-	//		{field_1.GetComponent<Field>().Kill();}
-
-	//		if(field_2.GetComponent<Field>().GetFilled())
-	//		{field_2.GetComponent<Field>().Kill();}
-
-	//		if(field_3.GetComponent<Field>().GetFilled())
-	//		{field_3.GetComponent<Field>().Kill();}
-
-	//		if(field_4.GetComponent<Field>().GetFilled())
-	//		{field_4.GetComponent<Field>().Kill();}
-
-	//		if(field_5.GetComponent<Field>().GetFilled())
-	//		{field_5.GetComponent<Field>().Kill();}
-
-	//		if(field_6.GetComponent<Field>().GetFilled())
-	//		{field_6.GetComponent<Field>().Kill();}
-	//		break;
-
-	//		case 9: // 마스크월드
-	//		{
-	//			if(field_1.GetFilled())
-	//			{field_1.GainForce(1);}
-
-	//			if(field_2.GetFilled())
-	//			{field_2.GainForce(1);}
-
-	//			if(field_3.GetFilled())
-	//			{field_3.GainForce(1);}
-
-	//			if(field_4.GetFilled())
-	//			{field_4.GainForce(1);}
-
-	//			if(field_5.GetFilled())
-	//			{field_5.GainForce(1);}
-
-	//			if(field_6.GetFilled())
-	//			{field_6.GainForce(1);}
-				
-	//			break;
-	//		}
-
-	//		case 10: // 투사의 의지
-	//		{
-	//			selectedField.GainForce(selectedField.GetForce());
-	//			selectedField.SetSuicide(true);
-	//			break;
-	//		}
-
-	//		case 11: // 절규하는 투사
-	//		{
-	//			selectedField.GainForce(selectedField.GetForce());
-	//			selectedField.AddCondition(EServentCondition.Madness);
-	//			break;
-	//		}
-
-	//	}
-
-	//}
-
 	public void HealPlayer(int value)
 	{
 		playerHealth += value;
@@ -503,9 +414,17 @@ public class BattleManager : MonoBehaviour
 		if(enemyHealth <= 0)
 		{
 			enemyHealth = 0;
+
+			AlertMessage("적을 쓰러트렸습니다.");
 			yield return new WaitForSeconds(delay);
 
-			if(enemyIndex == enemies.Count - 1)
+
+			foreach(ItemData itemData in currentEnemy.GetReward())
+			{
+				reward.Add(itemData);
+			}
+
+			if (enemyIndex == enemies.Count - 1)
 			{
 				AlertMessage("전투에서 승리했습니다.");
 
@@ -521,7 +440,10 @@ public class BattleManager : MonoBehaviour
 				yield return new WaitForSeconds(0.3f);
 				StartCoroutine(EnemyFieldClear());
 				yield return new WaitForSeconds(1f);
-				BackToDungeon();
+
+				itemOrganizeWindow.GetComponent<ItemOrganizeWindow>().SetItemList(reward);
+				itemOrganizeWindow.GetComponent<ItemOrganizeWindow>().OnOff();
+				runawayButton.SetActive(true);
 			}
 			else
 			{StartCoroutine(LoadNextEnemy());}
@@ -836,7 +758,6 @@ public class BattleManager : MonoBehaviour
 
 	IEnumerator LoadNextEnemy()
 	{
-		AlertMessage("적을 쓰러트렸습니다.");
 		yield return new WaitForSeconds(0.3f);
 
 		StartCoroutine(EnemyFieldClear());
@@ -1790,25 +1711,15 @@ public class BattleManager : MonoBehaviour
 		{
 			DrawDragLine(cardObject.transform.position,
 			CheckServentSummonable(cardObject.GetComponent<Card>().GetCardData(),
-			cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField())
-			);
+			cardObject.GetComponent<Card>().GetCurrentCost(),ReturnMouseOnField()));
 		}
-		else{
-
+		else
+		{
 			SpellCardData spellCardData = cardObject.GetComponent<Card>().GetCardData() as SpellCardData;
-			//DrawDragLine(cardObject.transform.position,
-			//CheckCardUsable(cardObject.GetComponent<BattleCardObject>().GetCardData(),
-			//cardObject.GetComponent<BattleCardObject>().GetCurrentCost(),ReturnMouseOnField())
-			//);
-			DrawDragLine(cardObject.transform.position,
-				spellCardData.IsSpellUsable(this) && CheckCardUsable());
-
-
+			DrawDragLine(cardObject.transform.position, spellCardData.IsSpellUsable(this) && CheckCardUsable());
 		}
 	}
 
-	public bool IsOnEmptyField()
-	{ return !ReturnMouseOnField().GetFilled(); }
 
 	public bool CheckServentSummonable(CardData cardData, int currentCost, Field targetField)
 	{
@@ -2411,26 +2322,26 @@ public class BattleManager : MonoBehaviour
 
 	public void ShowTrashCards()
 	{
-		foreach(CardData cardData in trashList)
-		{
-			GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], trashLayoutGroup.transform);
-			GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
+		//foreach(CardData cardData in trashList)
+		//{
+		//	GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], trashLayoutGroup.transform);
+		//	GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
 			
-			cardObject.GetComponent<DummyCard>().SetLock(true);
-			cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
-			cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
-			cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
-		}
+		//	cardObject.GetComponent<DummyCard>().SetLock(true);
+		//	cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
+		//	cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
+		//	cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
+		//}
 
-		foreach(GameObject cardObject in cardObjectList)
-		{cardObject.GetComponent<Card>().SetLock(true);}
+		//foreach(GameObject cardObject in cardObjectList)
+		//{cardObject.GetComponent<Card>().SetLock(true);}
 
-		RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
+		//RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
 
-		int height = ((trashLayoutGroup.transform.childCount / 2) * 480) +  550;
-		rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
+		//int height = ((trashLayoutGroup.transform.childCount / 2) * 480) +  550;
+		//rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
 
-		trashWindow.GetComponent<Window>().OnOff();
+		//trashWindow.GetComponent<Window>().OnOff();
 	}
 
 	public void CloseTrashCards()

@@ -1,4 +1,4 @@
-public class BigRedPotion : Item
+public class BigRedPotion : ItemData
 {
     public BigRedPotion()
     {

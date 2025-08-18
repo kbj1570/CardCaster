@@ -6,7 +6,7 @@ public class Wild : EnemyServentCardData
         cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Enemy;
-        force = 2;
+        force = 1;
         cardDesc = "";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;

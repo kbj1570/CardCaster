@@ -158,9 +158,9 @@ public class  DataController : MonoBehaviour
 		return cardDatas;
     }
 
-    public List<Item> LoadItemDatabase()
+    public List<ItemData> LoadItemDatabase()
     {
-        List<Item> items = new();
+        List<ItemData> items = new();
 
         items.Add(new LetterFromKingdom());
         items.Add(new BigRedPotion());

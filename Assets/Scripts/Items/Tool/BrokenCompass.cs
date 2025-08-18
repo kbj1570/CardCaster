@@ -1,4 +1,4 @@
-public class BrokenCompass : Item
+public class BrokenCompass : ItemData
 {
     public BrokenCompass()
     {

@@ -1,4 +1,4 @@
-public class OminousCenser : Item
+public class OminousCenser : ItemData
 {
     public OminousCenser()
     {

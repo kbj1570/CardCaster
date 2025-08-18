@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 public enum EnemyType
@@ -15,8 +16,8 @@ public class Enemy
     protected int enemyHealth;
     protected int actionToken;
 
-    protected Dictionary<Item, int> enemyRewards;
-    protected KeyValuePair<Item, int> rewards;
+    protected Dictionary<ItemData, int> enemyRewards;
+    protected List<ItemData> rewards;
     protected int enemyGold;
     protected List<EnemyServentCardData> serventList;
     protected EnemyAbility enemyAbility;
@@ -30,10 +31,8 @@ public class Enemy
     public int GetHealth()
     {return enemyHealth;}
 
-    public Dictionary<Item, int> GetRewards()
-    {return enemyRewards;}
 
-    public KeyValuePair<Item, int> GetReward()
+    public List<ItemData> GetReward()
     {return rewards;}
     public int GetGold()
     {return enemyGold;}
@@ -57,28 +56,34 @@ public class Enemy
         else
         {enemyGold -= randomNum;}
 
-        if(enemyRewards != null)
-        {   
-            int count = 0;
-            Dictionary<Item, int> rewardRoullet = new();
+		List<ItemData> rewardList = new List<ItemData>();
 
-            foreach(KeyValuePair<Item, int> reward in enemyRewards)
-            {
-                count += reward.Value;
-                rewardRoullet.Add(reward.Key, count);
-            }
+		int rewardCount = random.Next(0, 4);
 
-            randomNum = random.Next(0, count + 1);
+		if (rewardCount == 0 || enemyRewards.Count == 0)
+        {
+			rewards = rewardList;
+			return;
+		}
+			
+		int totalWeight = enemyRewards.Values.Sum();
 
-            foreach(KeyValuePair<Item, int> reward in rewardRoullet)
-            {
-                if(randomNum <= reward.Value)
-                {
-                    randomNum = random.Next(1, 4);
-                    rewards = new KeyValuePair<Item, int>(reward.Key, randomNum);
-                    return;
-                }
-            }
-        }
-    }
+		for (int i = 0; i < rewardCount; i++)
+		{
+			int roll = random.Next(0, totalWeight);
+			int cumulative = 0;
+
+			foreach (var kvp in enemyRewards)
+			{
+				cumulative += kvp.Value;
+				if (roll < cumulative)
+				{
+					rewardList.Add(kvp.Key);
+					break;
+				}
+			}
+		}
+
+		rewards = rewardList;
+	}
 }

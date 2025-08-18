@@ -1,4 +1,4 @@
-public class RustyKnife : Item
+public class RustyKnife : ItemData
 {
     public RustyKnife()
     {

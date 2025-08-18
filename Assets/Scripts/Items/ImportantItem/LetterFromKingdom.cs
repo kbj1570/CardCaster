@@ -1,4 +1,4 @@
-public class LetterFromKingdom : Item
+public class LetterFromKingdom : ItemData
 {
     public LetterFromKingdom()
     {

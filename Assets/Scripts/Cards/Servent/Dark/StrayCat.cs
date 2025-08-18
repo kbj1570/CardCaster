@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 public class StrayCat : ServentCardData
@@ -27,6 +28,8 @@ public class StrayCat : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
+		Field field = bm.ReturnMouseOnField();
+		field.GainForce(PlayerData.saveData.gold / 100);
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

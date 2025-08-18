@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
 	private BattleCardData cardData;
-	private Item itemData;
+	private ItemData itemData;
 	private string cardName;
 	private int count;
 	private int cardCost;
@@ -57,7 +57,7 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 		OnEndDragAction = endDragAntion;
 	}
 
-	public void SetItem(Item item, int count)
+	public void SetItem(ItemData item, int count)
 	{
 		itemData = item;
 		this.count = count;
@@ -65,10 +65,10 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 		cardCountText.text = count.ToString();
 	}
 
-	public Item GetItem()
+	public ItemData GetItem()
 	{ return itemData; }
 
-	public void SetItem(Item item)
+	public void SetItem(ItemData item)
 	{
 		itemData = item;
 		cardNameText.text = item.GetName();

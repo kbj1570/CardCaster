@@ -19,7 +19,7 @@ public class DialogueNode
     bool switchSequence;
     public bool hasSelection;
     int sequenceValue;
-    Item requirement;
+    ItemData requirement;
 
     public string GetName(){return speakerName;}
     public string GetText_1(){return text_1;}

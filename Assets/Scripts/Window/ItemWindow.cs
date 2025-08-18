@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ItemWindow : Window
 {
@@ -14,13 +15,16 @@ public class ItemWindow : Window
 
 	public Toggle toolToggle;
 
-	List<Item> toolList;
-	Dictionary<Item, int> othersList;
+	List<ItemData> toolList;
+	Dictionary<ItemData, int> othersList;
 
-	List<Item> itemDatabase;
+	List<ItemData> itemDatabase;
 
 	public GameObject itemDescriptionWindow;
 	public GameObject itemUsingAlert;
+
+	public TMP_Text shardCount;
+	public TMP_Text goldCount;
 
 
 	public bool itemLocked;
@@ -49,6 +53,9 @@ public class ItemWindow : Window
 
 		foreach (string value in PlayerData.saveData.inventory_items)
 		{ toolList.Add(itemDatabase[Int32.Parse(value)]);}
+
+		goldCount.text = PlayerData.saveData.gold.ToString();
+		shardCount.text = PlayerData.saveData.shard.ToString();
 	}
 
 	public void UpdateItemPage()
@@ -58,23 +65,21 @@ public class ItemWindow : Window
 
 		LoadItemList();
 
-		EItemCategory selectedItemCategory = EItemCategory.ETool;
-
 
 
 		int index = 0;
 
-		foreach (Item item in toolList)
+		foreach (ItemData item in toolList)
 		{
 
 			GameObject itemObject = Instantiate(itemPrefab, Vector3.zero, Utils.QI);
 			itemObject.transform.localScale = Vector3.one;
 
-			itemObject.GetComponent<DungeonItem>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
+			itemObject.GetComponent<Item>().SetUp(item, itemSpriteList[Int32.Parse(item.GetNum())]);
 
-			itemObject.GetComponent<DungeonItem>().Init(
+			itemObject.GetComponent<Item>().Init(
 			(item, eventData) => {
-				ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
+				//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
 			}
 			, // 클릭 시
 			(itemSlot, eventData) => {
@@ -82,7 +87,7 @@ public class ItemWindow : Window
 			} // 마우스 입장
 			,
 			(itemSlot, eventData) => {
-				HideItemDescription();
+				//HideItemDescription();
 			} // 마우스 퇴장
 			,
 			(itemSlot, eventData) => {
@@ -116,7 +121,7 @@ public class ItemWindow : Window
 	public void HideItemDescription()
 	{ itemDescriptionWindow.SetActive(false); }
 
-	public void SelectUsingItem(Item item)
+	public void SelectUsingItem(ItemData item)
 	{
 		if(!itemLocked)
 		{

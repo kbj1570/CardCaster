@@ -24,7 +24,7 @@ public class DungeonManager : MonoBehaviour
 	int lineCount;
 	int mouseOnRoomNum;
 	bool moveLocked;
-	Item clickedItem;
+	ItemData clickedItem;
 	int clickedItemOrder;
 	GameObject clickedItemInfo;
 	public GameObject itemDescriptionWindow;
@@ -38,7 +38,7 @@ public class DungeonManager : MonoBehaviour
 	int enemyLimit;
 	int dungeonEndFloor;
 	Dictionary<int, string> safeFloorList;
-	List<Item> itemDatabase;
+	List<ItemData> itemDatabase;
 	int floor;
 	int floorSize;
 	string dungeonName;
@@ -46,7 +46,7 @@ public class DungeonManager : MonoBehaviour
 	List<GameObject> nodeMap;
 	List<int> nodeNumList;
 	List<string> messageList;
-	Dictionary<Item, int> itemList;
+	Dictionary<ItemData, int> itemList;
 	Dictionary<Enemy, int> enemyList;
 	public GameObject roomNodePrefab;
 	public GameObject wallNodePrefab;
@@ -105,7 +105,7 @@ public class DungeonManager : MonoBehaviour
 	public Toggle othersToggle;
 
 
-	public Item selectedItem;
+	public ItemData selectedItem;
 
 	int currentPlayerLocation;
 	int previousPlayerLocation;
@@ -942,14 +942,14 @@ public class DungeonManager : MonoBehaviour
 
 	
 
-	private Item ReturnDungeonItem()
+	private ItemData ReturnDungeonItem()
 	{
 		if(itemList != null)
 		{   
 			int count = 0;
-			Dictionary<Item, int> rewardRoullet = new();
+			Dictionary<ItemData, int> rewardRoullet = new();
 
-			foreach(KeyValuePair<Item, int> reward in itemList)
+			foreach(KeyValuePair<ItemData, int> reward in itemList)
 			{
 				count += reward.Value;
 				rewardRoullet.Add(reward.Key, count);
@@ -957,7 +957,7 @@ public class DungeonManager : MonoBehaviour
 
 			int randomNum = Random.Range(0, count + 1);
 
-			foreach(KeyValuePair<Item, int> reward in rewardRoullet)
+			foreach(KeyValuePair<ItemData, int> reward in rewardRoullet)
 			{
 				if(randomNum <= reward.Value)
 				{
@@ -1575,7 +1575,7 @@ public class DungeonManager : MonoBehaviour
 		yield return null;
 	}
 
-	public void SelectUsingItem(Item item)
+	public void SelectUsingItem(ItemData item)
 	{
 		clickedItem = item;
 		itemAlert.GetComponent<Window>().OnOff();

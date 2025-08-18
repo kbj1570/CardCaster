@@ -19,8 +19,8 @@ public class FireBat : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-
-		BattleManager.Inst.DealDamageToEnemy(2);
+		bm.DealDamageToEnemy(2);
+		bm.HealPlayer(2);
 		yield return null;
 	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

@@ -7,22 +7,22 @@ using UnityEngine.EventSystems;
 using System;
 
 
-public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class Item : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
     int itemNum;
     int itemOrder;
     
-    Item item;
+    ItemData itemData;
     int count;
     public TMP_Text countText;
     public Image itemImage;
 
-	public Action<DungeonItem, PointerEventData> OnClickAction;
-	public Action<DungeonItem, PointerEventData> OnPointerEnterAction;
-	public Action<DungeonItem, PointerEventData> OnPointerExitAction;
-	public Action<DungeonItem, PointerEventData> OnBeginDragAction;
-	public Action<DungeonItem, PointerEventData> OnDragAction;
-	public Action<DungeonItem, PointerEventData> OnEndDragAction;
+	public Action<Item, PointerEventData> OnClickAction;
+	public Action<Item, PointerEventData> OnPointerEnterAction;
+	public Action<Item, PointerEventData> OnPointerExitAction;
+	public Action<Item, PointerEventData> OnBeginDragAction;
+	public Action<Item, PointerEventData> OnDragAction;
+	public Action<Item, PointerEventData> OnEndDragAction;
 
 	public void OnPointerClick(PointerEventData eventData)
     {OnClickAction?.Invoke(this, eventData);}
@@ -42,12 +42,12 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	{OnDragAction?.Invoke(this, eventData);}
 
 
-	public void Init(Action<DungeonItem, PointerEventData> clickAction,
-					Action<DungeonItem, PointerEventData> enterAction,
-					Action<DungeonItem, PointerEventData> exitAction,
-					Action<DungeonItem, PointerEventData> beginDragAction,
-					Action<DungeonItem, PointerEventData> onDragAction,
-					Action<DungeonItem, PointerEventData> endDragAntion
+	public void Init(Action<Item, PointerEventData> clickAction,
+					Action<Item, PointerEventData> enterAction,
+					Action<Item, PointerEventData> exitAction,
+					Action<Item, PointerEventData> beginDragAction,
+					Action<Item, PointerEventData> onDragAction,
+					Action<Item, PointerEventData> endDragAntion
 		)
 	{
 		OnClickAction = clickAction;
@@ -59,9 +59,9 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	}
 
 
-	public void SetUp(Item item, int count, Sprite sprite)
+	public void SetUp(ItemData item, int count, Sprite sprite)
     {
-        this.item = item;
+        this.itemData = item;
         itemNum = Int32.Parse(item.GetNum());
         this.count = count;
         countText.text = count.ToString();
@@ -69,15 +69,15 @@ public class DungeonItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     }
 
 
-	public void SetUp(Item item, Sprite sprite)
+	public void SetUp(ItemData item, Sprite sprite)
 	{
-		this.item = item;
+		this.itemData = item;
 		itemNum = Int32.Parse(item.GetNum());
 		itemImage.sprite = sprite;
 	}
 
-	public Item GetItem()
-    {return item;}
+	public ItemData GetItem()
+    {return itemData;}
     public int GetCount()
     {return count;}
 }

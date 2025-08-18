@@ -13,7 +13,7 @@ public class ElementalBoost : SpellCardData
 		cardCost = 3;
 		cardType = ECardType.Spell;
 		cardStoryDesc = "생명이 빛이 꺼져가는 기사의 주위에 작은 생명들의 모이기 시작했다. 작고 따뜻한 생명들의 기운이 모여 기사의 상처를 치유한다.";
-		cardDesc = "자신의 소환수들의 속성의 종류 수만큼 자신의 소환수들은 포스를 얻는다";
+		cardDesc = "자신의 소환수들의 속성의 종류 수만큼 자신의 소환수들은 전부 포스를 얻는다";
 		cardTargetType = ECardTargetType.Selected;
 		
 		preRequisites = new();
