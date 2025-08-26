@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -15,6 +17,8 @@ public class CardStoryDescWindow : Window
 
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
+
+	public List<Sprite> cardImageList;
 
 
 
@@ -54,7 +58,7 @@ public class CardStoryDescWindow : Window
 		GameObject focusOnCard = Instantiate(selectedCardPrefab,
 		new Vector3(0, 0, 0), Utils.QI);
 
-		focusOnCard.GetComponent<Card>().SetCard(cardData);
+		//focusOnCard.GetComponent<Card>().SetCard(cardData, cardImageList[cardHashMap[cardData.GetCardNum()]);
 
 		focusOnCard.transform.SetParent(cardLocation);
 		focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);

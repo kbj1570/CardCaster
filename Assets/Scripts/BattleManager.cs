@@ -1,5 +1,4 @@
 using DG.Tweening;
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
@@ -25,6 +25,7 @@ public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4
 public enum ECardTargetType{Selected, Select}
 public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
 public enum EServentSize{Small, Middle, Big}
+public enum EServentState{None, Idle, Guard, Ready, Summon, Attack, Death}
 public enum EParryState{Idle, Parry, Succecced, Failed}
 
 public class BattleManager : MonoBehaviour
@@ -37,6 +38,7 @@ public class BattleManager : MonoBehaviour
 	Dictionary<string, int> cardHashMap;
 
 	List<ItemData> reward;
+	int rewardGold;
 
 
 	EParryState parryState;
@@ -53,12 +55,11 @@ public class BattleManager : MonoBehaviour
 	Enemy currentEnemy;
 	int enemyIndex = 0;
 
-	public Image playerActor;
-	public Image enemyActor;
+	public Transform playerActor;
+	public Transform enemyActor;
+
 
 	public GameObject runawayButton;
-
-	public List<Sprite> actorSpriteList;
 	
 	public GameObject floatingTextPrefab;
 	public Transform enemyTransform;
@@ -156,9 +157,13 @@ public class BattleManager : MonoBehaviour
 	public SpriteRenderer smallCircle;
 	public SpriteRenderer bigCircle;
 
-
 	public GameObject serventCardPrefab;
 	public GameObject spellCardPrefab;
+	public GameObject enemyCardPrefab;
+	public GameObject fieldSpellCardPrefab;
+
+
+	public List<Sprite> cardImageList;
 
 
 	public GameObject alertMessage;
@@ -176,6 +181,8 @@ public class BattleManager : MonoBehaviour
 
 	private List<int> currentAbilities;
 
+	private List<bool> actionDoneStack = Enumerable.Repeat(false, 10).ToList();
+
 
 
 	public void Dash()
@@ -183,9 +190,23 @@ public class BattleManager : MonoBehaviour
 		StartCoroutine(ShowBattleWindow());   
 	}
 
+	public void ReadyBattleWindow(Field leftActor, EServentState leftActorState, Field rightActor, EServentState rightActorState)
+	{
+		
+	}
+
 	private IEnumerator ShowBattleWindow()
 	{
-		foreach(GameObject card in cardObjectList)
+		
+		foreach(Field field in GetAllFields())
+		{
+			if(field.GetFilled())
+			{
+				field.HideForce(true);
+			}
+		}
+
+		foreach (GameObject card in cardObjectList)
 		{card.GetComponent<Card>().SetLock(true);}
 
 		battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position,
@@ -195,9 +216,9 @@ public class BattleManager : MonoBehaviour
 
 		yield return new WaitForSeconds(0.2f);
 
-		battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position + new Vector3(50, 0, 0),
+		battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position + new Vector3(1.5f, 0, 0),
 		1.5f).SetEase(Ease.OutExpo);
-		battleWindowRightSide.transform.DOMove(battleWindowRightSideSecondPosition.position + new Vector3(-50, 0, 0),
+		battleWindowRightSide.transform.DOMove(battleWindowRightSideSecondPosition.position + new Vector3(-1.5f, 0, 0),
 		1.5f).SetEase(Ease.OutExpo);
 		yield return new WaitForSeconds(1.5f);
 
@@ -206,11 +227,22 @@ public class BattleManager : MonoBehaviour
 		battleWindowRightSide.transform.DOMove(battleWindowRightSideFirstPosition.position,
 		0.2f).SetEase(Ease.InQuad);
 
-		yield return new WaitForSeconds(1f);
-		isActionDone = true;
+		
 
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<Card>().SetLock(false);}
+		
+
+		foreach (Field field in GetAllFields())
+		{
+			if (field.GetFilled())
+			{
+				field.HideForce(false);
+			}
+		}
+		yield return new WaitForSeconds(1f);
+
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(false); }
+		isActionDone = true;
 
 	}
 
@@ -423,6 +455,7 @@ public class BattleManager : MonoBehaviour
 			{
 				reward.Add(itemData);
 			}
+			rewardGold += currentEnemy.GetGold();
 
 			if (enemyIndex == enemies.Count - 1)
 			{
@@ -442,6 +475,7 @@ public class BattleManager : MonoBehaviour
 				yield return new WaitForSeconds(1f);
 
 				itemOrganizeWindow.GetComponent<ItemOrganizeWindow>().SetItemList(reward);
+				itemOrganizeWindow.GetComponent<ItemOrganizeWindow>().SetGold(rewardGold);
 				itemOrganizeWindow.GetComponent<ItemOrganizeWindow>().OnOff();
 				runawayButton.SetActive(true);
 			}
@@ -722,7 +756,13 @@ public class BattleManager : MonoBehaviour
 		yield return new WaitForSeconds(0.4f);
 		foreach(GameObject card in cardObjectList)
 		{card.GetComponent<Card>().HideAndReveal(false);}
+
+
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(false); }
 		yield return new WaitForSeconds(0.4f);
+
+
 
 		if(myTurn)
 		{
@@ -731,7 +771,7 @@ public class BattleManager : MonoBehaviour
 				int p = 5 - handList.Count;
 				for(int i = 0; i < p; ++i)
 				{
-					yield return new WaitForSeconds(0.35f);
+					yield return new WaitForSeconds(0.5f);
 					DrawCard();
 				}
 			}
@@ -770,7 +810,7 @@ public class BattleManager : MonoBehaviour
 		AlertMessage("새로운 적이 나타났습니다.");
 	}
 
-	void AlertMessage(string message)
+	public void AlertMessage(string message)
 	{
 		GameObject onMessage = Instantiate(alertMessage, alertPoint);
 		onMessage.GetComponent<PopUpMessage>().SetText(message);
@@ -808,8 +848,7 @@ public class BattleManager : MonoBehaviour
 				break;
 
 		}
-		//GameObject cardPrefab = cardPrefabList[cardHashMap[battleCardData.GetCardNum()]];
-		GameObject cardObject = Instantiate(selectedCardPrefab, new Vector3(), Utils.QI);
+		GameObject cardObject = Instantiate(selectedCardPrefab, Vector3.zero, Utils.QI);
 
 		cardObject.GetComponent<Card>().InitiateActionInBattle();
 
@@ -822,15 +861,14 @@ public class BattleManager : MonoBehaviour
 				if (eventData.button == PointerEventData.InputButton.Right)
 				{ DiscardCard(card); }
 			}
-
-			, // 클릭 시
+			,
 			(card, eventData) => {
 
 				if (card.locked)
 				{ return; }
 
 				CardBeginDrag(card.gameObject);
-			}, // 드래그 시작
+			},
 			(card, eventData) => {
 
 				if (card.locked)
@@ -838,12 +876,12 @@ public class BattleManager : MonoBehaviour
 				card.transform.localScale = new Vector3(0.4f, 0.4f, 1);
 				card.transform.position = card.originPRS.pos;
 				CardOnDrag(card.gameObject);
-			}, // 드래그 중
+			},
 			(card, eventData) => {
 				if (card.locked)
 				{ return; }
 				StartCoroutine(CardEndDrag(card, ReturnMouseOnField()));
-			} // 드래그 끝
+			}
 			,
 			(card, eventData) => {
 				if (card.locked)
@@ -856,8 +894,7 @@ public class BattleManager : MonoBehaviour
 				card.currentSequence = DOTween.Sequence()
 					.Append(card.transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.13f).SetEase(Ease.InOutQuad))
 					.Append(card.transform.DOMoveY(card.originPRS.pos.y + 130, 0.13f).SetEase(Ease.OutCirc));
-			} // 마우스 입장
-
+			}
 			,
 			(card, eventData) => {
 				if (card.locked)
@@ -869,18 +906,19 @@ public class BattleManager : MonoBehaviour
 				card.currentSequence = DOTween.Sequence()
 					.Append(card.transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
 					.Append(card.transform.DOMove(card.originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
-			} // 마우스 퇴장
+			}
 		);
 
 		cardObject.transform.SetParent(canvas.transform);
 		cardObjectList.Add(cardObject);
 
 
-		cardObject.GetComponent<Card>().SetCard(battleCardData);
+		cardObject.GetComponent<Card>().SetCard(battleCardData, cardImageList[cardHashMap[battleCardData.GetCardNum()]]);
 
 		cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
 		handList.Add(battleCardData);
 		CardAlignmentAlt();
+
 
 		ShotDrawMissile(cardObject.transform);
 		return cardObject;
@@ -897,11 +935,44 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
+	public Transform GetDetectArea(EMouseOnArea area)
+	{
+		switch (area)
+		{
+			case EMouseOnArea.Player:
+				return playerDetectArea;
+			case EMouseOnArea.Enemy:
+				return enemyDetectArea;
+			case EMouseOnArea.Field_1:
+				return fieldDetectArea_1;
+			case EMouseOnArea.Field_2:
+				return fieldDetectArea_2;
+			case EMouseOnArea.Field_3:
+				return fieldDetectArea_3;
+			case EMouseOnArea.Field_4:
+				return fieldDetectArea_4;
+			case EMouseOnArea.Field_5:
+				return fieldDetectArea_5;
+			case EMouseOnArea.Field_6:
+				return fieldDetectArea_6;
+			case EMouseOnArea.Hole:
+				return holeDetectArea;
+			default:
+				return backgroundDetectArea;
+		}
+	}
+
+
 
 
 	private IEnumerator EnemyTurnCo()
 	{
 		turnState = ETurnState.Enemy;
+
+
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(true); }
+
 		foreach (GameObject card in cardObjectList)
 			card.GetComponent<Card>().HideAndReveal(true);
 
@@ -945,12 +1016,15 @@ public class BattleManager : MonoBehaviour
 				case EEnemyAction.Summon:
 					if (emptyField.Count > 0)
 					{
-						AlertMessage("적이 동료를 부릅니다.");
+						
 						Field field = emptyField[Random.Range(0, emptyField.Count)];
 						field.locked = true;
 
 						List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
 						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
+
+						StartCoroutine(ShowEnemyActionCard(randomServent,field.transform));
+						yield return new WaitForSeconds(2f);
 
 						field.Summon(randomServent,
 							Instantiate(enemyServentPrefabList[0], field.transform.position, Utils.QI));
@@ -963,7 +1037,6 @@ public class BattleManager : MonoBehaviour
 				case EEnemyAction.Attack:
 					if (attackableField.Count > 0)
 					{
-						AlertMessage("적이 공격합니다.");
 						List<Field> playerTargets = new List<Field> { playerField };
 						if (field_1.GetFilled()) playerTargets.Add(field_1);
 						if (field_2.GetFilled()) playerTargets.Add(field_2);
@@ -983,7 +1056,8 @@ public class BattleManager : MonoBehaviour
 				case EEnemyAction.Ability:
 					if (abilityUsable)
 					{
-						AlertMessage("적이 능력을 사용합니다.");
+						StartCoroutine(ShowEnemyActionCard("능력 이름", "능력 내용"));
+						yield return new WaitForSeconds(2.2f);
 						int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
 						switch (randomNum)
 						{
@@ -1044,8 +1118,8 @@ public class BattleManager : MonoBehaviour
 		yield return new WaitForSeconds(circleSpeed - parryWindowTime);
 		StartParryWindow();
 		yield return new WaitUntil(() => isActionDone);
-		
-		if(targetField == playerField)
+
+		if (targetField == playerField)
 		{
 			int attackerForce = startField.GetForce();
 
@@ -1061,11 +1135,13 @@ public class BattleManager : MonoBehaviour
 			if(playerDamageBlock)
 			{attackerForce = 0;}
 
-			
+			//playerActor.sprite = playerSprites[0];
+			//enemyActor.sprite = enemyServentSprite_Guard[cardHashMap[startField.GetCardData().GetCardNum()]];
 
 			PlayerTakeAttack(attackerForce, parryState == EParryState.Succecced);
 			startField.SetAttacked(true);
-		}else
+		}
+		else
 		{
 			int attackerForce = startField.GetForce();
 			int defenderForce = targetField.GetForce();
@@ -1079,12 +1155,14 @@ public class BattleManager : MonoBehaviour
 			if(attackerForce < 0)
 			{defenderDamage = 0;}
 
-			startField.TakeDamage(attackerDamage);
-			targetField.TakeDamage(defenderDamage);
+			startField.TakeAttack(attackerDamage);
+			targetField.TakeAttack(defenderDamage);
 
-			ServentTakeAttack(defenderDamage, parryState == EParryState.Succecced);
+			ReadyBattleWindow(targetField,EServentState.Guard, startField, EServentState.Attack);
 
-			if(startField.GetPenetrate())
+			ServentTakeAttack(defenderDamage, attackerDamage, parryState == EParryState.Succecced);
+
+			if (startField.GetPenetrate())
 			{
 				defenderDamage = Math.Abs(defenderForce - attackerForce);
 				
@@ -1196,6 +1274,23 @@ public class BattleManager : MonoBehaviour
 	{
 		myTurn = !myTurn;
 		StartCoroutine(StartTurnCo());
+	}
+
+	public IEnumerator ActivateCardDesc(BattleCardData battleCardData, Transform target, int stackIndex)
+	{
+		yield return new WaitForSeconds(0.3f);
+
+		GameObject cardObject = Instantiate(serventCardPrefab, alertPoint.position, Utils.QI);
+		cardObject.transform.SetParent(canvas.transform);
+
+		cardObject.GetComponent<Card>().SetCard(battleCardData, cardImageList[cardHashMap[battleCardData.GetCardNum()]]);
+
+		cardObject.GetComponent<Card>().InitiateActionInBattle();
+		yield return new WaitForSeconds(0.3f);
+		cardObject.GetComponent<Card>().SendMissile(alertPoint, target);
+		yield return new WaitForSeconds(1.8f);
+		actionDoneStack[stackIndex] = true;
+
 	}
 
 	public bool CheckCardUsable()
@@ -1779,6 +1874,30 @@ public class BattleManager : MonoBehaviour
 		return ReturnMouseOnField(start).GetFilled() && ReturnMouseOnField().GetFilled();
 	}
 
+	private IEnumerator ShowEnemyActionCard(EnemyServentCardData enemyServentCardData, Transform target)
+	{
+		GameObject cardObject = Instantiate(enemyCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+		cardObject.transform.SetParent(canvas.transform);
+		cardObject.GetComponent<Card>().SetEnemyActionCard(enemyServentCardData);
+		cardObject.GetComponent<Card>().InitiateActionInBattle();
+		yield return new WaitForSeconds(0.3f);
+		cardObject.GetComponent<Card>().SendMissile(alertPoint, target);
+		yield return new WaitForSeconds(1.8f);
+	}
+
+	private IEnumerator ShowEnemyActionCard(string ablityName, string abilityDesc)
+	{
+		GameObject cardObject = Instantiate(enemyCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+		cardObject.transform.SetParent(canvas.transform);
+		cardObject.GetComponent<Card>().SetEnemyActionCard(ablityName, abilityDesc);
+		cardObject.GetComponent<Card>().InitiateActionInBattle();
+		yield return new WaitForSeconds(0.3f);
+		cardObject.GetComponent<Card>().SendMissile(alertPoint, hole.transform);
+		yield return new WaitForSeconds(1.8f);
+	}
+
+
+
 	public void DiscardCard(Card card)
 	{
 		handList.RemoveAt(card.GetCardOrder());
@@ -1796,7 +1915,7 @@ public class BattleManager : MonoBehaviour
 		{ cardObjectList[i].GetComponent<Card>().SetCardOrder(i); }
 
 		handList = newHandList;
-		CardAlignmentAlt();
+		CardAlignment();
 	}
 
 	public IEnumerator CardEndDrag(Card card, Field targetField)
@@ -1858,7 +1977,7 @@ public class BattleManager : MonoBehaviour
 					for (int i = 0; i < cardObjectList.Count; ++i)
 					{cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
 
-					CardAlignmentAlt();
+					CardAlignment();
 				}
 			}
 			else
@@ -1883,7 +2002,7 @@ public class BattleManager : MonoBehaviour
 					for (int i = 0; i < cardObjectList.Count; ++i)
 					{ cardObjectList[i].GetComponent<Card>().SetCardOrder(i); }
 
-					CardAlignmentAlt();
+					CardAlignment();
 				}
 
 			}
@@ -1925,27 +2044,6 @@ public class BattleManager : MonoBehaviour
 		InstantiateCard(cardData);
 	}
 
-	// public void DrawCard()
-	// {
-
-	//     if(deckList.Count == 0 && trashList.Count == 0)
-	//     {return;}
-
-	//     GameObject cardObject = Instantiate(cardPrefab, new Vector3() , Utils.QI);
-	//     cardObject.SetActive(false);
-	//     CardData cardData = deckList[deckList.Count - 1];
-
-	//     cardObjectList.Add(cardObject);
-	//     handList.Add(cardData);
-
-	//     deckList.RemoveAt(deckList.Count - 1);
-
-	//     CardAlignmentAlt();
-
-	//     StartCoroutine(CreateMissile(hole, cardObjectList[cardObjectList.Count - 1]));
-	//     cardObject.SetActive(true);
-	//     CardAlignment();
-	// }
 
 
 	public void SetMouseOnField(EMouseOnArea mouseOnArea)
@@ -1957,41 +2055,37 @@ public class BattleManager : MonoBehaviour
 	public void SelectTarget(GameObject field)
 	{missileTarget = field;}
 
-	public void CardAlignmentAlt()
+	public void CardAlignmentAlt() { if (handList.Count == 0) { return; } List<PRS> originCardPRSs = new List<PRS>(); originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f); for (int i = 0; i < cardObjectList.Count; ++i) { var targetCard = cardObjectList[i]; targetCard.GetComponent<Card>().originPRS = originCardPRSs[i]; targetCard.transform.position = originCardPRSs[i].pos; targetCard.GetComponent<Card>().UpdateCardCost(costCount); } }
+
+	public void CardAlignment()
 	{
-		if(handList.Count == 0)
-		{return;}
+		if (handList.Count == 0)
+			return;
 
-		List<PRS> originCardPRSs = new List<PRS>();
+		List<PRS> originCardPRSs = RoundAlignment(
+			cardAreaBorderLeft,
+			cardAreaBorderRight,
+			cardObjectList.Count,
+			0.5f,
+			Vector3.one * 2.3f);
 
-		originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
-		for(int i = 0; i < cardObjectList.Count; ++i)
+		for (int i = 0; i < cardObjectList.Count; ++i)
 		{
 			var targetCard = cardObjectList[i];
-			targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
-			targetCard.transform.position = originCardPRSs[i].pos;
+			var cardComp = targetCard.GetComponent<Card>();
 
-			targetCard.GetComponent<Card>().UpdateCardCost(costCount);
+			// 목표 PRS 저장
+			cardComp.originPRS = originCardPRSs[i];
+
+			// 💡 DOTween으로 부드럽게 이동/회전/스케일 적용
+			targetCard.transform.DOMove(originCardPRSs[i].pos, 0.3f).SetEase(Ease.InOutQuad);
+			targetCard.transform.DORotateQuaternion(originCardPRSs[i].rot, 0.3f).SetEase(Ease.InOutQuad);
+			//targetCard.transform.DOScale(originCardPRSs[i].scale, 0.3f).SetEase(Ease.InOutQuad);
+
+			// 카드 코스트 갱신
+			cardComp.UpdateCardCost(costCount);
 		}
-
 	}
-	List<PRS> GetCardAlignment(Vector3 leftBoundary, Vector3 rightBoundary, int cardCount, float spacing)
-	{
-		
-		List<PRS> result = new List<PRS>();
-
-		for (int i = 0; i < cardCount; ++i)
-		{
-			float t = (float)i / (cardCount - 1); // Normalize index
-			Vector3 position = Vector3.Lerp(leftBoundary, rightBoundary, t);
-			Quaternion rotation = Quaternion.identity;
-			Vector3 scale = Vector3.one; // Default scale
-			result.Add(new PRS(position, rotation, scale));
-		}
-
-		return result;
-	}
-
 
 	List<PRS> RoundAlignment(Transform leftTr, Transform rightTr, int objectCount, float height, Vector3 scale)
 	{
@@ -2027,18 +2121,7 @@ public class BattleManager : MonoBehaviour
 	}
 
 
-	public void CardAlignment()
-	{
 
-		List<PRS> originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f);
-		for(int i = 0; i < cardObjectList.Count; ++i)
-		{
-			var targetCard = cardObjectList[i];
-			targetCard.GetComponent<Card>().originPRS = originCardPRSs[i];
-			targetCard.GetComponent<Card>().MoveTransform(targetCard.GetComponent<Card>().originPRS, true, 0.7f);
-
-		}
-	}
 	public void DeleteDragLine()
 	{
 		cardDragLine.positionCount = 0;
@@ -2047,14 +2130,12 @@ public class BattleManager : MonoBehaviour
 
 	public void DealDamageToEnemy(int damage)
 	{
-		
 		GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
 		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
 		enemyHealth -= damage;
-
-		StartCoroutine(CheckEnemyCondition(0.3f));
+		StartCoroutine(CheckEnemyCondition(2f));
 	}
 
 	public void AttackToEnemy(int damage)
@@ -2065,8 +2146,6 @@ public class BattleManager : MonoBehaviour
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
 		enemyHealth -= damage;
-
-		StartCoroutine(CheckEnemyCondition(2.2f));
 	}
 
 	public void PlayerTakeDamage(int damage)
@@ -2076,6 +2155,8 @@ public class BattleManager : MonoBehaviour
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
 		playerHealth -= damage;
+
+		StartCoroutine(CheckEnemyCondition(0.3f));
 	}
 
 
@@ -2093,85 +2174,115 @@ public class BattleManager : MonoBehaviour
 
 		playerHealth -= damage;
 
+		StartCoroutine(CheckEnemyCondition(2.2f));
+
 	}
-	public void ServentTakeAttack(int damage, bool guarded)
+	public void ServentTakeAttack(int defenderDamage, int attackerDamage, bool guarded)
 	{
 
-		Dash();
-		GameObject damageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-		damageText.GetComponent<FloatingDamageText>().SetFont(150);
+		StartCoroutine(ShowBattleWindow());
+		GameObject defenderDamageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
+		defenderDamageText.GetComponent<FloatingDamageText>().SetDamageText(defenderDamage);
+		defenderDamageText.GetComponent<FloatingDamageText>().SetFont(150);
 
-		if(guarded)
-		damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
+
+		GameObject attackerDamageText = Instantiate(floatingTextPrefab, battleWindowRightSideFloatTextLocation);
+		attackerDamageText.GetComponent<FloatingDamageText>().SetDamageText(attackerDamage);
+		attackerDamageText.GetComponent<FloatingDamageText>().SetFont(150);
+
+		if (guarded)
+			defenderDamageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
+
+		StartCoroutine(CheckEnemyCondition(2.2f));
 	}
 
 
 	
 
-	public void EndAttackLine(EMouseOnArea mouseOnArea, bool isUsuable)
+	public IEnumerator EndAttackLine(EMouseOnArea mouseOnArea, bool isUsuable)
 	{
-		if(ReturnMouseOnField() == ReturnMouseOnField(mouseOnArea))
-		{return;}
+		Field attackerField = ReturnMouseOnField(mouseOnArea);
+		Field defenderField = ReturnMouseOnField();
 
-		if(ReturnMouseOnField() == enemyField)
+
+		attackDragLine.positionCount = 0;
+		if (defenderField != attackerField)
 		{
-			int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
-
-			attackerForce += enemyDamageIncrease;
-			attackerForce -= enemyDamageDecrease;
-
-			if(attackerForce < 0)
-			{attackerForce = 0;}
-
-			if(enemyDamageBlock)
-			{attackerForce = 0;}
-			
-
-			AttackToEnemy(attackerForce);
-
-			
-			
-			ReturnMouseOnField(mouseOnArea).SetAttacked(true);
-
-			
-		}else
-		{
-			if(isUsuable)
+			if (defenderField == enemyField)
 			{
-				int attackerForce = ReturnMouseOnField(mouseOnArea).GetForce();
-				int defenderForce = ReturnMouseOnField().GetForce();
+				int attackerForce = attackerField.GetForce();
 
-				int attackerDamage = Math.Abs(defenderForce);
-				int defenderDamage = Math.Abs(attackerForce);
+				attackerForce += enemyDamageIncrease;
+				attackerForce -= enemyDamageDecrease;
 
-				ReturnMouseOnField(mouseOnArea).TakeDamage(attackerDamage);
-				ReturnMouseOnField().TakeDamage(defenderDamage);
+				if (attackerForce < 0)
+				{ attackerForce = 0; }
 
-				if(ReturnMouseOnField(mouseOnArea).GetPenetrate())
-				{
-					defenderDamage = Math.Abs(defenderForce - attackerForce);
+				if (enemyDamageBlock)
+				{ attackerForce = 0; }
 
-					if(enemyDamageBlock)
-					{
-						defenderDamage = 0;
-						DealDamageToEnemy(defenderDamage);
-					}
-					else if(defenderDamage == 0)
-					{}
-					else
-					{DealDamageToEnemy(defenderDamage);}
 
-				}
-				
-				StartCoroutine(CheckBattleAbility(ReturnMouseOnField(mouseOnArea), ReturnMouseOnField()));
-				
-				ReturnMouseOnField(mouseOnArea).SetAttacked(true);
+				AttackToEnemy(attackerForce);
+
+				yield return new WaitForSeconds(2f);
+
+
+				attackerField.SetAttacked(true);
+
+				StartCoroutine(CheckEnemyCondition(2f));
 
 			}
+			else
+			{
+				if (isUsuable)
+				{
+					int attackerForce = attackerField.GetForce();
+					int defenderForce = defenderField.GetForce();
+
+					int attackerDamage = Math.Abs(defenderForce);
+					int defenderDamage = Math.Abs(attackerForce);
+
+
+
+					ServentTakeAttack(attackerDamage, defenderDamage, false);
+					yield return new WaitForSeconds(2f);
+
+					attackerField.TakeAttack(attackerDamage);
+					defenderField.TakeAttack(defenderDamage);
+
+					if (attackerField.GetPenetrate())
+					{
+						defenderDamage = Math.Abs(defenderForce - attackerForce);
+
+						if (enemyDamageBlock)
+						{
+							defenderDamage = 0;
+							DealDamageToEnemy(defenderDamage);
+						}
+						else if (defenderDamage == 0)
+						{ }
+						else
+						{
+							actionDoneStack[1] = false;
+							StartCoroutine(ActivateCardDesc(new CrescentLancer(), enemyField.transform, 1));
+
+							yield return new WaitUntil(() => actionDoneStack[1]);
+							DealDamageToEnemy(defenderDamage);
+						}
+
+					}
+
+					StartCoroutine(CheckBattleAbility(attackerField, defenderField));
+
+					StartCoroutine(CheckEnemyCondition(2f));
+					attackerField.SetAttacked(true);
+
+				}
+			}
 		}
-		attackDragLine.positionCount = 0;
-		
+
+
+
 	}
 
 	public IEnumerator DrawAttackLine(Vector2 startPoint, Vector2 targetPoint, float duration)

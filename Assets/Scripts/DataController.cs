@@ -158,7 +158,55 @@ public class  DataController : MonoBehaviour
 		return cardDatas;
     }
 
-    public List<ItemData> LoadItemDatabase()
+    public List<CardData> LoadRareCard()
+    {
+		List<CardData> cardDatas = new();
+
+		cardDatas.Add(new Georgius());//115
+		cardDatas.Add(new NamelessTraveler());//127
+		cardDatas.Add(new ForbiddenedSavior());//130
+		return cardDatas;
+	}
+
+    public List<CardData> LoadNormalCard()
+	{
+		List<CardData> cardDatas = new();
+		cardDatas.Add(new BlueSlime()); //102
+		cardDatas.Add(new RedSlime());//103
+		cardDatas.Add(new GreenSlime());//104
+		cardDatas.Add(new OddedStew());//105
+		cardDatas.Add(new OddedStew());//106
+		cardDatas.Add(new NoWayToReturn());//107
+		cardDatas.Add(new WillOfWarrior());//108
+		cardDatas.Add(new BrownSlime());//109
+		cardDatas.Add(new WhiteSlime());//110
+		cardDatas.Add(new BlackSlime());//111
+		cardDatas.Add(new ShapeShifter());//112
+		cardDatas.Add(new Frillizard());//113
+		cardDatas.Add(new Griffin());//114
+		cardDatas.Add(new ForbiddenedSavior());//116
+		cardDatas.Add(new KnightOfTheRedFlame());//117
+		cardDatas.Add(new KnightOfTheAzure());//118
+		cardDatas.Add(new ToddleyWoodley());//119
+		cardDatas.Add(new FireBat());//120
+		cardDatas.Add(new TheSacredBeast());//121
+		cardDatas.Add(new CookOfDarkness());//122
+		cardDatas.Add(new Boomsquirrel());//123
+		cardDatas.Add(new StrayCat());//124
+		cardDatas.Add(new Hypnotist());//125
+		cardDatas.Add(new BurningSouls());//126
+		cardDatas.Add(new GiantLarva());//128
+		cardDatas.Add(new SilentFog());//129
+		cardDatas.Add(new GloriousVictory());//131
+		cardDatas.Add(new HolyPowerBoost());//132
+		cardDatas.Add(new BrokenBless());//133
+		cardDatas.Add(new AtTheEdgeOfPledge());//134
+		cardDatas.Add(new RunTogether());//135
+
+		return cardDatas;
+	}
+
+	public List<ItemData> LoadItemDatabase()
     {
         List<ItemData> items = new();
 

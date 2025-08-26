@@ -10,6 +10,7 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 	private ItemData itemData;
 	private string cardName;
 	private int count;
+	private int gold;
 	private int cardCost;
 	public TMP_Text cardNameText;
 	public TMP_Text cardCountText;
@@ -64,6 +65,17 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 		cardNameText.text = item.GetName();
 		cardCountText.text = count.ToString();
 	}
+
+
+
+	public void SetGold(int gold)
+	{
+		this.gold = gold;
+		cardNameText.text = "Gold: "  + gold.ToString();
+	}
+
+	public int GetGold()
+	{ return gold; }
 
 	public ItemData GetItem()
 	{ return itemData; }

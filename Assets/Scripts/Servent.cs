@@ -6,138 +6,141 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Servent: MonoBehaviour
+public class Servent : MonoBehaviour
 {
-    private EServentType serventType;
-    private ESequence sequence;
-    private string serventName;
-    private string serventOriginForce;
-    private string serventAbility;
+	private EServentType serventType;
+	private EServentState serventState;
 
-    public int serventForce;
+	private string serventName;
+	private string serventOriginForce;
+	private string serventAbility;
 
-    public GameObject border;
-    public GameObject infoWindow;
-    public TMP_Text serventForceText;
-    public Button activationButton;
+	private Sprite idle;
+	private Sprite attack;
+	private Sprite ready;
+	private Sprite guard;
+	private Sprite death;
 
-    public SpriteRenderer spriteRenderer;
+	public Transform dragPoint;
+	public int serventForce;
 
-    public Color fadeColor;
+	public GameObject border;
+	public GameObject infoWindow;
+	public TMP_Text serventForceText;
+	public Button activationButton;
+	public SpriteRenderer spriteRenderer;
 
-    public int serventNum;
+	public Color fadeColor;
+	public int serventNum;
+	private bool mouseOn;
 
-    private bool mouseOn;
+	public Texture2D texture2D;
+	private Material monsterMaterial;
 
-    public Texture2D texture2D;
+	bool isDissolving = true;
+	bool isDying = false;
+	float fade = 0f;
 
+	void Start()
+	{
+		monsterMaterial = spriteRenderer.GetComponent<SpriteRenderer>().material;
+		monsterMaterial.SetTexture("_MainTex", texture2D);
+		monsterMaterial.SetFloat("_Fade", fade);
+		monsterMaterial.SetColor("_Color", fadeColor);
+	}
 
+	void Update()
+	{
+		if (isDissolving)
+		{
+			fade += Time.deltaTime * 1.1f;
 
+			if (fade >= 1f)
+			{
+				fade = 1f;
+				isDissolving = false;
+			}
+			monsterMaterial.SetFloat("_Fade", fade);
+		}
 
-    private Material monsterMaterial;
-    bool isDissolving = true;
-    bool isDying = false;
-    float fade = 0f;
-    void Start()
-    {
-        // 몬스터의 Material 가져오기
-        monsterMaterial = spriteRenderer.GetComponent<SpriteRenderer>().material;
-        monsterMaterial.SetTexture("_MainTex", texture2D);
-        monsterMaterial.SetFloat("_Fade", fade);
-        monsterMaterial.SetColor("_Color", fadeColor);
-    }
+		if (isDying)
+		{
+			if (fade == 1f)
+			{ BattleManager.Inst.PlayServentDeathSound(); }
 
-    void Update()
-    {
-        if(isDissolving)
-        {
-            fade += Time.deltaTime * 1.1f;
+			fade -= Time.deltaTime * 1.1f;
 
-            if(fade >= 1f)
-            {
-                fade = 1f;
-                isDissolving = false;
-            }
-            monsterMaterial.SetFloat("_Fade", fade);
-        }
+			if (fade <= 0.1f)
+			{
+				fade = 0f;
+				isDying = false;
+				BattleManager.Inst.ShotMissile(transform);
+				Destroy(this.gameObject);
+			}
+			monsterMaterial.SetFloat("_Fade", fade);
+		}
+	}
 
-        if(isDying)
-        {
-            if(fade == 1f)
-            {BattleManager.Inst.PlayServentDeathSound();}
+	public void Dead()
+	{isDying = true;}
 
-            fade -= Time.deltaTime * 1.1f;
+	public void ChangeState(EServentState state)
+	{
+		switch(state)
+		{
+			case EServentState.Idle:
+				spriteRenderer.sprite = idle;
+				break;
 
+			case EServentState.Attack:
+				spriteRenderer.sprite = attack;
+				break;
 
-            if(fade <= 0.1f)
-            {
-                fade = 0f;
-                isDying = false;
-                BattleManager.Inst.ShotMissile(transform);
-                Destroy(this.gameObject);
-            }
-            monsterMaterial.SetFloat("_Fade", fade);
-        }
-    }
+			case EServentState.Guard:
+				spriteRenderer.sprite = guard;
+				break;
 
-    public void Dead()
-    {
-        isDying = true;
-    }
+			case EServentState.Death:
+				spriteRenderer.sprite = death;
+				break;
 
+			case EServentState.Ready:
+				spriteRenderer.sprite = ready;
+				break;
 
-    public void Attack()
-    {}
+		}
+	}
 
-    public void Defend()
-    {}
+	public void OnMouseUp()
+	{
+		if(mouseOn)
+		{StartCoroutine(BattleManager.Inst.ShowServentInfo(this));}
+	}
 
-    public void Summon(CardData cardData)
-    {}
+	public void OnMouseEnter()
+	{mouseOn = true;}
 
+	public void OnMouseExit()
+	{mouseOn = false;}
 
-    public void OnMouseUp()
-    {
-        if(mouseOn)
-        {StartCoroutine(BattleManager.Inst.ShowServentInfo(this));}
-    }
-
-    public void OnMouseEnter()
-    {mouseOn = true;}
-
-    public void OnMouseExit()
-    {mouseOn = false;}
-
-    public void ShowInfo()
-    {
-        infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
-        border.SetActive(true);
-        activationButton.gameObject.SetActive(true);
-    }
-    public void CloseInfo()
-    {
-        infoWindow.GetComponent<ServentInfoWindow>().OnOff(false);
-        border.SetActive(false);
-        activationButton.gameObject.SetActive(false);
-    }
-    // public IEnumerator FadeOut()
-    // {
-
-    // }
-    // void OnMouseDrag()
-    // {
-    //     Debug.Log("Dragging");
-    // }
-    public int GetServentNum()
-    {return serventNum;}
-    public EServentType GetServentType()
-    {return serventType;}
-
-    public void SetServentType(EServentType serventType)
-    {this.serventType = serventType;}
-
-
+	public void ShowInfo()
+	{
+		infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
+		border.SetActive(true);
+		activationButton.gameObject.SetActive(true);
+	}
+	public void CloseInfo()
+	{
+		infoWindow.GetComponent<ServentInfoWindow>().OnOff(false);
+		border.SetActive(false);
+		activationButton.gameObject.SetActive(false);
+	}
+	public int GetServentNum()
+	{return serventNum;}
+	public EServentType GetServentType()
+	{return serventType;}
+	public void SetServentType(EServentType serventType)
+	{this.serventType = serventType;}
+	public Transform GetDragPoint()
+	{return dragPoint; }
 }
-
-public enum ESequence
-{Idle, Targeting, Attacking, Blocking}

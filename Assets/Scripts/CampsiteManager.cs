@@ -54,6 +54,7 @@ public class CampsiteManager : MonoBehaviour
 
 	public Window dungeonSelectWindow;
 	public Window storageWindow;
+	public Window randomBoxWindow;
 
 	public bool screenLocked = false;
 
@@ -146,6 +147,12 @@ public class CampsiteManager : MonoBehaviour
 	{
 		storageWindow.GetComponent<StorageWindow>().UpdateItemPage();
 		storageWindow.OnOff();
+	}
+
+	public void OpenRandomBox()
+	{
+		//storageWindow.GetComponent<RandomBoxWindow>().UpdateItemPage();
+		randomBoxWindow.OnOff();
 	}
 
 	public void GoToShop()

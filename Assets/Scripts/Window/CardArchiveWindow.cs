@@ -39,6 +39,8 @@ public class CardArchiveWindow : Window
 
 	public GameObject cardStoryDescWindow;
 
+	public List<Sprite> cardImageList;
+
 
 	void Start()
 	{
@@ -166,7 +168,7 @@ public class CardArchiveWindow : Window
 				{
 					OpenCardStoryDesc(clickedSlot.cardData);
 				});
-				cardObject.GetComponent<Card>().SetCard(valuePair.Key);
+				cardObject.GetComponent<Card>().SetCard(valuePair.Key, cardImageList[cardHashMap[valuePair.Key.GetCardNum()]]);
 			}
 			
 			cardObject.transform.SetParent(cardLocation[count].transform);

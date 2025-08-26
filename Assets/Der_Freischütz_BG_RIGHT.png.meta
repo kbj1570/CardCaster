@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2bb051466960198459a500701d601c48
+guid: 3b1dc931c3b87134cad092b2299e66fa
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1208040086343421634
-    second: image_0
+      213: 6134812779180991299
+    second: "Der_Freisch\xFCtz_BG_RIGHT_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: image_0
+      name: "Der_Freisch\xFCtz_BG_RIGHT_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 440
-        height: 438
+        width: 860
+        height: 715
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2ce8eecde02d3c010800000000000000
-      internalID: 1208040086343421634
+      spriteID: 3432c9218bb332550800000000000000
+      internalID: 6134812779180991299
       vertices: []
       indices: 
       edges: []

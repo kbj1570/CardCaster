@@ -5,9 +5,10 @@ using TMPro;
 public class Field : MonoBehaviour
 {
     public FieldArea fieldArea;
-    public ServentCardData cardData;
-    public List<EServentCondition> conditions;
-    public EServentAttribute serventAttribute;
+    ServentCardData cardData;
+    List<EServentCondition> conditions;
+    EServentAttribute serventAttribute;
+    public EMouseOnArea mouseOnArea;
 
     public EAbilityType abilityType;
 
@@ -110,6 +111,16 @@ public class Field : MonoBehaviour
         currentForce -= value;
     }
 
+    public void TakeAttack(int value)
+    {
+		if (!filled)
+			return;
+
+		if (damageBlock)
+			return;
+		currentForce -= value;
+	}
+
     public void Kill()
     {
         if(voidWalker)
@@ -183,6 +194,11 @@ public class Field : MonoBehaviour
         // EffectManager.Inst.SpawnSummonEffect(cardData.serventAttribute, transform.position);
         locked = false;
     }
+
+    public void HideForce(bool value)
+    {
+		forceTMP.gameObject.SetActive(!value);
+	}
 
     public void UpdateCondition()
     {
@@ -266,6 +282,8 @@ public class Field : MonoBehaviour
 
     public int GetAdditionalDamage()
     {return additionalDamage;}
+
+    public EMouseOnArea GetMouseOnArea() {return mouseOnArea;}
 
 
     public Transform GetLinePoint()

@@ -27,8 +27,8 @@ public class FieldArea : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
         if(!field.GetFilled())
         return;
 
-        if(mouseOnArea != EMouseOnArea.Hole && mouseOnArea != EMouseOnArea.Enemy && mouseOnArea != EMouseOnArea.Player)
-        BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea));
+        if(mouseOnArea != EMouseOnArea.Hole && mouseOnArea != EMouseOnArea.Enemy && mouseOnArea != EMouseOnArea.Player && BattleManager.Inst.CheckAttackable(mouseOnArea))
+        StartCoroutine(BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea)));
     }
     public void OnDrag(PointerEventData eventData)
     {

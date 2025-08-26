@@ -3,6 +3,8 @@ using TMPro;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
+using static UnityEngine.Rendering.DebugUI;
 public class DeckManager : MonoBehaviour
 {
 	private int deckCount;
@@ -24,7 +26,7 @@ public class DeckManager : MonoBehaviour
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
 
-
+	public List<Sprite> cardImageList;
 
 	private Dictionary<BattleCardData, int> currentCardList;
 	private int currentPage;
@@ -68,7 +70,7 @@ public class DeckManager : MonoBehaviour
 		focusOnCard = Instantiate(selectedCardPrefab,
 		new Vector3(0, 0, 0), Utils.QI);
 
-		focusOnCard.GetComponent<Card>().SetCard(cardData);
+		focusOnCard.GetComponent<Card>().SetCard(cardData, cardImageList[cardHashMap[cardData.GetCardNum()]]);
 		focusOnCard.transform.SetParent(focusOnCardPosition);
 		focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		focusOnCard.transform.localPosition = new Vector3(0,0,0);
@@ -193,8 +195,6 @@ public class DeckManager : MonoBehaviour
 				case ECardType.Spell:
 					selectedCardPrefab = dummySpellCardPrefab;
 					break;
-
-
 			}
 
 
@@ -204,7 +204,7 @@ public class DeckManager : MonoBehaviour
 			cardObject.GetComponent<Card>().Init(item.Key, count, (clickedSlot, eventData) => {
 				AddCard(clickedSlot.cardData, clickedSlot.slotCount, locked);
 			});
-			cardObject.GetComponent<Card>().SetCard(item.Key);
+			cardObject.GetComponent<Card>().SetCard(item.Key, cardImageList[cardHashMap[item.Key.GetCardNum()]]);
 
 
 			cardObject.transform.SetParent(cardLocation[count].transform);
@@ -332,7 +332,7 @@ public class DeckManager : MonoBehaviour
 		if(cardObject == null)
 		{ Debug.LogError("Card object is null!"); return; }
 
-		cardObject.GetComponent<Card>().SetCard(value);
+		cardObject.GetComponent<Card>().SetCard(value, cardImageList[cardHashMap[value.GetCardNum()]]);
 
 		cardObject.transform.SetParent(this.transform);
 		cardObject.GetComponent<Card>().StartMoveAndScale(gridlayoutPosition.position);
@@ -370,7 +370,7 @@ public class DeckManager : MonoBehaviour
 			selectedCardPrefab,
 		gridlayoutPosition.position, Utils.QI);
 
-		cardObject.GetComponent<Card>().SetCard(value);
+		cardObject.GetComponent<Card>().SetCard(value, cardImageList[cardHashMap[value.GetCardNum()]]);
 
 
 

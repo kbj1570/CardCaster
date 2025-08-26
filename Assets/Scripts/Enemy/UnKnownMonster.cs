@@ -12,7 +12,8 @@ public class UnknownMonster : Enemy
 
         enemyRewards = new Dictionary<ItemData, int>()
         {
-            {new RedPotion(), 5}
+            {new RedPotion(), 5},
+			{new ShardOfStarlight(), 5}
 		};
 
         

@@ -34,6 +34,8 @@ public class DeckScrollView : MonoBehaviour
 	public ScrollRect scrollRect;
 
 	public Dictionary<string, int> cardHashMap;
+	public List<Sprite> cardImageList;
+
 
 	void Start()
 	{
@@ -69,7 +71,7 @@ public class DeckScrollView : MonoBehaviour
 		focusOnCard = Instantiate(selectedCardPrefab,
 		new Vector3(0, 0, 0), Utils.QI);
 
-		focusOnCard.GetComponent<Card>().SetCard(cardData);
+		focusOnCard.GetComponent<Card>().SetCard(cardData, cardImageList[cardHashMap[cardData.GetCardNum()]]);
 		focusOnCard.transform.SetParent(focusOnCardPosition);
 		focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		focusOnCard.transform.localPosition = new Vector3(0, 0, 0);

@@ -19,6 +19,8 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public CardData cardData;
 	public GameObject cardHighlightBorder;
 
+	public Image cardImage;
+
 
 	float duration = 0.35f; // 전체 이동 시간
 	float scaleFactor = 0.7f; // 최대 커지는 배율
@@ -45,6 +47,8 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public bool locked = false;
 	public Sequence currentSequence;
 
+	Animator animator;
+
 
 	public Action<Card, PointerEventData> OnClickAction;
 	public Action<Card, PointerEventData> OnBeginDragAction;
@@ -61,9 +65,28 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public void InitiateActionInBattle()
 	{
 		this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
-		StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
+		StartCoroutine(AppearAfterDelay(0.5f)); // 0.3초 후 애니메이션 실행
 	}
 
+	public IEnumerator PlayRevealAnimation()
+	{
+		//// 1) shard 흔들림
+		//shardImage.transform.DOShakeRotation(0.5f, strength: new Vector3(0, 0, 20), vibrato: 10);
+		//yield return new WaitForSeconds(0.5f);
+
+		//// 2) shard 껍질 벗겨짐 (흰색 페이드아웃)
+		//shardImage.DOFade(0, 1.0f);
+		//yield return new WaitForSeconds(1.0f);
+
+		//// 3) 카드 드러남 (페이드 인 + 확대 후 원래 크기)
+		//cardImage.DOFade(1, 0.3f);
+		//cardImage.transform.DOScale(1.2f, 0.2f).OnComplete(() =>
+		//{
+		//	cardImage.transform.DOScale(1.0f, 0.2f);
+		//});
+
+		yield return new WaitForSeconds(0.5f);
+	}
 	public void Init(Action<Card, PointerEventData> clickAction,
 					Action<Card, PointerEventData> beginDragAction,
 					Action<Card, PointerEventData> onDragAction,
@@ -139,14 +162,27 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public void UpdateIsUsable()
 	{ isUsable = (currentCost == 0); }
 
-	public void SetCard(CardData cardData)
+	public void SetCard(CardData cardData, Sprite sprite)
 	{
 		this.cardData = cardData;
 		nameTMP.text = this.cardData.GetCardName();
 		cardType = cardData.GetCardType();
+		cardImage.sprite = sprite;
 	}
 
-	public void SetCard(BattleCardData cardData)
+	public void SetEnemyActionCard(EnemyServentCardData enemyServentCardData)
+	{
+		nameTMP.text = enemyServentCardData.GetCardName();
+		descTMP.text = enemyServentCardData.GetCardDesc();
+	}
+	public void SetEnemyActionCard(string abilityName, string abilityDesc)
+	{
+		nameTMP.text = abilityName;
+		descTMP.text = abilityDesc;
+	}
+
+
+	public void SetCard(BattleCardData cardData, Sprite sprite)
 	{
 		this.cardData = cardData;
 		nameTMP.text = this.cardData.GetCardName();
@@ -155,6 +191,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		descTMP.text = this.cardData.GetCardDesc();
 
 		int fontSize = 0;
+		cardImage.sprite = sprite;
 
 
 		switch (this.cardData.GetCardDesc().Split(new string[] { "\r\n" }, StringSplitOptions.None).Length)
@@ -224,13 +261,13 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
 	IEnumerator AppearAfterDelay(float delay)
 	{
-		yield return new WaitForSeconds(delay); // 0.3초 기다림
+		yield return new WaitForSeconds(delay);
 
 		if (!locked)
 		{
 			locked = true;
 			Sequence seq = DOTween.Sequence();
-			seq.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.2f).SetEase(Ease.InOutQuad));
+			seq.Append(transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.1f).SetEase(Ease.InOutQuad));
 			seq.AppendCallback(() => locked = false);
 		}
 	}
@@ -267,6 +304,14 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		seq.AppendCallback(() => Destroy(gameObject));
 
 		DOTween.Kill(seq);
+	}
+
+	public void Setup(CardData cardData)
+	{
+		this.cardData = cardData;
+		nameTMP.text = this.cardData.GetCardName();
+		cardType = cardData.GetCardType();
+		costTMP.text = this.cardData.GetCardCost().ToString();
 	}
 
 
