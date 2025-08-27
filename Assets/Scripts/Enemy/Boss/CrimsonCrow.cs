@@ -17,7 +17,7 @@ public class CrimsonCrow : Enemy
 		};
 		serventList = new List<EnemyServentCardData>
 		{
-			new ChaoticCorvus(),
+			new ShadowCorvus(),
 			new Wild()
 		};
 		SetRewards();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 public class Dungeon
 {
     protected string dungeonName;
+    protected int dungeonNum;
     protected int dungeonEndFloor;
     protected int dungeonFloorSize;
     protected int dungeonWidth;
@@ -17,8 +18,10 @@ public class Dungeon
     protected List<RandomEvent> bannedEncounterList;
     public string GetDungeonName()
     {return dungeonName;}
+    public int GetDungeonNum()
+    { return dungeonNum; }
 
-    public int GetDungeonEndFloor()
+	public int GetDungeonEndFloor()
     {return dungeonEndFloor;}
 
     public int GetDungeonFloorSize()

@@ -137,7 +137,6 @@ public class CardArchiveWindow : Window
 		foreach (KeyValuePair<CardData, bool> valuePair in currentCardList)
 		{
 			bool locked = valuePair.Value;
-
 			GameObject selectedCardPrefab = null;
 
 			

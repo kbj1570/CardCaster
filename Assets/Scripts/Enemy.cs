@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -85,5 +86,10 @@ public class Enemy
 		}
 
 		rewards = rewardList;
+	}
+
+	public IEnumerator EffectExecute(BattleManager bm)
+	{
+		yield return null;
 	}
 }

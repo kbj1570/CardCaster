@@ -8,13 +8,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
 
 public enum EEnemyAction{None, Summon, Attack, Ability}
 public enum EServentType{None, Player, Enemy}
 public enum ETurnState{None, Player, Enemy}
-public enum ECardType{None ,Servent, Spell}
+public enum ECardType{None ,Servent, Spell, Field, Enemy}
 public enum ESpellType {None, Normal, Field}
 public enum ECardRarity{None, Normal, Rare}
 
@@ -39,7 +38,6 @@ public class BattleManager : MonoBehaviour
 
 	List<ItemData> reward;
 	int rewardGold;
-
 
 	EParryState parryState;
 	bool playerDamageBlock;
@@ -88,8 +86,6 @@ public class BattleManager : MonoBehaviour
 	public GameObject hole;
 	public List<GameObject> anyWhereAreas;
 
-	public GameObject cardPrefab;
-	public GameObject enemyPrefab;
 	public List<GameObject> playerServentPrefabList;
 	public List<GameObject> playerServentInfoList;
 	public List<GameObject> enemyServentPrefabList;
@@ -108,6 +104,9 @@ public class BattleManager : MonoBehaviour
 	public LineRenderer attackDragLine;
 	public int lineCount;
 	public List<GameObject> conditionMarkList;
+
+	public GameObject playerObject;
+	public GameObject enemyObject;
 
 
 	private bool myTurn;
@@ -167,7 +166,6 @@ public class BattleManager : MonoBehaviour
 
 
 	public GameObject alertMessage;
-
 	public GameObject gameOverWindow;
 
 	private int selectedLimit;
@@ -182,19 +180,6 @@ public class BattleManager : MonoBehaviour
 	private List<int> currentAbilities;
 
 	private List<bool> actionDoneStack = Enumerable.Repeat(false, 10).ToList();
-
-
-
-	public void Dash()
-	{
-		StartCoroutine(ShowBattleWindow());   
-	}
-
-	public void ReadyBattleWindow(Field leftActor, EServentState leftActorState, Field rightActor, EServentState rightActorState)
-	{
-		
-	}
-
 	private IEnumerator ShowBattleWindow()
 	{
 		
@@ -240,10 +225,13 @@ public class BattleManager : MonoBehaviour
 		}
 		yield return new WaitForSeconds(1f);
 
+
+		battleWindowLeftSide.GetComponent<BattleWindow>().ClearActor();
+		battleWindowRightSide.GetComponent<BattleWindow>().ClearActor();
+
 		foreach (GameObject card in cardObjectList)
 		{ card.GetComponent<Card>().SetLock(false); }
 		isActionDone = true;
-
 	}
 
 	public List<Field> GetPlayerFields()
@@ -463,7 +451,6 @@ public class BattleManager : MonoBehaviour
 
 				invisibleImage.SetActive(true);
 
-
 				PlayerData.saveData.health = playerHealth;
 
 
@@ -647,7 +634,11 @@ public class BattleManager : MonoBehaviour
 		Dictionary<string, int> myDeck = PlayerData.saveData.deck;
 
 
-		foreach(KeyValuePair<string, int> value in myDeck)
+		battleWindowLeftSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
+		battleWindowRightSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
+
+
+		foreach (KeyValuePair<string, int> value in myDeck)
 		{
 			deck.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value);
 		}
@@ -758,9 +749,7 @@ public class BattleManager : MonoBehaviour
 		{card.GetComponent<Card>().HideAndReveal(false);}
 
 
-		foreach (GameObject card in cardObjectList)
-		{ card.GetComponent<Card>().SetLock(false); }
-		yield return new WaitForSeconds(0.4f);
+		
 
 
 
@@ -780,6 +769,9 @@ public class BattleManager : MonoBehaviour
 		}
 		yield return new WaitForSeconds(0.3f);
 		turnState = ETurnState.Player;
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(false); }
+		yield return new WaitForSeconds(0.4f);
 
 
 		yield return delay07;
@@ -962,6 +954,30 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
+	private IEnumerator ShowActivatingCard(ECardType cardType , CardData cardData)
+	{
+		GameObject cardObject = new();
+		switch (cardType)
+		{
+			case ECardType.Servent:
+				cardObject = Instantiate(serventCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				break;
+			case ECardType.Spell:
+				cardObject = Instantiate(spellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				break;
+			case ECardType.Field:
+				cardObject = Instantiate(fieldSpellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				break;
+			case ECardType.Enemy:
+				cardObject = Instantiate(fieldSpellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				cardObject.GetComponent<Card>().SetEnemyActionCard(cardData as EnemyServentCardData);
+				break;
+		}
+		cardObject.transform.SetParent(canvas.transform);
+		cardObject.GetComponent<Card>().InitiateActionInBattle();
+		yield return new WaitForSeconds(0.3f);
+	}
+
 
 
 
@@ -981,7 +997,6 @@ public class BattleManager : MonoBehaviour
 
 		for (int i = 0; i < actionToken; ++i)
 		{
-			// 1. 현재 상태 분석
 			List<Field> filledField = new();
 			List<Field> emptyField = new();
 			List<Field> attackableField = new();
@@ -1026,8 +1041,11 @@ public class BattleManager : MonoBehaviour
 						StartCoroutine(ShowEnemyActionCard(randomServent,field.transform));
 						yield return new WaitForSeconds(2f);
 
-						field.Summon(randomServent,
-							Instantiate(enemyServentPrefabList[0], field.transform.position, Utils.QI));
+						GameObject serventObject =
+							Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
+						field.Summon(randomServent, serventObject);
+						serventObject.GetComponent<Servent>().InitWithEffect();
+
 						soundEffect.PlayOneShot(serventSummon);
 						field.locked = false;
 					}
@@ -1048,9 +1066,7 @@ public class BattleManager : MonoBehaviour
 						StartCoroutine(EnemyAttack(startField, targetField));
 					}
 					else
-					{
-						isActionDone = true;
-					}
+					{isActionDone = true;}
 					break;
 
 				case EEnemyAction.Ability:
@@ -1062,10 +1078,16 @@ public class BattleManager : MonoBehaviour
 						switch (randomNum)
 						{
 							case 0: Debug.Log("대장이 능력을 사용합니다."); break;
+
 							case 1: Debug.Log("1번 필드의 적이 능력을 사용합니다."); break;
+
 							case 2: Debug.Log("2번 필드의 적이 능력을 사용합니다."); break;
+
 							case 3: Debug.Log("3번 필드의 적이 능력을 사용합니다."); break;
 						}
+
+
+						StartCoroutine(currentEnemy.EffectExecute(this));
 					}
 					isActionDone = true;
 					break;
@@ -1075,11 +1097,9 @@ public class BattleManager : MonoBehaviour
 					isActionDone = true;
 					break;
 			}
-
 			yield return new WaitUntil(() => isActionDone);
 			yield return new WaitForSeconds(2.5f);
 		}
-
 		isActionDone = false;
 		StartCoroutine(StartTurnCo());
 	}
@@ -1138,8 +1158,16 @@ public class BattleManager : MonoBehaviour
 			//playerActor.sprite = playerSprites[0];
 			//enemyActor.sprite = enemyServentSprite_Guard[cardHashMap[startField.GetCardData().GetCardNum()]];
 
+			GameObject leftActor = Instantiate(playerObject, new Vector3(), Utils.QI);
+
+			GameObject rightActor = Instantiate(
+					enemyServentPrefabList[cardHashMap[startField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
+
+			battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(leftActor);
+			leftActor.GetComponent<SpriteRenderer>().sortingOrder = 104;
+			battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
+			rightActor.GetComponent<Servent>().OnBattleWindow();
 			PlayerTakeAttack(attackerForce, parryState == EParryState.Succecced);
-			startField.SetAttacked(true);
 		}
 		else
 		{
@@ -1155,12 +1183,25 @@ public class BattleManager : MonoBehaviour
 			if(attackerForce < 0)
 			{defenderDamage = 0;}
 
-			startField.TakeAttack(attackerDamage);
-			targetField.TakeAttack(defenderDamage);
+			GameObject leftActor = Instantiate(
+					playerServentPrefabList[cardHashMap[targetField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
 
-			ReadyBattleWindow(targetField,EServentState.Guard, startField, EServentState.Attack);
+			GameObject rightActor = Instantiate(
+					enemyServentPrefabList[cardHashMap[startField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
+
+
+			battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(leftActor);
+			leftActor.GetComponent<Servent>().OnBattleWindow();
+
+			battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
+			rightActor.GetComponent<Servent>().OnBattleWindow();
 
 			ServentTakeAttack(defenderDamage, attackerDamage, parryState == EParryState.Succecced);
+
+			yield return new WaitForSeconds(2f);
+
+			startField.TakeAttack(attackerDamage);
+			targetField.TakeAttack(defenderDamage);
 
 			if (startField.GetPenetrate())
 			{
@@ -1171,7 +1212,6 @@ public class BattleManager : MonoBehaviour
 				
 				PlayerTakeDamage(defenderDamage);
 			}
-			startField.SetAttacked(true);
 		}
 		attackDragLine.positionCount = 0;
 		
@@ -1179,18 +1219,21 @@ public class BattleManager : MonoBehaviour
 		Color originColor = bigCircle.color;
 		Color targetColor = new Color(1f, 0.3f, 0.3f, 0.5f);
 
-
 		if(parryState == EParryState.Succecced)
 		{targetColor = new Color(0.3f, 0.3f, 1f, 0.5f);}
 		
 
 
-		bigCircle.DOColor(targetColor, 0.1f) // 빨간색으로 변경  
-					 .SetLoops(3, LoopType.Yoyo) // 2번 반복  
-					 .OnComplete(() => bigCircle.color = originColor); // 원래 색으로 복귀  
-		// FlashMultipleTimes();
+		bigCircle.DOColor(targetColor, 0.1f)
+					 .SetLoops(3, LoopType.Yoyo)
+					 .OnComplete(() => bigCircle.color = originColor);
 
 		parryState = EParryState.Idle;
+
+		yield return new WaitForSeconds(2f);
+
+		StartCoroutine(CheckEnemyCondition(2f));
+		startField.SetAttacked(true);
 		isActionDone = false;
 		yield return new WaitForSeconds(1f);
 	}
@@ -1278,19 +1321,17 @@ public class BattleManager : MonoBehaviour
 
 	public IEnumerator ActivateCardDesc(BattleCardData battleCardData, Transform target, int stackIndex)
 	{
-		yield return new WaitForSeconds(0.3f);
-
 		GameObject cardObject = Instantiate(serventCardPrefab, alertPoint.position, Utils.QI);
+		cardObject.transform.localScale = Vector3.zero;
 		cardObject.transform.SetParent(canvas.transform);
 
 		cardObject.GetComponent<Card>().SetCard(battleCardData, cardImageList[cardHashMap[battleCardData.GetCardNum()]]);
+		Sequence seq = DOTween.Sequence();
+		seq.Append(cardObject.transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.5f).SetEase(Ease.InOutQuad))
+		.Append(cardObject.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack))
+		.AppendCallback(() => actionDoneStack[stackIndex] = true);
 
-		cardObject.GetComponent<Card>().InitiateActionInBattle();
 		yield return new WaitForSeconds(0.3f);
-		cardObject.GetComponent<Card>().SendMissile(alertPoint, target);
-		yield return new WaitForSeconds(1.8f);
-		actionDoneStack[stackIndex] = true;
-
 	}
 
 	public bool CheckCardUsable()
@@ -1956,14 +1997,18 @@ public class BattleManager : MonoBehaviour
 					foreach(GameObject cardObject in cardObjectList)
 					{cardObject.GetComponent<Card>().SetLock(false);}
 
-					targetField.Summon(
-						serventCardData,
-						Instantiate(
+					GameObject serventObject = Instantiate(
 							playerServentPrefabList[cardHashMap[serventCardData.GetCardNum()]],
 							targetField.transform.position,
 							Utils.QI
-						)
+						);
+
+					targetField.Summon(
+						serventCardData,
+						serventObject
 					);
+
+					serventObject.GetComponent<Servent>().InitWithEffect();
 
 					soundEffect.PlayOneShot(serventSummon);
 
@@ -2135,7 +2180,6 @@ public class BattleManager : MonoBehaviour
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
 		enemyHealth -= damage;
-		StartCoroutine(CheckEnemyCondition(2f));
 	}
 
 	public void AttackToEnemy(int damage)
@@ -2155,8 +2199,6 @@ public class BattleManager : MonoBehaviour
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
 		playerHealth -= damage;
-
-		StartCoroutine(CheckEnemyCondition(0.3f));
 	}
 
 
@@ -2173,8 +2215,6 @@ public class BattleManager : MonoBehaviour
 		damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
 
 		playerHealth -= damage;
-
-		StartCoroutine(CheckEnemyCondition(2.2f));
 
 	}
 	public void ServentTakeAttack(int defenderDamage, int attackerDamage, bool guarded)
@@ -2193,7 +2233,6 @@ public class BattleManager : MonoBehaviour
 		if (guarded)
 			defenderDamageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
 
-		StartCoroutine(CheckEnemyCondition(2.2f));
 	}
 
 
@@ -2221,6 +2260,20 @@ public class BattleManager : MonoBehaviour
 				if (enemyDamageBlock)
 				{ attackerForce = 0; }
 
+				GameObject leftActor = Instantiate(
+						playerServentPrefabList[cardHashMap[attackerField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
+
+				GameObject rightActor = Instantiate(enemyObject, new Vector3(), Utils.QI);
+
+				battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(leftActor);
+				leftActor.GetComponent<Servent>().OnBattleWindow();
+				battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
+				rightActor.GetComponent<SpriteRenderer>().sortingOrder = 104;
+
+
+				//battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(Instantiate(
+				//	playerServentPrefabList[cardHashMap[attackerField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI));
+				//battleWindowRightSide.GetComponent<BattleWindow>().SetActor(Instantiate(enemyObject, new Vector3(), Utils.QI));
 
 				AttackToEnemy(attackerForce);
 
@@ -2241,6 +2294,19 @@ public class BattleManager : MonoBehaviour
 
 					int attackerDamage = Math.Abs(defenderForce);
 					int defenderDamage = Math.Abs(attackerForce);
+
+					GameObject leftActor = Instantiate(
+					playerServentPrefabList[cardHashMap[attackerField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
+
+					GameObject rightActor = Instantiate(
+							enemyServentPrefabList[cardHashMap[defenderField.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
+
+
+					battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(leftActor);
+					leftActor.GetComponent<Servent>().OnBattleWindow();
+
+					battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
+					rightActor.GetComponent<Servent>().OnBattleWindow();
 
 
 
@@ -2264,10 +2330,10 @@ public class BattleManager : MonoBehaviour
 						else
 						{
 							actionDoneStack[1] = false;
+							DealDamageToEnemy(defenderDamage);
 							StartCoroutine(ActivateCardDesc(new CrescentLancer(), enemyField.transform, 1));
 
 							yield return new WaitUntil(() => actionDoneStack[1]);
-							DealDamageToEnemy(defenderDamage);
 						}
 
 					}

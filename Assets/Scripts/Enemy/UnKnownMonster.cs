@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 public class UnknownMonster : Enemy
@@ -7,7 +8,7 @@ public class UnknownMonster : Enemy
         enemyName = "정체불명의 괴물";
         enemyNum = "0";
         enemyHealth = 3;
-        enemyGold = 300;
+        enemyGold = 70;
         actionToken = 3;
 
         enemyRewards = new Dictionary<ItemData, int>()
@@ -19,7 +20,7 @@ public class UnknownMonster : Enemy
         
         serventList = new List<EnemyServentCardData>
         {
-            new ChaoticCorvus(),
+            new ShadowCorvus(),
             new Wild()
         };
 
@@ -27,4 +28,9 @@ public class UnknownMonster : Enemy
 
         SetRewards();
     }
+
+	public IEnumerator EffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
 }

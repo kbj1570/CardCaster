@@ -37,11 +37,12 @@ public class Servent : MonoBehaviour
 	public Texture2D texture2D;
 	private Material monsterMaterial;
 
-	bool isDissolving = true;
+	// 기본값을 false로 바꿔서 그냥 등장
+	bool isDissolving = false;
 	bool isDying = false;
-	float fade = 0f;
+	float fade = 1f; // 연출 없이 바로 보이도록 1로 시작
 
-	void Start()
+	void Awake()
 	{
 		monsterMaterial = spriteRenderer.GetComponent<SpriteRenderer>().material;
 		monsterMaterial.SetTexture("_MainTex", texture2D);
@@ -49,8 +50,14 @@ public class Servent : MonoBehaviour
 		monsterMaterial.SetColor("_Color", fadeColor);
 	}
 
+	public void OnBattleWindow()
+	{
+		spriteRenderer.sortingOrder = 104;
+	}
+
 	void Update()
 	{
+		// 선택적으로 등장 연출을 켤 때만 동작
 		if (isDissolving)
 		{
 			fade += Time.deltaTime * 1.1f;
@@ -81,47 +88,50 @@ public class Servent : MonoBehaviour
 		}
 	}
 
+	// 필요할 때만 호출해서 등장 연출 시작
+	public void InitWithEffect()
+	{
+		isDissolving = true;
+		fade = 0f;
+		monsterMaterial.SetFloat("_Fade", fade);
+	}
+
 	public void Dead()
-	{isDying = true;}
+	{ isDying = true; }
 
 	public void ChangeState(EServentState state)
 	{
-		switch(state)
+		switch (state)
 		{
 			case EServentState.Idle:
 				spriteRenderer.sprite = idle;
 				break;
-
 			case EServentState.Attack:
 				spriteRenderer.sprite = attack;
 				break;
-
 			case EServentState.Guard:
 				spriteRenderer.sprite = guard;
 				break;
-
 			case EServentState.Death:
 				spriteRenderer.sprite = death;
 				break;
-
 			case EServentState.Ready:
 				spriteRenderer.sprite = ready;
 				break;
-
 		}
 	}
 
 	public void OnMouseUp()
 	{
-		if(mouseOn)
-		{StartCoroutine(BattleManager.Inst.ShowServentInfo(this));}
+		if (mouseOn)
+		{ StartCoroutine(BattleManager.Inst.ShowServentInfo(this)); }
 	}
 
 	public void OnMouseEnter()
-	{mouseOn = true;}
+	{ mouseOn = true; }
 
 	public void OnMouseExit()
-	{mouseOn = false;}
+	{ mouseOn = false; }
 
 	public void ShowInfo()
 	{
@@ -136,11 +146,11 @@ public class Servent : MonoBehaviour
 		activationButton.gameObject.SetActive(false);
 	}
 	public int GetServentNum()
-	{return serventNum;}
+	{ return serventNum; }
 	public EServentType GetServentType()
-	{return serventType;}
+	{ return serventType; }
 	public void SetServentType(EServentType serventType)
-	{this.serventType = serventType;}
+	{ this.serventType = serventType; }
 	public Transform GetDragPoint()
-	{return dragPoint; }
+	{ return dragPoint; }
 }

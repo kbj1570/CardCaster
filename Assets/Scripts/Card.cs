@@ -65,7 +65,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public void InitiateActionInBattle()
 	{
 		this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
-		StartCoroutine(AppearAfterDelay(0.5f)); // 0.3초 후 애니메이션 실행
+		StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
 	}
 
 	public IEnumerator PlayRevealAnimation()
@@ -331,43 +331,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		costTMP.text = this.cardData.GetCardCost().ToString();
 	}
 
-	//public void Setup(ServentCardData cardData)
-	//{
-	//	this.cardData = cardData;
-	//	nameTMP.text = this.cardData.GetCardName();
-	//	cardType = cardData.GetCardType();
-	//	costTMP.text = this.cardData.GetCardCost().ToString();
-
-	//	Sprite image = null;
-	//	switch (cardData.GetAttribute())
-	//	{
-	//		case EServentAttribute.Fire:
-	//			image = fireElement;
-	//			break;
-
-	//		case EServentAttribute.Water:
-	//			image = waterElement;
-	//			break;
-
-	//		case EServentAttribute.Earth:
-	//			image = earthElement;
-	//			break;
-
-	//		case EServentAttribute.Dark:
-	//			image = darknessElement;
-	//			break;
-
-	//		case EServentAttribute.Wind:
-	//			image = windElement;
-	//			break;
-
-	//		case EServentAttribute.Light:
-	//			image = lightElement;
-	//			break;
-
-	//	}
-
-	//}
 
 
 	public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)

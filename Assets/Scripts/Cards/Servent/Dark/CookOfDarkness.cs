@@ -12,7 +12,7 @@ public class CookOfDarkness : ServentCardData
 		serventType = EServentType.Player;
 		force = 1;
 		cardStoryDesc = "";
-		cardDesc = "소환시 자신의 덱에서 [스튜]를 2장 가져온다.";
+		cardDesc = "소환 시 자신의 덱에서 \r\n[수상한 스튜]를 2장 가져온다.";
 		serventSize = EServentSize.Small;
 		cardTargetType = ECardTargetType.Select;
 		serventAttribute = EServentAttribute.Dark;

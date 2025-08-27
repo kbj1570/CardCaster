@@ -7,7 +7,7 @@ public class BezierMissile : MonoBehaviour {
 	bool hit = false;
 
 	private float t = 0;
-	float spd = 2f;
+	float spd = 3f;
 	float posA = 3f;
 	float posB = 3f;
 	public Vector3 master;
