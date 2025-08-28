@@ -1,15 +1,15 @@
 using System.Collections;
 
-public class OddedStew : SpellCardData
+public class DoubleEdgedSword : SpellCardData
 {
-	public OddedStew()
+	public DoubleEdgedSword()
 	{
-		cardNum = "105";
-		cardName = "수상한 스튜";
+		cardNum = "106";
+		cardName = "양날의 검";
 		cardCost = 1;
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
-		cardDesc = "자신의 HP를 1 회복한다.";
+		cardDesc = "1장을 드로우 하고,\r\n자신의 HP를 4 잃는다.";
 		cardTargetType = ECardTargetType.Selected;
 		spellType = ESpellType.Normal;
 
@@ -30,8 +30,12 @@ public class OddedStew : SpellCardData
 		bm.HealPlayer(1);
 		yield return null;
 	}
+
 	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
 	{
 		yield return null;
 	}
+
+
+
 }

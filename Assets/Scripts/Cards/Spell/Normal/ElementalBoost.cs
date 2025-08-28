@@ -51,6 +51,10 @@ public class ElementalBoost : SpellCardData
 
 		yield return null;
 	}
+	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
 
 }
 public enum ETrigger

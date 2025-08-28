@@ -11,7 +11,7 @@ public class ToddleyWoodley : ServentCardData
         serventType = EServentType.Player;
         force = 5;
         cardStoryDesc = "";
-        cardDesc = "공격시 소환사는 2 대미지를 입는다.";
+        cardDesc = "공격 시 자신은 HP를 3 잃는다.";
         abilityType = EAbilityType.Attack;
 		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;

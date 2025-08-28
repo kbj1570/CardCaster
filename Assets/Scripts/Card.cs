@@ -104,7 +104,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		OnPointerExitAction = exitAction;
 	}
 
-	public void Init(BattleCardData data, int slotCount, Action<Card, PointerEventData> clickAction)
+	public void Init(CardData data, int slotCount, Action<Card, PointerEventData> clickAction)
 	{
 		cardData = data;
 		this.slotCount = slotCount;
@@ -162,14 +162,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public void UpdateIsUsable()
 	{ isUsable = (currentCost == 0); }
 
-	public void SetCard(CardData cardData, Sprite sprite)
-	{
-		this.cardData = cardData;
-		nameTMP.text = this.cardData.GetCardName();
-		cardType = cardData.GetCardType();
-		cardImage.sprite = sprite;
-	}
-
 	public void SetEnemyActionCard(EnemyServentCardData enemyServentCardData)
 	{
 		nameTMP.text = enemyServentCardData.GetCardName();
@@ -182,7 +174,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	}
 
 
-	public void SetCard(BattleCardData cardData, Sprite sprite)
+	public void SetCard(CardData cardData, Sprite sprite)
 	{
 		this.cardData = cardData;
 		nameTMP.text = this.cardData.GetCardName();
@@ -307,23 +299,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	}
 
 	public void Setup(CardData cardData)
-	{
-		this.cardData = cardData;
-		nameTMP.text = this.cardData.GetCardName();
-		cardType = cardData.GetCardType();
-		costTMP.text = this.cardData.GetCardCost().ToString();
-	}
-
-
-	public void Setup(SpellCardData cardData)
-	{
-		this.cardData = cardData;
-		nameTMP.text = this.cardData.GetCardName();
-		cardType = cardData.GetCardType();
-		costTMP.text = this.cardData.GetCardCost().ToString();
-	}
-
-	public void Setup(BattleCardData cardData)
 	{
 		this.cardData = cardData;
 		nameTMP.text = this.cardData.GetCardName();

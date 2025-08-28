@@ -125,7 +125,7 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new RedSlime());//103
         cardDatas.Add(new GreenSlime());//104
 		cardDatas.Add(new OddedStew());//105
-		cardDatas.Add(new OddedStew());//106
+		cardDatas.Add(new DoubleEdgedSword());//106
 		cardDatas.Add(new NoWayToReturn());//107
 		cardDatas.Add(new WillOfWarrior());//108
         cardDatas.Add(new BrownSlime());//109

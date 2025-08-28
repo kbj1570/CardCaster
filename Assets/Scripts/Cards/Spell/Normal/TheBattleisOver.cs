@@ -47,5 +47,9 @@ public class TheBattleisOver : SpellCardData
 		}
 		yield return null;
 	}
+	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
+	{
+		yield return null;
+	}
 
 }

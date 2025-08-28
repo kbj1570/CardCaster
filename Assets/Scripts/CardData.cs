@@ -31,11 +31,7 @@ public class CardData
 	public List<PreRequisite> GetPreRequisites(){return preRequisites;}
 }
 
-public class BattleCardData : CardData
-{
-	
-}
-	public struct PreRequisite
+public struct PreRequisite
 {
 	public EPreRequisite preRequisite;
 	public EServentAttribute serventAttribute;
@@ -44,14 +40,14 @@ public class BattleCardData : CardData
 	public string cardNum;
 }
 
-public interface IServentCardEffect
+public interface ICardEffect
 {
 	public IEnumerator SummonEffectExecute(BattleManager bm);
 	public IEnumerator AttackEffectExecute(BattleManager bm);
 	public IEnumerator DefendEffectExecute(BattleManager bm);
-}
-
-public interface ISpellCardEffect
-{
-	public IEnumerator SpellEffectExecute(BattleManager bm);
+	public IEnumerator HitEffectExecute(BattleManager bm);
+	public IEnumerator DeathEffectExecute(BattleManager bm);
+	public IEnumerator StandByPhaseEffectExecute(BattleManager bm);
+	public IEnumerator EndPhaseEffectExecute(BattleManager bm);
+	public IEnumerator ActivationEffectExecute(BattleManager bm);
 }

@@ -12,7 +12,7 @@ public class KnightOfTheRedFlame : ServentCardData
         serventType = EServentType.Player;
         force = 2;
         cardStoryDesc = "";
-        cardDesc = "소멸될 때, 덱에서 [창해의 기사]를 1장 가져온다.";
+        cardDesc = "소멸될 시, 덱에서\r\n[창해의 기사]를 가져온다.";
 		abilityType = EAbilityType.Death;
 		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;

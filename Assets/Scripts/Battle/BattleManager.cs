@@ -10,22 +10,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public enum EEnemyAction{None, Summon, Attack, Ability}
-public enum EServentType{None, Player, Enemy}
-public enum ETurnState{None, Player, Enemy}
-public enum ECardType{None ,Servent, Spell, Field, Enemy}
-public enum ESpellType {None, Normal, Field}
-public enum ECardRarity{None, Normal, Rare}
-
-public enum EAbilityType{None, Normal, Active, Defend, Summon, Attack, Death}
-public enum EServentAttribute{None, Fire, Water, Earth, Wind, Dark, Light}
-public enum ECardState{Nothing, CanMouseOver, CanMouseDrag}
-public enum EMouseOnArea{None, Player, Enemy, Field_1, Field_2, Field_3, Field_4, Field_5, Field_6, AnyWhere, Hole, Inventory, Storage, Trash}
-public enum ECardTargetType{Selected, Select}
-public enum EServentCondition{None, Void, Oblivion, Poison, Madness, Testament}
-public enum EServentSize{Small, Middle, Big}
-public enum EServentState{None, Idle, Guard, Ready, Summon, Attack, Death}
-public enum EParryState{Idle, Parry, Succecced, Failed}
 
 public class BattleManager : MonoBehaviour
 {
@@ -95,9 +79,9 @@ public class BattleManager : MonoBehaviour
 	public Transform selectedTargetLineEnd;
 
 	public EMouseOnArea mouseOnArea;
-	public List<BattleCardData> deckList;
-	public List<BattleCardData> trashList;
-	public List<BattleCardData> handList;
+	public List<CardData> deckList;
+	public List<CardData> trashList;
+	public List<CardData> handList;
 	private List<GameObject> cardObjectList;
 	WaitForSeconds delay07 = new WaitForSeconds(0.7f);
 	public LineRenderer cardDragLine;
@@ -629,7 +613,7 @@ public class BattleManager : MonoBehaviour
 		enemyHealth = currentEnemy.GetHealth();
 		cardHashMap = DataController.Inst.LoadCardHashMap();
 
-		Dictionary<BattleCardData, int> deck = new Dictionary<BattleCardData, int>();
+		Dictionary<CardData, int> deck = new Dictionary<CardData, int>();
 		List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
 		Dictionary<string, int> myDeck = PlayerData.saveData.deck;
 
@@ -640,14 +624,14 @@ public class BattleManager : MonoBehaviour
 
 		foreach (KeyValuePair<string, int> value in myDeck)
 		{
-			deck.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value);
+			deck.Add(cardDatabase[cardHashMap[value.Key]], value.Value);
 		}
 
 		deckList = new();
 		cardObjectList = new();
 		trashList = new();
 		
-		foreach(KeyValuePair<BattleCardData, int> value in deck)
+		foreach(KeyValuePair<CardData, int> value in deck)
 		{
 			for(int i = 0; i < value.Value; ++i)
 			{deckList.Add(value.Key);}
@@ -666,7 +650,7 @@ public class BattleManager : MonoBehaviour
 		{
 			int a = Random.Range(0, deckList.Count);
 			int b = Random.Range(0, deckList.Count);
-			BattleCardData c = deckList[a];
+			CardData c = deckList[a];
 			deckList[a] = deckList[b];
 			deckList[b] = c;
 		}
@@ -825,7 +809,7 @@ public class BattleManager : MonoBehaviour
 		yield return new WaitForSeconds(0.3f);
 	}
 
-	public GameObject InstantiateCard(BattleCardData battleCardData)
+	public GameObject InstantiateCard(CardData battleCardData)
 	{
 
 		GameObject selectedCardPrefab = null;
@@ -904,19 +888,17 @@ public class BattleManager : MonoBehaviour
 		cardObject.transform.SetParent(canvas.transform);
 		cardObjectList.Add(cardObject);
 
-
 		cardObject.GetComponent<Card>().SetCard(battleCardData, cardImageList[cardHashMap[battleCardData.GetCardNum()]]);
 
 		cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
 		handList.Add(battleCardData);
 		CardAlignmentAlt();
 
-
 		ShotDrawMissile(cardObject.transform);
 		return cardObject;
 	}
 
-	public void SearchCardInDeck(BattleCardData targetCardData)
+	public void SearchCardInDeck(CardData targetCardData)
 	{
 
 		var cardDataToRemove = deckList.Find(cardData => cardData.GetCardNum() == targetCardData.GetCardNum());
@@ -1319,7 +1301,7 @@ public class BattleManager : MonoBehaviour
 		StartCoroutine(StartTurnCo());
 	}
 
-	public IEnumerator ActivateCardDesc(BattleCardData battleCardData, Transform target, int stackIndex)
+	public IEnumerator ActivateCardDesc(CardData battleCardData, Transform target, int stackIndex)
 	{
 		GameObject cardObject = Instantiate(serventCardPrefab, alertPoint.position, Utils.QI);
 		cardObject.transform.localScale = Vector3.zero;
@@ -1943,13 +1925,13 @@ public class BattleManager : MonoBehaviour
 	{
 		handList.RemoveAt(card.GetCardOrder());
 		cardObjectList.Remove(card.gameObject);
-		AddTrash(card.GetCardData() as BattleCardData);
+		AddTrash(card.GetCardData());
 		card.SendMissile(alertPoint, hole.transform);
 		costCount++;
 
-		List<BattleCardData> newHandList = new List<BattleCardData>();
+		List<CardData> newHandList = new List<CardData>();
 
-		foreach (BattleCardData cardData in handList)
+		foreach (CardData cardData in handList)
 		{ newHandList.Add(cardData); }
 
 		for (int i = 0; i < cardObjectList.Count; ++i)
@@ -2038,7 +2020,7 @@ public class BattleManager : MonoBehaviour
 					StartCoroutine(spellCardData.SpellEffectExecute(this));
 
 
-					AddTrash(card.GetCardData() as BattleCardData);
+					AddTrash(card.GetCardData());
 					handList.RemoveAt(card.GetCardOrder());
 					cardObjectList.Remove(card.gameObject);
 
@@ -2072,7 +2054,7 @@ public class BattleManager : MonoBehaviour
 		{return;}
 
 
-		List<BattleCardData> targetList;
+		List<CardData> targetList;
 
 		if(deckList.Count != 0)
 		{targetList = deckList;}
@@ -2082,7 +2064,7 @@ public class BattleManager : MonoBehaviour
 			targetList = trashList;
 		}
 
-		BattleCardData cardData = targetList[targetList.Count - 1];
+		CardData cardData = targetList[targetList.Count - 1];
 
 		targetList.RemoveAt(targetList.Count - 1);
 
@@ -2533,12 +2515,12 @@ public class BattleManager : MonoBehaviour
 		trashWindow.GetComponent<Window>().OnOff();
 	}
 
-	public void AddTrash(BattleCardData cardData)
+	public void AddTrash(CardData cardData)
 	{    
 		trashList.Add(cardData);
 	}
 
-	public void RemoveTrash(BattleCardData cardData)
+	public void RemoveTrash(CardData cardData)
 	{
 		trashList.Remove(cardData);
 	}

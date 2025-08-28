@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEngine;
 
 public class NamelessTraveler : ServentCardData
 {
@@ -12,7 +11,7 @@ public class NamelessTraveler : ServentCardData
         serventType = EServentType.Player;
         force = 3;
         cardStoryDesc = "";
-        cardDesc = "이 소환수가 다른 소환수를 공격할 때, 모든 적에게 1 대미지를 준다.";
+        cardDesc = "다른 소환수를 공격할 시, 모든 적에게 1 대미지를 준다.";
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Dark;

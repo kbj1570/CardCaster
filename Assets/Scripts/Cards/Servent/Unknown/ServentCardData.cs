@@ -1,6 +1,6 @@
 using System.Collections;
 
-public abstract class ServentCardData : BattleCardData, IServentCardEffect
+public abstract class ServentCardData : CardData, ICardEffect
 {
 	protected EServentAttribute serventAttribute;
 	protected EServentSize serventSize;
@@ -16,7 +16,6 @@ public abstract class ServentCardData : BattleCardData, IServentCardEffect
 	protected int weight;
 	protected bool penetrate;
 	protected bool voidWalker;
-
 	protected bool fireImmune;
 	protected bool waterImmune;
 	protected bool windImmune;
@@ -34,5 +33,9 @@ public abstract class ServentCardData : BattleCardData, IServentCardEffect
 	public abstract IEnumerator AttackEffectExecute(BattleManager bm);
 	public abstract IEnumerator DefendEffectExecute(BattleManager bm);
 	public abstract IEnumerator DeathEffectExecute(BattleManager bm);
+	public abstract IEnumerator HitEffectExecute(BattleManager bm);
 	public abstract IEnumerator ActivationEffectExecute(BattleManager bm);
+
+	public abstract IEnumerator StandByPhaseEffectExecute(BattleManager bm);
+	public abstract IEnumerator EndPhaseEffectExecute(BattleManager bm);
 }
