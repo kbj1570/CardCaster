@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEngine;
 
 public class FireBat : ServentCardData
 {
@@ -21,23 +22,6 @@ public class FireBat : ServentCardData
 	{
 		bm.DealDamageToEnemy(2);
 		bm.HealPlayer(2);
-		yield return null;
-	}
-	public override IEnumerator AttackEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DeathEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
-	{
-		yield return null;
+		yield return new WaitForSeconds(1f);
 	}
 }

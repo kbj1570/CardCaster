@@ -12,25 +12,16 @@ public class Celestia : SpellCardData
 		cardDesc = "덱 또는 묘지에서 [크레센트 랜서]를 가져온다.";
 		cardTargetType = ECardTargetType.Selected;
 		spellType = ESpellType.Field;
-
-		preRequisites = new();
-		PreRequisite preRequisite = new();
-		preRequisite.preRequisite = EPreRequisite.None;
-
-		preRequisites.Add(preRequisite);
 	}
 
-	public override bool IsSpellUsable(BattleManager bm)
+	public override bool IsCardUsable(BattleManager bm)
 	{
 		return true;
 	}
 
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		bm.HealPlayer(1);
 		yield return null;
 	}
-
-
-
 }

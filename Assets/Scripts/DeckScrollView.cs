@@ -13,7 +13,7 @@ public class DeckScrollView : MonoBehaviour
 	public Transform focusOnCardPosition;
 	public GameObject smallCardPrefab;
 	private GameObject focusOnCard;
-	private Dictionary<BattleCardData, int> myDeckList;
+	private Dictionary<CardData, int> myDeckList;
 	private List<CardData> cardDatabase;
 	private List<GameObject> deckCardObjectList;
 
@@ -48,13 +48,13 @@ public class DeckScrollView : MonoBehaviour
 		deckCardObjectList = new List<GameObject>();
 
 		foreach (KeyValuePair<string, int> value in PlayerData.saveData.deck)
-		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]], value.Value); }
 		UpdateDeckScroll();
 	}
 
 
 
-	public void FocusOnCard(BattleCardData cardData)
+	public void FocusOnCard(CardData cardData)
 	{
 		GameObject selectedCardPrefab = null;
 
@@ -111,7 +111,7 @@ public class DeckScrollView : MonoBehaviour
 		foreach (GameObject gameObject in deckCardObjectList)
 		{ Destroy(gameObject); }
 
-		foreach (KeyValuePair<BattleCardData, int> value in myDeckList)
+		foreach (KeyValuePair<CardData, int> value in myDeckList)
 		{
 			GameObject smallCard = Instantiate(smallCardPrefab, new Vector3(0, 0, 0), Utils.QI);
 			deckCardObjectList.Add(smallCard);
@@ -162,7 +162,5 @@ public class DeckScrollView : MonoBehaviour
 
 			deckCount += value.Value;
 		}
-
-		//deckCountText.text = deckCount.ToString() + "  /  30";
 	}
 }

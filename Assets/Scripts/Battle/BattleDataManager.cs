@@ -9,7 +9,6 @@ public class BattleDataManager
 
 public enum EEnemyAction { None, Summon, Attack, Ability }
 public enum EServentType { None, Player, Enemy }
-public enum ETurnState { None, Player, Enemy }
 public enum ECardType { None, Servent, Spell, Field, Enemy }
 public enum ESpellType { None, Normal, Field }
 public enum ECardRarity { None, Normal, Rare }

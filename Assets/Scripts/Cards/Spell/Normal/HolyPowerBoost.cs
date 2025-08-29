@@ -13,42 +13,15 @@ public class HolyPowerBoost : SpellCardData
         cardDesc = "자신의 HP가 1일때만 사용할 수 있다. 서로의 소횐수들을 전부 소멸시킨다.";
         cardTargetType = ECardTargetType.Selected;
         spellType = ESpellType.Normal;
-
-        preRequisites = new();
-        PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.PlayerHPCount;
-        preRequisite.count = 1;
-
-        preRequisites.Add(preRequisite);
-
-
-        preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.AllServentCountOver;
-        preRequisite.count = 0;
-
-        preRequisite.serventAttribute = EServentAttribute.None;
-
-        preRequisites.Add(preRequisite);
-
     }
-
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return bm.playerHealth == 1;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
-	{
-		List<Field> allFields = bm.GetAllFields();
-		foreach (Field field in allFields)
-		{
+    public override IEnumerator ActivationEffectExecute(BattleManager bm)
+    {
+        List<Field> allFields = bm.GetAllFields();
+        foreach (Field field in allFields)
+        {
             if (field.GetFilled())
                 field.Kill();
-		}
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
+        }
+        yield return null;
+    }
 }

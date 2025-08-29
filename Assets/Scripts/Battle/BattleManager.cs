@@ -32,33 +32,16 @@ public class BattleManager : MonoBehaviour
 	int enemyDamageIncrease;
 
 
-	ETurnState turnState;
 	List<Enemy> enemies = new();
 	Enemy currentEnemy;
 	int enemyIndex = 0;
 
-	public Transform playerActor;
-	public Transform enemyActor;
-
-
 	public GameObject runawayButton;
-	
 	public GameObject floatingTextPrefab;
-	public Transform enemyTransform;
 	public Transform alertPoint; 
 	public static BattleManager Inst{get; private set;}
 	public Canvas canvas;
 	public Camera camera;
-	public RectTransform backgroundDetectArea;
-	public RectTransform playerDetectArea;
-	public RectTransform enemyDetectArea;
-	public RectTransform holeDetectArea;
-	public RectTransform fieldDetectArea_1;
-	public RectTransform fieldDetectArea_2;
-	public RectTransform fieldDetectArea_3;
-	public RectTransform fieldDetectArea_4;
-	public RectTransform fieldDetectArea_5;
-	public RectTransform fieldDetectArea_6;
 	public Field playerField;
 	public Field enemyField;
 	public Field field_1;
@@ -67,23 +50,23 @@ public class BattleManager : MonoBehaviour
 	public Field field_4;
 	public Field field_5;
 	public Field field_6;
-	public GameObject hole;
-	public List<GameObject> anyWhereAreas;
 
+	public List<GameObject> anyWhereAreas;
 	public List<GameObject> playerServentPrefabList;
 	public List<GameObject> playerServentInfoList;
 	public List<GameObject> enemyServentPrefabList;
 	public List<GameObject> enemyServentInfoList;
-	public Transform cardAreaBorderLeft;
-	public Transform cardAreaBorderRight;
-	public Transform selectedTargetLineEnd;
+	public List<Sprite> cardImageList;
 
-	public EMouseOnArea mouseOnArea;
 	public List<CardData> deckList;
 	public List<CardData> trashList;
 	public List<CardData> handList;
+
+	public Transform cardAreaBorderLeft;
+	public Transform cardAreaBorderRight;
+
+	public EMouseOnArea mouseOnArea;
 	private List<GameObject> cardObjectList;
-	WaitForSeconds delay07 = new WaitForSeconds(0.7f);
 	public LineRenderer cardDragLine;
 	public LineRenderer attackDragLine;
 	public int lineCount;
@@ -91,19 +74,14 @@ public class BattleManager : MonoBehaviour
 
 	public GameObject playerObject;
 	public GameObject enemyObject;
+	public GameObject hole;
 
-
-	private bool myTurn;
-
-
-	public GameObject invisibleImage;
 	public GameObject battleWindowLeftSide;
 	public GameObject battleWindowRightSide;
 
 	public GameObject itemOrganizeWindow;
 
 	public Transform battleWindowLeftSideFloatTextLocation;
-
 	public Transform battleWindowRightSideFloatTextLocation;
 
 	public Transform battleWindowLeftSideFirstPosition;
@@ -111,12 +89,11 @@ public class BattleManager : MonoBehaviour
 	public Transform battleWindowRightSideFirstPosition;
 	public Transform battleWindowRightSideSecondPosition;
 
-
 	public GameObject missile;
 	public GameObject missileTarget;
-	public Servent clickedServent;
 	public GameObject clickedServentInfo;
 
+	public Servent clickedServent;
 
 	public TMP_Text costCountText;
 	public TMP_Text deckCountText;
@@ -132,8 +109,6 @@ public class BattleManager : MonoBehaviour
 	public List<CardData> selectedCards;
 	public GridLayoutGroup selectedCardLayoutGroup;
 	public GridLayoutGroup trashLayoutGroup;
-	public GameObject cardSelectFrame;
-	public GameObject cardSelectWindow;
 	public GameObject trashWindow;
 	public Image fadeImage;
 	public Image flashImage;
@@ -146,24 +121,27 @@ public class BattleManager : MonoBehaviour
 	public GameObject fieldSpellCardPrefab;
 
 
-	public List<Sprite> cardImageList;
 
 
 	public GameObject alertMessage;
 	public GameObject gameOverWindow;
 
 	private int selectedLimit;
+
+
+	private bool phaseFlag;
 	private bool isActionDone = false;
 	bool isParryWindowActive = false;
 
 	float parryWindowTime = 0.3f;
 	float circleSpeed = 1f;
+
+
 	public int playerHealth;
 	public int enemyHealth;
 
-	private List<int> currentAbilities;
 
-	private List<bool> actionDoneStack = Enumerable.Repeat(false, 10).ToList();
+
 	private IEnumerator ShowBattleWindow()
 	{
 		
@@ -248,13 +226,9 @@ public class BattleManager : MonoBehaviour
 		sequence.Play();
 	}
 
-	void Start()
-	{
-		
-	}
-
 	void Awake()
 	{
+		Debug.Log("Awake Start");
 		Inst = this;
 		enemies = BattleData.enemies;
 		GameSetup();
@@ -264,8 +238,10 @@ public class BattleManager : MonoBehaviour
 		selectedCards = new();
 		mouseOnArea = EMouseOnArea.None;
 
-		StartCoroutine(StartGameCo());
+
+
 		StartCoroutine(FadeIn());
+		StartCoroutine(GameLoop());
 	}
 
 	public bool AddSelectedCards(CardData cardData)
@@ -279,7 +255,7 @@ public class BattleManager : MonoBehaviour
 	}
 	private IEnumerator FadeIn() 
 	{
-		
+		Debug.Log("FadeIn Start");
 		float time = 0;
 		Color color = fadeImage.color;
 		
@@ -315,21 +291,6 @@ public class BattleManager : MonoBehaviour
 		selectedCards.Remove(cardData);
 	}
 
-	public void CloseSelectedCards()
-	{
-		if(selectedCards.Count == selectedLimit)
-		{
-			isActionDone = true;
-			cardSelectWindow.GetComponent<Window>().OnOff();
-
-			for( int i = selectedCardLayoutGroup.transform.childCount - 1; i >= 0 ; --i )
-			{Destroy(selectedCardLayoutGroup.transform.GetChild(i).gameObject );}
-		}
-		else
-		{
-			Debug.Log("카드를 선택하세요.");
-		}
-	}
 	//public void ShowSelectedCards(List<BattleCardData> targetList,ECardType cardType, int limit)
 	//{
 	//	isActionDone = false;
@@ -359,54 +320,6 @@ public class BattleManager : MonoBehaviour
 	//}
 
 	
-	IEnumerator ActivateEnemyAbility(EnemyAbility enemyAbility)
-	{
-		yield return new WaitForSeconds(.3f);
-		switch(enemyAbility.GetNum())
-		{
-			case "0": // 미지의 안개
-			{
-				if(field_1.GetFilled())
-				{
-					field_1.TakeDamage(1);
-				}
-
-				if(field_2.GetFilled())
-				{
-					field_2.TakeDamage(1);
-				}
-
-				if(field_3.GetFilled())
-				{
-					field_3.TakeDamage(1);
-				}
-
-				PlayerTakeDamage(1);
-				break;
-			}
-			case "1": // 사나운 울음소리
-			{
-				List<Field> filledField = new();
-				if(field_1.GetFilled())
-				{filledField.Add(field_1);}
-
-				if(field_2.GetFilled())
-				{filledField.Add(field_2);}
-
-				if(field_3.GetFilled())
-				{filledField.Add(field_3);}
-
-				int randomNum = Random.Range(0, filledField.Count);
-				Field field = filledField[randomNum];
-
-				field.TakeDamage(1);
-
-				break;
-			}
-
-		}
-
-	}
 
 	public void HealPlayer(int value)
 	{
@@ -432,8 +345,6 @@ public class BattleManager : MonoBehaviour
 			if (enemyIndex == enemies.Count - 1)
 			{
 				AlertMessage("전투에서 승리했습니다.");
-
-				invisibleImage.SetActive(true);
 
 				PlayerData.saveData.health = playerHealth;
 
@@ -481,9 +392,6 @@ public class BattleManager : MonoBehaviour
 			}
 			else
 			{
-				// GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
-				// damageText.GetComponent<FloatingDamageText>().SetDamageText("Failed..!");
-				// damageText.GetComponent<FloatingDamageText>().SetFont(150);
 				parryState = EParryState.Failed;
 			}
 			StopCoroutine(ParryWindowCoroutine());
@@ -589,21 +497,20 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
-	public IEnumerator StartGameCo()
+	public IEnumerator GameLoop()
 	{
-		//GameSetup();
-
-		yield return new WaitForSeconds(0.35f);
-		StartCoroutine(StartTurnCo());
-	}
-
-	public void EndBattle()
-	{
-		
+		Debug.Log("Loop Start");
+		yield return new WaitForSeconds(1f);
+		while (true)
+		{
+			yield return StartCoroutine(PlayerTurn());
+			yield return StartCoroutine(EnemyTurn());
+		}
 	}
 
 	void GameSetup()
 	{
+		Debug.Log("SetUp Start");
 		trashCount = 0;
 		deckCount = 0;
 		costCount = 0;
@@ -638,10 +545,6 @@ public class BattleManager : MonoBehaviour
 		};
 
 		Shuffle();
-
-		currentAbilities = new();
-
-		myTurn = true;
 	}
 
 	private void Shuffle()
@@ -693,32 +596,87 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
-
-	IEnumerator CheckBattleAbility(Field start, Field end)
-	{
-		yield return new WaitForSeconds(0.5f);
-		//switch(end.GetCardData().GetServentNum())
-		//{
-		//	case 1000:
-		//	end.SetHealth(0);
-		//	Debug.Log("뚜쉬뚜쉬");
-		//	yield return new WaitForSeconds(0.5f);
-		//	break;
-		//}
-	}
-
-	IEnumerator CheckDeathAbility(int serventNum)
-	{
-		yield return new WaitForSeconds(1f);
-	}
-
 	public void SetEnemyDamageBlock(bool value)
 	{ this.enemyDamageBlock = value; }
 
-	IEnumerator StartTurnCo()
-	{        
-		turnState = ETurnState.None;
+	public IEnumerator DrawPhase()
+	{
+		Debug.Log("Draw Phase");
+		/*
+		 * 패가 5장이 될 때까지 드로우하고 드로우페이즈를 마친다.
+		 * 만약 덱이 0장이라면 대신 묘지에서 카드를 드로우하고,
+		 * 묘지에서 카드를 드로우 할 때마다 1 대미지를 받는다.
+		 * 덱과 묘지가 모두 0장이라면 드로우를 진행하지 않고 드로우 페이즈를 마친다.
+		*/
+		if (handList.Count < 5)
+		{
+			int p = 5 - handList.Count;
+			for (int i = 0; i < p; ++i)
+			{
+				yield return new WaitForSeconds(0.5f);
+				DrawCard();
+			}
+		}
+		else
+		{ DrawCard(); }
+		yield return new WaitForSeconds(1f);
+		
+	}
+	public IEnumerator StandByPhase()
+	{
+		Debug.Log("StandBy Phase");
+		/*
+		 * 턴 시작시 효과들을 처리하는 단계
+		 * 필드 효과, 소환수에게 걸려있는 상태 효과, 소환수 효과, 마법 효과 순서대로 처리된다.
+		 * 처리할 효과가 없거나 효과를 모두 처리하면 스탠바이 페이즈를 마친다
+		 */
 
+		//foreach (var card in activatingCards)
+		//{
+		//	yield return StartCoroutine(card.GetCardData().EndPhaseEffectExecute(this));
+		//}
+		yield return new WaitForSeconds(1f);
+	}
+
+	public IEnumerator MainPhase()
+	{
+		Debug.Log("Main Phase");
+		/* 플레이어가 행동하는 단계
+		 * 행동을 모두 마치고 메인 페이즈를 마친다.
+		 * 행동이란 소환, 마법 사용, 공격, 패 버리기 등을 포함한다.
+		 * 행동을 모두 마쳤다면 메인 페이즈를 마친다.
+		 */
+
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(false); }
+
+		yield return new WaitUntil(() => isActionDone);
+	}
+	public IEnumerator EndPhase()
+	{
+		Debug.Log("End Phase");
+
+		/*
+		 * 턴 종료시 효과들을 처리하는 단계
+		 * 필드 효과, 소환수에게 걸려있는 상태 효과, 소환수 효과, 마법 효과 순서대로 처리된다.
+		 */
+
+		//foreach (var card in activatingCards)
+		//{
+		//	yield return StartCoroutine(card.GetCardData().EndPhaseEffectExecute(this));
+		//}
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().SetLock(true); }
+
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().HideAndReveal(true); }
+		yield return new WaitForSeconds(1f);
+	}
+
+
+	IEnumerator PlayerTurn()
+	{        
+		phaseFlag = false;
 		field_1.GetComponent<Field>().SetAttacked(false);
 		field_2.GetComponent<Field>().SetAttacked(false);
 		field_3.GetComponent<Field>().SetAttacked(false);
@@ -728,44 +686,109 @@ public class BattleManager : MonoBehaviour
 
 		enemyDamageBlock = false;
 
-		yield return new WaitForSeconds(0.4f);
 		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<Card>().HideAndReveal(false);}
-
-
-		
-
-
-
-		if(myTurn)
-		{
-			if(handList.Count < 5)
-			{
-				int p = 5 - handList.Count;
-				for(int i = 0; i < p; ++i)
-				{
-					yield return new WaitForSeconds(0.5f);
-					DrawCard();
-				}
-			}
-			else
-			{DrawCard();}
-		}
-		yield return new WaitForSeconds(0.3f);
-		turnState = ETurnState.Player;
-		foreach (GameObject card in cardObjectList)
-		{ card.GetComponent<Card>().SetLock(false); }
+		{card.GetComponent<Card>().HideAndReveal(false); }
 		yield return new WaitForSeconds(0.4f);
 
+		yield return StartCoroutine(DrawPhase());
+		yield return StartCoroutine(StandByPhase());
+		yield return StartCoroutine(MainPhase());
+		yield return StartCoroutine(EndPhase());
+	}
 
-		yield return delay07;
+	IEnumerator EnemyTurn()
+	{
+		yield return
+		StartCoroutine(StandByPhase());
+		yield return
+		StartCoroutine(MainPhase());
+		yield return
+		StartCoroutine(EndPhase());
+
+		yield return new WaitForSeconds(0.3f);
+		int actionToken = currentEnemy.GetActionToken();
+
+		for (int i = 0; i < actionToken; ++i)
+		{
+			List<Field> filledField = new();
+			List<Field> emptyField = new();
+			List<Field> attackableField = new();
+
+			Field[] enemyFields = { field_4, field_5, field_6 };
+
+			for (int idx = 0; idx < enemyFields.Length; idx++)
+			{
+				if (enemyFields[idx].GetFilled())
+				{
+					filledField.Add(enemyFields[idx]);
+					if (!enemyFields[idx].GetAttacked())
+						attackableField.Add(enemyFields[idx]);
+
+				}
+				else
+				{ emptyField.Add(enemyFields[idx]); }
+			}
+
+			isActionDone = false;
+			EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableField.Count);
+
+			switch (action)
+			{
+				case EEnemyAction.Summon:
+					if (emptyField.Count > 0)
+					{
+
+						Field field = emptyField[Random.Range(0, emptyField.Count)];
+						field.locked = true;
+
+						List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
+						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
+
+						StartCoroutine(ShowEnemyActionCard(randomServent, field.transform));
+						yield return new WaitForSeconds(2f);
+
+						GameObject serventObject =
+							Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
+						field.Summon(randomServent, serventObject.GetComponent<Servent>());
+						serventObject.GetComponent<Servent>().InitWithEffect();
+
+						soundEffect.PlayOneShot(serventSummon);
+						field.locked = false;
+					}
+					isActionDone = true;
+					break;
+
+				case EEnemyAction.Attack:
+					if (attackableField.Count > 0)
+					{
+						List<Field> playerTargets = new List<Field> { playerField };
+						if (field_1.GetFilled()) playerTargets.Add(field_1);
+						if (field_2.GetFilled()) playerTargets.Add(field_2);
+						if (field_3.GetFilled()) playerTargets.Add(field_3);
+
+						Field startField = attackableField[Random.Range(0, attackableField.Count)];
+						Field targetField = playerTargets[Random.Range(0, playerTargets.Count)];
+
+						StartCoroutine(EnemyAttack(startField, targetField));
+					}
+					else
+					{ isActionDone = true; }
+					break;
+
+				case EEnemyAction.None:
+					AlertMessage("적이 아무것도 할 수 없습니다.");
+					isActionDone = true;
+					break;
+			}
+			yield return new WaitUntil(() => isActionDone);
+			yield return new WaitForSeconds(2.5f);
+		}
+		isActionDone = false;
 	}
 
 	public void StartEnemyTurn()
 	{
-		costCount = 0;
-		if(turnState == ETurnState.Player)
-		StartCoroutine(EnemyTurnCo());
+		phaseFlag = true;
 	}
 	public IEnumerator WinBattle()
 	{
@@ -909,49 +932,22 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
-	public Transform GetDetectArea(EMouseOnArea area)
-	{
-		switch (area)
-		{
-			case EMouseOnArea.Player:
-				return playerDetectArea;
-			case EMouseOnArea.Enemy:
-				return enemyDetectArea;
-			case EMouseOnArea.Field_1:
-				return fieldDetectArea_1;
-			case EMouseOnArea.Field_2:
-				return fieldDetectArea_2;
-			case EMouseOnArea.Field_3:
-				return fieldDetectArea_3;
-			case EMouseOnArea.Field_4:
-				return fieldDetectArea_4;
-			case EMouseOnArea.Field_5:
-				return fieldDetectArea_5;
-			case EMouseOnArea.Field_6:
-				return fieldDetectArea_6;
-			case EMouseOnArea.Hole:
-				return holeDetectArea;
-			default:
-				return backgroundDetectArea;
-		}
-	}
-
 	private IEnumerator ShowActivatingCard(ECardType cardType , CardData cardData)
 	{
 		GameObject cardObject = new();
 		switch (cardType)
 		{
 			case ECardType.Servent:
-				cardObject = Instantiate(serventCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				cardObject = Instantiate(serventCardPrefab, camera.WorldToScreenPoint(enemyField.transform.position), Utils.QI);
 				break;
 			case ECardType.Spell:
-				cardObject = Instantiate(spellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				cardObject = Instantiate(spellCardPrefab, camera.WorldToScreenPoint(enemyField.transform.position), Utils.QI);
 				break;
 			case ECardType.Field:
-				cardObject = Instantiate(fieldSpellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				cardObject = Instantiate(fieldSpellCardPrefab, camera.WorldToScreenPoint(enemyField.transform.position), Utils.QI);
 				break;
 			case ECardType.Enemy:
-				cardObject = Instantiate(fieldSpellCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+				cardObject = Instantiate(fieldSpellCardPrefab, camera.WorldToScreenPoint(enemyField.transform.position), Utils.QI);
 				cardObject.GetComponent<Card>().SetEnemyActionCard(cardData as EnemyServentCardData);
 				break;
 		}
@@ -961,141 +957,15 @@ public class BattleManager : MonoBehaviour
 	}
 
 
-
-
-	private IEnumerator EnemyTurnCo()
-	{
-		turnState = ETurnState.Enemy;
-
-
-		foreach (GameObject card in cardObjectList)
-		{ card.GetComponent<Card>().SetLock(true); }
-
-		foreach (GameObject card in cardObjectList)
-			card.GetComponent<Card>().HideAndReveal(true);
-
-		yield return new WaitForSeconds(0.3f);
-		int actionToken = currentEnemy.GetActionToken();
-
-		for (int i = 0; i < actionToken; ++i)
-		{
-			List<Field> filledField = new();
-			List<Field> emptyField = new();
-			List<Field> attackableField = new();
-			currentAbilities.Clear();
-
-			Field[] enemyFields = { field_4, field_5, field_6 };
-
-			for (int idx = 0; idx < enemyFields.Length; idx++)
-			{
-				if (enemyFields[idx].GetFilled())
-				{
-					filledField.Add(enemyFields[idx]);
-					if (!enemyFields[idx].GetAttacked())
-						attackableField.Add(enemyFields[idx]);
-					if (enemyFields[idx].GetAbilityType() == EAbilityType.Active)
-						currentAbilities.Add(idx + 1);
-				}
-				else
-				{emptyField.Add(enemyFields[idx]);}
-			}
-
-			if (currentEnemy.GetEnemyAbility() != null)
-				currentAbilities.Insert(0, 0);
-
-			bool abilityUsable = currentAbilities.Count > 0;
-
-			isActionDone = false;
-			EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableField.Count, abilityUsable);
-
-			switch (action)
-			{
-				case EEnemyAction.Summon:
-					if (emptyField.Count > 0)
-					{
-						
-						Field field = emptyField[Random.Range(0, emptyField.Count)];
-						field.locked = true;
-
-						List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
-						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
-
-						StartCoroutine(ShowEnemyActionCard(randomServent,field.transform));
-						yield return new WaitForSeconds(2f);
-
-						GameObject serventObject =
-							Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
-						field.Summon(randomServent, serventObject);
-						serventObject.GetComponent<Servent>().InitWithEffect();
-
-						soundEffect.PlayOneShot(serventSummon);
-						field.locked = false;
-					}
-					isActionDone = true;
-					break;
-
-				case EEnemyAction.Attack:
-					if (attackableField.Count > 0)
-					{
-						List<Field> playerTargets = new List<Field> { playerField };
-						if (field_1.GetFilled()) playerTargets.Add(field_1);
-						if (field_2.GetFilled()) playerTargets.Add(field_2);
-						if (field_3.GetFilled()) playerTargets.Add(field_3);
-
-						Field startField = attackableField[Random.Range(0, attackableField.Count)];
-						Field targetField = playerTargets[Random.Range(0, playerTargets.Count)];
-
-						StartCoroutine(EnemyAttack(startField, targetField));
-					}
-					else
-					{isActionDone = true;}
-					break;
-
-				case EEnemyAction.Ability:
-					if (abilityUsable)
-					{
-						StartCoroutine(ShowEnemyActionCard("능력 이름", "능력 내용"));
-						yield return new WaitForSeconds(2.2f);
-						int randomNum = currentAbilities[Random.Range(0, currentAbilities.Count)];
-						switch (randomNum)
-						{
-							case 0: Debug.Log("대장이 능력을 사용합니다."); break;
-
-							case 1: Debug.Log("1번 필드의 적이 능력을 사용합니다."); break;
-
-							case 2: Debug.Log("2번 필드의 적이 능력을 사용합니다."); break;
-
-							case 3: Debug.Log("3번 필드의 적이 능력을 사용합니다."); break;
-						}
-
-
-						StartCoroutine(currentEnemy.EffectExecute(this));
-					}
-					isActionDone = true;
-					break;
-
-				case EEnemyAction.None:
-					AlertMessage("적이 아무것도 할 수 없습니다.");
-					isActionDone = true;
-					break;
-			}
-			yield return new WaitUntil(() => isActionDone);
-			yield return new WaitForSeconds(2.5f);
-		}
-		isActionDone = false;
-		StartCoroutine(StartTurnCo());
-	}
-
-	private EEnemyAction SelectEnemyAction(int emptyCount, int attackableCount, bool abilityUsable)
+	private EEnemyAction SelectEnemyAction(int emptyCount, int attackableCount)
 	{
 		int summonWeight = (emptyCount > 0) ? emptyCount * 3 : 0;
 		int attackWeight = (attackableCount > 0) ? attackableCount * 2 : 0;
-		int abilityWeight = abilityUsable ? 2 : 0;
 
 		if (playerHealth <= 10) attackWeight = Mathf.CeilToInt(attackWeight * 1.5f);
 		if (emptyCount >= 2) summonWeight *= 2;
 
-		int totalWeight = summonWeight + attackWeight + abilityWeight;
+		int totalWeight = summonWeight + attackWeight;
 		if (totalWeight == 0) return EEnemyAction.None;
 
 		int roll = Random.Range(0, totalWeight);
@@ -1136,9 +1006,6 @@ public class BattleManager : MonoBehaviour
 
 			if(playerDamageBlock)
 			{attackerForce = 0;}
-
-			//playerActor.sprite = playerSprites[0];
-			//enemyActor.sprite = enemyServentSprite_Guard[cardHashMap[startField.GetCardData().GetCardNum()]];
 
 			GameObject leftActor = Instantiate(playerObject, new Vector3(), Utils.QI);
 
@@ -1297,8 +1164,7 @@ public class BattleManager : MonoBehaviour
 
 	public void EndTurn()
 	{
-		myTurn = !myTurn;
-		StartCoroutine(StartTurnCo());
+		StartCoroutine(PlayerTurn());
 	}
 
 	public IEnumerator ActivateCardDesc(CardData battleCardData, Transform target, int stackIndex)
@@ -1311,7 +1177,7 @@ public class BattleManager : MonoBehaviour
 		Sequence seq = DOTween.Sequence();
 		seq.Append(cardObject.transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.5f).SetEase(Ease.InOutQuad))
 		.Append(cardObject.transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack))
-		.AppendCallback(() => actionDoneStack[stackIndex] = true);
+		.AppendCallback(() => phaseFlag = true);
 
 		yield return new WaitForSeconds(0.3f);
 	}
@@ -1337,477 +1203,7 @@ public class BattleManager : MonoBehaviour
 		if(targetField == null)
 		{return false;}
 
-		{
-			List<PreRequisite> preRequisites = cardData.GetPreRequisites();
-
-			if(preRequisites == null)
-			return true;
-
-			bool flag = false;
-
-			int count;
-
-
-			foreach(PreRequisite value in preRequisites)
-			{
-				count = 0;
-				switch(value.preRequisite)
-				{
-					
-					case EPreRequisite.None:
-					return true;
-
-					case EPreRequisite.SelectedServent:
-					if(ReturnMouseOnField().GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{return true;}
-						else
-						{
-							if(value.serventAttribute == ReturnMouseOnField().GetServentAttribute())
-							{return true;}
-						}
-						
-					}
-					return false;
-					
-
-					case EPreRequisite.AllServentCount:
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_4.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_4.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_5.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_5.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_6.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count == value.count;
-					break;
-
-					case EPreRequisite.AllServentCountOver:
-					count = 0;
-
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_4.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_4.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_5.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_5.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_6.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count > value.count;
-					break;
-
-					case EPreRequisite.AllServentCountUnder:
-					count = 0;
-
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_4.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_4.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_5.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_5.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_6.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count < value.count;
-					break;
-
-					case EPreRequisite.PlayerServentCount:
-					count = 0;
-					
-
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count == value.count;
-					break;
-
-					case EPreRequisite.PlayerServentCountOver:
-					count = 0;
-
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == field_1.GetServentAttribute() ||
-						 value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count > value.count;
-					break;
-
-					case EPreRequisite.PlayerServentCountUnder:
-					count = 0;
-
-					if(field_1.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_1.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_2.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_2.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-					if(field_3.GetFilled())
-					{
-						if(value.serventAttribute == EServentAttribute.None)
-						{count++;}
-						else
-						{
-							if(value.serventAttribute == field_3.GetServentAttribute())
-							{count++;}
-						}
-						
-					}
-
-					flag = count < value.count;
-					break;
-
-					case EPreRequisite.TrashCountOver:
-
-					if(value.cardType == ECardType.None)
-					{flag = trashCount > value.count;}
-
-					if(value.cardType == ECardType.Servent)
-					{
-						int serventCardCount = 0;
-
-						foreach(CardData card in trashList)
-						{
-							if(card.GetCardType() == ECardType.Servent)
-							{serventCardCount++;}
-						}
-						flag = serventCardCount > value.count;
-					}
-
-					if(value.cardType == ECardType.Spell)
-					{
-						int spellCardCount = 0;
-
-						foreach(CardData card in trashList)
-						{
-							if(card.GetCardType() == ECardType.Spell)
-							{spellCardCount++;}
-						}
-						flag = spellCardCount > value.count;
-
-						
-					}
-					
-					break;
-
-					case EPreRequisite.PlayerHPCount:
-					flag = playerHealth == value.count;
-					break;
-
-					case EPreRequisite.PlayerHPCountOver:
-					flag = playerHealth > value.count;
-					break;
-
-					case EPreRequisite.PlayerHPCountUnder:
-					flag = playerHealth < value.count;
-					break;
-
-					case EPreRequisite.DeckCountOver:
-					{
-
-						switch(value.cardType)
-						{
-							case ECardType.None:
-							{
-								if(value.cardNum == "0")
-								{flag = deckCount > value.count;}
-								else
-								{
-									int cardCount = 0;
-									foreach(CardData card in deckList)
-									{
-										if(card.GetCardNum() == value.cardNum)
-										cardCount++;
-									}
-									flag = cardCount > value.count;
-								}  
-								break;
-							}
-
-							case ECardType.Servent:
-							{
-								int serventCardCount = 0;
-
-								foreach(CardData card in deckList)
-								{
-									if(card.GetCardType() == ECardType.Servent)
-									{serventCardCount++;}
-								}
-								flag = serventCardCount > value.count;
-								break;
-							}
-
-							case ECardType.Spell:
-							{
-								int spellCardCount = 0;
-
-								foreach(CardData card in deckList)
-								{
-									if(card.GetCardType() == ECardType.Spell)
-									{spellCardCount++;}
-								}
-								flag = spellCardCount > value.count;
-								break;
-							}
-						}
-						break;
-					}
-				}
-
-				if(!flag)
-				{return flag;}
-			}
-			return flag;
-		}
+		return true;
 	}
 
 	public void CardBeginDrag(GameObject cardObject)
@@ -1834,7 +1230,7 @@ public class BattleManager : MonoBehaviour
 		else
 		{
 			SpellCardData spellCardData = cardObject.GetComponent<Card>().GetCardData() as SpellCardData;
-			DrawDragLine(cardObject.transform.position, spellCardData.IsSpellUsable(this) && CheckCardUsable());
+			DrawDragLine(cardObject.transform.position, spellCardData.IsCardUsable(this) && CheckCardUsable());
 		}
 	}
 
@@ -1865,9 +1261,9 @@ public class BattleManager : MonoBehaviour
 		if(targetField == playerField || targetField == enemyField)
 		{return false;}
 
-
 		if(targetField.GetFilled())
 		{return false;}
+
 		return true;
 	}
 
@@ -1899,7 +1295,7 @@ public class BattleManager : MonoBehaviour
 
 	private IEnumerator ShowEnemyActionCard(EnemyServentCardData enemyServentCardData, Transform target)
 	{
-		GameObject cardObject = Instantiate(enemyCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+		GameObject cardObject = Instantiate(enemyCardPrefab, enemyField.transform.position, Utils.QI);
 		cardObject.transform.SetParent(canvas.transform);
 		cardObject.GetComponent<Card>().SetEnemyActionCard(enemyServentCardData);
 		cardObject.GetComponent<Card>().InitiateActionInBattle();
@@ -1910,7 +1306,7 @@ public class BattleManager : MonoBehaviour
 
 	private IEnumerator ShowEnemyActionCard(string ablityName, string abilityDesc)
 	{
-		GameObject cardObject = Instantiate(enemyCardPrefab, enemyDetectArea.transform.position, Utils.QI);
+		GameObject cardObject = Instantiate(enemyCardPrefab, enemyField.transform.position, Utils.QI);
 		cardObject.transform.SetParent(canvas.transform);
 		cardObject.GetComponent<Card>().SetEnemyActionCard(ablityName, abilityDesc);
 		cardObject.GetComponent<Card>().InitiateActionInBattle();
@@ -1987,7 +1383,7 @@ public class BattleManager : MonoBehaviour
 
 					targetField.Summon(
 						serventCardData,
-						serventObject
+						serventObject.GetComponent<Servent>()
 					);
 
 					serventObject.GetComponent<Servent>().InitWithEffect();
@@ -2011,13 +1407,12 @@ public class BattleManager : MonoBehaviour
 			{
 				SpellCardData spellCardData = card.GetCardData() as SpellCardData;
 
-				if(spellCardData.IsSpellUsable(this) && card.GetComponent<Card>().GetCurrentCost() == 0)
+				if(spellCardData.IsCardUsable(this) && card.GetComponent<Card>().GetCurrentCost() == 0)
 				{
 					costCount -= spellCardData.GetCardCost();
 					// StartCoroutine(ActivateSpell(card.GetCardData(), targetField));
-					spellCardData.SpellEffectExecute(this);
 
-					StartCoroutine(spellCardData.SpellEffectExecute(this));
+					yield return StartCoroutine(spellCardData.ActivationEffectExecute(this));
 
 
 					AddTrash(card.GetCardData());
@@ -2157,7 +1552,7 @@ public class BattleManager : MonoBehaviour
 
 	public void DealDamageToEnemy(int damage)
 	{
-		GameObject damageText = Instantiate(floatingTextPrefab, enemyDetectArea);
+		GameObject damageText = Instantiate(floatingTextPrefab);
 		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
@@ -2176,7 +1571,7 @@ public class BattleManager : MonoBehaviour
 
 	public void PlayerTakeDamage(int damage)
 	{
-		GameObject damageText = Instantiate(floatingTextPrefab, playerDetectArea);
+		GameObject damageText = Instantiate(floatingTextPrefab);
 		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
 		damageText.GetComponent<FloatingDamageText>().SetFont(150);
 
@@ -2311,16 +1706,15 @@ public class BattleManager : MonoBehaviour
 						{ }
 						else
 						{
-							actionDoneStack[1] = false;
+							phaseFlag = false;
 							DealDamageToEnemy(defenderDamage);
-							StartCoroutine(ActivateCardDesc(new CrescentLancer(), enemyField.transform, 1));
+							
+							yield return StartCoroutine(ActivateCardDesc(new CrescentLancer(), enemyField.transform, 1));
 
-							yield return new WaitUntil(() => actionDoneStack[1]);
 						}
 
 					}
 
-					StartCoroutine(CheckBattleAbility(attackerField, defenderField));
 
 					StartCoroutine(CheckEnemyCondition(2f));
 					attackerField.SetAttacked(true);
@@ -2426,11 +1820,11 @@ public class BattleManager : MonoBehaviour
 			break;
 
 			case EMouseOnArea.Player:
-			targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
+			targetPoint = playerField.transform.position;
 			break;
 
 			case EMouseOnArea.Enemy:
-			targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
+			targetPoint = enemyField.transform.position;
 			break;
 			
 			case EMouseOnArea.AnyWhere:
@@ -2441,8 +1835,6 @@ public class BattleManager : MonoBehaviour
 			targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
 			break;
 		}
-
-		startPoint = camera.ScreenToWorldPoint(startPoint);
 
 		for(int i = 0; i < lineCount; ++i)
 		{
@@ -2479,29 +1871,6 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
-	public void ShowTrashCards()
-	{
-		//foreach(CardData cardData in trashList)
-		//{
-		//	GameObject cardObject = Instantiate(dummyCardPrefabList[cardHashMap[cardData.GetCardNum()]], trashLayoutGroup.transform);
-		//	GameObject cardFrameObject = Instantiate(cardSelectFrame, cardObject.transform);
-			
-		//	cardObject.GetComponent<DummyCard>().SetLock(true);
-		//	cardFrameObject.GetComponent<CardSelectFrame>().SetCardData(cardData);
-		//	cardFrameObject.transform.localPosition = new Vector3(0, 0, 0);
-		//	cardFrameObject.transform.localScale = new Vector3(1, 1, 0);
-		//}
-
-		//foreach(GameObject cardObject in cardObjectList)
-		//{cardObject.GetComponent<Card>().SetLock(true);}
-
-		//RectTransform rectTransform = trashLayoutGroup.GetComponent<RectTransform>();
-
-		//int height = ((trashLayoutGroup.transform.childCount / 2) * 480) +  550;
-		//rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, height);
-
-		//trashWindow.GetComponent<Window>().OnOff();
-	}
 
 	public void CloseTrashCards()
 	{
@@ -2572,19 +1941,18 @@ public class BattleManager : MonoBehaviour
 
 
 			case EMouseOnArea.Hole:
-			targetPoint = holeDetectArea.position;
+			targetPoint = hole.transform.position;
 			break;
 
 			case EMouseOnArea.Player:
-			targetPoint = camera.ScreenToWorldPoint(playerDetectArea.position);
+			targetPoint = playerField.transform.position;
 			break;
 
 			case EMouseOnArea.Enemy:
-			targetPoint = camera.ScreenToWorldPoint(enemyDetectArea.position);
+			targetPoint = enemyField.transform.position;
 			break;
 			
 			case EMouseOnArea.AnyWhere:
-			//targetPoint = selectedTargetLineEnd.position;
 			targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
 			break;
 			

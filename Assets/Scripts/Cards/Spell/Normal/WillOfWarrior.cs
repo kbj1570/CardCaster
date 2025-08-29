@@ -12,26 +12,9 @@ public class WillOfWarrior : SpellCardData
         cardDesc = "소환수 하나의 포스를 2배로 한다, 그 소환수는 턴이 끝나면 소멸한다.";
         cardTargetType = ECardTargetType.Select;
 		spellType = ESpellType.Normal;
-
-		preRequisites = new();
-        PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.SelectedServent;
-        preRequisite.serventAttribute = EServentAttribute.None;
-
-        preRequisites.Add(preRequisite);
     }
 
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
-	{
-
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		yield return null;
 	}

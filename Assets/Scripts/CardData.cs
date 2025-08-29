@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
-public class CardData
+public class CardData : ICardEffect
 {
 
 	protected string cardNum;
@@ -13,7 +13,6 @@ public class CardData
 	protected ESpellType spellType;
 	protected ECardTargetType cardTargetType;
 	protected ECardRarity cardRarity;
-	protected List<PreRequisite> preRequisites;
 	protected int cardCost;
 
 	protected int fontSize;
@@ -28,26 +27,25 @@ public class CardData
 	public ECardType GetCardType(){return cardType;}
 	public ECardRarity GetCardRarity() { return cardRarity; }
 	public ECardTargetType GetCardTargetType(){return cardTargetType;}
-	public List<PreRequisite> GetPreRequisites(){return preRequisites;}
-}
 
-public struct PreRequisite
-{
-	public EPreRequisite preRequisite;
-	public EServentAttribute serventAttribute;
-	public ECardType cardType;
-	public int count;
-	public string cardNum;
+	public virtual IEnumerator SummonEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator AttackEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator DefendEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator DeathEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator HitEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator ActivationEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator StandByPhaseEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator EndPhaseEffectExecute(BattleManager bm) { yield break; }
+	public virtual bool IsCardUsable(BattleManager bm) { return true; }
 }
-
 public interface ICardEffect
 {
-	public IEnumerator SummonEffectExecute(BattleManager bm);
-	public IEnumerator AttackEffectExecute(BattleManager bm);
-	public IEnumerator DefendEffectExecute(BattleManager bm);
-	public IEnumerator HitEffectExecute(BattleManager bm);
-	public IEnumerator DeathEffectExecute(BattleManager bm);
-	public IEnumerator StandByPhaseEffectExecute(BattleManager bm);
-	public IEnumerator EndPhaseEffectExecute(BattleManager bm);
-	public IEnumerator ActivationEffectExecute(BattleManager bm);
+	IEnumerator SummonEffectExecute(BattleManager bm);
+	IEnumerator AttackEffectExecute(BattleManager bm);
+	IEnumerator DefendEffectExecute(BattleManager bm);
+	IEnumerator HitEffectExecute(BattleManager bm);
+	IEnumerator DeathEffectExecute(BattleManager bm);
+	IEnumerator StandByPhaseEffectExecute(BattleManager bm);
+	IEnumerator EndPhaseEffectExecute(BattleManager bm);
+	IEnumerator ActivationEffectExecute(BattleManager bm);
 }

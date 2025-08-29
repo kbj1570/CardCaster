@@ -10,16 +10,10 @@ public class NoWayToReturn : SpellCardData
         cardCost = 0;
         cardType = ECardType.Spell;
         cardStoryDesc = "";
-        cardDesc = "1장 드로우 한다. \r\n 이 턴이 끝날 때 자신의 패를 전부 버린다.";
+        cardDesc = "1장 드로우 한다.\r\n 이 턴이 끝날 시,\r\n자신의 패를 전부 버린다.";
         cardTargetType = ECardTargetType.Selected;
     }
-
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-        return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
         bm.DrawCard();
 		yield return null;

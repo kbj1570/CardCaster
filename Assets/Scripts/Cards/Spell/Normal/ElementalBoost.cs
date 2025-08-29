@@ -15,21 +15,13 @@ public class ElementalBoost : SpellCardData
 		cardStoryDesc = "생명이 빛이 꺼져가는 기사의 주위에 작은 생명들의 모이기 시작했다. 작고 따뜻한 생명들의 기운이 모여 기사의 상처를 치유한다.";
 		cardDesc = "자신의 소환수들의 속성의 종류 수만큼 자신의 소환수들은 전부 포스를 얻는다";
 		cardTargetType = ECardTargetType.Selected;
-		
-		preRequisites = new();
-		PreRequisite preRequisite = new();
-		preRequisite.preRequisite = EPreRequisite.PlayerServentCountOver;
-		preRequisite.count = 0;
-		preRequisite.serventAttribute = EServentAttribute.None;
-
-		preRequisites.Add(preRequisite);
 
 	}
 
-	public override bool IsSpellUsable(BattleManager bm)
+	public override bool IsCardUsable(BattleManager bm)
 	{return true;}
 
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		List<EServentAttribute> attributes = new();
 		List<Field> playerFields = bm.GetPlayerFields();
@@ -55,53 +47,8 @@ public class ElementalBoost : SpellCardData
 	{
 		yield return null;
 	}
-
-}
-public enum ETrigger
-{
-	None,
-	Attack, // 공격시
-	Block, // 방어시
-	Hit // 피격시
 }
 
-public enum EPreRequisite
-{
-	None, // 무조건 사용 가능
-	HandCount, // 패의 매수
-	TrashCount, // 트래쉬의 매수
-	DeckCount, // 덱의 매수
-	HandCountOver, // 패의 매수 ~이상
-	TrashCountOver,// 트래쉬의 매수 ~이상
-	DeckCountOver,// 덱의 매수 ~이상
-	PlayerHPCount,//나의 체력
-	PlayerHPCountOver,//나의 체력 ~이상
-	PlayerHPCountUnder,//나의 체력 ~이하
-	HandCountUnder,// 패의 매수 ~이하
-	TrashCountUnder, //트래쉬의 매수 ~이하
-	DeckCountUnder, //덱의 매수 ~이하
-	PlayerServentCount,//나의 소환수의 수
-	PlayerServentCountUnder, //나의 소환수의 수 ~미만
-	PlayerServentCountOver, //나의 소환수의 수 ~초과
-	EnemyServentCount,//상대의 소환수의 수
-	EnemyServentCountUnder, //상대의 소환수의 수 ~미만
-	EnemyServentCountOver, //상대의 소환수의 수 ~초과
-	EnemyHP, //상대의 체력
-	EnemyHPOver, //상대의 체력 ~초과
-	EnemyHPUnder, //상대의 체력 ~미만
-	AllServentCount, // 소환수의 수
-	AllServentCountOver, //소환수의 수 ~초과
-	AllServentCountUnder, //소환수의 수 ~미만
-	SelectedServent, // 내가 선택한 소환수
-}
-
-public struct AbilityPreRequisite
-{
-	public EPreRequisite preRequisite;
-	public EServentAttribute serventAttribute;
-	public int count;
-	public string name;
-}
 
 
 // Verb 소환된 내 소환수가 있을 때

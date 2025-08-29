@@ -13,26 +13,9 @@ public class NoPainNoGain : SpellCardData
         cardDesc = "자신의 묘지의 카드를 전부 덱으로 되돌린다.\r\n그 수만큼 자신은 HP를 잃는다.";
         cardTargetType = ECardTargetType.Selected;
 
-		spellType = ESpellType.Normal;
-		preRequisites = new();
-        PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.TrashCountOver;
-        preRequisite.count = 0;
-        preRequisite.cardType = ECardType.None;
-
-        preRequisites.Add(preRequisite);
     }
 
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		yield return null;
 	}

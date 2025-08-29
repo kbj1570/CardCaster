@@ -13,32 +13,12 @@ public class TheSacredBeast : ServentCardData
 		force = 3;
 		cardStoryDesc = "";
 		cardDesc = "소환 시 자신의 Hp가 5 이하라면 상대 소환수를 무작위로 소멸시킨다.";
-
-		abilityType = EAbilityType.Summon;
-
 		serventSize = EServentSize.Small;
 		cardTargetType = ECardTargetType.Select;
 		serventAttribute = EServentAttribute.Light;
 	}
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator AttackEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DeathEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		yield return null;
 	}

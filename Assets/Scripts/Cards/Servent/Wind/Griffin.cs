@@ -12,7 +12,6 @@ public class Griffin : ServentCardData
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 4;
-		abilityType = EAbilityType.Summon;
 		cardStoryDesc = "성격은 온화하고 조용히 지내며, 자신이 인정한 존재에게 충성한다.";
         cardDesc = "소환 시 자신의 바람 속성 소환수 수만큼 드로우한다.";
         serventSize = EServentSize.Small;
@@ -41,22 +40,4 @@ public class Griffin : ServentCardData
 
 		yield return null;
 	}
-	public override IEnumerator AttackEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DeathEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
 }

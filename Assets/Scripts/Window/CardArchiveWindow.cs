@@ -163,10 +163,8 @@ public class CardArchiveWindow : Window
 
 			if (valuePair.Value)
 			{
-				cardObject.GetComponent<Card>().Init(valuePair.Key as BattleCardData, count, (clickedSlot, eventData) =>
-				{
-					OpenCardStoryDesc(clickedSlot.cardData);
-				});
+				cardObject.GetComponent<Card>().Init(valuePair.Key, count, (clickedSlot, eventData) =>
+				{OpenCardStoryDesc(clickedSlot.cardData);});
 				cardObject.GetComponent<Card>().SetCard(valuePair.Key, cardImageList[cardHashMap[valuePair.Key.GetCardNum()]]);
 			}
 			

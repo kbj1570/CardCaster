@@ -12,32 +12,13 @@ public class KnightOfTheAzure : ServentCardData
         force = 1;
         cardStoryDesc = "";
 		cardDesc = "소멸될 시, 덱에서\r\n[홍염의 기사]를 가져온다.";
-		abilityType = EAbilityType.Death;
 		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Water;
     }
-
-	public override IEnumerator SummonEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator AttackEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
 	public override IEnumerator DeathEffectExecute(BattleManager bm)
 	{
 		bm.SearchCardInDeck(new KnightOfTheRedFlame());
-		yield return null;
-	}
-
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
-	{
 		yield return null;
 	}
 }

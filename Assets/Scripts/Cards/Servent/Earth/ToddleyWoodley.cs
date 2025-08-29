@@ -12,32 +12,13 @@ public class ToddleyWoodley : ServentCardData
         force = 5;
         cardStoryDesc = "";
         cardDesc = "공격 시 자신은 HP를 3 잃는다.";
-        abilityType = EAbilityType.Attack;
 		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Select;
         serventAttribute = EServentAttribute.Earth;
     }
-
-	public override IEnumerator SummonEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
 	public override IEnumerator AttackEffectExecute(BattleManager bm)
 	{
-		bm.PlayerTakeDamage(2);
+		bm.PlayerTakeDamage(3);
 		yield return null;
 	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DeathEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
 }

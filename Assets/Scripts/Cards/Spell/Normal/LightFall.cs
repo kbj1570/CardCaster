@@ -12,27 +12,11 @@ public class LightFall : SpellCardData
         cardDesc = "소환된 빛 속성 소환수들은 포스를 1 얻는다.";
         cardTargetType = ECardTargetType.Select;
 		spellType = ESpellType.Normal;
-
-		preRequisites = new();
-        PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.SelectedServent;
-        preRequisite.serventAttribute = EServentAttribute.None;
-
-        preRequisites.Add(preRequisite);
     }
 
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
-	{
 		yield return null;
 	}
 }

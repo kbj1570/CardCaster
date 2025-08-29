@@ -12,28 +12,10 @@ public class AtTheEdgeOfPledge : SpellCardData
 		cardDesc = "선택한 소환수는 포스를 1 얻는다.그 소환수가 빛 속성이라면 포스를 2 얻는다.";
 		cardTargetType = ECardTargetType.Selected;
 		spellType = ESpellType.Normal;
-
-		preRequisites = new();
-		PreRequisite preRequisite = new();
-		preRequisite.preRequisite = EPreRequisite.None;
-
-		preRequisites.Add(preRequisite);
 	}
 
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		yield return null;
 	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
-
-
 }

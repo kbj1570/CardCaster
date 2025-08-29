@@ -13,30 +13,14 @@ public class PriceOfBlood : SpellCardData
         cardDesc = "자신의 HP를 4 잃는다. 1장 드로우한다.";
         cardTargetType = ECardTargetType.Selected;
 		spellType = ESpellType.Normal;
-
-		preRequisites = new();
-        PreRequisite preRequisite = new();
-        preRequisite.preRequisite = EPreRequisite.None;
-
-        preRequisites.Add(preRequisite);
     }
-
-	public override bool IsSpellUsable(BattleManager bm)
-	{
-		return true;
-	}
-
-	public override IEnumerator SpellEffectExecute(BattleManager bm)
+	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 
 		bm.PlayerTakeDamage(4);
 		yield return new WaitForSeconds(0.5f);
 		bm.DrawCard();
 
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
-	{
 		yield return null;
 	}
 }

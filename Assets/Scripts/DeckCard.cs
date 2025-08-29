@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler
 {
-	private BattleCardData cardData;
+	private CardData cardData;
 	private ItemData itemData;
 	private string cardName;
 	private int count;
@@ -87,7 +87,7 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 		cardCountText.text = "";
 	}
 
-	public void SetCard(BattleCardData value, int count)
+	public void SetCard(CardData value, int count)
 	{
 		cardData = value;
 		this.count = count;
@@ -98,13 +98,13 @@ public class DeckCard : MonoBehaviour, IPointerClickHandler, IPointerEnterHandle
 		image.color = purpleColor;
 		if(value.GetCardType() == ECardType.Servent || value.GetCardType() == ECardType.Spell)
 		{
-			this.cardCost = (value as BattleCardData).GetCardCost();
-			cardCostText.text = (value as BattleCardData).GetCardCost().ToString();
+			this.cardCost = value.GetCardCost();
+			cardCostText.text = value.GetCardCost().ToString();
 		}
 		
 	}
 
-	public BattleCardData GetCardData()
+	public CardData GetCardData()
 	{
 		return cardData;
 	}

@@ -15,8 +15,8 @@ public class DeckManager : MonoBehaviour
 	public GameObject smallCardPrefab;
 	private GameObject focusOnCard;
 	public GridLayoutGroup gridLayout;
-	private Dictionary<BattleCardData, int> myCardList;
-	private Dictionary<BattleCardData, int> myDeckList;
+	private Dictionary<CardData, int> myCardList;
+	private Dictionary<CardData, int> myDeckList;
 	private List<CardData> cardDatabase;
 	private List<GameObject> dummyCardObjectList;
 	private List<GameObject> deckCardObjectList;
@@ -28,7 +28,7 @@ public class DeckManager : MonoBehaviour
 
 	public List<Sprite> cardImageList;
 
-	private Dictionary<BattleCardData, int> currentCardList;
+	private Dictionary<CardData, int> currentCardList;
 	private int currentPage;
 	private int pageLimit;
 	public static DeckManager Inst{get; private set;}
@@ -53,7 +53,7 @@ public class DeckManager : MonoBehaviour
 
 
 
-	public void FocusOnCard(BattleCardData cardData)
+	public void FocusOnCard(CardData cardData)
 	{
 		GameObject selectedCardPrefab = null;
 
@@ -91,10 +91,10 @@ public class DeckManager : MonoBehaviour
 		cardHashMap = DataController.Inst.LoadCardHashMap();
 
 		foreach (KeyValuePair<string, int> value in PlayerData.saveData.cardList)
-		{ myCardList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+		{ myCardList.Add(cardDatabase[cardHashMap[value.Key]], value.Value); }
 
 		foreach (KeyValuePair<string, int> value in PlayerData.saveData.deck)
-		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]] as BattleCardData, value.Value); }
+		{ myDeckList.Add(cardDatabase[cardHashMap[value.Key]], value.Value); }
 		CreatePage();
 	}
 
@@ -109,14 +109,14 @@ public class DeckManager : MonoBehaviour
 	{
 		AlertPopUpMessage("해당 덱을 저장했습니다");
 		Dictionary<string, int> dumb = new Dictionary<string, int>();
-		foreach(KeyValuePair<BattleCardData, int> value in myDeckList)
+		foreach(KeyValuePair<CardData, int> value in myDeckList)
 		{dumb.Add(value.Key.GetCardNum().ToString(), value.Value);}
 
 		PlayerData.saveData.deck = dumb;
 
 		dumb = new Dictionary<string, int>();
 
-		foreach (KeyValuePair<BattleCardData, int> value in myCardList)
+		foreach (KeyValuePair<CardData, int> value in myCardList)
 		{ dumb.Add(value.Key.GetCardNum().ToString(), value.Value); }
 
 
@@ -126,7 +126,7 @@ public class DeckManager : MonoBehaviour
 	
 	public void CreatePage()
 	{
-		currentCardList = new Dictionary<BattleCardData, int>();
+		currentCardList = new Dictionary<CardData, int>();
 
 		UpdatePage();
 		UpdateDeckPage();
@@ -160,7 +160,7 @@ public class DeckManager : MonoBehaviour
 		foreach(GameObject gameObject in dummyCardObjectList)
 		{Destroy(gameObject);}
 
-		List<BattleCardData> cardList = new List<BattleCardData>(myCardList.Keys);
+		List<CardData> cardList = new List<CardData>(myCardList.Keys);
 
 		if(currentPage != pageLimit)
 		{remainder = 6;}
@@ -170,7 +170,7 @@ public class DeckManager : MonoBehaviour
 			currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);
 		}
 
-		foreach (KeyValuePair<BattleCardData, int> item in currentCardList)
+		foreach (KeyValuePair<CardData, int> item in currentCardList)
 		{
 			bool locked = false;
 
@@ -248,7 +248,7 @@ public class DeckManager : MonoBehaviour
 		foreach(GameObject gameObject in deckCardObjectList)
 		{Destroy(gameObject);}
 
-		foreach(KeyValuePair<BattleCardData, int> value in myDeckList)
+		foreach(KeyValuePair<CardData, int> value in myDeckList)
 		{
 			GameObject smallCard = Instantiate(smallCardPrefab, new Vector3(0,0,0) , Utils.QI);
 			deckCardObjectList.Add(smallCard);
@@ -298,7 +298,7 @@ public class DeckManager : MonoBehaviour
 			AlertPopUpMessage("해당 카드를 더 이상 추가할 수 없습니다");
 			return;
 		}
-		BattleCardData battleCardData = value as BattleCardData;
+		CardData battleCardData = value ;
 
 		if (!myDeckList.ContainsKey(battleCardData))
 		{
@@ -340,7 +340,7 @@ public class DeckManager : MonoBehaviour
 		UpdateDeckPage();
 	}
 
-	public void DeleteCard(BattleCardData value)
+	public void DeleteCard(CardData value)
 	{
 		myDeckList[value]--;
 		PlayerData.saveData.deck[value.GetCardNum().ToString()]--;

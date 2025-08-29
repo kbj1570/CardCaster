@@ -24,8 +24,6 @@ public class UnknownMonster : Enemy
             new Wild()
         };
 
-        enemyAbility = new MysteriousFog();
-
         SetRewards();
     }
 

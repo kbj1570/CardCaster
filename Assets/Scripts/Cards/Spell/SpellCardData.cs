@@ -2,13 +2,12 @@ using System.Collections;
 
 public abstract class SpellCardData : CardData, ICardEffect
 {
-	public abstract IEnumerator SummonEffectExecute(BattleManager bm);
-	public abstract IEnumerator AttackEffectExecute(BattleManager bm);
-	public abstract IEnumerator DefendEffectExecute(BattleManager bm);
-	public abstract IEnumerator DeathEffectExecute(BattleManager bm);
-	public abstract IEnumerator HitEffectExecute(BattleManager bm);
-	public abstract IEnumerator ActivationEffectExecute(BattleManager bm);
-
-	public abstract IEnumerator StandByPhaseEffectExecute(BattleManager bm);
-	public abstract IEnumerator EndPhaseEffectExecute(BattleManager bm);
+	public virtual IEnumerator SummonEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator AttackEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator DefendEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator DeathEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator HitEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator ActivationEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator StandByPhaseEffectExecute(BattleManager bm) { yield break; }
+	public virtual IEnumerator EndPhaseEffectExecute(BattleManager bm) { yield break; }
 }

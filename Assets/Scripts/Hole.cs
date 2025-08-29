@@ -6,10 +6,7 @@ public class Hole : MonoBehaviour
 
     
     public void OnMouseUp()
-    {
-        if(mouseOn)
-        {BattleManager.Inst.ShowTrashCards();}
-    }
+    {}
 
     public void OnMouseEnter()
     {mouseOn = true;}

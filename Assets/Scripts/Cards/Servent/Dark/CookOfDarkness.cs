@@ -16,41 +16,13 @@ public class CookOfDarkness : ServentCardData
 		serventSize = EServentSize.Small;
 		cardTargetType = ECardTargetType.Select;
 		serventAttribute = EServentAttribute.Dark;
-		abilityType = EAbilityType.Summon;
-
-		preRequisites = new();
-		PreRequisite preRequisite = new();
-		preRequisite.preRequisite = EPreRequisite.DeckCountOver;
-		preRequisite.count = 0;
-		preRequisite.cardType = ECardType.None;
-		preRequisite.cardNum = "107";
-
-		preRequisites.Add(preRequisite);
 	}
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-
 		bm.SearchCardInDeck(new OddedStew());
 		yield return new WaitForSeconds(0.4f);
 		bm.SearchCardInDeck(new OddedStew());
-		yield return null;
-	}
-	public override IEnumerator AttackEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DefendEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-	public override IEnumerator DeathEffectExecute(BattleManager bm)
-	{
-		yield return null;
-	}
-
-	public override IEnumerator ActivationEffectExecute(BattleManager bm)
-	{
 		yield return null;
 	}
 }
