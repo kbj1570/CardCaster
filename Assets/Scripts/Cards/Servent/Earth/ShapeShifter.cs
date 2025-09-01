@@ -13,7 +13,7 @@ public class ShapeShifter : ServentCardData
         cardStoryDesc = "";
         cardDesc = "";
 		serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Earth;
     }
 

@@ -16,7 +16,7 @@ public class CrescentLancer : ServentCardData
 
 		penetrate = true;
 		serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Light;
     }
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

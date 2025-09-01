@@ -119,10 +119,6 @@ public class BattleManager : MonoBehaviour
 	public GameObject spellCardPrefab;
 	public GameObject enemyCardPrefab;
 	public GameObject fieldSpellCardPrefab;
-
-
-
-
 	public GameObject alertMessage;
 	public GameObject gameOverWindow;
 
@@ -130,7 +126,6 @@ public class BattleManager : MonoBehaviour
 
 
 	private bool phaseFlag;
-	private bool isActionDone = false;
 	bool isParryWindowActive = false;
 
 	float parryWindowTime = 0.3f;
@@ -193,7 +188,6 @@ public class BattleManager : MonoBehaviour
 
 		foreach (GameObject card in cardObjectList)
 		{ card.GetComponent<Card>().SetLock(false); }
-		isActionDone = true;
 	}
 
 	public List<Field> GetPlayerFields()
@@ -202,9 +196,6 @@ public class BattleManager : MonoBehaviour
 	{ return new List<Field> { field_4, field_5, field_6 }; }
 	public List<Field> GetAllFields()
 	{ return new List<Field> { field_1, field_2, field_3, field_4, field_5, field_6 }; }
-
-	public void ActionDone()
-	{isActionDone = true;}
 
 	public void FlashMultipleTimes()
 	{
@@ -228,7 +219,6 @@ public class BattleManager : MonoBehaviour
 
 	void Awake()
 	{
-		Debug.Log("Awake Start");
 		Inst = this;
 		enemies = BattleData.enemies;
 		GameSetup();
@@ -255,7 +245,6 @@ public class BattleManager : MonoBehaviour
 	}
 	private IEnumerator FadeIn() 
 	{
-		Debug.Log("FadeIn Start");
 		float time = 0;
 		Color color = fadeImage.color;
 		
@@ -376,6 +365,16 @@ public class BattleManager : MonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Mouse0))
 		{CloseServentInfo();}
 
+		if (Input.GetMouseButtonDown(0))
+		{
+			Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+			if (hit.collider != null)
+			{
+				Debug.Log("Raycast hit: " + hit.collider.gameObject.name);
+			}
+		}
+
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			if(parryState != EParryState.Parry)
@@ -395,7 +394,6 @@ public class BattleManager : MonoBehaviour
 				parryState = EParryState.Failed;
 			}
 			StopCoroutine(ParryWindowCoroutine());
-			isActionDone = true;
 			isParryWindowActive = false;
 		}
 	}
@@ -499,7 +497,6 @@ public class BattleManager : MonoBehaviour
 
 	public IEnumerator GameLoop()
 	{
-		Debug.Log("Loop Start");
 		yield return new WaitForSeconds(1f);
 		while (true)
 		{
@@ -510,7 +507,6 @@ public class BattleManager : MonoBehaviour
 
 	void GameSetup()
 	{
-		Debug.Log("SetUp Start");
 		trashCount = 0;
 		deckCount = 0;
 		costCount = 0;
@@ -650,7 +646,7 @@ public class BattleManager : MonoBehaviour
 		foreach (GameObject card in cardObjectList)
 		{ card.GetComponent<Card>().SetLock(false); }
 
-		yield return new WaitUntil(() => isActionDone);
+		yield return new WaitUntil(() => phaseFlag);
 	}
 	public IEnumerator EndPhase()
 	{
@@ -729,7 +725,6 @@ public class BattleManager : MonoBehaviour
 				{ emptyField.Add(enemyFields[idx]); }
 			}
 
-			isActionDone = false;
 			EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableField.Count);
 
 			switch (action)
@@ -744,18 +739,17 @@ public class BattleManager : MonoBehaviour
 						List<EnemyServentCardData> serventList = currentEnemy.GetServentList();
 						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
 
-						StartCoroutine(ShowEnemyActionCard(randomServent, field.transform));
+						yield return ShowEnemyActionCard(randomServent, field.transform);
 						yield return new WaitForSeconds(2f);
 
 						GameObject serventObject =
 							Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
-						field.Summon(randomServent, serventObject.GetComponent<Servent>());
+						field.Summon(serventObject.GetComponent<Servent>(), randomServent);
 						serventObject.GetComponent<Servent>().InitWithEffect();
 
 						soundEffect.PlayOneShot(serventSummon);
 						field.locked = false;
 					}
-					isActionDone = true;
 					break;
 
 				case EEnemyAction.Attack:
@@ -769,21 +763,16 @@ public class BattleManager : MonoBehaviour
 						Field startField = attackableField[Random.Range(0, attackableField.Count)];
 						Field targetField = playerTargets[Random.Range(0, playerTargets.Count)];
 
-						StartCoroutine(EnemyAttack(startField, targetField));
+						yield return EnemyAttack(startField, targetField);
 					}
-					else
-					{ isActionDone = true; }
 					break;
 
 				case EEnemyAction.None:
 					AlertMessage("적이 아무것도 할 수 없습니다.");
-					isActionDone = true;
 					break;
 			}
-			yield return new WaitUntil(() => isActionDone);
 			yield return new WaitForSeconds(2.5f);
 		}
-		isActionDone = false;
 	}
 
 	public void StartEnemyTurn()
@@ -821,14 +810,14 @@ public class BattleManager : MonoBehaviour
 	public IEnumerator EnemyFieldClear()
 	{
 		if(field_4.GetFilled())
-		field_4.SetHealth(0);
+			field_4.GetServent().SetForce(0);
 
 		if(field_5.GetFilled())
-		field_5.SetHealth(0);
+			field_5.GetServent().SetForce(0);
 
-		if(field_6.GetFilled())
-		field_6.SetHealth(0);
-		
+		if (field_6.GetFilled())
+			field_6.GetServent().SetForce(0);
+
 		yield return new WaitForSeconds(0.3f);
 	}
 
@@ -981,15 +970,12 @@ public class BattleManager : MonoBehaviour
 	IEnumerator EnemyAttack(Field startField,Field targetField)
 	{
 		parryState  = EParryState.Parry;
-		isActionDone = false;
-
 		StartCoroutine(DrawAttackLine(startField.GetLinePoint().position
 		,targetField.GetLinePoint().position, circleSpeed));
 
 		ParryCircle();
 		yield return new WaitForSeconds(circleSpeed - parryWindowTime);
 		StartParryWindow();
-		yield return new WaitUntil(() => isActionDone);
 
 		if (targetField == playerField)
 		{
@@ -1083,7 +1069,6 @@ public class BattleManager : MonoBehaviour
 
 		StartCoroutine(CheckEnemyCondition(2f));
 		startField.SetAttacked(true);
-		isActionDone = false;
 		yield return new WaitForSeconds(1f);
 	}
 
@@ -1123,6 +1108,42 @@ public class BattleManager : MonoBehaviour
 		}
 	}
 
+	public Vector3 ReturnMouseOnPosition()
+	{
+		switch (mouseOnArea)
+		{
+			case EMouseOnArea.Field_1:
+				return field_1.gameObject.transform.position;
+
+			case EMouseOnArea.Field_2:
+				return field_2.gameObject.transform.position;
+
+			case EMouseOnArea.Field_3:
+				return field_3.gameObject.transform.position;
+
+			case EMouseOnArea.Field_4:
+				return field_4.gameObject.transform.position;
+
+			case EMouseOnArea.Field_5:
+				return field_5.gameObject.transform.position;
+
+			case EMouseOnArea.Field_6:
+				return field_6.gameObject.transform.position;
+
+			case EMouseOnArea.Enemy:
+				return enemyField.gameObject.transform.position;
+
+			case EMouseOnArea.Player:
+				return playerField.gameObject.transform.position;
+
+			case EMouseOnArea.AnyWhere:
+				return camera.ScreenToWorldPoint(Input.mousePosition);
+
+			default:
+				return camera.ScreenToWorldPoint(Input.mousePosition); 
+		}
+	}
+
 
 	public Field ReturnMouseOnField()
 	{
@@ -1145,26 +1166,10 @@ public class BattleManager : MonoBehaviour
 
 			case EMouseOnArea.Field_6:
 			return field_6;
-			case EMouseOnArea.Hole:
-			return null;
-
-			case EMouseOnArea.Enemy:
-			return enemyField;
-
-			case EMouseOnArea.Player:
-			return playerField;
-
-			case EMouseOnArea.AnyWhere:
-			return field_1;
 
 			default:
 			return null;
 		}
-	}
-
-	public void EndTurn()
-	{
-		StartCoroutine(PlayerTurn());
 	}
 
 	public IEnumerator ActivateCardDesc(CardData battleCardData, Transform target, int stackIndex)
@@ -1208,7 +1213,7 @@ public class BattleManager : MonoBehaviour
 
 	public void CardBeginDrag(GameObject cardObject)
 	{
-		if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.Selected)
+		if(cardObject.GetComponent<Card>().GetCardData().GetCardTargetType() == ECardTargetType.NoneTargeting)
 		{
 			foreach(GameObject gameObject in anyWhereAreas)
 			{gameObject.SetActive(true);}
@@ -1216,6 +1221,7 @@ public class BattleManager : MonoBehaviour
 
 		foreach(GameObject card in cardObjectList)
 		{card.GetComponent<Card>().SetLock(true);}
+
 		cardObject.GetComponent<Card>().SetLock(false);
 	}
 
@@ -1243,25 +1249,30 @@ public class BattleManager : MonoBehaviour
 		if(currentCost != 0)
 		{return false;}
 
-		if(targetField == null)
+		
+
+		if(mouseOnArea == EMouseOnArea.Field_4)
 		{return false;}
 
-		if(targetField.locked)
+		if(mouseOnArea == EMouseOnArea.Field_5)
 		{return false;}
 
-		if(targetField == field_4)
+		if(mouseOnArea == EMouseOnArea.Field_6)
 		{return false;}
 
-		if(targetField == field_5)
-		{return false;}
+		if (mouseOnArea == EMouseOnArea.Player)
+		{ return false; }
 
-		if(targetField == field_6)
-		{return false;}
+		if (mouseOnArea == EMouseOnArea.Enemy)
+		{ return false; }
 
-		if(targetField == playerField || targetField == enemyField)
-		{return false;}
+		if (targetField == null)
+		{ return false; }
 
-		if(targetField.GetFilled())
+		if (targetField.locked)
+		{ return false; }
+
+		if (targetField.GetFilled())
 		{return false;}
 
 		return true;
@@ -1347,8 +1358,6 @@ public class BattleManager : MonoBehaviour
 
 		DeleteDragLine();
 
-		isActionDone = false;
-
 		if(mouseOnArea == EMouseOnArea.Hole)
 		{
 			DiscardCard(card);
@@ -1382,9 +1391,7 @@ public class BattleManager : MonoBehaviour
 						);
 
 					targetField.Summon(
-						serventCardData,
-						serventObject.GetComponent<Servent>()
-					);
+						serventObject.GetComponent<Servent>(), serventCardData);
 
 					serventObject.GetComponent<Servent>().InitWithEffect();
 
@@ -1938,8 +1945,6 @@ public class BattleManager : MonoBehaviour
 			targetPoint = field_6.GetLinePoint().position;
 			break;
 
-
-
 			case EMouseOnArea.Hole:
 			targetPoint = hole.transform.position;
 			break;
@@ -2016,7 +2021,6 @@ public class BattleManager : MonoBehaviour
 		.OnComplete(() => 
 		{
 			smallCircle.transform.localScale = new Vector3(0,0,0);
-			isActionDone = true;
 		});
 	}
 }

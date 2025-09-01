@@ -1,17 +1,14 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Hole : MonoBehaviour
+public class Hole : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    private bool mouseOn;
-
-    
-    public void OnMouseUp()
-    {}
-
-    public void OnMouseEnter()
-    {mouseOn = true;}
-
-    public void OnMouseExit()
-    {mouseOn = false;}
-
+	public void OnPointerEnter(PointerEventData eventData)
+	{
+		BattleManager.Inst.SetMouseOnField(EMouseOnArea.Hole);
+	}
+	public void OnPointerExit(PointerEventData eventData)
+	{
+		BattleManager.Inst.ResetMouseOnField();
+	}
 }

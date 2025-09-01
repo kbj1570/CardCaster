@@ -6,8 +6,10 @@ using DG.Tweening;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Servent : MonoBehaviour
+public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler , IPointerClickHandler
 {
+	private CardData cardData;
+
 	private EServentType serventType;
 	private EServentState serventState;
 
@@ -22,7 +24,7 @@ public class Servent : MonoBehaviour
 	private Sprite death;
 
 	public Transform dragPoint;
-	public int serventForce;
+	public int currentForce;
 
 	public GameObject border;
 	public GameObject infoWindow;
@@ -37,10 +39,9 @@ public class Servent : MonoBehaviour
 	public Texture2D texture2D;
 	private Material monsterMaterial;
 
-	// 기본값을 false로 바꿔서 그냥 등장
 	bool isDissolving = false;
 	bool isDying = false;
-	float fade = 1f; // 연출 없이 바로 보이도록 1로 시작
+	float fade = 1f;
 
 	void Awake()
 	{
@@ -51,13 +52,10 @@ public class Servent : MonoBehaviour
 	}
 
 	public void OnBattleWindow()
-	{
-		spriteRenderer.sortingOrder = 104;
-	}
+	{spriteRenderer.sortingOrder = 104;}
 
 	void Update()
 	{
-		// 선택적으로 등장 연출을 켤 때만 동작
 		if (isDissolving)
 		{
 			fade += Time.deltaTime * 1.1f;
@@ -87,8 +85,6 @@ public class Servent : MonoBehaviour
 			monsterMaterial.SetFloat("_Fade", fade);
 		}
 	}
-
-	// 필요할 때만 호출해서 등장 연출 시작
 	public void InitWithEffect()
 	{
 		isDissolving = true;
@@ -153,4 +149,36 @@ public class Servent : MonoBehaviour
 	{ this.serventType = serventType; }
 	public Transform GetDragPoint()
 	{ return dragPoint; }
+
+	public void GainForce(int value)
+	{
+
+	}
+	public void LoseForce(int value)
+	{
+
+	}
+
+	public void SetForce(int value)
+	{
+		currentForce = value;
+	}
+
+	public void OnBeginDrag(PointerEventData eventData)
+	{ }
+
+	public void OnPointerClick(PointerEventData eventData)
+	{
+	}
+
+	public void OnEndDrag(PointerEventData eventData)
+	{
+		StartCoroutine(BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea)));
+	}
+	public void OnDrag(PointerEventData eventData)
+	{
+		BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(mouseOnArea));
+	}
+
+	
 }

@@ -13,7 +13,7 @@ public class ToddleyWoodley : ServentCardData
         cardStoryDesc = "";
         cardDesc = "공격 시 자신은 HP를 3 잃는다.";
 		serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Earth;
     }
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

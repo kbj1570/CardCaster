@@ -10,7 +10,7 @@ public class Celestia : SpellCardData
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
 		cardDesc = "덱 또는 묘지에서 [크레센트 랜서]를 가져온다.";
-		cardTargetType = ECardTargetType.Selected;
+		cardTargetType = ECardTargetType.NoneTargeting;
 		spellType = ESpellType.Field;
 	}
 

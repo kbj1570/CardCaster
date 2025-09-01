@@ -138,7 +138,7 @@ MonoBehaviour:
   dragPoint: {fileID: 1602376820656342994}
   serventForce: 0
   border: {fileID: 0}
-  infoWindow: {fileID: 0}
+  infoWindow: {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
   serventForceText: {fileID: 3965241541678656265}
   activationButton: {fileID: 0}
   spriteRenderer: {fileID: 7468473441850001522}
@@ -373,7 +373,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1

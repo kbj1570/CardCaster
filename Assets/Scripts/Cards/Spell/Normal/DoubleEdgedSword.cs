@@ -10,7 +10,7 @@ public class DoubleEdgedSword : SpellCardData
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
 		cardDesc = "1장을 드로우 하고,\r\n자신의 HP를 4 잃는다.";
-		cardTargetType = ECardTargetType.Selected;
+		cardTargetType = ECardTargetType.NoneTargeting;
 		spellType = ESpellType.Normal;
 	}
 

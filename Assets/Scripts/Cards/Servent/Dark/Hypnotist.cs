@@ -14,7 +14,7 @@ public class Hypnotist : ServentCardData
         cardStoryDesc = "";
         cardDesc = "소환 시 다른 소환수를 혼란 상태로 한다.";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
 

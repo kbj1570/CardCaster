@@ -10,7 +10,7 @@ public class Wild : EnemyServentCardData
         force = 1;
         cardDesc = "";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Earth;
     }
 }

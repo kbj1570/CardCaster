@@ -13,7 +13,7 @@ public class BurningSouls : ServentCardData
 		cardStoryDesc = "";
 		cardDesc = "소멸시 상대 소환수 중 무작위로 하나에게 3 대미지를 준다.";
 		serventSize = EServentSize.Small;
-		cardTargetType = ECardTargetType.Select;
+		cardTargetType = ECardTargetType.Targeting;
 		serventAttribute = EServentAttribute.Fire;
 	}
 

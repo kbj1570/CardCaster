@@ -15,7 +15,7 @@ public class StrayCat : ServentCardData
         cardStoryDesc = "";
         cardDesc = "소환시 가진 골드에 따라 포스를 얻는다. (100G / 1)";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
 

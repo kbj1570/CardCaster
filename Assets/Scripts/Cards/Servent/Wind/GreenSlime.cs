@@ -13,7 +13,7 @@ public class GreenSlime : ServentCardData
         cardStoryDesc = "";
         cardDesc = "";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Wind;
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 
 public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-	ServentCardData cardData;
 	List<EServentCondition> conditions;
 	EServentAttribute serventAttribute;
 	public EMouseOnArea mouseOnArea;
@@ -15,7 +14,6 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	public bool filled;
 	public bool locked;
 	public bool isDragable;
-	private bool attacked;
 	public TMP_Text forceTMP;
 
 	public GameObject conditionPanel;
@@ -28,44 +26,20 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	public GameObject summonEffectObject;
 	public GameObject monsterEntity;
 
-	public Transform lowLinePoint;
-	public Transform middleLinePoint;
-	public Transform highLinePoint;
-
 	public Color forceColorFire;
 	public Color forceColorWater;
 	public Color forceColorEarth;
 	public Color forceColorWind;
 	public Color forceColorDarkness;
 	public Color forceColorLightness;
-	
-	public int currentForce;
-	public int fieldNum;
 
-	bool penetrate;
-	bool suicide;
 
-	bool voidWalker;
 	bool damageBlock;
-
 	int damageDecrease;
 	int damageIncrease;
 
 	int additionalForce;
-
 	private Servent serventObject;
-	
-
-	public void SetForce(int value)
-	{
-		if(voidWalker)
-		return;
-
-		currentForce = value;
-	}
-	public int GetForce(){return currentForce;}
-
-	public int GetFieldNum(){return fieldNum;}
 
 	public void GainForce(int value)
 	{
@@ -94,6 +68,9 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 		currentForce -= value;
 	}
 
+	public Servent GetServent()
+	{ return serventObject;}
+
 	public void TakeDamage(int value)
 	{
 		if(!filled)
@@ -101,7 +78,6 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 
 		if(damageBlock)
 			return;
-
 
 		// 피해 숫자 표시
 		GameObject damageText = Instantiate(floatingTextPrefab);
@@ -138,16 +114,11 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 		currentForce = 0;
 	}
 
-	public void SetHealth(int value)
-	{
-		currentForce = value;
-	}
-
 	public void UpdateHealth()
 	{
-
 		if(!filled)
 		{return;}
+
 		forceTMP.text = currentForce.ToString();
 
 		if(currentForce <= 0)
@@ -165,21 +136,13 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 		}
 	}
 
-	public void Summon(ServentCardData cardData, Servent serventObject)
+	public void Summon(Servent serventObject, ServentCardData cardData)
 	{
 
 		filled = true;
-		this.cardData = cardData;
-		currentForce = cardData.GetForce();
-		forceTMP.gameObject.SetActive(true);
-		forceTMP.text = currentForce.ToString();
-		
-		attacked = false;
-		penetrate = cardData.GetPenetrate();
-		voidWalker = cardData.GetVoidWalker();
-		serventAttribute = cardData.GetAttribute();
 		this.serventObject = serventObject;
-		gameObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
+		serventObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
+		serventObject.GetComponent<Servent>().SetForce(cardData.GetForce());
 		locked = false;
 	}
 
@@ -206,65 +169,9 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 		{conditionPanelButton.SetActive(false);}
 	}
 
-	public void ActivateTurnEnd()
-	{
-
-		if(voidWalker)
-		return;
-
-		if(suicide)
-		{currentForce = 0;}
-
-
-	}
-
-	public void ResetCondition()
-	{
-
-		if(voidWalker)
-		return;
-
-		conditions.Clear();
-	}
-	
-	public void AddCondition(EServentCondition value)
-	{
-		if(voidWalker)
-		return;
-
-		conditions.Add(value);
-	}
-
-	public void RemoveCondition(EServentCondition value)
-	{
-
-		if(voidWalker)
-		return;
-
-		conditions.Remove(value);
-	}
-
 	public bool GetFilled()
 	{return filled;}
 
-	public bool GetAttacked()
-	{return attacked;}
-
-	public void SetAttacked(bool value)
-	{this.attacked = value;}
-	public ServentCardData GetCardData()
-	{return cardData;}
-
-	public void SetSuicide(bool value)
-	{
-		if(voidWalker)
-		return;
-
-		suicide = value;
-	}
-
-	public bool GetPenetrate()
-	{return penetrate;}
 
 	public EMouseOnArea GetMouseOnArea() {return mouseOnArea;}
 
@@ -272,37 +179,10 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	public Transform GetLinePoint()
 	{
 		if(!filled)
-		return lowLinePoint;
+		return this.transform;
 
 		return serventObject.GetDragPoint();
 	}
-	public void OnBeginDrag(PointerEventData eventData)
-	{ }
-
-	public void OnPointerClick(PointerEventData eventData)
-	{
-		if (!GetFilled())
-			return;
-	}
-
-	public void OnEndDrag(PointerEventData eventData)
-	{
-		if (!GetFilled())
-			return;
-
-		if (mouseOnArea != EMouseOnArea.Hole && mouseOnArea != EMouseOnArea.Enemy && mouseOnArea != EMouseOnArea.Player && BattleManager.Inst.CheckAttackable(mouseOnArea))
-			StartCoroutine(BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea)));
-	}
-	public void OnDrag(PointerEventData eventData)
-	{
-
-		if (!GetFilled())
-			return;
-
-		if (mouseOnArea != EMouseOnArea.Hole && mouseOnArea != EMouseOnArea.Enemy && mouseOnArea != EMouseOnArea.Player)
-			BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(mouseOnArea));
-	}
-
 	public void OnPointerEnter(PointerEventData eventData)
 	{
 		BattleManager.Inst.SetMouseOnField(mouseOnArea);

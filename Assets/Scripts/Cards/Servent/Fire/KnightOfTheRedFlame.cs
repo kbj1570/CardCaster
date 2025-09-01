@@ -14,7 +14,7 @@ public class KnightOfTheRedFlame : ServentCardData
         cardStoryDesc = "";
         cardDesc = "소멸될 시, 덱에서\r\n[창해의 기사]를 가져온다.";
 		serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Fire;
     }
 

@@ -10,7 +10,7 @@ public class OddedStew : SpellCardData
 		cardType = ECardType.Spell;
 		cardStoryDesc = "";
 		cardDesc = "자신의 HP를 1 회복한다.";
-		cardTargetType = ECardTargetType.Selected;
+		cardTargetType = ECardTargetType.NoneTargeting;
 		spellType = ESpellType.Normal;
 	}
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)

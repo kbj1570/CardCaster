@@ -11,7 +11,7 @@ public class ShadowCorvus : EnemyServentCardData
         cardStoryDesc = "";
         cardDesc = "공격을 받을 시, 상대에게";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
    }
 }

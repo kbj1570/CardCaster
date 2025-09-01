@@ -13,7 +13,7 @@ public class Frillizard : ServentCardData
         cardStoryDesc = "척박한 사막지대에서 서식하는 도마뱀.\r\n먹이감을 포착하면 목에있는 프릴을 펼치면서 쫓아온다.";
         cardDesc = "소환 시 상대 소환수 1마리를 혼란 상태로 만든다.";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
 	}
 

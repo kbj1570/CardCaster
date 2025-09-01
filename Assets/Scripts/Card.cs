@@ -57,11 +57,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public Action<Card, PointerEventData> OnPointerEnterAction;
 	public Action<Card, PointerEventData> OnPointerExitAction;
 
-	void Start()
-	{
-		
-	}
-
 	public void InitiateActionInBattle()
 	{
 		this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정

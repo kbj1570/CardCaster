@@ -10,7 +10,7 @@ public class CorvusShadow : EnemyServentCardData
         cardStoryDesc = "";
         cardDesc = "공격을 받으면 소멸한다";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
 }

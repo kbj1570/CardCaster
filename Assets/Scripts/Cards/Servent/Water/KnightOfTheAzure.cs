@@ -13,7 +13,7 @@ public class KnightOfTheAzure : ServentCardData
         cardStoryDesc = "";
 		cardDesc = "소멸될 시, 덱에서\r\n[홍염의 기사]를 가져온다.";
 		serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Water;
     }
 	public override IEnumerator DeathEffectExecute(BattleManager bm)

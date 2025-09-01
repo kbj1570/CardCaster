@@ -14,7 +14,7 @@ public class BlackSlime : ServentCardData
         cardDesc = "";
         penetrate = true;
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
 

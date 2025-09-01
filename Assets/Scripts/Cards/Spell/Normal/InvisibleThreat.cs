@@ -10,7 +10,7 @@ public class InvisibleThreat : SpellCardData
         cardType = ECardType.Spell;
         cardStoryDesc = "숨죽이고 있던 어둠이 깨어나기 시작한다.";
         cardDesc = "소환된 빛 속성 소환수들은 포스를 1 얻는다.";
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
 		spellType = ESpellType.Normal;
     }
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)

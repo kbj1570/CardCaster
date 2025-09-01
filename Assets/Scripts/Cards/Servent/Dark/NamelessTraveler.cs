@@ -13,7 +13,7 @@ public class NamelessTraveler : ServentCardData
         cardStoryDesc = "";
         cardDesc = "다른 소환수를 공격할 시, 모든 적에게 1 대미지를 준다.";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
 	public override IEnumerator AttackEffectExecute(BattleManager bm)

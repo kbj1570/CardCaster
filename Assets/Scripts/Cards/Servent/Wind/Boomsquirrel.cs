@@ -13,7 +13,7 @@ public class Boomsquirrel : ServentCardData
         cardStoryDesc = "";
         cardDesc = "능력 발동 시,\r\n패로 돌아온다.";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Wind;
     }
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)

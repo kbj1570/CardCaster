@@ -15,7 +15,7 @@ public class Griffin : ServentCardData
 		cardStoryDesc = "성격은 온화하고 조용히 지내며, 자신이 인정한 존재에게 충성한다.";
         cardDesc = "소환 시 자신의 바람 속성 소환수 수만큼 드로우한다.";
         serventSize = EServentSize.Small;
-        cardTargetType = ECardTargetType.Select;
+        cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Wind;
     }
 
