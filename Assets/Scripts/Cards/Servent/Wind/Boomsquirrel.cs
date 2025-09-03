@@ -20,7 +20,6 @@ public class Boomsquirrel : ServentCardData
 	}
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
-        bm.DrawCard();
-		yield return null;
+		yield return bm.BackToHands();
 	}
 }

@@ -36,6 +36,9 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	int maxAttackCount = 1;
 	int attackCount;
 
+	int maxActivationCount = 1;
+	int activationCount;
+
 	public Color fadeColor;
 	public int serventNum;
 	private bool mouseOn;
@@ -47,6 +50,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	bool isDissolving = false;
 	bool isDying = false;
+	bool locked;
 	float fade = 1f;
 
 	void Awake()
@@ -132,18 +136,21 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	{ mouseOn = true; }
 	public void OnMouseExit()
 	{ mouseOn = false; }
-	public void ShowInfo()
-	{
-		infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
-		border.SetActive(true);
-		activationButton.gameObject.SetActive(true);
-	}
-	public void CloseInfo()
-	{
-		infoWindow.GetComponent<ServentInfoWindow>().OnOff(false);
-		border.SetActive(false);
-		activationButton.gameObject.SetActive(false);
-	}
+
+	public void SetLock(bool locked)
+	{ this.locked = locked; }
+	//public void ShowInfo()
+	//{
+	//	infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
+	//	border.SetActive(true);
+	//	activationButton.gameObject.SetActive(true);
+	//}
+	//public void CloseInfo()
+	//{
+	//	infoWindow.GetComponent<ServentInfoWindow>().OnOff(false);
+	//	border.SetActive(false);
+	//	activationButton.gameObject.SetActive(false);
+	//}
 	public int GetServentNum()
 	{ return serventNum; }
 	public EServentType GetServentType()
@@ -170,34 +177,49 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	{ return serventAttribute; }
 
 	public void OnBeginDrag(PointerEventData eventData)
-	{ BattleManager.Inst.ReadyServentAttack(this); }
+	{
+		if(locked) return;
+
+		BattleManager.Inst.ReadyServentAttack(this);
+	}
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
+		if (locked) return;
 		StartCoroutine(BattleManager.Inst.ShowServentInfo(this));
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
+		if (locked) return;
 		if (BattleManager.Inst.CheckAttackable(this))
 			StartCoroutine(BattleManager.Inst.BattlePhase());
 
 		BattleManager.Inst.ClearLine();
 	}
 	public void OnDrag(PointerEventData eventData)
-	{BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(this));}
+	{
+		if (locked) return;
+		BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(this));
+	}
 
 	public void TakeDamage(int damage)
 	{currentForce -= damage;}
 
 	public void AddAttackCount()
-	{attackCount++;}
+	{ attackCount++; }
 
 	public void ResetAttackCount()
 	{attackCount = 0;}
 
+	public void AddActivationCount()
+	{ activationCount++; }
+
 	public bool IsAttackable()
 	{ return attackCount < maxAttackCount; }
+
+	public bool IsActivationable()
+	{ return activationCount < maxActivationCount; }
 
 	public void HideForce()
 	{ serventForceText.gameObject.SetActive(false); }

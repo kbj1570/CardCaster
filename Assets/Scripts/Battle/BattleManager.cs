@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 using Random = UnityEngine.Random;
 
 
@@ -17,6 +18,8 @@ public class BattleManager : MonoBehaviour
 	public AudioSource soundEffect;
 	public AudioClip serventDeath;
 	public AudioClip serventSummon;
+
+	public GameObject serventSelectAlert;
 
 	Dictionary<string, int> cardHashMap;
 
@@ -32,6 +35,7 @@ public class BattleManager : MonoBehaviour
 	int enemyDamageIncrease;
 
 	private Servent attackingServent;
+	private Servent selectedServent;
 
 
 	List<Enemy> enemies = new();
@@ -106,6 +110,8 @@ public class BattleManager : MonoBehaviour
 	private int deckCount;
 	private int trashCount;
 
+	private BattleState battleState = BattleState.Idle;
+
 	public List<Servent> summonedServents;
 	public List<CardData> selectedCards;
 	public GridLayoutGroup selectedCardLayoutGroup;
@@ -124,7 +130,8 @@ public class BattleManager : MonoBehaviour
 	public GameObject gameOverWindow;
 
 	private int selectedLimit;
-	private bool phaseFlag;
+	public bool phaseFlag;
+	public bool actionFlag;
 	bool isParryWindowActive = false;
 
 	float parryWindowTime = 0.3f;
@@ -163,8 +170,6 @@ public class BattleManager : MonoBehaviour
 			attackerDamageText.GetComponent<FloatingDamageText>().SetFont(30);
 
 		}
-
-			
 
 		yield return new WaitForSeconds(0.2f);
 
@@ -342,11 +347,11 @@ public class BattleManager : MonoBehaviour
 
 				PlayerData.saveData.health = playerHealth;
 
-
 				foreach (GameObject card in cardObjectList)
 				{card.GetComponent<Card>().HideAndReveal(true);}
 
 				yield return new WaitForSeconds(0.3f);
+
 				StartCoroutine(EnemyFieldClear());
 				yield return new WaitForSeconds(1f);
 
@@ -363,23 +368,19 @@ public class BattleManager : MonoBehaviour
 
 	void Update()
 	{
-		if (clickedServentInfo != null && Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown(0))
 		{
-			CloseServentInfo();
-			//Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-			//RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-
-			//if (hit.collider != null) 
-			//{
-			//	GameObject targetObject = hit.collider.gameObject;
-			//	if (!targetObject.CompareTag("ServentInfo"))
-			//	{
-
-			//		CloseServentInfo();
-			//	}
-			//}
-			//else { CloseServentInfo(); }
+			switch (battleState)
+			{
+				case BattleState.Idle:
+					HandleIdleClick();
+					break;
+				case BattleState.SelectingServent:
+					HandleSelectServentClick();
+					break;
+				case BattleState.EnemyTurn:
+					break;
+			}
 		}
 
 		UpdateCondition();
@@ -400,9 +401,8 @@ public class BattleManager : MonoBehaviour
 				
 			}
 			else
-			{
-				parryState = EParryState.Failed;
-			}
+			{parryState = EParryState.Failed;}
+
 			StopCoroutine(ParryWindowCoroutine());
 			isParryWindowActive = false;
 		}
@@ -411,6 +411,33 @@ public class BattleManager : MonoBehaviour
 	public void StartParryWindow()
 	{
 		StartCoroutine(ParryWindowCoroutine());
+	}
+
+	void HandleIdleClick()
+	{
+		if (clickedServentInfo != null)
+		{
+			CloseServentInfo();
+		}
+	}
+
+	void HandleSelectServentClick()
+	{
+		Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
+		if (hit.collider != null)
+		{
+			GameObject selectedObject = hit.collider.gameObject;
+
+			if (selectedObject.CompareTag("Servent"))
+			{
+				selectedServent = selectedObject.GetComponent<Servent>();
+				actionFlag = true;
+			}
+			else
+			{Debug.Log("선택할 수 없는 대상입니다.");}
+		}
 	}
 
 	private IEnumerator ParryWindowCoroutine()
@@ -490,7 +517,7 @@ public class BattleManager : MonoBehaviour
 		clickedServentInfo.transform.position = vector;
 		yield return new WaitForSeconds(0.1f);
 		clickedServentInfo.GetComponent<ServentInfoWindow>().OnOff(true);
-		clickedServentInfo.GetComponent<ServentInfoWindow>().UpdateCardData(servent.GetCardData());
+		clickedServentInfo.GetComponent<ServentInfoWindow>().UpdateCardData(servent);
 		clickedServentInfo.transform.SetParent(canvas.transform);
 		clickedServent = servent; 
 	}
@@ -504,8 +531,8 @@ public class BattleManager : MonoBehaviour
 
 		if (clickedServent != null)
 		{
-			clickedServent = null;
 			Destroy(clickedServentInfo);
+			clickedServent = null;
 		}
 	}
 
@@ -785,6 +812,21 @@ public class BattleManager : MonoBehaviour
 			//yield return new WaitForSeconds(2.5f);
 		}
 	}
+	public void SelectServentOnField()
+	{ 
+		StartCoroutine(SelectServentOnFieldCo());
+	}
+
+	public IEnumerator SelectServentOnFieldCo()
+	{
+
+		battleState = BattleState.SelectingServent;
+		actionFlag = false;
+		serventSelectAlert.SetActive(true);
+		yield return new WaitUntil(() => actionFlag);
+		serventSelectAlert.SetActive(false);
+		battleState = BattleState.Idle;
+	}
 
 	public void StartEnemyTurn()
 	{
@@ -833,6 +875,100 @@ public class BattleManager : MonoBehaviour
 
 		yield return new WaitForSeconds(0.3f);
 	}
+
+	public IEnumerator InstantiateCardFromServent(CardData battleCardData)
+	{
+		GameObject selectedCardPrefab = null;
+
+		switch (battleCardData.GetCardType())
+		{
+			case ECardType.Servent:
+				selectedCardPrefab = serventCardPrefab;
+				break;
+			case ECardType.Spell:
+				selectedCardPrefab = spellCardPrefab;
+				break;
+
+		}
+		GameObject cardObject = Instantiate(selectedCardPrefab, Vector3.zero, Utils.QI);
+
+		cardObject.GetComponent<Card>().InitiateActionInBattle();
+
+		cardObject.GetComponent<Card>().Init(
+			(card, eventData) =>
+			{
+				if (card.locked)
+				{ return; }
+
+				if (eventData.button == PointerEventData.InputButton.Right)
+				{ DiscardCard(card); }
+			}
+			,
+			(card, eventData) => {
+
+				if (card.locked)
+				{ return; }
+
+				CardBeginDrag(card.gameObject);
+			},
+			(card, eventData) => {
+
+				if (card.locked)
+				{ return; }
+				card.transform.localScale = new Vector3(0.4f, 0.4f, 1);
+				card.transform.position = card.originPRS.pos;
+				CardOnDrag(card.gameObject);
+			},
+			(card, eventData) => {
+				if (card.locked)
+				{ return; }
+				StartCoroutine(CardEndDrag(card, ReturnMouseOnField()));
+			}
+			,
+			(card, eventData) => {
+				if (card.locked)
+				{ return; }
+
+				if (card.currentSequence != null && card.currentSequence.IsActive())
+					card.currentSequence.Kill();
+
+
+				card.currentSequence = DOTween.Sequence()
+					.Append(card.transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.13f).SetEase(Ease.InOutQuad))
+					.Append(card.transform.DOMoveY(card.originPRS.pos.y + 130, 0.13f).SetEase(Ease.OutCirc));
+			}
+			,
+			(card, eventData) => {
+				if (card.locked)
+				{ return; }
+
+				if (card.currentSequence != null && card.currentSequence.IsActive())
+					card.currentSequence.Kill();
+
+				card.currentSequence = DOTween.Sequence()
+					.Append(card.transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.07f).SetEase(Ease.InOutQuad))
+					.Append(card.transform.DOMove(card.originPRS.pos, 0.07f).SetEase(Ease.OutCirc));
+			}
+		);
+
+		cardObject.transform.SetParent(canvas.transform);
+		cardObjectList.Add(cardObject);
+
+		cardObject.GetComponent<Card>().SetCard(battleCardData, cardImageList[cardHashMap[battleCardData.GetCardNum()]]);
+
+		cardObject.GetComponent<Card>().SetCardOrder(handList.Count);
+		handList.Add(battleCardData);
+		CardAlignmentAlt();
+
+
+		GameObject bullet = Instantiate(missile, clickedServent.transform.position, Utils.QI);
+		BezierMissile missileScript = bullet.GetComponent<BezierMissile>();
+
+		missileScript.master = clickedServent.transform.position;
+		missileScript.enemy = camera.ScreenToWorldPoint(cardObject.transform.position);
+		yield return new WaitForSeconds(0.5f);
+	}
+
 
 	public GameObject InstantiateCard(CardData battleCardData)
 	{
@@ -1452,6 +1588,9 @@ public class BattleManager : MonoBehaviour
 
 		foreach(GameObject cardObject in cardObjectList)
 		{cardObject.GetComponent<Card>().SetLock(false);}
+
+		//소환수마다 LocK 넣어서 클릭 방지하기
+
 	}
 
 	public void DiscardAllHands()
@@ -1489,13 +1628,24 @@ public class BattleManager : MonoBehaviour
 
 	public void ActivateCardEffect(CardData cardData)
 	{
+		foreach (Servent servent in summonedServents)
+		{ servent.SetLock(true); }	
+
+
 		Destroy(clickedServentInfo);
+		clickedServent.AddActivationCount();
 		StartCoroutine(ActivateCardEffectCo(cardData));
+
+
 	}
 
 	public IEnumerator ActivateCardEffectCo(CardData cardData)
 	{
 		yield return StartCoroutine(cardData.ActivationEffectExecute(this));
+		clickedServent = null;
+		yield return StartCoroutine(CheckServentsCondition());
+		foreach (Servent servent in summonedServents)
+		{ servent.SetLock(false); }
 	}
 
 
@@ -1714,7 +1864,8 @@ public class BattleManager : MonoBehaviour
 	}
 	public IEnumerator CheckServentsCondition()
 	{
-		foreach(Servent servent in summonedServents.ToList())
+		Debug.Log("CheckServentsCondition");
+		foreach (Servent servent in summonedServents.ToList())
 		{
 			if (servent.GetForce() <= 0)
 			{
@@ -2008,16 +2159,16 @@ public class BattleManager : MonoBehaviour
 	{
 		Vector3 targetScale = bigCircle.transform.localScale;
 		smallCircle.transform.DOScale(targetScale, circleSpeed).SetEase(Ease.Linear)
-		.OnComplete(() => 
-		{
-			smallCircle.transform.localScale = new Vector3(0,0,0);
-		});
+		.OnComplete(() => {smallCircle.transform.localScale = new Vector3(0,0,0);});
 	}
 
 	public void ReadyServentAttack(Servent servent)
 	{
 		attackingServent = servent;
 	}
+
+	public Servent GetSelectedServent()
+	{ return selectedServent; }
 	public void ClearLine()
 	{
 		attackDragLine.positionCount = 0;
@@ -2038,6 +2189,15 @@ public class BattleManager : MonoBehaviour
 		}
 		
 		return serventList;
+	}
+
+	public IEnumerator BackToHands()
+	{
+		StartCoroutine(InstantiateCardFromServent(clickedServent.GetCardData()));
+		summonedServents.Remove(clickedServent);
+		Destroy(clickedServent.gameObject);
+		clickedServent = null;
+		yield return new WaitForSeconds(1f);
 	}
 
 }

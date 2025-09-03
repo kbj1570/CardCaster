@@ -35,9 +35,9 @@ public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
 	}
 
-    public void UpdateCardData(ServentCardData cardData)
+    public void UpdateCardData(Servent servent)
     {
-        this.cardData = cardData;
+        cardData = servent.GetCardData();
 		originForce.text = cardData.GetForce().ToString();
         serventName.text = cardData.GetCardName();
         serventAbility.text = cardData.GetCardDesc();
@@ -68,6 +68,7 @@ public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerEx
             break;
         }
         activationButton.gameObject.SetActive(cardData.GetHasActivtionEffect());
+		activationButton.interactable =  servent.IsActivationable();
 		activationButton.onClick.AddListener(() => BattleManager.Inst.ActivateCardEffect(cardData));
 	}
 
