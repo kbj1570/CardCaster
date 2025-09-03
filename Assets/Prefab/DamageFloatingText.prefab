@@ -81,7 +81,7 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 150
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &4340512543099275962
 MonoBehaviour:
@@ -189,7 +189,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce5e598885e2b9e44831b0390b8b2cff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textMesh: {fileID: 0}
-  floatDistance: 100
-  scaleUpSize: 1.5
-  scaleDownSize: 0.1
+  textMesh: {fileID: 4340512543099275962}

@@ -3,17 +3,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class Field : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 	List<EServentCondition> conditions;
 	EServentAttribute serventAttribute;
 	public EMouseOnArea mouseOnArea;
 
-	public EAbilityType abilityType;
-
-	public bool filled;
 	public bool locked;
-	public bool isDragable;
 	public TMP_Text forceTMP;
 
 	public GameObject conditionPanel;
@@ -33,6 +29,8 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	public Color forceColorDarkness;
 	public Color forceColorLightness;
 
+	bool filled;
+
 
 	bool damageBlock;
 	int damageDecrease;
@@ -41,106 +39,37 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	int additionalForce;
 	private Servent serventObject;
 
-	public void GainForce(int value)
-	{
-		if(voidWalker)
-		return;
-
-		GameObject damageText = Instantiate(floatingTextPrefab);
-		damageText.GetComponent<FloatingDamageText>().SetFont(100);
-		damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
-
-		currentForce += value;
-	}
 	public EServentAttribute GetServentAttribute(){return serventAttribute;}
-	public void LoseForce(int value)
-	{
-		if(voidWalker)
-		return;
-
-		if(!filled)
-		return;
-
-		if(damageBlock)
-		return;
-
-		currentForce -= value;
-	}
 
 	public Servent GetServent()
 	{ return serventObject;}
 
-	public void TakeDamage(int value)
-	{
-		if(!filled)
-			return;
+	//public void UpdateHealth()
+	//{
+	//	if(!filled)
+	//	{return;}
 
-		if(damageBlock)
-			return;
+	//	forceTMP.text = currentForce.ToString();
 
-		// 피해 숫자 표시
-		GameObject damageText = Instantiate(floatingTextPrefab);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
-		damageText.GetComponent<FloatingDamageText>().SetFont(150);
+	//	if(currentForce <= 0)
+	//	{
+	//		forceTMP.gameObject.SetActive(false);
+	//		filled = false;
+	//		attacked = false;
 
-		currentForce -= value;
-	}
-
-	public void TakeAttack(int value)
-	{
-		if (!filled)
-			return;
-
-		if (damageBlock)
-			return;
-		currentForce -= value;
-	}
-
-	public void Kill()
-	{
-		if(voidWalker)
-		{return;}
-
-		forceTMP.gameObject.SetActive(false);
-		filled = false;
-		attacked = false;
-
-		if(serventObject.GetComponent<Servent>().GetServentType() == EServentType.Player)
-		BattleManager.Inst.AddTrash(cardData);
-
-		
-		serventObject.GetComponent<Servent>().Dead();
-		currentForce = 0;
-	}
-
-	public void UpdateHealth()
-	{
-		if(!filled)
-		{return;}
-
-		forceTMP.text = currentForce.ToString();
-
-		if(currentForce <= 0)
-		{
-			forceTMP.gameObject.SetActive(false);
-			filled = false;
-			attacked = false;
-
-			if(serventObject.GetComponent<Servent>().GetServentType() == EServentType.Player)
-			BattleManager.Inst.AddTrash(cardData);
+	//		if(serventObject.GetComponent<Servent>().GetServentType() == EServentType.Player)
+	//		BattleManager.Inst.AddTrash(cardData);
 
 			
-			serventObject.GetComponent<Servent>().Dead();
-			currentForce = 0;
-		}
-	}
+	//		serventObject.GetComponent<Servent>().Dead();
+	//		currentForce = 0;
+	//	}
+	//}
 
 	public void Summon(Servent serventObject, ServentCardData cardData)
 	{
-
-		filled = true;
 		this.serventObject = serventObject;
+		serventObject.SetCardData(cardData);
 		serventObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
 		serventObject.GetComponent<Servent>().SetForce(cardData.GetForce());
 		locked = false;
@@ -169,19 +98,15 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 		{conditionPanelButton.SetActive(false);}
 	}
 
-	public bool GetFilled()
-	{return filled;}
-
 
 	public EMouseOnArea GetMouseOnArea() {return mouseOnArea;}
 
 
 	public Transform GetLinePoint()
 	{
-		if(!filled)
 		return this.transform;
 
-		return serventObject.GetDragPoint();
+		//return serventObject.GetDragPoint();
 	}
 	public void OnPointerEnter(PointerEventData eventData)
 	{
@@ -191,4 +116,6 @@ public class Field : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
 	{
 		BattleManager.Inst.ResetMouseOnField();
 	}
+
+	public bool IsFilled() { return filled; }
 }

@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEngine;
 
 public class Boomsquirrel : ServentCardData
 {
@@ -15,9 +16,11 @@ public class Boomsquirrel : ServentCardData
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Wind;
-    }
+        hasActivationEffect = true;
+	}
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
+        bm.DrawCard();
 		yield return null;
 	}
 }

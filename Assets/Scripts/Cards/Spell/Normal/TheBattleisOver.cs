@@ -22,12 +22,6 @@ public class TheBattleisOver : SpellCardData
 
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
-		List<Field> allFields = bm.GetAllFields();
-		foreach (Field field in allFields)
-		{
-            if (field.GetFilled())
-                field.Kill();
-		}
 		yield return null;
 	}
 

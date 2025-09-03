@@ -2375,6 +2375,106 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 620876301680486835, guid: 6702516d749362b4fab73942f9e39a16, type: 3}
   m_PrefabInstance: {fileID: 499260059}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &502631703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 502631704}
+  - component: {fileID: 502631706}
+  - component: {fileID: 502631705}
+  m_Layer: 0
+  m_Name: Square
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &502631704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502631703}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.48, y: -1.1, z: 0}
+  m_LocalScale: {x: 6.328154, y: 3.4, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1324746743}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &502631705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502631703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c15cd72b8f1a341b846c9fd321774c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!212 &502631706
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 502631703}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &512970330
 GameObject:
   m_ObjectHideFlags: 0
@@ -2937,6 +3037,7 @@ MonoBehaviour:
   - {fileID: 515708752}
   - {fileID: 1974186822}
   cardStoryDescWindow: {fileID: 1981471511}
+  cardImageList: []
 --- !u!1001 &591239717
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3720,9 +3821,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 400757058605906095, guid: 816845ac588e8f64fb8ec05549a8a75a, type: 3}
       propertyPath: m_text
-      value: 'Poisoned
-
-        Desert'
+      value: Red Forest
       objectReference: {fileID: 0}
     - target: {fileID: 400757058605906095, guid: 816845ac588e8f64fb8ec05549a8a75a, type: 3}
       propertyPath: m_fontSize
@@ -3846,7 +3945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7935022752652855972, guid: 816845ac588e8f64fb8ec05549a8a75a, type: 3}
       propertyPath: m_Name
-      value: PoisonedDesert
+      value: Red Forest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7335,6 +7434,7 @@ Transform:
   - {fileID: 1555607310}
   - {fileID: 446868902}
   - {fileID: 126513392}
+  - {fileID: 502631704}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1325905465
@@ -9128,7 +9228,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.23921569}
   m_FlipX: 0
@@ -12944,6 +13044,7 @@ MonoBehaviour:
   cardLocation: {fileID: 213385194}
   dummyServentCardPrefab: {fileID: 8357732725725720325, guid: bf4c77bfca310bb4993d7e46890f4eb9, type: 3}
   dummySpellCardPrefab: {fileID: 8357732725725720325, guid: 9df33df545c1f6d41ae58c6ea580fc85, type: 3}
+  cardImageList: []
 --- !u!1 &1982408364
 GameObject:
   m_ObjectHideFlags: 0

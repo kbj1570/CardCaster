@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class OldHouse : MonoBehaviour
+public class ExaminePoint : MonoBehaviour
 {
-
-
 
 	void OnMouseDown()
 	{
@@ -12,9 +10,7 @@ public class OldHouse : MonoBehaviour
 			return;
 
 		if (EventSystem.current.IsPointerOverGameObject())
-		{
 			return;
-		}
 
 		CampsiteManager.Inst.LockScreen(true);
 		CampsiteManager.Inst.PlayMapOpen();

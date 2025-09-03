@@ -8,10 +8,11 @@ using UnityEngine.EventSystems;
 
 public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler , IPointerClickHandler
 {
-	private CardData cardData;
+	private ServentCardData cardData;
 
 	private EServentType serventType;
 	private EServentState serventState;
+	private EServentAttribute serventAttribute;
 
 	private string serventName;
 	private string serventOriginForce;
@@ -32,12 +33,17 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public Button activationButton;
 	public SpriteRenderer spriteRenderer;
 
+	int maxAttackCount = 1;
+	int attackCount;
+
 	public Color fadeColor;
 	public int serventNum;
 	private bool mouseOn;
 
 	public Texture2D texture2D;
 	private Material monsterMaterial;
+
+	public EBattleObjectType battleObjectType = EBattleObjectType.Servent;
 
 	bool isDissolving = false;
 	bool isDying = false;
@@ -56,6 +62,8 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	void Update()
 	{
+		serventForceText.text = currentForce.ToString();
+
 		if (isDissolving)
 		{
 			fade += Time.deltaTime * 1.1f;
@@ -67,23 +75,6 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 			}
 			monsterMaterial.SetFloat("_Fade", fade);
 		}
-
-		if (isDying)
-		{
-			if (fade == 1f)
-			{ BattleManager.Inst.PlayServentDeathSound(); }
-
-			fade -= Time.deltaTime * 1.1f;
-
-			if (fade <= 0.1f)
-			{
-				fade = 0f;
-				isDying = false;
-				BattleManager.Inst.ShotMissile(transform);
-				Destroy(this.gameObject);
-			}
-			monsterMaterial.SetFloat("_Fade", fade);
-		}
 	}
 	public void InitWithEffect()
 	{
@@ -92,9 +83,25 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		monsterMaterial.SetFloat("_Fade", fade);
 	}
 
-	public void Dead()
-	{ isDying = true; }
+	public IEnumerator DieCoroutine()
+	{
+		float fade = 1f; // 처음 페이드 값
+		BattleManager.Inst.PlayServentDeathSound();
 
+		while (fade > 0.1f)
+		{
+			fade -= Time.deltaTime * 1.1f;
+			monsterMaterial.SetFloat("_Fade", fade);
+			yield return null; // 다음 프레임까지 대기
+		}
+
+		fade = 0f;
+		monsterMaterial.SetFloat("_Fade", fade);
+		isDying = false;
+
+		BattleManager.Inst.ShotMissile(transform);
+		Destroy(gameObject);
+	}
 	public void ChangeState(EServentState state)
 	{
 		switch (state)
@@ -119,16 +126,12 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public void OnMouseUp()
 	{
-		if (mouseOn)
-		{ StartCoroutine(BattleManager.Inst.ShowServentInfo(this)); }
 	}
 
 	public void OnMouseEnter()
 	{ mouseOn = true; }
-
 	public void OnMouseExit()
 	{ mouseOn = false; }
-
 	public void ShowInfo()
 	{
 		infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
@@ -149,36 +152,58 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	{ this.serventType = serventType; }
 	public Transform GetDragPoint()
 	{ return dragPoint; }
-
 	public void GainForce(int value)
-	{
-
-	}
+	{currentForce += value;}
 	public void LoseForce(int value)
-	{
-
-	}
+	{currentForce -= value;}
 
 	public void SetForce(int value)
-	{
-		currentForce = value;
-	}
+	{currentForce = value;}
+
+	public int GetForce()
+	{ return currentForce; }
+
+	public ServentCardData GetCardData()
+	{ return cardData; }
+
+	public EServentAttribute GetAttribute()
+	{ return serventAttribute; }
 
 	public void OnBeginDrag(PointerEventData eventData)
-	{ }
+	{ BattleManager.Inst.ReadyServentAttack(this); }
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
+		StartCoroutine(BattleManager.Inst.ShowServentInfo(this));
 	}
 
 	public void OnEndDrag(PointerEventData eventData)
 	{
-		StartCoroutine(BattleManager.Inst.EndAttackLine(mouseOnArea, BattleManager.Inst.CheckAttackable(mouseOnArea)));
+		if (BattleManager.Inst.CheckAttackable(this))
+			StartCoroutine(BattleManager.Inst.BattlePhase());
+
+		BattleManager.Inst.ClearLine();
 	}
 	public void OnDrag(PointerEventData eventData)
-	{
-		BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(mouseOnArea));
-	}
+	{BattleManager.Inst.DrawAttackLine(this.transform.position, BattleManager.Inst.CheckAttackable(this));}
 
-	
+	public void TakeDamage(int damage)
+	{currentForce -= damage;}
+
+	public void AddAttackCount()
+	{attackCount++;}
+
+	public void ResetAttackCount()
+	{attackCount = 0;}
+
+	public bool IsAttackable()
+	{ return attackCount < maxAttackCount; }
+
+	public void HideForce()
+	{ serventForceText.gameObject.SetActive(false); }
+	public void ShowForce()
+	{ serventForceText.gameObject.SetActive(true); }
+
+	public void SetCardData(ServentCardData cardData)
+	{this.cardData = cardData;}
 }

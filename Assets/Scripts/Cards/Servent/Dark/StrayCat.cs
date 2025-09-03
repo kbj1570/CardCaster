@@ -21,8 +21,8 @@ public class StrayCat : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-		Field field = bm.ReturnMouseOnField();
-		field.GainForce(PlayerData.saveData.gold / 100);
+        Servent servent = null;
+		servent.GainForce(PlayerData.saveData.gold / 100);
 		yield return null;
 	}
 }

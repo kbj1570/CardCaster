@@ -1,12 +1,17 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using DG.Tweening;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ServentInfoWindow : MonoBehaviour
+public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    public bool onMouse;
+    public ServentCardData cardData;
+
     public TMP_Text originForce;
     public TMP_Text serventName;
     public TMP_Text serventAbility;
@@ -19,14 +24,21 @@ public class ServentInfoWindow : MonoBehaviour
     public Sprite darknessAttribute;
     public Sprite lightnessAttribute;
 
+    public Button activationButton;
     void Start()
     {
         ScaleZero();
     }
+    public ServentCardData GetCardData()
+    {
+        return cardData;
+
+	}
 
     public void UpdateCardData(ServentCardData cardData)
     {
-        originForce.text = cardData.GetForce().ToString();
+        this.cardData = cardData;
+		originForce.text = cardData.GetForce().ToString();
         serventName.text = cardData.GetCardName();
         serventAbility.text = cardData.GetCardDesc();
         switch(cardData.GetAttribute())
@@ -55,11 +67,13 @@ public class ServentInfoWindow : MonoBehaviour
             serventAttribute.sprite = lightnessAttribute;
             break;
         }
-    }
+        activationButton.gameObject.SetActive(cardData.GetHasActivtionEffect());
+		activationButton.onClick.AddListener(() => BattleManager.Inst.ActivateCardEffect(cardData));
+	}
 
-    public void OnOff(bool isOpened)
+	public void OnOff(bool isOpened)
     {
-        if(!isOpened)
+        if (!isOpened)
         {
             DG.Tweening.Sequence sequence = DOTween.Sequence()
             .Append(transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.OutCirc));
@@ -76,4 +90,14 @@ public class ServentInfoWindow : MonoBehaviour
 
     [ContextMenu("ScaleZero")]
     void ScaleZero() => transform.localScale = Vector3.zero;
+
+	public void OnPointerEnter(PointerEventData eventData)
+	{
+		onMouse = true;
+	}
+
+	public void OnPointerExit(PointerEventData eventData)
+	{
+		onMouse = false;
+	}
 }

@@ -8,6 +8,8 @@ public abstract class ServentCardData : CardData
 
 	protected int force;
 	protected bool penetrate;
+	protected bool hasActivationEffect;
+
 	protected bool voidWalker;
 	protected bool fireImmune;
 	protected bool waterImmune;
@@ -20,5 +22,6 @@ public abstract class ServentCardData : CardData
 	public EServentAttribute GetAttribute() => serventAttribute;
 	public EServentSize GetSize() => serventSize;
 	public bool GetPenetrate() => penetrate;
+	public bool GetHasActivtionEffect() => hasActivationEffect;
 	public bool GetVoidWalker() => voidWalker;
 }

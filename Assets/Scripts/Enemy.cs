@@ -43,8 +43,15 @@ public class Enemy
     public int GetActionToken()
     {return actionToken;}
 
+    public void EnemyTakeDamage(int damage)
+    {
+        enemyHealth -= damage;
+        if(enemyHealth < 0)
+        {enemyHealth = 0;}
+	}
 
-    public void SetRewards()
+
+	public void SetRewards()
     {
         Random random = new Random();
         int randomNum = random.Next(0, enemyGold / 5);

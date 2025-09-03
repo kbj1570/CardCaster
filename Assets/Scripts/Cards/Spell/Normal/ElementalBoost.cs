@@ -24,27 +24,19 @@ public class ElementalBoost : SpellCardData
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		List<EServentAttribute> attributes = new();
-		List<Field> playerFields = bm.GetPlayerFields();
+		List<Servent> playerServents = bm.GetServents(EServentType.Player);
 
-		foreach (Field field in playerFields)
+		foreach (Servent servent in playerServents)
 		{
-			if (!field.GetFilled()) continue;
-
-			if (!attributes.Contains(field.GetServentAttribute()))
-			{ attributes.Add(field.GetServentAttribute()); }
+			if (!attributes.Contains(servent.GetAttribute()))
+			{ attributes.Add(servent.GetAttribute()); }
 		}
 
-		foreach (Field field in playerFields)
+		foreach (Servent servent in playerServents)
 		{
-			if (!field.GetFilled()) continue;
-
-			field.GainForce(attributes.Count);
+			servent.GainForce(attributes.Count);
 		}
 
-		yield return null;
-	}
-	public override IEnumerator EndPhaseEffectExecute(BattleManager bm)
-	{
 		yield return null;
 	}
 }

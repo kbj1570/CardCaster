@@ -23,15 +23,13 @@ public class Griffin : ServentCardData
 	{
 
 		List<EServentAttribute> attributes = new();
-		List<Field> playerFields = bm.GetPlayerFields();
+		List<Servent> playerServents = bm.GetServents(EServentType.Player);
 
 		int count = 0;
 
-		foreach (Field field in playerFields)
+		foreach (Servent servent in playerServents)
 		{
-			if (!field.GetFilled()) continue;
-
-			if (field.GetServentAttribute() == EServentAttribute.Wind)
+			if (servent.GetAttribute() == EServentAttribute.Wind)
 			{count++;}
 		}
 

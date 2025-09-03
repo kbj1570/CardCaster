@@ -17,18 +17,13 @@ public class SilentFog : SpellCardData
     }
 
 	public override bool IsCardUsable(BattleManager bm)
-	{
-		return bm.playerHealth == 1;
-	}
+	{return bm.playerHealth == 1;}
 
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
-		List<Field> allFields = bm.GetAllFields();
-		foreach (Field field in allFields)
-		{
-            if (field.GetFilled())
-                field.Kill();
-		}
+		List<Servent> allServents = bm.GetServents(EServentType.None);
+		foreach (Servent servent in allServents)
+		{servent.SetForce(0);}
 
 		yield return new WaitForSeconds(1f);
 	}

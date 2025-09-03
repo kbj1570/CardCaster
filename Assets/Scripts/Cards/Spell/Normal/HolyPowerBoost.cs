@@ -16,12 +16,11 @@ public class HolyPowerBoost : SpellCardData
     }
     public override IEnumerator ActivationEffectExecute(BattleManager bm)
     {
-        List<Field> allFields = bm.GetAllFields();
-        foreach (Field field in allFields)
+        List<Servent> servents = bm.GetServents(EServentType.None);
+        foreach (Servent servent in servents)
         {
-            if (field.GetFilled())
-                field.Kill();
-        }
-        yield return null;
+            servent.SetForce(0);
+		}
+		yield return null;
     }
 }
