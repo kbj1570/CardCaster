@@ -18,7 +18,7 @@ public class UnknownMonster : Enemy
 		};
 
         
-        serventList = new List<EnemyServentCardData>
+        serventDeck = new List<EnemyServentCardData>
         {
             new ShadowCorvus(),
             new Wild()

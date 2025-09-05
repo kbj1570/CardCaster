@@ -1,21 +1,21 @@
 using System.Collections;
 using UnityEngine;
 
-public class ShapeShifter : ServentCardData
+public class Executioner: ServentCardData
 {
-    public ShapeShifter()
+    public Executioner()
     {
-        cardNum = "112";
-        cardName = "셰이프 시프터";
-        cardCost = 2;
+        cardNum = "136";
+        cardName = "처형자";
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 1;
         cardStoryDesc = "";
-        cardDesc = "능력 발동 시, 소환수 하나를 선택하고 소멸시킨다.";
+        cardDesc = "능력 발동 시, 자신의 물 속성\r\n소환수 하나를 선택하고\r\n포스를 0으로 한다.";
 		serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Targeting;
-        serventAttribute = EServentAttribute.Earth;
+        serventAttribute = EServentAttribute.Water;
         hasActivationEffect = true;
 	}
 

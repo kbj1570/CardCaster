@@ -10,21 +10,21 @@ public class BezierMissile : MonoBehaviour {
 	float spd = 3f;
 	float posA = 3f;
 	float posB = 3f;
-	public Vector3 master;
-	public Vector3 enemy;
+	public Vector3 masterPos;
+	public Vector3 enemyPos;
 
 	void Start()
 	{
-		point[0] = master;
-		point[1] = PointSetting(master);
-		point[2] = PointSetting(enemy);
-		point[3] = enemy;
+		point[0] = masterPos;
+		point[1] = PointSetting(masterPos);
+		point[2] = PointSetting(enemyPos);
+		point[3] = enemyPos;
 	}
 
 	void FixedUpdate() {
 		if (hit) return;
 
-		if (Vector2.Distance(transform.position, enemy) < 0.5f)
+		if (Vector2.Distance(transform.position, enemyPos) < 0.5f)
 		{
 			hit = true;
 			Destroy(gameObject, 0.1f);

@@ -131,7 +131,7 @@ public class  DataController : MonoBehaviour
         cardDatas.Add(new BrownSlime());//109
         cardDatas.Add(new WhiteSlime());//110
 		cardDatas.Add(new BlackSlime());//111
-		cardDatas.Add(new ShapeShifter());//112
+		cardDatas.Add(new AbyssEater());//112
 		cardDatas.Add(new Frillizard());//113
         cardDatas.Add(new Griffin());//114
         cardDatas.Add(new Georgius());//115
@@ -155,6 +155,7 @@ public class  DataController : MonoBehaviour
 		cardDatas.Add(new BrokenBless());//133
 		cardDatas.Add(new AtTheEdgeOfPledge());//134
 		cardDatas.Add(new RunTogether());//135
+		cardDatas.Add(new Executioner());//136
 		return cardDatas;
     }
 
@@ -181,7 +182,7 @@ public class  DataController : MonoBehaviour
 		cardDatas.Add(new BrownSlime());//109
 		cardDatas.Add(new WhiteSlime());//110
 		cardDatas.Add(new BlackSlime());//111
-		cardDatas.Add(new ShapeShifter());//112
+		cardDatas.Add(new AbyssEater());//112
 		cardDatas.Add(new Frillizard());//113
 		cardDatas.Add(new Griffin());//114
 		cardDatas.Add(new ForbiddenedSavior());//116
@@ -221,25 +222,5 @@ public class  DataController : MonoBehaviour
         items.Add(new TrickGlove());
 
         return items;
-    }
-
-    public Dictionary<string, int> LoadCardList()
-    {
-        if(File.Exists(Path.Combine(Application.dataPath, "CardList.json")))
-        {
-            Dictionary<string, int> data = JsonMapper.ToObject<Dictionary<string, int>>(File.ReadAllText(Path.Combine(Application.dataPath , "CardList.json")));
-            return data;
-        }
-        return null;
-    }
-
-    public List<RandomEvent> LoadEncounterList()
-    {
-        if(File.Exists(Path.Combine(Application.dataPath , "Encounter.json")))
-        {
-            List<RandomEvent> data = JsonMapper.ToObject<List<RandomEvent>>(File.ReadAllText(Path.Combine(Application.dataPath , "Encounter.json")));
-            return data;
-        }
-        return null;
     }
 }

@@ -20,9 +20,10 @@ public class Enemy
     protected Dictionary<ItemData, int> enemyRewards;
     protected List<ItemData> rewards;
     protected int enemyGold;
-    protected List<EnemyServentCardData> serventList;
+    protected List<EnemyServentCardData> serventDeck;
 
-    public string GetName()
+
+	public string GetName()
     {return enemyName;}
 
     public string GetNum()
@@ -38,17 +39,10 @@ public class Enemy
     {return enemyGold;}
 
     
-    public List<EnemyServentCardData> GetServentList()
-    {return serventList;}
+    public List<EnemyServentCardData> GetServentDeck()
+    {return serventDeck;}
     public int GetActionToken()
     {return actionToken;}
-
-    public void EnemyTakeDamage(int damage)
-    {
-        enemyHealth -= damage;
-        if(enemyHealth < 0)
-        {enemyHealth = 0;}
-	}
 
 
 	public void SetRewards()

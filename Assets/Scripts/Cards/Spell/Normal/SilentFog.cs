@@ -23,9 +23,10 @@ public class SilentFog : SpellCardData
 	{
 		List<Servent> allServents = bm.GetServents(EServentType.None);
 		foreach (Servent servent in allServents)
-		{servent.SetForce(0);}
-
-		yield return new WaitForSeconds(1f);
+		{
+			servent.SetForce(0);
+		}
+		yield return new WaitForSeconds(0.1f);
 	}
 
 

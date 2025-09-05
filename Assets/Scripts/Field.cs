@@ -69,9 +69,12 @@ public class Field : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	public void Summon(Servent serventObject, ServentCardData cardData)
 	{
 		this.serventObject = serventObject;
+		filled = true;
 		serventObject.SetCardData(cardData);
-		serventObject.GetComponent<Servent>().SetServentType(cardData.GetServentType());
-		serventObject.GetComponent<Servent>().SetForce(cardData.GetForce());
+		serventObject.SetField(this);
+		serventObject.SetAttribute(cardData.GetAttribute());
+		serventObject.SetServentType(cardData.GetServentType());
+		serventObject.SetForce(cardData.GetForce());
 		locked = false;
 	}
 
@@ -116,6 +119,7 @@ public class Field : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	{
 		BattleManager.Inst.ResetMouseOnField();
 	}
+	public void SetFilled(bool value) { filled = value; }
 
 	public bool IsFilled() { return filled; }
 }

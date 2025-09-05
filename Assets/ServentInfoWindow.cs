@@ -69,7 +69,7 @@ public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
         activationButton.gameObject.SetActive(cardData.GetHasActivtionEffect());
 		activationButton.interactable =  servent.IsActivationable();
-		activationButton.onClick.AddListener(() => BattleManager.Inst.ActivateCardEffect(cardData));
+		activationButton.onClick.AddListener(() => BattleManager.Inst.ActivateCardEffect(servent));
 	}
 
 	public void OnOff(bool isOpened)

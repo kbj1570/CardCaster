@@ -14,9 +14,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	private EServentState serventState;
 	private EServentAttribute serventAttribute;
 
-	private string serventName;
-	private string serventOriginForce;
-	private string serventAbility;
+	private Field field;
 
 	private Sprite idle;
 	private Sprite attack;
@@ -36,7 +34,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	int maxAttackCount = 1;
 	int attackCount;
 
-	int maxActivationCount = 1;
+	int maxActivationCount = 5;
 	int activationCount;
 
 	public Color fadeColor;
@@ -103,8 +101,11 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		monsterMaterial.SetFloat("_Fade", fade);
 		isDying = false;
 
-		BattleManager.Inst.ShotMissile(transform);
+		BattleManager.Inst.AddTrash(cardData);
+		Vector3 startPos = transform.position;
+		BattleManager.Inst.ShotMissile(startPos);
 		Destroy(gameObject);
+		yield break;
 	}
 	public void ChangeState(EServentState state)
 	{
@@ -128,29 +129,18 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		}
 	}
 
-	public void OnMouseUp()
-	{
-	}
-
 	public void OnMouseEnter()
 	{ mouseOn = true; }
 	public void OnMouseExit()
 	{ mouseOn = false; }
 
+	void OnDestroy()
+	{
+		field.SetFilled(false);
+	}
+
 	public void SetLock(bool locked)
 	{ this.locked = locked; }
-	//public void ShowInfo()
-	//{
-	//	infoWindow.GetComponent<ServentInfoWindow>().OnOff(true);
-	//	border.SetActive(true);
-	//	activationButton.gameObject.SetActive(true);
-	//}
-	//public void CloseInfo()
-	//{
-	//	infoWindow.GetComponent<ServentInfoWindow>().OnOff(false);
-	//	border.SetActive(false);
-	//	activationButton.gameObject.SetActive(false);
-	//}
 	public int GetServentNum()
 	{ return serventNum; }
 	public EServentType GetServentType()
@@ -169,6 +159,9 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public int GetForce()
 	{ return currentForce; }
+
+	public void SetAttribute(EServentAttribute value)
+	{ serventAttribute = value; }
 
 	public ServentCardData GetCardData()
 	{ return cardData; }
@@ -228,4 +221,12 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public void SetCardData(ServentCardData cardData)
 	{this.cardData = cardData;}
+
+
+	public void SetField(Field field)
+	{ this.field = field; }
+
+	public Field GetField()
+	{ return field; }
+
 }

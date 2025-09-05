@@ -7,7 +7,7 @@ public class KnightOfTheRedFlame : ServentCardData
     {
         cardNum = "117";
         cardName = "홍염의 기사";
-        cardCost = 1;
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 2;

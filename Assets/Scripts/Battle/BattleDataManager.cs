@@ -7,7 +7,14 @@ public class BattleDataManager
 	private int totalSummonedServentCount; // 총 소환된 소환수의 수
 }
 
-public enum EEnemyAction { None, Summon, Attack, Ability }
+public enum EEnemyAction
+{
+	None,
+	Summon,
+	Attack,
+	ServentAbility,  // 소환수 능력 사용
+	EnemyAbility     // 적 고유 능력 사용
+}
 public enum EServentType { None, Player, Enemy }
 public enum BattleState { Idle, SelectingServent, EnemyTurn }
 public enum ECardType { None, Servent, Spell, Field, Enemy }

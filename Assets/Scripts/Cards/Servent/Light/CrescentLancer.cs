@@ -21,7 +21,18 @@ public class CrescentLancer : ServentCardData
     }
 	public override IEnumerator AttackEffectExecute(BattleManager bm)
 	{
-		//bm.Pierce();
+		if (bm.currentDefender != null && bm.originalDefenderForce > 0)
+		{
+			int myForce = bm.currentAttacker.GetForce();
+			int enemyForce = bm.originalDefenderForce;
+
+			if (myForce > enemyForce)
+			{
+				int pierceDamage = myForce - enemyForce;
+				bm.DealDamageToEnemy(pierceDamage);
+				bm.AlertMessage($"관통 대미지 {pierceDamage}!");
+			}
+		}
 		yield return null;
 	}
 }

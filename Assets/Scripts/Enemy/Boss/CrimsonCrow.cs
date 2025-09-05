@@ -15,7 +15,7 @@ public class CrimsonCrow : Enemy
 			{new ShardOfStarlight(), 3},
 			{new RedPotion(), 10}
 		};
-		serventList = new List<EnemyServentCardData>
+		serventDeck = new List<EnemyServentCardData>
 		{
 			new ShadowCorvus(),
 			new Wild()

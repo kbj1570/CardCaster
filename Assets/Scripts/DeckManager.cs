@@ -42,12 +42,6 @@ public class DeckManager : MonoBehaviour
 	public ScrollRect scrollRect;
 
 	public Dictionary<string, int> cardHashMap;
-
-	void Start()
-	{
-		
-	}
-
 	void Awake()
 	{Inst = this;}
 
@@ -150,24 +144,29 @@ public class DeckManager : MonoBehaviour
 	{
 		int count = 0;
 
-		pageLimit = myCardList.Count / 6;
-		int remainder = myCardList.Count % 6;
+		// 페이지 계산 수정: 전체 페이지 수 = (총 카드 수 + 5) / 6
+		int totalPages = (myCardList.Count + 5) / 6;
+		pageLimit = totalPages - 1; // 페이지는 0부터 시작하므로 -1
 
-		if(remainder == 0)
-		{ pageLimit--; }
+		// 현재 페이지가 범위를 벗어나지 않도록 보정
+		if (currentPage > pageLimit)
+			currentPage = pageLimit;
 
 		currentCardList.Clear();
-		foreach(GameObject gameObject in dummyCardObjectList)
-		{Destroy(gameObject);}
+		foreach (GameObject gameObject in dummyCardObjectList)
+		{ Destroy(gameObject); }
 
 		List<CardData> cardList = new List<CardData>(myCardList.Keys);
 
-		if(currentPage != pageLimit)
-		{remainder = 6;}
+		// 현재 페이지에서 표시할 카드 수 계산
+		int startIndex = currentPage * 6;
+		int cardsToShow = Mathf.Min(6, myCardList.Count - startIndex);
 
-		for (int i = 0; i < remainder; ++i)
+		// 현재 페이지에 표시할 카드들을 currentCardList에 추가
+		for (int i = 0; i < cardsToShow; ++i)
 		{
-			currentCardList.Add(cardList[(currentPage * 6) + i], myCardList[cardList[(currentPage * 6) + i]]);
+			CardData cardData = cardList[startIndex + i];
+			currentCardList.Add(cardData, myCardList[cardData]);
 		}
 
 		foreach (KeyValuePair<CardData, int> item in currentCardList)
@@ -197,7 +196,6 @@ public class DeckManager : MonoBehaviour
 					break;
 			}
 
-
 			GameObject cardObject = Instantiate(selectedCardPrefab,
 			new Vector3(0, 0, 0), Utils.QI);
 
@@ -206,25 +204,26 @@ public class DeckManager : MonoBehaviour
 			});
 			cardObject.GetComponent<Card>().SetCard(item.Key, cardImageList[cardHashMap[item.Key.GetCardNum()]]);
 
-
 			cardObject.transform.SetParent(cardLocation[count].transform);
-			cardObject.transform.localScale = new Vector3(0.7f,0.7f, 1f);
-			cardObject.transform.localPosition = new Vector3(0,0,0);
-			
+			cardObject.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+			cardObject.transform.localPosition = new Vector3(0, 0, 0);
+
 			dummyCardObjectList.Add(cardObject);
 			count++;
 		}
-		if(currentPage == 0)
-		backButton.SetActive(false);
-		else
-		backButton.SetActive(true);
 
-		if(currentPage == pageLimit)
-		nextButton.SetActive(false);
+		// 버튼 활성화/비활성화
+		if (currentPage == 0)
+			backButton.SetActive(false);
 		else
-		nextButton.SetActive(true);
+			backButton.SetActive(true);
 
-		pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);        
+		if (currentPage == pageLimit)
+			nextButton.SetActive(false);
+		else
+			nextButton.SetActive(true);
+
+		pageNumber.text = (currentPage + 1) + " / " + (pageLimit + 1);
 	}
 
 	public void ChangePage(bool value)
