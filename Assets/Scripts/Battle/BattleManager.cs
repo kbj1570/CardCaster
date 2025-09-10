@@ -37,6 +37,7 @@ public class BattleManager : MonoBehaviour
 
 	public Servent currentAttacker;
 	public Servent selectedServent;
+	public EServentAttribute targetServentAttribute;
 
 	public Servent activatingServent;
 
@@ -148,7 +149,6 @@ public class BattleManager : MonoBehaviour
 
 	private IEnumerator ShowBattleWindow(int attackerDamage, int defenderDamage)
 	{
-		Debug.Log(summonedServents.Count);
 		foreach (Servent servent in summonedServents)
 		{servent.HideForce();}
 
@@ -431,8 +431,17 @@ public class BattleManager : MonoBehaviour
 
 			if (selectedObject.CompareTag("Servent"))
 			{
+
 				selectedServent = selectedObject.GetComponent<Servent>();
-				actionFlag = true;
+				if (targetServentAttribute == EServentAttribute.None)
+				{
+					actionFlag = true;
+				}
+				else if(selectedServent.GetAttribute() == targetServentAttribute)
+				{
+					actionFlag = true;
+				}
+				
 			}
 			else
 			{Debug.Log("선택할 수 없는 대상입니다.");}
@@ -827,14 +836,14 @@ public class BattleManager : MonoBehaviour
 			yield return new WaitForSeconds(2.5f);
 		}
 	}
-	public void SelectServentOnField()
-	{ 
+	public void SelectServentOnField(EServentAttribute targetServentAttribute)
+	{
+		this.targetServentAttribute = targetServentAttribute;
 		StartCoroutine(SelectServentOnFieldCo());
 	}
 
 	public IEnumerator SelectServentOnFieldCo()
 	{
-
 		battleState = BattleState.SelectingServent;
 		actionFlag = false;
 		serventSelectAlert.SetActive(true);
@@ -1674,22 +1683,19 @@ public class BattleManager : MonoBehaviour
 
 					serventObject.GetComponent<Servent>().InitWithEffect();
 					summonedServents.Add(serventObject.GetComponent<Servent>());
-
 					soundEffect.PlayOneShot(serventSummon);
 
 
-					//StartCoroutine(ActivateSummonAbility(
-					//	serventCardData,
-					//	card.GetComponent<BattleCardObject>().GetCurrentCost(),
-					//	targetField
-					//));
-					StartCoroutine(serventCardData.SummonEffectExecute(this));
+					activatingServent = serventObject.GetComponent<Servent>();
+					yield return StartCoroutine(serventCardData.SummonEffectExecute(this));
+					activatingServent = null;
 
 					for (int i = 0; i < cardObjectList.Count; ++i)
 					{cardObjectList[i].GetComponent<Card>().SetCardOrder(i);}
 
 					CardAlignment();
 					yield return StartCoroutine(NotifyServentSummon(serventObject.GetComponent<Servent>()));
+					yield return StartCoroutine(CheckServentsCondition());
 				}
 			}
 			else

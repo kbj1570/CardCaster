@@ -21,7 +21,7 @@ public class CookOfDarkness : ServentCardData
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
 		bm.SearchCardInDeck(new OddedStew());
-		yield return new WaitForSeconds(0.4f);
+		yield return new WaitForSeconds(0.2f);
 		bm.SearchCardInDeck(new OddedStew());
 		yield return null;
 	}

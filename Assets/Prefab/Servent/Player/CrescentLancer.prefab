@@ -139,6 +139,7 @@ MonoBehaviour:
   currentForce: 0
   border: {fileID: 0}
   infoWindow: {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
+  floatingTextPrefab: {fileID: 5577212868850533928, guid: 435c3ec4acf82db41ae2936f88adc52f, type: 3}
   serventForceText: {fileID: 3965241541678656265}
   activationButton: {fileID: 0}
   spriteRenderer: {fileID: 7468473441850001522}

@@ -1,10 +1,10 @@
-using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
-using TMPro;
 using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler , IPointerClickHandler
 {
@@ -25,16 +25,17 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public Transform dragPoint;
 	public int currentForce;
 
+
 	public GameObject border;
 	public GameObject infoWindow;
+	public GameObject floatingTextPrefab;
 	public TMP_Text serventForceText;
-	public Button activationButton;
 	public SpriteRenderer spriteRenderer;
 
 	int maxAttackCount = 1;
 	int attackCount;
 
-	int maxActivationCount = 5;
+	int maxActivationCount = 1;
 	int activationCount;
 
 	public Color fadeColor;
@@ -150,7 +151,14 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public Transform GetDragPoint()
 	{ return dragPoint; }
 	public void GainForce(int value)
-	{currentForce += value;}
+	{
+		GameObject damageText = Instantiate(floatingTextPrefab, this.transform);
+		damageText.transform.position = serventForceText.transform.position;
+		damageText.GetComponent<FloatingDamageText>().SetDamageText(value);
+		damageText.GetComponent<FloatingDamageText>().SetFont(20);
+		damageText.GetComponent<FloatingDamageText>().SetColor(Color.green);
+		currentForce += value;
+	}
 	public void LoseForce(int value)
 	{currentForce -= value;}
 
@@ -197,7 +205,14 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	}
 
 	public void TakeDamage(int damage)
-	{currentForce -= damage;}
+	{
+		GameObject damageText = Instantiate(floatingTextPrefab, this.transform);
+		damageText.transform.position = serventForceText.transform.position;
+		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
+		damageText.GetComponent<FloatingDamageText>().SetFont(20);
+		damageText.GetComponent<FloatingDamageText>().SetColor(Color.red);
+		currentForce -= damage;
+	}
 
 	public void AddAttackCount()
 	{ attackCount++; }
@@ -215,9 +230,18 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	{ return activationCount < maxActivationCount; }
 
 	public void HideForce()
-	{ serventForceText.gameObject.SetActive(false); }
+	{
+		if (serventForceText.gameObject == null) return;
+
+		serventForceText.gameObject.SetActive(false);
+	}
 	public void ShowForce()
-	{ serventForceText.gameObject.SetActive(true); }
+	{
+
+		if (serventForceText.gameObject == null) return;
+
+		serventForceText.gameObject.SetActive(true);
+	}
 
 	public void SetCardData(ServentCardData cardData)
 	{this.cardData = cardData;}

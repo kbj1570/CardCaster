@@ -23,6 +23,6 @@ public class BlueSlime : ServentCardData
         bm.DrawCard();
         Servent servent = bm.clickedServent;
         servent.SetForce(0);
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.2f);
 	}
 }

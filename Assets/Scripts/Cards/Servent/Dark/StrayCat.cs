@@ -21,8 +21,8 @@ public class StrayCat : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-        Servent servent = null;
+        Servent servent = bm.activatingServent;
 		servent.GainForce(PlayerData.saveData.gold / 100);
-		yield return null;
+		yield return new WaitForSeconds(0.2f);
 	}
 }

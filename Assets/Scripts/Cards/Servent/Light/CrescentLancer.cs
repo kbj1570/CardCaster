@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class CrescentLancer : ServentCardData
 {
@@ -31,6 +32,8 @@ public class CrescentLancer : ServentCardData
 				int pierceDamage = myForce - enemyForce;
 				bm.DealDamageToEnemy(pierceDamage);
 				bm.AlertMessage($"관통 대미지 {pierceDamage}!");
+
+				yield return new WaitForSeconds(0.3f);
 			}
 		}
 		yield return null;

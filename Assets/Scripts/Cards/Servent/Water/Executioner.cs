@@ -21,7 +21,7 @@ public class Executioner: ServentCardData
 
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
-		bm.SelectServentOnField();
+		bm.SelectServentOnField(EServentAttribute.Water);
         yield return new WaitUntil(() => bm.actionFlag);
         Servent servent = bm.GetSelectedServent();
         servent.SetForce(0);
