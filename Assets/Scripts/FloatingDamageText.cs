@@ -6,8 +6,8 @@ using DG.Tweening;
 public class FloatingDamageText : MonoBehaviour
 {
     public TMP_Text textMesh;
-    float floatDistance = 0.4f;  // 떠오르는 거리
-    float scaleUpSize = 1.2f;    // 커지는 크기 비율
+    float floatDistance = 0.2f;  // 떠오르는 거리
+    float scaleUpSize = 1.1f;    // 커지는 크기 비율
     float scaleDownSize = 0.1f;
 
     float duration  = 1.5f;

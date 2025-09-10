@@ -22,6 +22,8 @@ public class Enemy
     protected int enemyGold;
     protected List<EnemyServentCardData> serventDeck;
 
+    protected int dialogueIndex;
+
 
 	public string GetName()
     {return enemyName;}

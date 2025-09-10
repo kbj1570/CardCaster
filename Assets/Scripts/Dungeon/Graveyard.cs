@@ -24,11 +24,11 @@ public class Graveyard : Dungeon
             {new UnknownMonster(), 3}
         };
 
-        randomEventList = new(){
+        dialogueList = new(){
+            1
+		};
 
-        };
-
-        maxGold = 20;
+		maxGold = 20;
     }
 
 }

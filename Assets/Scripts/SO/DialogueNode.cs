@@ -6,7 +6,7 @@ using UnityEngine;
 public class DialogueEvent
 {
 	public DialogueEventType eventType;
-	public string parameter; // 씬 이름, 아이템 ID, 다음 대화 ID 등
+	public string parameter;
 }
 
 [System.Serializable]
@@ -32,5 +32,6 @@ public enum DialogueEventType
 	CloseDialogue,
 	LoadScene,
 	StartDialogue,
-	GiveItem
+	GiveItem,
+	AlertUnexpectedSituation
 }

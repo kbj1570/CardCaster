@@ -210,7 +210,7 @@ MonoBehaviour:
   dummyServentCardPrefab: {fileID: 8357732725725720325, guid: 109a33d9b1bc66d4abb9281c25f4e07c, type: 3}
   dummySpellCardPrefab: {fileID: 8357732725725720325, guid: 9df33df545c1f6d41ae58c6ea580fc85, type: 3}
   cardImageList:
-  - {fileID: 1208040086343421634, guid: 2bb051466960198459a500701d601c48, type: 3}
+  - {fileID: 1815138211309850413, guid: e270d92233ab92b4ca2583b1288c89f6, type: 3}
   - {fileID: 1208040086343421634, guid: 2bb051466960198459a500701d601c48, type: 3}
   - {fileID: 1208040086343421634, guid: 2bb051466960198459a500701d601c48, type: 3}
   - {fileID: 1208040086343421634, guid: 2bb051466960198459a500701d601c48, type: 3}
@@ -1738,7 +1738,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0037231445}
+  m_AnchoredPosition: {x: 0, y: 0.0037841797}
   m_SizeDelta: {x: 0, y: 769.07}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1806984801999012931
@@ -1977,8 +1977,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5695538411658485852}
   m_HandleRect: {fileID: 8504407956093854453}
   m_Direction: 2
-  m_Value: 0.016129032
-  m_Size: 0
+  m_Value: 0
+  m_Size: 0.016129036
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

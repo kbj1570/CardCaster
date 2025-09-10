@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 
 public class ExaminePoint : MonoBehaviour
 {
+	public int dialogueIndex;
 
 	void OnMouseDown()
 	{
@@ -12,8 +13,7 @@ public class ExaminePoint : MonoBehaviour
 		if (EventSystem.current.IsPointerOverGameObject())
 			return;
 
-		CampsiteManager.Inst.LockScreen(true);
-		CampsiteManager.Inst.PlayMapOpen();
-		CampsiteManager.Inst.OpenMap();
+		DialogueManager.Inst.SetLockTarget(CampsiteManager.Inst);
+		DialogueManager.Inst.StartDialogue(dialogueIndex);
 	}
 }

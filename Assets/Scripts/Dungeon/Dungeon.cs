@@ -16,7 +16,8 @@ public class Dungeon
 	protected Dictionary<int, string> safeFloorList;
 	protected Dictionary<RandomEvent, int> randomEventList;
     protected List<RandomEvent> bannedEncounterList;
-    public string GetDungeonName()
+	protected List<int> dialogueList;
+	public string GetDungeonName()
     {return dungeonName;}
     public int GetDungeonNum()
     { return dungeonNum; }
@@ -51,6 +52,9 @@ public class Dungeon
     {return randomEventList;}
     public List<RandomEvent> GetBannedEncounterList()
     {return bannedEncounterList;}
+
+	public List<int> GetDialogueList()
+	{ return dialogueList; }
 
 
 }

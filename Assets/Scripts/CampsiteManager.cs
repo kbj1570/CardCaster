@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
+public interface ILockable
+{
+	void LockControl();
+	void UnlockControl();
+}
 public static class DungeonData
 {
 	public static Dungeon dungeon;
@@ -40,7 +45,7 @@ public static class DungeonClearData
 	public static Enemy enemy;
 }
 
-public class CampsiteManager : MonoBehaviour
+public class CampsiteManager : MonoBehaviour, ILockable
 {
 	public Image fadeImage;
 	public AudioSource audioSource;
@@ -108,6 +113,16 @@ public class CampsiteManager : MonoBehaviour
 	public void LockScreen(bool value)
 	{
 		screenLocked = value;
+	}
+
+	public void LockControl()
+	{screenLocked = true;}
+
+	public void UnlockControl()
+	{screenLocked = false;}
+
+	public void StartDialogue()
+	{
 	}
 
 

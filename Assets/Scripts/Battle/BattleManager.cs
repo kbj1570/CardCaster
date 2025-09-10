@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Search;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,7 +14,7 @@ using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 
-public class BattleManager : MonoBehaviour
+public class BattleManager : MonoBehaviour , ILockable
 {
 	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
@@ -240,7 +241,12 @@ public class BattleManager : MonoBehaviour
 		mouseOnArea = EMouseOnArea.None;
 
 		StartCoroutine(FadeIn());
+
 		StartCoroutine(GameLoop());
+	}
+	public void ShowBattleDialogue()
+	{
+
 	}
 
 	public bool AddSelectedCards(CardData cardData)
@@ -1732,6 +1738,18 @@ public class BattleManager : MonoBehaviour
 
 		//소환수마다 LocK 넣어서 클릭 방지하기
 
+	}
+
+	public void LockControl()
+	{
+		foreach (GameObject cardObject in cardObjectList)
+		{ cardObject.GetComponent<Card>().SetLock(true); }
+	}
+
+	public void UnlockControl()
+	{
+		foreach (GameObject cardObject in cardObjectList)
+		{ cardObject.GetComponent<Card>().SetLock(false); }
 	}
 
 	public void DiscardAllHands()

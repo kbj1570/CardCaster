@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -14,25 +15,46 @@ public class DialogueManager : MonoBehaviour
 	public GameObject choiceButtonPrefab;
 	public Transform choiceContainer;
 
-	public DialogueData dialogueData;
-	private DialogueNode[] dialogueNodes;
+	private DialogueData currentData;
+	public List<DialogueData> dialogueList;
 	int currentIndex = 0;
+    private ILockable lockTarget;
 
+	private GameObject alertObject;
+	public static DialogueManager Inst { get; private set; }
 	void Start()
 	{
-		dialogueNodes = dialogueData.lines;
+		transform.localScale = Vector3.zero;
+	}
+	void Awake()
+	{
+		Inst = this;
+	}
+
+	public void StartDialogue(int dialogueId)
+	{
+		lockTarget?.LockControl();
+		transform.localScale = Vector3.one;
+		if (dialogueId < 0 || dialogueId >= dialogueList.Count)
+		{
+			Debug.LogError("잘못된 Dialogue ID: " + dialogueId);
+			return;
+		}
+
+		currentData = dialogueList[dialogueId];
+		currentIndex = 0;
 		ShowLine();
 	}
 
 	void ShowLine()
 	{
-		ClearChoices();
+		if (currentData == null) return;
+		DialogueNode line = currentData.lines[currentIndex];
 
-		DialogueNode line = dialogueNodes[currentIndex];
+		ClearChoices();
 		speakerText.text = line.speaker;
 		dialogueText.text = line.text;
 
-		// 선택지가 있으면 버튼 생성
 		if (line.choices != null && line.choices.Length > 0)
 		{
 			foreach (var choice in line.choices)
@@ -48,7 +70,7 @@ public class DialogueManager : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			DialogueNode line = dialogueNodes[currentIndex];
+			DialogueNode line = currentData.lines[currentIndex];
 			if (line.choices == null || line.choices.Length == 0)
 			{
 				NextLine();
@@ -66,8 +88,8 @@ public class DialogueManager : MonoBehaviour
 				break;
 
 			case DialogueEventType.CloseDialogue:
-				// 대화창만 닫기
-				gameObject.SetActive(false);
+				lockTarget?.UnlockControl();
+				transform.localScale = Vector3.zero;
 				break;
 
 			case DialogueEventType.LoadScene:
@@ -75,40 +97,38 @@ public class DialogueManager : MonoBehaviour
 				break;
 
 			case DialogueEventType.StartDialogue:
-				// 다른 DialogueData 불러오기
 				DialogueData nextData = Resources.Load<DialogueData>(evt.parameter);
-				if (nextData != null)
-				{
-					dialogueNodes = nextData.lines;
-					currentIndex = 0;
-					ShowLine();
-				}
+				StartDialogue(Int32.Parse(evt.parameter));
+				break;
+
+			case DialogueEventType.AlertUnexpectedSituation:
+				StartCoroutine(AlertUnexpected(evt.parameter));
 				break;
 		}
+	}
+
+	private IEnumerator AlertUnexpected(string situationName)
+	{
+
+		yield return null;
+
 	}
 
 
 
 	void NextLine()
 	{
-		// 현재 라인의 이벤트 실행
-		ExecuteEvent(dialogueNodes[currentIndex].lineEvent);
-
+		ExecuteEvent(currentData.lines[currentIndex].lineEvent);
 		currentIndex++;
-		if (currentIndex < dialogueNodes.Length)
-		{
-			ShowLine();
-		}
+		if (currentIndex < currentData.lines.Length)
+		{ShowLine();}
 		else
-		{
-			EndDialogue();
-		}
+		{EndDialogue();}
 	}
 
 	void OnChoiceSelected(DialogueChoice choice)
 	{
 		ExecuteEvent(choice.choiceEvent);
-
 		currentIndex = choice.nextDialogueIndex;
 		ShowLine();
 	}
@@ -122,11 +142,15 @@ public class DialogueManager : MonoBehaviour
 	void ClearChoices()
 	{
 		if (choiceContainer == null) return;
+
 		foreach (Transform child in choiceContainer)
-		{
-			Destroy(child.gameObject);
-		}
+		{Destroy(child.gameObject);}
 	}
+
+	public void SetLockTarget(ILockable target)
+	{
+		lockTarget = target;}
+
 }
 
 [CreateAssetMenu(fileName = "DialogueData", menuName = "Dialogue/DialogueData")]

@@ -1071,7 +1071,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 5561210338895174606}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.050155602
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1144,7 +1144,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
-  m_sharedMaterial: {fileID: 6547046955625659031, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
+  m_sharedMaterial: {fileID: -4522723343932014805, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
-  m_sharedMaterial: {fileID: 6547046955625659031, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
+  m_sharedMaterial: {fileID: -4522723343932014805, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3161,7 +3161,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
-  m_sharedMaterial: {fileID: 6547046955625659031, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
+  m_sharedMaterial: {fileID: -4522723343932014805, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3682,7 +3682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &608142021579504922
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3916,7 +3916,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1026941725031942425
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4540,9 +4540,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 52d349ef750e47b458ce256611c8d167, type: 3}
   - {fileID: 21300000, guid: 20440c456e08b284c80b99da6921edc9, type: 3}
   itemPrefab: {fileID: 1310393156257509718, guid: 5daf8be5a2927484888843cf9ab93984, type: 3}
-  smallItemPrefab: {fileID: 8822816853248534152, guid: 5e858e05a1c76864692039a3b6627ecb, type: 3}
-  toolToggle: {fileID: 8398810687822202823}
-  othersToggle: {fileID: 2069691492784216262}
   itemDescriptionWindow: {fileID: 5231090263643440659}
   itemUsingAlert: {fileID: 88108110427264204}
   storageArea: {fileID: 958245978054249022}

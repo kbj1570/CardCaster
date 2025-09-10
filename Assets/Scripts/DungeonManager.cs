@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-public class DungeonManager : MonoBehaviour
+public class DungeonManager : MonoBehaviour, ILockable
 {
 
 	public EDirection currentDirection;
@@ -1092,15 +1092,20 @@ public class DungeonManager : MonoBehaviour
 		}
 	}
 
+	public void LockControl()
+	{ moveLocked = true; }
+
+	public void UnlockControl()
+	{ moveLocked = false; }
+
 	private void SetNodeRoom()
 	{
 		if (nodeNumList.Count == 0) return;
 
-		// 첫 방은 전투 방으로
 		int encounterIdx = Random.Range(0, nodeNumList.Count);
 		map[nodeNumList[encounterIdx]].SetRoomType(ERoomType.EEncount);
+		map[nodeNumList[encounterIdx]].SetDialogueNum(dungeon.GetDialogueList()[0]);
 
-		// 아이템/골드 방 설정
 		HashSet<int> used = new HashSet<int>();
 		for (int i = 0; i < 10 && used.Count < nodeNumList.Count; ++i)
 		{
@@ -1114,7 +1119,7 @@ public class DungeonManager : MonoBehaviour
 			if (Random.Range(0, 10) == 0)
 			{
 				map[node].SetRoomType(ERoomType.EItem);
-				map[node].SetItem(ReturnDungeonItem(), Random.Range(0, 2));
+				map[node].SetItem(ReturnDungeonItem());
 			}
 			else
 			{
@@ -1123,19 +1128,16 @@ public class DungeonManager : MonoBehaviour
 			}
 		}
 
-		// 계단 방 설정
 		int stairIdx;
 		do
 		{
 			stairIdx = Random.Range(0, nodeNumList.Count);
 		}
-		// 계단은 None 타입 + 비밀방 영역 제외
 		while (map[nodeNumList[stairIdx]].GetRoomType() != ERoomType.None
 			   || secretRoomNodes.Contains(nodeNumList[stairIdx]));
 
 		map[nodeNumList[stairIdx]].SetRoomType(ERoomType.EStair);
 
-		// 플레이어 시작 위치 설정
 		int startIdx;
 		do { startIdx = Random.Range(0, nodeNumList.Count); }
 		while (map[nodeNumList[startIdx]].GetRoomType() != ERoomType.None);
