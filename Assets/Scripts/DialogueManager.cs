@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -15,12 +16,15 @@ public class DialogueManager : MonoBehaviour
 	public GameObject choiceButtonPrefab;
 	public Transform choiceContainer;
 
+	public Transform alertPosition;
+	public GameObject textBox;
+
 	private DialogueData currentData;
 	public List<DialogueData> dialogueList;
 	int currentIndex = 0;
     private ILockable lockTarget;
 
-	private GameObject alertObject;
+	public GameObject alertObject;
 	public static DialogueManager Inst { get; private set; }
 	void Start()
 	{
@@ -73,14 +77,14 @@ public class DialogueManager : MonoBehaviour
 			DialogueNode line = currentData.lines[currentIndex];
 			if (line.choices == null || line.choices.Length == 0)
 			{
-				NextLine();
+				StartCoroutine(NextLine());
 			}
 		}
 	}
 
-	void ExecuteEvent(DialogueEvent evt)
+	IEnumerator ExecuteEvent(DialogueEvent evt)
 	{
-		if (evt == null) return;
+		if (evt == null) yield return null;
 
 		switch (evt.eventType)
 		{
@@ -102,23 +106,29 @@ public class DialogueManager : MonoBehaviour
 				break;
 
 			case DialogueEventType.AlertUnexpectedSituation:
-				StartCoroutine(AlertUnexpected(evt.parameter));
+				yield return StartCoroutine(AlertUnexpected(evt.parameter));
 				break;
 		}
 	}
 
 	private IEnumerator AlertUnexpected(string situationName)
 	{
+		textBox.SetActive(false);
+		GameObject onMessage = Instantiate(alertObject, this.transform);
+		onMessage.transform.position = alertPosition.position;
+		onMessage.GetComponent<AlertMessage>().SetText(situationName);
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeInOut());
+		yield return new WaitForSeconds(2f);
+		textBox.SetActive(true);
 
-		yield return null;
 
 	}
 
 
 
-	void NextLine()
+	IEnumerator NextLine()
 	{
-		ExecuteEvent(currentData.lines[currentIndex].lineEvent);
+		yield return StartCoroutine(ExecuteEvent(currentData.lines[currentIndex].lineEvent));
 		currentIndex++;
 		if (currentIndex < currentData.lines.Length)
 		{ShowLine();}
@@ -128,15 +138,14 @@ public class DialogueManager : MonoBehaviour
 
 	void OnChoiceSelected(DialogueChoice choice)
 	{
-		ExecuteEvent(choice.choiceEvent);
+		StartCoroutine(ExecuteEvent(choice.choiceEvent));
 		currentIndex = choice.nextDialogueIndex;
 		ShowLine();
 	}
 
-	void EndDialogue()
+	IEnumerator EndDialogue()
 	{
-		// 대화 끝났을 때도 이벤트 실행 가능
-		ExecuteEvent(new DialogueEvent { eventType = DialogueEventType.CloseDialogue });
+		yield return StartCoroutine(ExecuteEvent(new DialogueEvent { eventType = DialogueEventType.CloseDialogue }));
 	}
 
 	void ClearChoices()
@@ -149,12 +158,8 @@ public class DialogueManager : MonoBehaviour
 
 	public void SetLockTarget(ILockable target)
 	{
-		lockTarget = target;}
+		lockTarget = target;
+	}
 
 }
 
-[CreateAssetMenu(fileName = "DialogueData", menuName = "Dialogue/DialogueData")]
-public class DialogueData : ScriptableObject
-{
-	public DialogueNode[] lines;
-}

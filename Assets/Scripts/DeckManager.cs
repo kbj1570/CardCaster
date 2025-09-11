@@ -126,6 +126,7 @@ public class DeckManager : MonoBehaviour
 		UpdateDeckPage();
 	}
 
+
 	public void AlertPopUpMessage(string value)
 	{
 		if(onMessage == null)
@@ -135,7 +136,8 @@ public class DeckManager : MonoBehaviour
 			Destroy(onMessage.gameObject);
 			onMessage = Instantiate(popUpMessage, popUpPosition);
 		}
-		onMessage.GetComponent<PopUpMessage>().SetText(value);
+		onMessage.GetComponent<AlertMessage>().SetText(value);
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 	}
 
 	
@@ -144,11 +146,9 @@ public class DeckManager : MonoBehaviour
 	{
 		int count = 0;
 
-		// 페이지 계산 수정: 전체 페이지 수 = (총 카드 수 + 5) / 6
 		int totalPages = (myCardList.Count + 5) / 6;
-		pageLimit = totalPages - 1; // 페이지는 0부터 시작하므로 -1
+		pageLimit = totalPages - 1;
 
-		// 현재 페이지가 범위를 벗어나지 않도록 보정
 		if (currentPage > pageLimit)
 			currentPage = pageLimit;
 
@@ -158,11 +158,9 @@ public class DeckManager : MonoBehaviour
 
 		List<CardData> cardList = new List<CardData>(myCardList.Keys);
 
-		// 현재 페이지에서 표시할 카드 수 계산
 		int startIndex = currentPage * 6;
 		int cardsToShow = Mathf.Min(6, myCardList.Count - startIndex);
 
-		// 현재 페이지에 표시할 카드들을 currentCardList에 추가
 		for (int i = 0; i < cardsToShow; ++i)
 		{
 			CardData cardData = cardList[startIndex + i];
@@ -212,7 +210,6 @@ public class DeckManager : MonoBehaviour
 			count++;
 		}
 
-		// 버튼 활성화/비활성화
 		if (currentPage == 0)
 			backButton.SetActive(false);
 		else

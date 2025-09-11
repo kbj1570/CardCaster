@@ -45,7 +45,8 @@ public class SafeZoneManager : MonoBehaviour
 	{
 		PlayerData.saveData.health = 30;
 		GameObject onMessage = Instantiate(commentaryPreFab, commentaryLocation);
-		onMessage.GetComponent<PopUpMessage>().SetText("체력이 전부 회복되었다.");
+		onMessage.GetComponent<AlertMessage>().SetText("체력이 전부 회복되었다.");
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 		healthBox.text = PlayerData.saveData.health.ToString();
 	}
 
@@ -70,7 +71,8 @@ public class SafeZoneManager : MonoBehaviour
 	public void ShowCommentary(int value)
 	{
 		GameObject onMessage = Instantiate(commentaryPreFab, commentaryLocation);
-		onMessage.GetComponent<PopUpMessage>().SetText(safeZone.GetCommentaries()[value]);
+		onMessage.GetComponent<AlertMessage>().SetText(safeZone.GetCommentaries()[value]);
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 	}
 
 	public void SaveData()

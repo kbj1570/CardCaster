@@ -70,5 +70,5 @@ MonoBehaviour:
     text: "\uBCC0\uD638\uC0AC \uBD88\uB7EC\uC904\uAC8C."
     choices: []
     lineEvent:
-      eventType: 0
+      eventType: 1
       parameter: 

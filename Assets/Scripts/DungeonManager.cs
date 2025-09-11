@@ -69,24 +69,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	
 	public LineRenderer cardDragLine;
 	public GameObject popUpMessageWindow;
-	public GameObject popUpMessage;
-
-
-	private RandomEvent currentEncounter;
-	public GameObject encounterWindow;
-	public TMP_Text encounterName;
-	public TMP_Text encounterDescription;
-	public TMP_Text firstSelection;
-	public TMP_Text secondSelection;
-	public TMP_Text thirdSelection;
-	public TMP_Text hiddenSelection;
-
-
-	public GameObject firstSelectionButton;
-	public GameObject secondSelectionButton;
-	public GameObject thirdSelectionButton;
-
-	public GameObject hiddenSelectionButton;
+	public GameObject alertMessage;
 
 
 	public GameObject nextButton;
@@ -121,7 +104,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	List<GameObject> itemObjectList;
 	List<GameObject> enemyObjectList;
-	public List<GameObject> cardObjectList;
 	public Sprite decorateBlock;
 	private float moveDistance = 2f; // 한 번에 이동할 거리
 	private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
@@ -140,7 +122,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 		if (updateLock)
 			return;
 
-		ShowMessage();
 		UpdatePlayerData();
 		if (Input.GetKeyDown(KeyCode.W) && !moveLocked)
 		{
@@ -209,18 +190,18 @@ public class DungeonManager : MonoBehaviour, ILockable
 			}
 			CameraController.Inst.SetFollowing();
 		}
-		else if (Input.GetKeyDown(KeyCode.Space))
-		{
-			CameraController.Inst.ZoomIn(2f);
-		}
-		else if (Input.GetKeyUp(KeyCode.Space))
-		{
-			CameraController.Inst.ZoomOut(2f);
-		}
-		else if (Input.GetKeyUp(KeyCode.Z))
-		{
-			PlayerData.saveData.health -= 1;
-		}
+		//else if (Input.GetKeyDown(KeyCode.Space))
+		//{
+		//	CameraController.Inst.ZoomIn(2f);
+		//}
+		//else if (Input.GetKeyUp(KeyCode.Space))
+		//{
+		//	CameraController.Inst.ZoomOut(2f);
+		//}
+		//else if (Input.GetKeyUp(KeyCode.Z))
+		//{
+		//	PlayerData.saveData.health -= 1;
+		//}
 
 	}
 
@@ -848,16 +829,10 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	void AlertPopUpMessage(string message)
 	{
-		GameObject onMessage = Instantiate(popUpMessage, popUpMessageWindow.transform);
-		onMessage.GetComponent<PopUpMessage>().SetText(message);
+		GameObject onMessage = Instantiate(alertMessage, popUpMessageWindow.transform);
+		onMessage.GetComponent<AlertMessage>().SetText(message);
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 	}
-	public void ShowMessage()
-	{
-		if(messageList.Count == 0)
-		return;
-	}
-
-
 
 	void EnqueueMove(Vector2 direction)
 	{
@@ -1654,7 +1629,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		{ShowStairAlert();}
 		else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
 		{
-			// ShowEncounter();
+			ShowEncounter(map[roomNum].GetDialogueNum());
 			map[roomNum].SetRoomType(ERoomType.None);
 			nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 		}
@@ -1686,7 +1661,13 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 	}
 
-	
+	private void ShowEncounter(int value)
+	{
+		DialogueManager.Inst.SetLockTarget(this);
+		DialogueManager.Inst.StartDialogue(value);
+	}
+
+
 
 	private void GainGold(Node node)
 	{

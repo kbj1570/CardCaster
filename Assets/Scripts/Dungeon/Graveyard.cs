@@ -5,10 +5,10 @@ public class Graveyard : Dungeon
         dungeonName = "옛 무덤";
         dungeonNum = 1;
 		dungeonEndFloor = 5;
-        dungeonFloorSize = 180;
+        dungeonFloorSize = 120;
         dungeonHeight = 10;
-        dungeonWidth = 18;
-        enemyLimit = 3;
+        dungeonWidth = 12;
+        enemyLimit = 0;
 
         itemList = new(){
             {new RedPotion(), 1},

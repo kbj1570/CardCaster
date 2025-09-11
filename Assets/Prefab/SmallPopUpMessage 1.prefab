@@ -68,7 +68,7 @@ MonoBehaviour:
   m_text: "\uCE74\uB4DC\uB97C \uB354 \uC774\uC0C1 \uCD94\uAC00 \uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
-  m_sharedMaterial: {fileID: 6547046955625659031, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
+  m_sharedMaterial: {fileID: -4522723343932014805, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 4936627902108019698}
   - component: {fileID: 4936627902108019661}
   - component: {fileID: 4936627902108019660}
-  - component: {fileID: 4936627902108019699}
+  - component: {fileID: 8308086420557870693}
   m_Layer: 5
   m_Name: SmallPopUpMessage 1
   m_TagString: Untagged
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4936627902108019699
+--- !u!114 &8308086420557870693
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -222,9 +222,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 4936627902108019697}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acb74d27833943d44b90cacb0b28a4c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e40ee6876a6e8743b9f550c886651e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   message: {fileID: 4936627900973908845}
   textbox: {fileID: 4936627902108019660}
-  fadeDuration: 1

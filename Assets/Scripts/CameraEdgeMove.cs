@@ -1,45 +1,77 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
 
 public class CameraEdgeMove : MonoBehaviour
 {
-	float moveSpeed = 10f;          // 카메라 이동 속도
-	float edgePercent = 0.07f;      // 화면 끝에서 몇 % 지점부터 이동할지
-	Vector2 minMaxX = new Vector2(-2.7f, 2.7f); // 카메라 X 이동 한계
-
+	Vector2 minMaxX = new Vector2(-2.7f, 2.7f);
 	private float smoothTime = 0.2f;
 
-	private float velocity = 0f;
-	private float targetX;
-	void Start()
+	[SerializeField] private Button leftButton;
+	[SerializeField] private Button rightButton;
+
+	private Coroutine moveRoutine;
+
+	public void MoveLeft()
 	{
-		targetX = transform.position.x;
+		StartMove(minMaxX.x);
 	}
 
-	void Update()
+	public void MoveRight()
 	{
+		StartMove(minMaxX.y);
+	}
 
-		if (CampsiteManager.Inst.screenLocked)
-			return;
+	public void MoveCenter()
+	{
+		StartMove((minMaxX.x + minMaxX.y) * 0.5f);
+	}
 
+	private void StartMove(float targetX)
+	{
+		// 이동 중에는 버튼들 잠시 비활성화
+		if (leftButton) leftButton.gameObject.SetActive(false);
+		if (rightButton) rightButton.gameObject.SetActive(false);
 
-		float mouseX = Input.mousePosition.x;
-		float screenWidth = Screen.width;
+		// 이미 이동중이면 중단
+		if (moveRoutine != null)
+			StopCoroutine(moveRoutine);
 
-		float leftEdge = screenWidth * edgePercent;
-		float rightEdge = screenWidth * (1f - edgePercent);
+		moveRoutine = StartCoroutine(MoveCamera(targetX));
+	}
 
-		if (mouseX < leftEdge)
+	private IEnumerator MoveCamera(float targetX)
+	{
+		float velocity = 0f;
+
+		while (Mathf.Abs(transform.position.x - targetX) > 0.01f)
 		{
-			targetX -= moveSpeed * Time.deltaTime;
+			float newX = Mathf.SmoothDamp(transform.position.x, targetX, ref velocity, smoothTime);
+			transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+			yield return null;
 		}
-		else if (mouseX > rightEdge)
+
+		// 최종 위치 보정
+		transform.position = new Vector3(targetX, transform.position.y, transform.position.z);
+
+		// 도착한 위치에 따라 버튼 표시 제어
+		if (Mathf.Approximately(targetX, minMaxX.x))
 		{
-			targetX += moveSpeed * Time.deltaTime;
+			// 왼쪽 끝 → 오른쪽 버튼만 보이기
+			if (rightButton) rightButton.gameObject.SetActive(true);
+		}
+		else if (Mathf.Approximately(targetX, minMaxX.y))
+		{
+			// 오른쪽 끝 → 왼쪽 버튼만 보이기
+			if (leftButton) leftButton.gameObject.SetActive(true);
+		}
+		else
+		{
+			// 중앙일 때 → 둘 다 보이기
+			if (leftButton) leftButton.gameObject.SetActive(true);
+			if (rightButton) rightButton.gameObject.SetActive(true);
 		}
 
-		targetX = Mathf.Clamp(targetX, minMaxX.x, minMaxX.y);
-
-		float newX = Mathf.SmoothDamp(transform.position.x, targetX, ref velocity, smoothTime);
-		transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+		moveRoutine = null;
 	}
 }

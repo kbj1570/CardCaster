@@ -884,7 +884,8 @@ public class BattleManager : MonoBehaviour , ILockable
 	public void AlertMessage(string message)
 	{
 		GameObject onMessage = Instantiate(alertMessage, alertPoint);
-		onMessage.GetComponent<PopUpMessage>().SetText(message);
+		onMessage.GetComponent<AlertMessage>().SetText(message);
+		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 	}
 
 
