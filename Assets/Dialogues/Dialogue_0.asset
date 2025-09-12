@@ -9,66 +9,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 63270e1dec17bfc4a99b21cf610bba98, type: 3}
   m_Name: Dialogue_0
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
-  - speaker: "\uB9C8\uC528"
-    text: "\uD734\uC9C0\uB97C \uC65C \uC774\uB807\uAC8C  \uB9CE\uC774 \uC368? \uC138\uAE08\uB3C4
-      \uC548 \uB0B4\uB294 \uC0C8\uB07C\uAC00."
-    choices:
-    - choiceText: "\uD63C\uC790\uC57C?"
-      nextDialogueIndex: 1
-      choiceEvent:
-        eventType: 0
-        parameter: 
-    - choiceText: "\uC2F8~\uBE44!"
-      nextDialogueIndex: 3
-      choiceEvent:
-        eventType: 0
-        parameter: 
-    lineEvent:
-      eventType: 0
-      parameter: 
-  - speaker: "\uC7A5\uC528"
-    text: "\uD63C\uC790\uC57C?"
+  - speaker: 
+    text: 
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - speaker: "\uB9C8\uC528"
-    text: "\uC5B4. \uC544\uC9C1 \uC2F1\uAE00\uC774\uC57C."
-    choices: []
-    lineEvent:
-      eventType: 1
-      parameter: 
-  - speaker: "\uC7A5\uC528"
-    text: "\uC2F8~\uBE44!"
+  - speaker: 
+    text: 
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - speaker: "\uB9C8\uC528"
-    text: "\uC774\uAC70 \uBB50\uB77C\uB294\uAC70\uB0D0?"
+  - speaker: 
+    text: 
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - speaker: "\uD1B5\uC5ED\uAC00"
-    text: "\uBCD1\uC2E0\uC774\uB78D\uB2C8\uB2E4."
-    choices: []
-    lineEvent:
-      eventType: 0
-      parameter: 
-  - speaker: "\uB9C8\uC528"
-    text: "\uC544. \uADF8\uB798?"
-    choices: []
-    lineEvent:
-      eventType: 0
-      parameter: 
-  - speaker: "\uB9C8\uC528"
-    text: "\uBCC0\uD638\uC0AC \uBD88\uB7EC\uC904\uAC8C."
-    choices: []
-    lineEvent:
-      eventType: 1
-      parameter: 
+  signalText: 

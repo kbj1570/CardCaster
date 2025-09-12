@@ -9,8 +9,8 @@ public class AlertMessage : MonoBehaviour
 	public Image textbox;
 	private bool isDestroyed = false;
 
-	[SerializeField] float fadeDuration = 0.6f; // 나타나거나 사라지는 데 걸리는 시간
-	[SerializeField] float stayDuration = 0.8f; // 다 나타난 후 유지 시간
+	float fadeDuration = 0.6f; // 나타나거나 사라지는 데 걸리는 시간
+	float stayDuration = 2.2f; // 다 나타난 후 유지 시간
 
 	void Start()
 	{

@@ -1082,7 +1082,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		map[nodeNumList[encounterIdx]].SetDialogueNum(dungeon.GetDialogueList()[0]);
 
 		HashSet<int> used = new HashSet<int>();
-		for (int i = 0; i < 10 && used.Count < nodeNumList.Count; ++i)
+		for (int i = 0; i < 5 && used.Count < nodeNumList.Count; ++i)
 		{
 			int num;
 			do { num = Random.Range(0, nodeNumList.Count); }

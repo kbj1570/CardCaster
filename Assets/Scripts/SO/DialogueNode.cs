@@ -20,6 +20,7 @@ public class DialogueChoice
 [System.Serializable]
 public class DialogueNode
 {
+	public Sprite mugShot;
 	public string speaker;
 	public string text;
 	public DialogueChoice[] choices;
@@ -33,5 +34,11 @@ public enum DialogueEventType
 	LoadScene,
 	StartDialogue,
 	GiveItem,
-	AlertUnexpectedSituation
+	AlertUnexpectedSituation,
+	FadeInOut,
+	AddValue,
+	SetMugShot,
+	HideMugShot,
+	ShowMugShot,
+	FadeInSituationImage
 }
