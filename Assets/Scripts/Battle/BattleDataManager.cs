@@ -28,3 +28,4 @@ public enum EServentCondition { None, Void, Oblivion, Poison, Madness, Testament
 public enum EServentSize { Small, Middle, Big }
 public enum EServentState { None, Idle, Guard, Ready, Summon, Attack, Death }
 public enum EParryState { Idle, Parry, Succecced, Failed }
+public enum EStatusCondition{None, Confused, Will, Oblivion}

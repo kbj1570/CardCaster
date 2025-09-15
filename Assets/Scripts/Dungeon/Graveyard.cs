@@ -8,7 +8,7 @@ public class Graveyard : Dungeon
         dungeonFloorSize = 120;
         dungeonHeight = 10;
         dungeonWidth = 12;
-        enemyLimit = 0;
+        enemyLimit = 1;
 
         itemList = new(){
             {new RedPotion(), 1},

@@ -131,7 +131,6 @@ public class StorageWindow : Window
 				itemSlot.transform.position = Vector3.SmoothDamp(itemSlot.transform.position, Input.mousePosition, ref velocity, 0.015f);
 			}, // 드래그 중
 			(itemSlot, eventData) => {
-
 				if (mouseOnArea == EMouseOnArea.Storage)
 				{
 					PlayerData.saveData.inventory_items.Remove(itemSlot.GetItem().GetNum());
@@ -139,13 +138,9 @@ public class StorageWindow : Window
 					UpdateItemPage();
 				}
 				else if (mouseOnArea == EMouseOnArea.Inventory)
-				{
-					itemSlot.transform.localPosition = Vector3.zero;
-				}
+				{itemSlot.transform.localPosition = Vector3.zero;}
 				else
-				{
-					itemSlot.transform.localPosition = Vector3.zero;
-				}
+				{itemSlot.transform.localPosition = Vector3.zero;}
 
 
 				storageArea.SetActive(false);

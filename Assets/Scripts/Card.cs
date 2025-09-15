@@ -48,6 +48,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public Sequence currentSequence;
 
 	Animator animator;
+	public GameObject statusConditionWindow;
+	public GameObject statusConditionPanel;
+
 
 
 	public Action<Card, PointerEventData> OnClickAction;
@@ -99,11 +102,16 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		OnPointerExitAction = exitAction;
 	}
 
-	public void Init(CardData data, int slotCount, Action<Card, PointerEventData> clickAction)
+	public void Init(CardData data, int slotCount,
+		Action<Card, PointerEventData> clickAction,
+		Action<Card, PointerEventData> enterAction,
+		Action<Card, PointerEventData> exitAction)
 	{
 		cardData = data;
 		this.slotCount = slotCount;
 		OnClickAction = clickAction;
+		OnPointerEnterAction = enterAction;
+		OnPointerExitAction = exitAction;
 	}
 
 
@@ -301,7 +309,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		costTMP.text = this.cardData.GetCardCost().ToString();
 	}
 
+	public void ShowCardCondition()
+	{
 
+	}
 
 	public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
 	{
@@ -316,6 +327,15 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 			transform.position = prs.pos;
 			transform.rotation = prs.rot;
 			transform.localScale = prs.scale;
+		}
+	}
+
+	public void AddStatusCondition(EStatusCondition statusConditionType)
+	{
+		if (statusConditionPanel != null)
+		{
+			StatusConditionPanel statusObject = Instantiate(statusConditionPanel, statusConditionWindow.transform).GetComponent<StatusConditionPanel>();
+			statusObject.SetStatusCondition(statusConditionType);
 		}
 	}
 
@@ -335,11 +355,19 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	}
 	public void OnPointerEnter(PointerEventData eventData)
 	{
+		if (cardData.hasStatusEffect)
+		{
+			statusConditionWindow.SetActive(true);
+		}
 		OnPointerEnterAction?.Invoke(this, eventData);
 	}
 
 	public void OnPointerExit(PointerEventData eventData)
 	{
+		if (cardData.hasStatusEffect)
+		{
+			statusConditionWindow.SetActive(false);
+		}
 		OnPointerExitAction?.Invoke(this, eventData);
 	}
 
@@ -350,4 +378,9 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
 	public void SetOriginPosition(Vector3 value)
 	{originPosition = value;}
+
+	public void ShowStatusCondition()
+	{
+		statusConditionWindow.SetActive(true);
+	}
 }

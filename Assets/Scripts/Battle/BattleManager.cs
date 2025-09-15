@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 using Random = UnityEngine.Random;
 
 
@@ -922,6 +923,10 @@ public class BattleManager : MonoBehaviour , ILockable
 
 		}
 		GameObject cardObject = Instantiate(selectedCardPrefab, Vector3.zero, Utils.QI);
+
+		if (battleCardData.statusConditions != null)
+			foreach (EStatusCondition status in battleCardData.statusConditions)
+			{ cardObject.GetComponent<Card>().AddStatusCondition(status); }
 
 		cardObject.GetComponent<Card>().InitiateActionInBattle();
 

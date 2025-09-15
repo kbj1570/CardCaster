@@ -15,6 +15,8 @@ public class Frillizard : ServentCardData
         serventSize = EServentSize.Small;
         cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
+		hasStatusEffect = true;
+        statusConditions = new EStatusCondition[] { EStatusCondition.Confused };
 	}
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)

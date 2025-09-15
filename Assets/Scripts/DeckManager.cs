@@ -22,7 +22,6 @@ public class DeckManager : MonoBehaviour
 	private List<GameObject> deckCardObjectList;
 
 
-
 	public GameObject dummyServentCardPrefab;
 	public GameObject dummySpellCardPrefab;
 
@@ -40,8 +39,11 @@ public class DeckManager : MonoBehaviour
 	public GameObject backButton;
 	public GameObject nextButton;
 	public ScrollRect scrollRect;
-
 	public Dictionary<string, int> cardHashMap;
+
+	public Transform cardLocationParent;
+
+
 	void Awake()
 	{Inst = this;}
 
@@ -66,8 +68,17 @@ public class DeckManager : MonoBehaviour
 
 		focusOnCard.GetComponent<Card>().SetCard(cardData, cardImageList[cardHashMap[cardData.GetCardNum()]]);
 		focusOnCard.transform.SetParent(focusOnCardPosition);
+
 		focusOnCard.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
 		focusOnCard.transform.localPosition = new Vector3(0,0,0);
+
+		if (cardData.statusConditions != null)
+		{
+			foreach (EStatusCondition status in cardData.statusConditions)
+			{ focusOnCard.GetComponent<Card>().AddStatusCondition(status); }
+
+			focusOnCard.GetComponent<Card>().ShowStatusCondition();
+		}
 
 	}
 
@@ -182,6 +193,7 @@ public class DeckManager : MonoBehaviour
 				if (myDeckList[item.Key] == 3)
 				{ locked = true; }
 			}
+
 			GameObject selectedCardPrefab = null;
 
 			switch (item.Key.GetCardType())
@@ -194,14 +206,24 @@ public class DeckManager : MonoBehaviour
 					break;
 			}
 
-			GameObject cardObject = Instantiate(selectedCardPrefab,
-			new Vector3(0, 0, 0), Utils.QI);
+			GameObject cardObject = Instantiate(selectedCardPrefab, new Vector3(0, 0, 0), Utils.QI);
 
-			cardObject.GetComponent<Card>().Init(item.Key, count, (clickedSlot, eventData) => {
-				AddCard(clickedSlot.cardData, clickedSlot.slotCount, locked);
-			});
+
+			if(item.Key.statusConditions != null)
+				foreach(EStatusCondition status in item.Key.statusConditions)
+				{cardObject.GetComponent<Card>().AddStatusCondition(status);}
+
+			cardObject.GetComponent<Card>().Init(item.Key, count, (clickedSlot, eventData) =>
+			{AddCard(clickedSlot.cardData, clickedSlot.slotCount, locked);},
+			(clickedSlot, eventData) => {
+
+				cardLocation[clickedSlot.slotCount].transform.SetSiblingIndex(cardLocationParent.transform.childCount - 1);
+			},
+			(clickedSlot, eventData) => {
+			}
+			);
+
 			cardObject.GetComponent<Card>().SetCard(item.Key, cardImageList[cardHashMap[item.Key.GetCardNum()]]);
-
 			cardObject.transform.SetParent(cardLocation[count].transform);
 			cardObject.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
 			cardObject.transform.localPosition = new Vector3(0, 0, 0);

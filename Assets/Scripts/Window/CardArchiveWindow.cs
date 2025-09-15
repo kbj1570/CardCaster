@@ -119,14 +119,10 @@ public class CardArchiveWindow : Window
 
 
 		if (currentPage != pageLimit - 1)
-		{ 
-			remainder = 6;
-		}
+		{ remainder = 6;}
 
 		for (int i = 0; i < remainder; ++i)
-		{
-			currentCardList.Add(selectedCardList.Keys.ToList()[(currentPage * 6) + i], selectedCardList.Values.ToList()[(currentPage * 6) + i]);
-		}
+		{currentCardList.Add(selectedCardList.Keys.ToList()[(currentPage * 6) + i], selectedCardList.Values.ToList()[(currentPage * 6) + i]);}
 
 		foreach (KeyValuePair<CardData, bool> valuePair in selectedCardList)
 		{
@@ -138,8 +134,6 @@ public class CardArchiveWindow : Window
 		{
 			bool locked = valuePair.Value;
 			GameObject selectedCardPrefab = null;
-
-			
 
 			if(valuePair.Value)
 			{
@@ -154,9 +148,7 @@ public class CardArchiveWindow : Window
 				}
 			}
 			else
-			{
-				selectedCardPrefab = dummyCardPrefab;
-			}
+			{selectedCardPrefab = dummyCardPrefab;}
 
 
 			GameObject cardObject = Instantiate(selectedCardPrefab, new Vector3(0, 0, 0), Utils.QI);
@@ -164,7 +156,9 @@ public class CardArchiveWindow : Window
 			if (valuePair.Value)
 			{
 				cardObject.GetComponent<Card>().Init(valuePair.Key, count, (clickedSlot, eventData) =>
-				{OpenCardStoryDesc(clickedSlot.cardData);});
+				{OpenCardStoryDesc(clickedSlot.cardData);}
+				, null
+				, null);
 				cardObject.GetComponent<Card>().SetCard(valuePair.Key, cardImageList[cardHashMap[valuePair.Key.GetCardNum()]]);
 			}
 			

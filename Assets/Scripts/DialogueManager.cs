@@ -38,6 +38,7 @@ public class DialogueManager : MonoBehaviour
 		situationImage.color = new Color(1, 1, 1, 0);
 		transform.localScale = Vector3.zero;
 	}
+
 	void Awake()
 	{Inst = this;}
 

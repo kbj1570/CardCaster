@@ -15,6 +15,10 @@ public class CardData : ICardEffect
 	protected ECardRarity cardRarity;
 	protected int cardCost;
 
+	public bool hasStatusEffect;
+
+	public EStatusCondition[] statusConditions;
+
 	protected int fontSize;
 	public int GetCardCost() { return cardCost; }
 
