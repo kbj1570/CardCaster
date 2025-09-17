@@ -21,8 +21,6 @@ public static class DungeonData
 	public static Dictionary<DungeonEnemy, int> dungeonEnemies;
 	public static int currentFloor;
 
-	
-
 	public static void Reset()
 	{
 		dungeon = null;
@@ -68,16 +66,10 @@ public class CampsiteManager : MonoBehaviour, ILockable
 
 	void Start()
 	{
-		PlayerData.saveData = DataController.Inst.LoadData();
-
+		// PlayerData.saveData = DataController.Inst.LoadData();
 		DeckManager.Inst.LoadDeck();
 		Inst = this;
 		StartCoroutine(FadeIn());
-	}
-
-	void Awake()
-	{
-		
 	}
 
 	public void GoToDungeon()

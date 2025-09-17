@@ -11,13 +11,6 @@ using Random = UnityEngine.Random;
 
 public class DungeonManager : MonoBehaviour, ILockable
 {
-
-	public EDirection currentDirection;
-	public Sprite directionSprite;
-
-	public List<Transform> directionLocations;
-
-	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
 	public List<AudioClip> runningInGrassSound;
 	public Image fadeImage;
@@ -25,13 +18,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 	int mouseOnRoomNum;
 	bool moveLocked;
 	ItemData clickedItem;
-	int clickedItemOrder;
 	GameObject clickedItemInfo;
 	public GameObject itemDescriptionWindow;
 	private int pageLimit;
 	Dungeon dungeon;
 	public Camera camera;
-	public Node startNode;
 	int width;
 	int height;
 	int maxGold;
@@ -47,7 +38,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	List<int> nodeNumList;
 	List<string> messageList;
 	Dictionary<ItemData, int> itemList;
-	Dictionary<Enemy, int> enemyList;
 	public GameObject roomNodePrefab;
 	public GameObject wallNodePrefab;
 	public GameObject itemNodePrefab;
@@ -55,16 +45,13 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public GameObject monsterNodePrefab;
 	public GameObject stairNodePrefab;
 	public Transform mapObject;
-	public GameObject buttonPrefab;
 	public GameObject player;
 	public GameObject dungeonEnemyPrefab;
 	public GameObject stairAlert;
 	public GameObject itemAlert;
-	public GameObject wayPointWindow;
 	public GameObject dungeonClearWindow;
 	public GameObject gameOverWindow;
 
-	public List<Sprite> itemSpriteList;
 
 	
 	public LineRenderer cardDragLine;
@@ -72,20 +59,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public GameObject alertMessage;
 
 
-	public GameObject nextButton;
-	public GameObject backButton;
-
-	public List<GameObject> itemInfoPrefab;
-
 	public TMP_Text dungeonNameText;
 	public TMP_Text floorText;
 
 	public TMP_Text healthText;
 	public TMP_Text goldText;
-	public TMP_Text textbox;
-
-	public Toggle toolToggle;
-	public Toggle othersToggle;
 
 
 	public ItemData selectedItem;
@@ -99,9 +77,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	private List<int> secretRoomNodes = new List<int>();
 	private int obstacleNodeIndex = -1;
 
-
-	public Transform toolLocation;
-
 	List<GameObject> itemObjectList;
 	List<GameObject> enemyObjectList;
 	public Sprite decorateBlock;
@@ -109,7 +84,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
 	private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
 	private bool isMoving = false;
-	private float energyGainLimit = 40;
 	private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
 	public static DungeonManager Inst{get; private set;}
@@ -236,16 +210,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 		if(DungeonData.map == null)
 		{
 			CreateFloor();
-			//LoadItemList();
-
-			//UpdateItemPage();
 		}
 		else
 		{ReCreateFloor();}
 
 		StartCoroutine(FadeIn());
-		
-		//DontDestroyOnLoad(this);
 	}
 
 
@@ -673,9 +642,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 		foreach(int roomNum in nodeNumList)
 		{visitedNodes.Add(roomNum, nodeMap[roomNum].GetComponent<RoomNode>().GetVisited());}
 
-
-		
-
 		DungeonData.activeNodes = activeNodes;
 		DungeonData.visitedNodes = visitedNodes;
 
@@ -1077,9 +1043,14 @@ public class DungeonManager : MonoBehaviour, ILockable
 	{
 		if (nodeNumList.Count == 0) return;
 
-		int encounterIdx = Random.Range(0, nodeNumList.Count);
-		map[nodeNumList[encounterIdx]].SetRoomType(ERoomType.EEncount);
-		map[nodeNumList[encounterIdx]].SetDialogueNum(dungeon.GetDialogueList()[0]);
+		if (dungeon.GetDialogueList() != null)
+		{
+			int encounterIdx = Random.Range(0, nodeNumList.Count);
+			map[nodeNumList[encounterIdx]].SetRoomType(ERoomType.EEncount);
+			map[nodeNumList[encounterIdx]].SetDialogueNum(dungeon.GetDialogueList()[0]);
+		}
+
+		
 
 		HashSet<int> used = new HashSet<int>();
 		for (int i = 0; i < 5 && used.Count < nodeNumList.Count; ++i)
@@ -1441,18 +1412,23 @@ public class DungeonManager : MonoBehaviour, ILockable
 		floor++;
 		moveLocked = false;
 		StartCoroutine(ReadyNextFloor());
-
 	}
 
 	private IEnumerator ReadyNextFloor()
 	{
 		StartCoroutine(FadeOut());
 		yield return new WaitForSeconds(1f);
-		if(safeFloorList.ContainsKey(floor))
+		if (safeFloorList == null)
+		{
+			DestroyFloor();
+			CreateFloor();
+			CameraController.Inst.SetFollowing();
+		}
+		else if (safeFloorList.ContainsKey(floor))
 		{
 			SceneManager.LoadScene(safeFloorList[floor]);
 		}
-		else if(dungeonEndFloor == floor)
+		else if (dungeonEndFloor == floor)
 		{
 			Debug.Log("던전을 클리어 했습니다");
 			dungeonClearWindow.GetComponent<Window>().OnOff();
@@ -1677,11 +1653,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private void GainItem(Node node)
 	{
-		AlertPopUpMessage(node.GetItem().GetName() + " " +" 획득");
-		//if (myItemList.ContainsKey(node.GetItem()))
-		//{myItemList[node.GetItem()]++;}
-		//else
-		//{myItemList.Add(node.GetItem(), 1);}
+		AlertPopUpMessage(node.GetItem().GetName() + " " + " 획득");
+		PlayerData.saveData.inventory_items.Add(node.GetItem().GetNum());
 	}
 
 	public void ShowStairAlert()
@@ -1696,85 +1669,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 		stairAlert.GetComponent<Window>().OnOff();
 	}
 
-	public void DrawDragLine(Vector2 startPoint, bool isUsuable)
-	{
-		 Vector3[] point = new Vector3[lineCount];
-		float posA = 3f;
-		float posB = 3f;
-		cardDragLine.positionCount = lineCount;
-
-		if(isUsuable)
-		{cardDragLine.endColor = Color.blue;}
-		else
-		{cardDragLine.endColor = Color.red;}
-		
-		Vector3 targetPoint = camera.ScreenToWorldPoint(Input.mousePosition);
-
-		startPoint = camera.ScreenToWorldPoint(startPoint);
-
-		for(int i = 0; i < lineCount; ++i)
-		{
-			float t;
-			if (i == 0)
-			{t = 0;}
-			else
-			{t = (float)i / (lineCount - 1);}
-			
-			point[i] = Bezier(startPoint, PointSetting(startPoint),
-			PointSetting(targetPoint),targetPoint, t);
-			point[i].z = 0;
-		}
-		cardDragLine.SetPositions(point);
-		
-
-		Vector3 PointSetting(Vector3 origin){
-			float x, y;
-			x = posA * Mathf.Cos(120 * Mathf.Deg2Rad) + origin.x;
-			y = posB * Mathf.Sin(120 * Mathf.Deg2Rad) + origin.y;
-	
-			return new Vector3(x, y);
-		}
-		Vector3 Bezier(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
-		{
-			Vector3 M0 = Vector3.Lerp(P0, P1, t);
-			Vector3 M1 = Vector3.Lerp(P1, P2, t);
-			Vector3 M2 = Vector3.Lerp(P2, P3, t);
-
-			Vector3 B0 = Vector3.Lerp(M0, M1, t);
-			Vector3 B1 = Vector3.Lerp(M1, M2, t);
-
-			return Vector3.Lerp(B0, B1, t);
-		}
-	}
-
-	public void ActivateTeleport()
-	{
-		int randomNum = Random.Range(0, nodeNumList.Count);
-
-		previousPlayerLocation = currentPlayerLocation;
-		currentPlayerLocation = nodeNumList[randomNum];
-		MovePlayer(nodeNumList[randomNum]);
-		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
-		CameraController.Inst.SetFollowing();
-
-	}
-
-	public void DeleteDragLine()
-	{
-		cardDragLine.positionCount = 0;
-		cardDragLine.endColor = Color.blue;
-	}
-
-
-	public bool CheckCardUsable(CardData cardData, int nodeNum)
-	{
-		if(mouseOnRoomNum == 0)
-		{return false;}
-
-		return true;
-	}
-
-
 	public int ReturnMouseOnNode()
 	{return mouseOnRoomNum;}
 
@@ -1784,26 +1678,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public void ResetMouseOnNode()
 	{mouseOnRoomNum = 0;}
 
-	private void ApplyEncountResult(int encounterNum, int value)
-	{
-		switch(encounterNum)
-		{
-			//모자장수
-			case 0:
-			switch(value)
-			{
-				case 0:
-				break;
-
-				case 1:
-				break;
-
-				case 2:
-				break;
-			}
-			break;
-		}
-	}
 
 	private bool TrueOrFalse()
 	{

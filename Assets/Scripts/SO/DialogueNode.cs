@@ -6,7 +6,7 @@ using UnityEngine;
 public class DialogueEvent
 {
 	public DialogueEventType eventType;
-	public string parameter;
+	[TextArea] public string parameter;
 }
 
 [System.Serializable]
@@ -20,9 +20,10 @@ public class DialogueChoice
 [System.Serializable]
 public class DialogueNode
 {
-	public Sprite mugShot;
+	public Sprite portrait;
+	public Sprite background;
 	public string speaker;
-	public string text;
+	[TextArea] public string text;
 	public DialogueChoice[] choices;
 	public DialogueEvent lineEvent;
 }
@@ -33,12 +34,17 @@ public enum DialogueEventType
 	CloseDialogue,
 	LoadScene,
 	StartDialogue,
-	GiveItem,
+	GetItem,
+	GetGold,
 	AlertUnexpectedSituation,
 	FadeInOut,
+	FadeIn,
+	FadeOut,
 	AddValue,
-	SetMugShot,
-	HideMugShot,
-	ShowMugShot,
-	FadeInSituationImage
+	SetPortrait,
+	HidePortrait,
+	FadeInSituationImage,
+	ShowDocument,
+	SetBackGround,
+	PlaySound
 }

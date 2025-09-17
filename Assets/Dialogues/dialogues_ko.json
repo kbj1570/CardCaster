@@ -1,50 +1,31 @@
-[
-  {
-    "dialogue_001": {
-      "speaker": "마부",
-      "text": "이봐, 형씨! 잠깐 나와봐!"
+{
+  "lines": [
+    {
+      "speaker": "주인공",
+      "text": "여기가 마을인가…",
+      "mugShot": "hero",
+      "preEvent": "FadeInOut",
+      "postEvent": "None",
+      "choices": []
+    },
+    {
+      "speaker": "NPC",
+      "text": "어서 오세요!",
+      "mugShot": "npc1",
+      "preEvent": "None",
+      "postEvent": "ShowMugShot",
+      "choices": [
+        {
+          "choiceText": "물건을 산다",
+          "nextDialogueIndex": 2,
+          "choiceEvent": "None"
+        },
+        {
+          "choiceText": "떠난다",
+          "nextDialogueIndex": -1,
+          "choiceEvent": "CloseDialogue"
+        }
+      ]
     }
-  },
-  {
-    "dialogue_002": {
-      "speaker": "이드",
-      "text": "무슨 일이지?"
-    }
-  },
-  {
-    "dialogue_003": {
-      "speaker": "마부",
-      "text": "오 이런.."
-    }
-  },
-  {
-    "dialogue_004": {
-      "speaker": "샐리온",
-      "text": "놀러갔나?"
-    }
-  },
-  {
-    "dialogue_005": {
-      "speaker": "이드",
-      "text": "지금 농담할 때가 아니야."
-    }
-  },
-  {
-    "dialogue_006": {
-      "speaker": "이드",
-      "text": "다들 어디로 사라진 거지?"
-    }
-  },
-  {
-    "dialogue_007": {
-      "speaker": "이드",
-      "text": "(밤길이 어두워. 앞에 뭐가 있을지 모르니 신중하게 가보자.)"
-    }
-  },
-  {
-    "dialogue_008": {
-      "speaker": "이드",
-      "text": "미치겠네.."
-    }
-  }
-]
+  ]
+}

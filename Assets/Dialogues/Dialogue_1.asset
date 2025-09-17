@@ -58,7 +58,7 @@ MonoBehaviour:
       parameter: 
   - mugShot: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
     speaker: 
-    text: "\uB0C4\uBE44?"
+    text: "\uC774\uAC74 \uBB50\uC57C?"
     choices: []
     lineEvent:
       eventType: 5
@@ -255,12 +255,12 @@ MonoBehaviour:
     text: "\uC77C\uB2E8 \uBA3C\uC800 \uB123\uC744 \uC7AC\uB8CC\uB294..."
     choices:
     - choiceText: "\uC0DD\uC120\uBA38\uB9AC"
-      nextDialogueIndex: 32
+      nextDialogueIndex: 33
       choiceEvent:
         eventType: 0
         parameter: 
     - choiceText: "\uAC10\uC790"
-      nextDialogueIndex: 31
+      nextDialogueIndex: 32
       choiceEvent:
         eventType: 0
         parameter: 
@@ -270,13 +270,6 @@ MonoBehaviour:
   - mugShot: {fileID: 0}
     speaker: 
     text: "\uB290\uB08C\uC774 \uC88B\uB2E4."
-    choices: []
-    lineEvent:
-      eventType: 0
-      parameter: 
-  - mugShot: {fileID: 0}
-    speaker: 
-    text: "\uB290\uB08C\uC774 \uC548\uC88B\uB2E4...."
     choices: []
     lineEvent:
       eventType: 0
@@ -338,12 +331,5 @@ MonoBehaviour:
     choices: []
     lineEvent:
       eventType: 1
-      parameter: 
-  - mugShot: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
-    speaker: 
-    text: "\uADF8\uB798\uB3C4 \uC548\uB418\uB294\uAC74 \uC548\uB418\uB294\uAC70\uC57C."
-    choices: []
-    lineEvent:
-      eventType: 0
       parameter: 
   signalText: 

@@ -13,22 +13,102 @@ MonoBehaviour:
   m_Name: Dialogue_0
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
-  - speaker: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 9
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: ....
+    choices: []
+    lineEvent:
+      eventType: 14
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 14
+      parameter: "\uAE38\uACE0 \uAE38\uC5C8\uB358 \uCC9C\uC88C\uC758 \uACF5\uBC31\uB3C4
+        \uC774\uC820 \uB05D\uC774\uB2E4.\n\uADF8\uB7EC\uB2C8\uAE4C....\n\n\n\uB0B4\uAC00
+        \uD558\uB298\uC5D0 \uC11C\uACA0\uB2E4.\n\n\n\n\n\n\n\t\t\t\t\t-\uC544\uC774\uC820
+        \uC18C\uC2A4\uCF00-"
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: ???
+    text: "\uBB50\uC57C \uC774\uAC74?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6876963936897236661, guid: cc801a6b453f10e48862666c1a818523, type: 3}
+    background: {fileID: 0}
+    speaker: ???
+    text: "\uC774\uBD10, \uD615\uC528! \uC7A0\uAE50 \uB098\uC640\uBD10!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: ..?
+    choices: []
+    lineEvent:
+      eventType: 8
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: -2910023334482628502, guid: bf951e1ee6f122c4ea98f36d3f810119, type: 3}
+    speaker: 
     text: 
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - speaker: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
     text: 
+    choices: []
+    lineEvent:
+      eventType: 9
+      parameter: 
+  - portrait: {fileID: -6876963936897236661, guid: cc801a6b453f10e48862666c1a818523, type: 3}
+    background: {fileID: 0}
+    speaker: "\uB9C8\uBD80"
+    text: "\uB3C4\uCC29\uD588\uC5B4."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - speaker: 
-    text: 
+  - portrait: {fileID: -6876963936897236661, guid: cc801a6b453f10e48862666c1a818523, type: 3}
+    background: {fileID: 0}
+    speaker: "\uB9C8\uBD80"
+    text: "\uC774\uAC70 \uAC16\uACE0 \uC5B4\uC11C \uAEBC\uC838."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  signalText: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "100\uACE8\uB4DC\uB97C \uD68D\uB4DD\uD588\uB2E4."
+    choices: []
+    lineEvent:
+      eventType: 5
+      parameter: 100
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB135."
+    choices: []
+    lineEvent:
+      eventType: 2
+      parameter: Campsite

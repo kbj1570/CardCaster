@@ -63,16 +63,11 @@ public class SafeZoneManager : MonoBehaviour
 		}
 	}
 
-	public void OpenStorage()
-	{
-
-	}
-
 	public void ShowCommentary(int value)
 	{
-		GameObject onMessage = Instantiate(commentaryPreFab, commentaryLocation);
-		onMessage.GetComponent<AlertMessage>().SetText(safeZone.GetCommentaries()[value]);
-		StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
+		//GameObject onMessage = Instantiate(commentaryPreFab, commentaryLocation);
+		//onMessage.GetComponent<AlertMessage>().SetText(safeZone.GetCommentaries()[value]);
+		//StartCoroutine(onMessage.GetComponent<AlertMessage>().FadeAway());
 	}
 
 	public void SaveData()

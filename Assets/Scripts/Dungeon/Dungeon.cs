@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 public class Dungeon
 {
+    protected bool randomCreate;
     protected string dungeonName;
     protected int dungeonNum;
     protected int dungeonEndFloor;

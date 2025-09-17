@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Campsite.unity
+    path: Assets/Scenes/Campsite/Campsite.unity
     guid: f581297a38568fa49bde8bc000d2f575
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
@@ -44,5 +44,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CutScene/Intro.unity
     guid: dda6e04ed3f83a442ba104f54c9924fe
+  - enabled: 1
+    path: Assets/Scenes/Prologue/Prologue.unity
+    guid: 615c1849d27dc114dbf471cc23f46219
+  - enabled: 1
+    path: Assets/Scenes/Prologue/PrologueDungeon.unity
+    guid: 0b087548e8fd75c47bc4fecc756de36e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

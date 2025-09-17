@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,24 +12,29 @@ public class DialogueManager : MonoBehaviour
 {
 	public TMP_Text speakerText;
 	public TMP_Text dialogueText;
+	public TMP_Text documentText;
+	public GameObject documentFrame;
+
 	public GameObject choiceButtonPrefab;
 	public Transform choiceContainer;
-
 	public Transform alertPosition;
 	public GameObject textBox;
-
 	private DialogueData currentData;
 	public List<DialogueData> dialogueList;
 	int currentIndex = 0;
     private ILockable lockTarget;
-
 	public GameObject alertObject;
 	public GameObject FadeImage;
-	public Image mugShotImage;
-	public Image mugShotFrame;
+	public Image portraitImage;
+	public Image portraitFrame;
 	public Image situationImage;
-
-	public Sprite[] mugShots;
+	public Image fadeImage;
+	public Image backgroundImage;
+	public Sprite[] portraits;
+	public Sprite[] situationSprites;
+	bool isActionDone;
+	float typingSpeed = 0.04f;
+	bool isTyping = false;
 
 	public static DialogueManager Inst { get; private set; }
 	void Start()
@@ -48,31 +52,43 @@ public class DialogueManager : MonoBehaviour
 		transform.localScale = Vector3.one;
 		if (dialogueId < 0 || dialogueId >= dialogueList.Count)
 		{
-			Debug.LogError("Àß¸øµÈ Dialogue ID: " + dialogueId);
+			Debug.LogError("Denied Dialogue ID: " + dialogueId);
 			return;
 		}
 
 		currentData = dialogueList[dialogueId];
 		currentIndex = 0;
-		ShowLine();
+		StartCoroutine(ShowLine());
 	}
-
-	void ShowLine()
+	IEnumerator ShowLine()
 	{
-		if (currentData == null) return;
+		if (currentData == null) yield break;
 		DialogueNode line = currentData.lines[currentIndex];
-
 		ClearChoices();
-		speakerText.text = line.speaker;
-		dialogueText.text = line.text;
+		
+		documentFrame.SetActive(false);
+		isActionDone = false;
+		
+		if(line.background != null)
+		{ backgroundImage.sprite = line.background; }
 
-		mugShotFrame.gameObject.SetActive(line.mugShot != null);
+		if (!string.IsNullOrEmpty(line.text))
+			{
+				textBox.SetActive(true);
+				speakerText.text = line.speaker;
+				dialogueText.text = "";
+				portraitFrame.gameObject.SetActive(line.portrait != null);
+				portraitImage.sprite = line.portrait;
 
-		if (line.mugShot != null)
-		{
-			mugShotImage.sprite = line.mugShot;
-			mugShotImage.color = new Color(1, 1, 1, 1);
-		}
+
+
+				yield return StartCoroutine(TypeText(line.text));
+				yield return new WaitUntil(() => isActionDone);
+			}
+			else
+			{
+				textBox.SetActive(false);
+			}
 
 
 		if (line.choices != null && line.choices.Length > 0)
@@ -84,17 +100,47 @@ public class DialogueManager : MonoBehaviour
 				btnObj.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(choice));
 			}
 		}
+		else
+		{
+			StartCoroutine(NextLine());
+		}
 	}
+
+	private IEnumerator TypeText(string text)
+	{
+		isTyping = true;
+		dialogueText.text = "";
+
+		for (int i = 0; i < text.Length; i++)
+		{
+			if (text[i] == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
+			{
+				dialogueText.text = text.Substring(0, i + 2);
+				i++;
+			}
+			else
+			{dialogueText.text = text.Substring(0, i + 1);}
+
+			if (text[i] == '.' || text[i] == '!' || text[i] == '?')
+			{typingSpeed = 0.17f;}
+			else
+			{typingSpeed = 0.05f;}
+
+			yield return new WaitForSeconds(typingSpeed);
+		}
+
+		isTyping = false;
+		dialogueText.text = text;
+	}
+
 
 	void Update()
 	{
+
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			DialogueNode line = currentData.lines[currentIndex];
-			if (line.choices == null || line.choices.Length == 0)
-			{
-				StartCoroutine(NextLine());
-			}
+			if (!isTyping)
+			{isActionDone = true;}
 		}
 	}
 
@@ -113,11 +159,11 @@ public class DialogueManager : MonoBehaviour
 				break;
 
 			case DialogueEventType.LoadScene:
-				SceneManager.LoadScene(evt.parameter);
+				StartCoroutine(LoadScene(evt.parameter));
 				break;
 
 			case DialogueEventType.StartDialogue:
-				DialogueData nextData = Resources.Load<DialogueData>(evt.parameter);
+				// DialogueData nextData = Resources.Load<DialogueData>(evt.parameter);
 				StartDialogue(Int32.Parse(evt.parameter));
 				break;
 
@@ -127,16 +173,54 @@ public class DialogueManager : MonoBehaviour
 			case DialogueEventType.FadeInSituationImage:
 				yield return StartCoroutine(FadeInSituationImage());
 				break;
-			case DialogueEventType.ShowMugShot:
-				yield return StartCoroutine(AlertUnexpected(evt.parameter));
+			case DialogueEventType.FadeInOut:
+				yield return StartCoroutine(FadeInOut());
 				break;
-			case DialogueEventType.HideMugShot:
-				yield return StartCoroutine(AlertUnexpected(evt.parameter));
+
+			case DialogueEventType.FadeIn:
+				yield return StartCoroutine(FadeIn());
+				break;
+
+			case DialogueEventType.FadeOut:
+				yield return StartCoroutine(FadeOut());
+				break;
+
+			case DialogueEventType.GetItem:
+				yield return StartCoroutine(GetItem(evt.parameter));
+				break;
+
+			case DialogueEventType.GetGold:
+				yield return StartCoroutine(GetGold(evt.parameter));
+				break;
+
+			case DialogueEventType.ShowDocument:
+				documentFrame.SetActive(true);
+				documentText.text = evt.parameter;
+				yield return new WaitUntil(() => isActionDone);
+				documentFrame.SetActive(false);
 				break;
 		}
 	}
 
-	private IEnumerator AlertUnexpected(string situationName)
+	private IEnumerator GetGold(string parameter)
+	{
+		PlayerData.saveData.gold += Int32.Parse(parameter);
+		yield return null;
+    }
+
+	private IEnumerator GetItem(string parameter)
+    {
+
+		// ItemData item = DataController.Inst.LoadItemDatabase()[Int32.Parse(parameter)];
+		if(PlayerData.saveData.inventory_items.Count <= 8)
+		{PlayerData.saveData.inventory_items.Add(parameter);}
+		else
+		{PlayerData.saveData.storage_items.Add(parameter);}
+
+		yield return null;
+    }
+
+    private IEnumerator AlertUnexpected(string situationName)
 	{
 		textBox.SetActive(false);
 		GameObject onMessage = Instantiate(alertObject, this.transform);
@@ -147,14 +231,117 @@ public class DialogueManager : MonoBehaviour
 		textBox.SetActive(true);
 	}
 
+
+	private IEnumerator LoadScene(string value)
+	{
+		fadeImage.gameObject.SetActive(true);
+
+		float time = 0f;
+		Color color = fadeImage.color;
+		color.a = 0f;
+		fadeImage.color = color;
+
+		// Fade In
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Clamp01(time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		color.a = 1f;
+		fadeImage.color = color;
+		
+		SceneManager.LoadScene(value);
+	}
+
+	private IEnumerator FadeOut()
+	{
+		fadeImage.gameObject.SetActive(true);
+		float time = 0f;
+		Color color = fadeImage.color;
+		color.a = 0f;
+		fadeImage.color = color;
+
+		time = 0f;
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Clamp01(1f - time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		color.a = 0f;
+		fadeImage.color = color;
+		
+		fadeImage.gameObject.SetActive(false);
+	}
+
+	private IEnumerator FadeIn()
+	{
+		fadeImage.gameObject.SetActive(true);
+		float time = 0f;
+		Color color = fadeImage.color;
+		color.a = 0f;
+		fadeImage.color = color;
+
+		// Fade In
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Clamp01(time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		color.a = 1f;
+		fadeImage.color = color;
+	}
+
+	private IEnumerator FadeInOut()
+	{
+		fadeImage.gameObject.SetActive(true);
+
+		float time = 0f;
+		Color color = fadeImage.color;
+		color.a = 0f;
+		fadeImage.color = color;
+
+		// Fade In
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Clamp01(time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		color.a = 1f;
+		fadeImage.color = color;
+
+		yield return new WaitForSeconds(2f);
+
+		// Fade Out
+		time = 0f;
+		while (time < 1f)
+		{
+			time += Time.deltaTime;
+			color.a = Mathf.Clamp01(1f - time / 1f);
+			fadeImage.color = color;
+			yield return null;
+		}
+		color.a = 0f; // ï¿½ï¿½ï¿½ï¿½
+		fadeImage.color = color;
+
+		fadeImage.gameObject.SetActive(false);
+	}
+
 	private IEnumerator FadeInSituationImage()
 	{
 
 		textBox.SetActive(false);
 		float alpha = 0f;
 		float t = 0f;
-		float fadeDuration = 0.6f; // ³ªÅ¸³ª°Å³ª »ç¶óÁö´Â µ¥ °É¸®´Â ½Ã°£
-		float stayDuration = 2.2f; // ´Ù ³ªÅ¸³­ ÈÄ À¯Áö ½Ã°£
+		float fadeDuration = 0.6f; // ï¿½ï¿½Å¸ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½É¸ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
+		float stayDuration = 2.2f; // ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
 		// Fade In
 		while (t < fadeDuration)
@@ -168,7 +355,7 @@ public class DialogueManager : MonoBehaviour
 			yield return null;
 		}
 
-		// ´ë±â
+		// ï¿½ï¿½ï¿½
 		yield return new WaitForSeconds(stayDuration);
 
 		textBox.SetActive(true);
@@ -177,20 +364,20 @@ public class DialogueManager : MonoBehaviour
 
 
 		IEnumerator NextLine()
-	{
-		yield return StartCoroutine(ExecuteEvent(currentData.lines[currentIndex].lineEvent));
-		currentIndex++;
-		if (currentIndex < currentData.lines.Length)
-		{ShowLine();}
-		else
-		{EndDialogue();}
-	}
+		{
+			yield return StartCoroutine(ExecuteEvent(currentData.lines[currentIndex].lineEvent));
+			currentIndex++;
+			if (currentIndex < currentData.lines.Length)
+			{ StartCoroutine(ShowLine());}
+			else
+			{EndDialogue();}
+		}
 
 	void OnChoiceSelected(DialogueChoice choice)
 	{
 		StartCoroutine(ExecuteEvent(choice.choiceEvent));
 		currentIndex = choice.nextDialogueIndex;
-		ShowLine();
+		StartCoroutine(ShowLine());
 	}
 
 	IEnumerator EndDialogue()
