@@ -2,7 +2,6 @@ public class Graveyard : Dungeon
 {
     public Graveyard()
     {
-        randomCreate = true;
         dungeonName = "공동묘지";
         dungeonNum = 1;
 		dungeonEndFloor = 5;

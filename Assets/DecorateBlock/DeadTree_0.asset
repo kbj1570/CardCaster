@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df415140adb2acc41916789c61776806, type: 3}
+  m_Name: DeadTree_0
+  m_EditorClassIdentifier: Assembly-CSharp::DecorateBlock
+  decorateBlockSize: 1
+  sprites:
+  - {fileID: 21300000, guid: d0f00baff6ca68846a074a46a5cd038e, type: 3}

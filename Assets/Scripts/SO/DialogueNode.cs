@@ -46,5 +46,12 @@ public enum DialogueEventType
 	FadeInSituationImage,
 	ShowDocument,
 	SetBackGround,
-	PlaySound
+	PlaySound,
+	ClearBackground,
+	KeyInputRight,
+	KeyInputUp,
+	KeyInputDown,
+	KeyInputLeft,
+	ShowMaskImage,
+	HideMaskImage
 }

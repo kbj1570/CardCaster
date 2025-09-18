@@ -19,20 +19,6 @@ public class RoomNode : MonoBehaviour
 
     public bool visited;
 
-    public Sprite leftDownCorner;
-    public Sprite leftUpCorner;
-    public Sprite rightDownCorner;
-    public Sprite rightUpCorner;
-    public Sprite leftDeadEnd;
-    public Sprite rightDeadEnd;
-    public Sprite downDeadEnd;
-    public Sprite upDeadEnd;
-    public Sprite leftRightCorridor;
-    public Sprite upDownCorridor;
-    public Sprite leftWall;
-    public Sprite rightWall;
-    public Sprite downWall;
-    public Sprite upWall;
 
     void Start()
     {}
@@ -44,7 +30,6 @@ public class RoomNode : MonoBehaviour
     public void Decorate(Sprite sprite)
     {
 		renderer.GetComponent<SpriteRenderer>().sprite = sprite;
-
 	}
 
     public Node GetNodeData()
@@ -63,7 +48,7 @@ public class RoomNode : MonoBehaviour
         this.leftBlocked = leftBlocked;
         this.rightBlocked = rightBlocked;
 
-        UpdateNodeFrame();
+        // UpdateNodeFrame();
     }
 
     public void SetRoomType(ERoomType roomType)
@@ -79,6 +64,8 @@ public class RoomNode : MonoBehaviour
     {
         visited = true;
         renderer.GetComponent<SpriteRenderer>().color = Color.white;
+
+        
 
         //if (roomType != ERoomType.EStair)
         //{
@@ -102,38 +89,38 @@ public class RoomNode : MonoBehaviour
     public bool GetVisited()
     {return visited;}
 
-    public void UpdateNodeFrame()
-    {
-        if(!upBlocked && rightBlocked && leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = upDeadEnd;}
-        else if(upBlocked && !rightBlocked && leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = rightDeadEnd;}
-        else if(upBlocked && rightBlocked && !leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = leftDeadEnd;}
-        else if(upBlocked && rightBlocked && leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = downDeadEnd;}
-        else if(!upBlocked &&!rightBlocked && leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = leftDownCorner;}
-        else if(!upBlocked && rightBlocked && !leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = rightDownCorner;}
-        else if(!upBlocked && rightBlocked && leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = upDownCorridor;}
-        else if(upBlocked && !rightBlocked && !leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = leftRightCorridor;}
-        else if(upBlocked && !rightBlocked && leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = leftUpCorner;}
-        else if(upBlocked && rightBlocked && !leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = rightUpCorner;}
-        else if(!upBlocked && !rightBlocked && !leftBlocked && downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = downWall;}
-        else if(!upBlocked && !rightBlocked && leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = leftWall;}
-        else if(!upBlocked && rightBlocked && !leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = rightWall;}
-        else if(upBlocked && !rightBlocked && !leftBlocked && !downBlocked)
-        {renderer.GetComponent<SpriteRenderer>().sprite = upWall;}
-        else{Debug.Log(roomNum);}
-    }
+    // public void UpdateNodeFrame()
+    // {
+    //     if(!upBlocked && rightBlocked && leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = upDeadEnd;}
+    //     else if(upBlocked && !rightBlocked && leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = rightDeadEnd;}
+    //     else if(upBlocked && rightBlocked && !leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = leftDeadEnd;}
+    //     else if(upBlocked && rightBlocked && leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = downDeadEnd;}
+    //     else if(!upBlocked &&!rightBlocked && leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = leftDownCorner;}
+    //     else if(!upBlocked && rightBlocked && !leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = rightDownCorner;}
+    //     else if(!upBlocked && rightBlocked && leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = upDownCorridor;}
+    //     else if(upBlocked && !rightBlocked && !leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = leftRightCorridor;}
+    //     else if(upBlocked && !rightBlocked && leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = leftUpCorner;}
+    //     else if(upBlocked && rightBlocked && !leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = rightUpCorner;}
+    //     else if(!upBlocked && !rightBlocked && !leftBlocked && downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = downWall;}
+    //     else if(!upBlocked && !rightBlocked && leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = leftWall;}
+    //     else if(!upBlocked && rightBlocked && !leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = rightWall;}
+    //     else if(upBlocked && !rightBlocked && !leftBlocked && !downBlocked)
+    //     {renderer.GetComponent<SpriteRenderer>().sprite = upWall;}
+    //     else{Debug.Log(roomNum);}
+    // }
 
     public void UpdateNodeImage(Sprite sprite)
     {roomMark.GetComponent<SpriteRenderer>().sprite = sprite;}
@@ -142,6 +129,10 @@ public class RoomNode : MonoBehaviour
 
     public IEnumerator FadeOut()
     {
+        // if (roomType == ERoomType.EWall)
+        // {
+        //     GetComponent<SpriteMask>().alphaCutoff = 0.6f;
+        // }
         float f = 0;
         while (f <= 1)
         {
@@ -151,6 +142,7 @@ public class RoomNode : MonoBehaviour
             renderer.material.color = ColorAlhpa;
             yield return new WaitForSeconds(0.03f);
         }
+        
     }
 
 

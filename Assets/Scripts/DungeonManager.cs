@@ -13,6 +13,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 {
 	public AudioSource soundEffect;
 	public List<AudioClip> runningInGrassSound;
+	public DecorateBlock[] decorateBlocks;
+	public Sprite decorateBlock;
 	public Image fadeImage;
 	int lineCount;
 	int mouseOnRoomNum;
@@ -53,7 +55,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public GameObject gameOverWindow;
 
 
-	
+
 	public LineRenderer cardDragLine;
 	public GameObject popUpMessageWindow;
 	public GameObject alertMessage;
@@ -63,7 +65,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public TMP_Text floorText;
 
 	public TMP_Text healthText;
-	public TMP_Text goldText;
 
 
 	public ItemData selectedItem;
@@ -79,105 +80,77 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	List<GameObject> itemObjectList;
 	List<GameObject> enemyObjectList;
-	public Sprite decorateBlock;
 	private float moveDistance = 2f; // 한 번에 이동할 거리
 	private float moveDuration = 0.2f; // 이동하는 데 걸리는 시간
 	private Queue<Vector2> moveQueue = new Queue<Vector2>(); // 이동할 방향 저장
 	private bool isMoving = false;
 	private Dictionary<DungeonEnemy, int> dungeonEnemies;
 
-	public static DungeonManager Inst{get; private set;}
+	public static DungeonManager Inst { get; private set; }
 
+	public float moveDelay = 0.2f; // 이동 간격 (초 단위)
+    private bool isRepeating = false;
+    private Coroutine repeatCoroutine;
 	int currentPage;
+
+
+
 
 
 	void Update()
 	{
-		if (updateLock)
-			return;
+		
+		if (moveLocked)
+		{ StopRepeatMove(); }
+
+		if (updateLock || moveLocked) return;
+
+
 
 		UpdatePlayerData();
-		if (Input.GetKeyDown(KeyCode.W) && !moveLocked)
-		{
-			if (player.GetComponent<Player>().GetDirection() != EDirection.North) { player.GetComponent<Player>().SetDirection(EDirection.North); }
-			else if (CheckOutOfIndex(currentPlayerLocation - width))
-			{
-				if (nodeMap[currentPlayerLocation - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation -= width;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.up);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-		else if (Input.GetKeyDown(KeyCode.A) && !moveLocked)
-		{
-			if (currentPlayerLocation % width == 0)
-				return;
+        // 첫 입력은 즉시 실행
+        if (Input.GetKeyDown(KeyCode.W)) StartRepeatMove(InputKeyNorth);
+        else if (Input.GetKeyDown(KeyCode.A)) StartRepeatMove(InputKeyWest);
+        else if (Input.GetKeyDown(KeyCode.S)) StartRepeatMove(InputKeySouth);
+        else if (Input.GetKeyDown(KeyCode.D)) StartRepeatMove(InputKeyEast);
 
-			if (player.GetComponent<Player>().GetDirection() != EDirection.West) { player.GetComponent<Player>().SetDirection(EDirection.West); }
-			else if(CheckOutOfIndex(currentPlayerLocation - 1))
-			{
-				if (nodeMap[currentPlayerLocation - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation -= 1;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.left);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-		else if (Input.GetKeyDown(KeyCode.S) && !moveLocked)
-		{
-			if (player.GetComponent<Player>().GetDirection() != EDirection.South) { player.GetComponent<Player>().SetDirection(EDirection.South); }
-			else if(CheckOutOfIndex(currentPlayerLocation + width))
-			{
-				if (nodeMap[currentPlayerLocation + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation += width;
-					MovePlayer(currentPlayerLocation);
-					EnqueueMove(Vector2.down);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-		else if (Input.GetKeyDown(KeyCode.D) && !moveLocked)
-		{
-			if (currentPlayerLocation % width == width - 1)
-				return;
-
-			if (player.GetComponent<Player>().GetDirection() != EDirection.East) { player.GetComponent<Player>().SetDirection(EDirection.East); }
-			else if(CheckOutOfIndex(currentPlayerLocation + 1))
-			{
-				if (nodeMap[currentPlayerLocation + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
-				{
-					previousPlayerLocation = currentPlayerLocation;
-					currentPlayerLocation += 1;
-					MovePlayer(currentPlayerLocation);
-
-					EnqueueMove(Vector2.right);
-				}
-			}
-			CameraController.Inst.SetFollowing();
-		}
-		//else if (Input.GetKeyDown(KeyCode.Space))
-		//{
-		//	CameraController.Inst.ZoomIn(2f);
-		//}
-		//else if (Input.GetKeyUp(KeyCode.Space))
-		//{
-		//	CameraController.Inst.ZoomOut(2f);
-		//}
-		//else if (Input.GetKeyUp(KeyCode.Z))
-		//{
-		//	PlayerData.saveData.health -= 1;
-		//}
-
+        // 키를 뗐을 때 반복 중단
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) ||
+            Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+        {
+            StopRepeatMove();
+        }
 	}
+	  void StartRepeatMove(System.Action moveAction)
+    {
+        // 이미 반복 중이면 중단하고 새로 시작
+        if (repeatCoroutine != null) StopCoroutine(repeatCoroutine);
+        repeatCoroutine = StartCoroutine(RepeatMove(moveAction));
+    }
+
+    void StopRepeatMove()
+    {
+        if (repeatCoroutine != null)
+        {
+            StopCoroutine(repeatCoroutine);
+            repeatCoroutine = null;
+        }
+    }
+
+    IEnumerator RepeatMove(System.Action moveAction)
+    {
+        // 첫 입력 즉시 실행
+        moveAction();
+
+        // 일정 텀마다 반복 실행
+        yield return new WaitForSeconds(moveDelay); 
+
+        while (true)
+        {
+            moveAction();
+            yield return new WaitForSeconds(moveDelay);
+        }
+    }
 
 
 
@@ -206,13 +179,19 @@ public class DungeonManager : MonoBehaviour, ILockable
 		lineCount = 30;
 
 		DungeonSetUp();
-
-		if(DungeonData.map == null)
+		if (DungeonData.map != null)
 		{
-			CreateFloor();
+			ReCreateFloor();
+		}
+		else if (DungeonData.dungeon.GetHasStaticFloor())
+		{
+			CreateStaticFloor();
 		}
 		else
-		{ReCreateFloor();}
+		{
+			CreateRandomFloor();
+		}
+		UpdatePlayerData();
 
 		StartCoroutine(FadeIn());
 	}
@@ -261,22 +240,19 @@ public class DungeonManager : MonoBehaviour, ILockable
 			map[obstaclePos].SetRoomType(ERoomType.EObstacle); // 장애물 노드
 			obstacleNodeIndex = obstaclePos;
 
-			
+
 		}
 		// 비밀방 노드 저장
 		secretRoomNodes = tempSecretNodes;
 	}
 	private bool IsValidIndex(int index)
 	{
-		// 먼저 전체 범위 체크
 		if (!CheckOutOfIndex(index))
 			return false;
 
-		// 1차원 배열이므로 x, y 계산
 		int x = index % width;
 		int y = index / width;
 
-		// 가로/세로 범위 확인 (사실 CheckOutOfIndex가 이미 y 범위도 보장함)
 		return (x >= 0 && x < width && y >= 0 && y < (floorSize / width));
 	}
 
@@ -284,7 +260,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	{
 		float time = 0;
 		Color color = fadeImage.color;
-		
+
 		while (time < 1f)
 		{
 			time += Time.deltaTime;
@@ -312,11 +288,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 	}
 
-	
+
 	public IEnumerator FindPath(int target)
 	{
-		if(moveLocked)
-		{yield break;}
+		if (moveLocked)
+		{ yield break; }
 
 		moveLocked = true;
 		Queue<int> queue = new Queue<int>();
@@ -355,48 +331,48 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 		directions.Reverse();
 
-		for(int i = 0; i < directions.Count; ++i)
+		for (int i = 0; i < directions.Count; ++i)
 		{
 			previousPlayerLocation = currentPlayerLocation;
-			
-			switch(directions[i])
+
+			switch (directions[i])
 			{
 				case "Up":
-				currentPlayerLocation -= width;
-				break;
+					currentPlayerLocation -= width;
+					break;
 
 				case "Down":
-				currentPlayerLocation += width;
-				break;
+					currentPlayerLocation += width;
+					break;
 
 				case "Left":
-				currentPlayerLocation -= 1;
-				break;
+					currentPlayerLocation -= 1;
+					break;
 
 				case "Right":
-				currentPlayerLocation += 1;
-				break;
+					currentPlayerLocation += 1;
+					break;
 			}
 			MovePlayer(currentPlayerLocation);
-			
 
-			switch(directions[i])
+
+			switch (directions[i])
 			{
 				case "Up":
-				EnqueueMove(Vector2.up);
-				break;
+					EnqueueMove(Vector2.up);
+					break;
 
 				case "Down":
-				EnqueueMove(Vector2.down);
-				break;
+					EnqueueMove(Vector2.down);
+					break;
 
 				case "Left":
-				EnqueueMove(Vector2.left);
-				break;
+					EnqueueMove(Vector2.left);
+					break;
 
 				case "Right":
-				EnqueueMove(Vector2.right);
-				break;
+					EnqueueMove(Vector2.right);
+					break;
 			}
 			yield return new WaitForSeconds(0.2f);
 		}
@@ -407,35 +383,35 @@ public class DungeonManager : MonoBehaviour, ILockable
 	{
 		List<int> newList = new();
 
-		if(nodeNumList.Contains(nodeNum - 1))
-		newList.Add(nodeNum - 1);
+		if (nodeNumList.Contains(nodeNum - 1))
+			newList.Add(nodeNum - 1);
 
-		if(nodeNumList.Contains(nodeNum + 1))
-		newList.Add(nodeNum + 1);
+		if (nodeNumList.Contains(nodeNum + 1))
+			newList.Add(nodeNum + 1);
 
-		if(nodeNumList.Contains(nodeNum - width))
-		newList.Add(nodeNum - width);
+		if (nodeNumList.Contains(nodeNum - width))
+			newList.Add(nodeNum - width);
 
-		if(nodeNumList.Contains(nodeNum + width))
-		newList.Add(nodeNum + width);
+		if (nodeNumList.Contains(nodeNum + width))
+			newList.Add(nodeNum + width);
 
 		return newList;
 	}
 
 	public void RevealMap()
 	{
-		foreach(GameObject node in nodeMap)
+		foreach (GameObject node in nodeMap)
 		{
-			if(node != null)
-			{node.SetActive(true);}
+			if (node != null)
+			{ node.SetActive(true); }
 		}
 	}
 
 	public void SetDungeon(Dungeon dungeon)
-	{this.dungeon = dungeon;}
+	{ this.dungeon = dungeon; }
 
 	public void SetSelectedItem(int itemNum)
-	{selectedItem = itemDatabase[itemNum];}
+	{ selectedItem = itemDatabase[itemNum]; }
 
 	//public void LoadItemList()
 	//{
@@ -445,15 +421,15 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void ChangePage(bool value)
 	{
-		if(value)
-		{currentPage++;}
-		else{currentPage--;}
+		if (value)
+		{ currentPage++; }
+		else { currentPage--; }
 
-		if(currentPage < 0)
-		{currentPage = 0;}
+		if (currentPage < 0)
+		{ currentPage = 0; }
 
-		if(currentPage >= pageLimit)
-		{currentPage = pageLimit;}
+		if (currentPage >= pageLimit)
+		{ currentPage = pageLimit; }
 
 		//UpdateItemPage();
 	}
@@ -562,39 +538,39 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private bool CheckBattleStart()
 	{
-		if(dungeonEnemies.Values.Contains(currentPlayerLocation))
-		{return true;}
+		if (dungeonEnemies.Values.Contains(currentPlayerLocation))
+		{ return true; }
 		else
 		{
 			List<DungeonEnemy> enemies = dungeonEnemies.Keys.ToList();
 
-			for(int i = 0; i < enemies.Count; ++i)
+			for (int i = 0; i < enemies.Count; ++i)
 			{
-				if(enemies[i].GetCurrentNodeNum() == previousPlayerLocation
+				if (enemies[i].GetCurrentNodeNum() == previousPlayerLocation
 				&& EnemyFootStep(enemies[i]) == currentPlayerLocation)
-				{return true;}
+				{ return true; }
 			}
 			return false;
 		}
-		
-		
+
+
 	}
 
 	public int EnemyFootStep(DungeonEnemy dungeonEnemy)
 	{
-		switch(dungeonEnemy.GetEnemyDirection())
+		switch (dungeonEnemy.GetEnemyDirection())
 		{
 			case EEnemyDirection.North:
-			return dungeonEnemy.GetCurrentNodeNum() + width;
+				return dungeonEnemy.GetCurrentNodeNum() + width;
 
 			case EEnemyDirection.West:
-			return dungeonEnemy.GetCurrentNodeNum() + 1;
+				return dungeonEnemy.GetCurrentNodeNum() + 1;
 
 			case EEnemyDirection.East:
-			return dungeonEnemy.GetCurrentNodeNum() - 1;
+				return dungeonEnemy.GetCurrentNodeNum() - 1;
 
 			case EEnemyDirection.South:
-			return dungeonEnemy.GetCurrentNodeNum() - width;
+				return dungeonEnemy.GetCurrentNodeNum() - width;
 		}
 
 		return 0;
@@ -620,7 +596,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 			.ToList();
 
 
-		foreach(DungeonEnemy selectedEnemy in selectedEnemies)
+		foreach (DungeonEnemy selectedEnemy in selectedEnemies)
 		{
 			enemyObjectList.Remove(selectedEnemy.gameObject);
 			dungeonEnemies.Remove(selectedEnemy);
@@ -636,11 +612,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 		Dictionary<int, bool> visitedNodes = new();
 
 
-		foreach(int roomNum in nodeNumList)
-		{activeNodes.Add(roomNum, nodeMap[roomNum].activeSelf);}
+		foreach (int roomNum in nodeNumList)
+		{ activeNodes.Add(roomNum, nodeMap[roomNum].activeSelf); }
 
-		foreach(int roomNum in nodeNumList)
-		{visitedNodes.Add(roomNum, nodeMap[roomNum].GetComponent<RoomNode>().GetVisited());}
+		foreach (int roomNum in nodeNumList)
+		{ visitedNodes.Add(roomNum, nodeMap[roomNum].GetComponent<RoomNode>().GetVisited()); }
 
 		DungeonData.activeNodes = activeNodes;
 		DungeonData.visitedNodes = visitedNodes;
@@ -665,34 +641,34 @@ public class DungeonManager : MonoBehaviour, ILockable
 		);
 	}
 
-	
-	
+
+
 	private bool CheckConnect(int enemyLocation)
 	{
-		int[] offsets = { 0, 1, width};
+		int[] offsets = { 0, 1, width };
 
-		if(offsets.Contains(Math.Abs(enemyLocation - currentPlayerLocation)))
-		{return true;}
+		if (offsets.Contains(Math.Abs(enemyLocation - currentPlayerLocation)))
+		{ return true; }
 
 		int path1 = 0;
 		int path2 = 0;
 
-		if(enemyLocation - currentPlayerLocation == 1 + width) // 오른쪽 아래
+		if (enemyLocation - currentPlayerLocation == 1 + width) // 오른쪽 아래
 		{
 			path1 = currentPlayerLocation + width;
 			path2 = currentPlayerLocation + 1;
 		}
-		else if(enemyLocation - currentPlayerLocation == 1 - width) // 오른쪽 위
+		else if (enemyLocation - currentPlayerLocation == 1 - width) // 오른쪽 위
 		{
 			path1 = currentPlayerLocation - width;
 			path2 = currentPlayerLocation + 1;
 		}
-		else if(enemyLocation - currentPlayerLocation == -1 - width) // 왼쪽 위
+		else if (enemyLocation - currentPlayerLocation == -1 - width) // 왼쪽 위
 		{
 			path1 = currentPlayerLocation - width;
 			path2 = currentPlayerLocation - 1;
 		}
-		else if(enemyLocation - currentPlayerLocation == -1 + width) // 왼쪽 아래
+		else if (enemyLocation - currentPlayerLocation == -1 + width) // 왼쪽 아래
 		{
 			path1 = currentPlayerLocation + width;
 			path2 = currentPlayerLocation - 1;
@@ -704,25 +680,27 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private void MoveEnemy()
 	{
-		if(dungeonEnemies.Count == 0)
-		{return;}
-		
+		if (dungeonEnemies.Count == 0)
+		{ return; }
+
 		int count = 0;
 
-		foreach(KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
+		foreach (KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
 		{
 
 			enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
 			.SetEase(Ease.OutQuad)
-			.OnStart(() => {
-				if(nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
-				{StartCoroutine(dungeonEnemy.Key.FadeOut());}
+			.OnStart(() =>
+			{
+				if (nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && !dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이고 자신이 지금 visible false라면?
+				{ StartCoroutine(dungeonEnemy.Key.FadeOut()); }
 
 			})
-			.OnComplete(() => {
-				if(!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
-				{StartCoroutine(dungeonEnemy.Key.FadeIn());}
-				});
+			.OnComplete(() =>
+			{
+				if (!nodeMap[dungeonEnemy.Key.GetCurrentNodeNum()].gameObject.activeSelf && dungeonEnemy.Key.gameObject.activeSelf) //방문한 곳이 아니고 자신이 지금 visible True라면?
+				{ StartCoroutine(dungeonEnemy.Key.FadeIn()); }
+			});
 			count++;
 		}
 	}
@@ -731,38 +709,38 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private int ReturnForwardNode(EEnemyDirection enemyDirection, int nodeNum)
 	{
-		switch(enemyDirection)
+		switch (enemyDirection)
 		{
 			case EEnemyDirection.North:
-			return nodeNum - width;
+				return nodeNum - width;
 
 			case EEnemyDirection.South:
-			return nodeNum + width;
+				return nodeNum + width;
 
 			case EEnemyDirection.East:
-			return nodeNum + 1;
+				return nodeNum + 1;
 
 			case EEnemyDirection.West:
-			return nodeNum - 1;
+				return nodeNum - 1;
 		}
 		return -1;
 	}
 
 	private EEnemyDirection ReturnReverseDirection(EEnemyDirection enemyDirection)
 	{
-		switch(enemyDirection)
+		switch (enemyDirection)
 		{
 			case EEnemyDirection.North:
-			return EEnemyDirection.South;
+				return EEnemyDirection.South;
 
 			case EEnemyDirection.South:
-			return EEnemyDirection.North;
+				return EEnemyDirection.North;
 
 			case EEnemyDirection.East:
-			return EEnemyDirection.West;
+				return EEnemyDirection.West;
 
 			case EEnemyDirection.West:
-			return EEnemyDirection.East;
+				return EEnemyDirection.East;
 		}
 		return EEnemyDirection.None;
 	}
@@ -776,11 +754,12 @@ public class DungeonManager : MonoBehaviour, ILockable
 	}
 
 	public void HideItemDescription()
-	{itemDescriptionWindow.SetActive(false);}
+	{ itemDescriptionWindow.SetActive(false); }
 
 
 	private void DungeonSetUp()
 	{
+		floor = 1;
 		dungeon = DungeonData.dungeon;
 		dungeonName = dungeon.GetDungeonName();
 		width = dungeon.GetDungeonWidth();
@@ -805,7 +784,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		moveQueue.Enqueue(direction);
 
 		if (!isMoving)
-		{StartNextMove();}
+		{ StartNextMove(); }
 	}
 
 	void StartNextMove()
@@ -816,7 +795,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 			Vector2 direction = moveQueue.Dequeue();
 			Vector3 targetPosition = player.transform.position + (Vector3)direction * moveDistance;
 
-			
+
 			SetEnemyCourse();
 
 			soundEffect.PlayOneShot(runningInGrassSound[Random.Range(0, runningInGrassSound.Count)]);
@@ -825,27 +804,28 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 			player.transform.DOMove(targetPosition, moveDuration)
 				.SetEase(Ease.OutQuad) // 부드러운 감속 효과
-				.OnComplete(() => {
+				.OnComplete(() =>
+				{
 					isMoving = false;
 					StartNextMove(); // 다음 이동 실행
 				});
-			
+
 			// if(CheckBattleStart())
 			// {moveDistance = moveDistance / 2;}
 
 			MoveEnemy();
-			if(CheckBattleStart())
-			{StartCoroutine(ReadyBattle());}
+			if (CheckBattleStart())
+			{ StartCoroutine(ReadyBattle()); }
 		}
-		
+
 	}
 
 	public void CloseItemInfo()
 	{
-		if(clickedItem == null)
-		{return;}
+		if (clickedItem == null)
+		{ return; }
 
-		if(clickedItem != null)
+		if (clickedItem != null)
 		{
 			clickedItem = null;
 			Destroy(clickedItemInfo.gameObject);
@@ -877,20 +857,20 @@ public class DungeonManager : MonoBehaviour, ILockable
 	//	return false;
 
 	//	//아이템 종류
-		
+
 	//}
 
 
-	
+
 
 	private ItemData ReturnDungeonItem()
 	{
-		if(itemList != null)
-		{   
+		if (itemList != null)
+		{
 			int count = 0;
 			Dictionary<ItemData, int> rewardRoullet = new();
 
-			foreach(KeyValuePair<ItemData, int> reward in itemList)
+			foreach (KeyValuePair<ItemData, int> reward in itemList)
 			{
 				count += reward.Value;
 				rewardRoullet.Add(reward.Key, count);
@@ -898,9 +878,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 			int randomNum = Random.Range(0, count + 1);
 
-			foreach(KeyValuePair<ItemData, int> reward in rewardRoullet)
+			foreach (KeyValuePair<ItemData, int> reward in rewardRoullet)
 			{
-				if(randomNum <= reward.Value)
+				if (randomNum <= reward.Value)
 				{
 					randomNum = Random.Range(1, 3);
 					return reward.Key;
@@ -918,7 +898,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void ReCreateFloor()
 	{
-		
+
 		map = DungeonData.map;
 		currentPlayerLocation = DungeonData.currentPlayerLocation;
 		previousPlayerLocation = DungeonData.previousPlayerLocation;
@@ -927,29 +907,30 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 
 		dungeonEnemies = DungeonData.dungeonEnemies;
-		
+
 		nodeNumList = DungeonData.nodeNumList;
 
 		InstantiateNode();
 
-		foreach(KeyValuePair<int, bool> keyValuePair in DungeonData.activeNodes)
-		{nodeMap[keyValuePair.Key].SetActive(keyValuePair.Value);}
+		if (DungeonData.activeNodes != null)
+			foreach (KeyValuePair<int, bool> keyValuePair in DungeonData.activeNodes)
+			{ nodeMap[keyValuePair.Key].SetActive(keyValuePair.Value); }
 
-		foreach(KeyValuePair<int, bool> keyValuePair in DungeonData.visitedNodes)
-		{nodeMap[keyValuePair.Key].GetComponent<RoomNode>().SetVisited(keyValuePair.Value);}
+		if (DungeonData.activeNodes != null)
+			foreach (KeyValuePair<int, bool> keyValuePair in DungeonData.visitedNodes)
+			{ nodeMap[keyValuePair.Key].GetComponent<RoomNode>().SetVisited(keyValuePair.Value); }
 
 		MovePlayer(currentPlayerLocation);
 		nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
 		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
 		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
-	   
-		ReCreateEnemy();
-		//LoadItemList();
-		//UpdateItemPage();
+
+		if (dungeonEnemies != null)
+			ReCreateEnemy();
 	}
 
 
-	public void CreateFloor()
+	public void CreateRandomFloor()
 	{
 		// 맵 생성 재시도 제한
 		const int MAX_ATTEMPTS = 10;
@@ -1028,6 +1009,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 			case ERoomType.EItem: return itemNodePrefab;
 			case ERoomType.EObstacle: return monsterNodePrefab;
 			case ERoomType.None: return roomNodePrefab;
+			case ERoomType.EStory: return roomNodePrefab;
+			case ERoomType.EStart: return roomNodePrefab;
 			case ERoomType.EWall:
 			default: return wallNodePrefab;
 		}
@@ -1050,7 +1033,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 			map[nodeNumList[encounterIdx]].SetDialogueNum(dungeon.GetDialogueList()[0]);
 		}
 
-		
+
 
 		HashSet<int> used = new HashSet<int>();
 		for (int i = 0; i < 5 && used.Count < nodeNumList.Count; ++i)
@@ -1149,24 +1132,191 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void DecorateFloor()
 	{
+		EDecorateBlockSize decorateBlockSize = EDecorateBlockSize.None;
+
 		for (int i = 0; i < nodeMap.Count; ++i)
 		{
-			if (Random.Range(0, 2) == 1) continue;
+			if (Random.Range(0, 9) != 1) continue;
 
-			RoomNode node = nodeMap[i]?.GetComponent<RoomNode>();
-			if (node != null && !node.filled && node.GetRoomType() == ERoomType.EWall)
+			if (CanPlace2x2(i))
 			{
-				node.filled = true;
-				var sr = node.GetComponent<SpriteRenderer>();
-				sr.sprite = decorateBlock;
-				sr.color = Color.red; // 나중에 테마 기반 색상 적용 가능
+				decorateBlockSize = EDecorateBlockSize.Size_2x2;
+				// 배치 처리
+			}
+			else if (CanPlace2x1(i))
+			{
+				decorateBlockSize = EDecorateBlockSize.Size_2x1;
+			}
+			else if (CanPlace1x2(i))
+			{
+				decorateBlockSize = EDecorateBlockSize.Size_1x2;
+			}
+			else if (CanPlace1x1(i))
+			{
+				decorateBlockSize = EDecorateBlockSize.Size_1x1;
+			}
+			else
+			{
+				decorateBlockSize = EDecorateBlockSize.None;
+			}
+
+			switch (decorateBlockSize)
+			{
+				case EDecorateBlockSize.Size_2x2:
+				// nodeMap[i], i+1, i+width, i+width+1 에 스프라이트 적용
+					{
+						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
+						RoomNode node_1 = nodeMap[i + 1]?.GetComponent<RoomNode>();
+						RoomNode node_2 = nodeMap[i + width]?.GetComponent<RoomNode>();
+						RoomNode node_3 = nodeMap[i + width + 1]?.GetComponent<RoomNode>();
+						node_0.filled = true;
+						node_1.filled = true;
+						node_2.filled = true;
+						node_3.filled = true;
+						var sr_0 = node_0.GetComponent<SpriteRenderer>();
+						var sr_1 = node_1.GetComponent<SpriteRenderer>();
+						var sr_2 = node_3.GetComponent<SpriteRenderer>();
+						var sr_3 = node_3.GetComponent<SpriteRenderer>();
+						sr_0.size = new Vector2(0.36f, 0.36f);
+						sr_1.size = new Vector2(0.36f, 0.36f);
+						sr_2.size = new Vector2(0.36f, 0.36f);
+						sr_3.size = new Vector2(0.36f, 0.36f);
+						
+						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[0];
+						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[1];
+						sr_2.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[2];
+						sr_3.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[3];
+						break;
+					}
+					
+				case EDecorateBlockSize.Size_2x1:
+					{
+						// nodeMap[i], i+1
+						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
+						RoomNode node_1 = nodeMap[i + 1]?.GetComponent<RoomNode>();
+						node_0.filled = true;
+						node_1.filled = true;
+						var sr_0 = node_0.GetComponent<SpriteRenderer>();
+						var sr_1 = node_1.GetComponent<SpriteRenderer>();
+
+						
+						nodeMap[i].transform.localScale = new Vector2(0.36f, 0.36f);
+						nodeMap[i + 1].transform.localScale = new Vector2(0.36f, 0.36f);
+
+						
+						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x1).Sprites[0];
+						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x1).Sprites[1];
+						break;
+					}
+					
+				case EDecorateBlockSize.Size_1x2:
+					// nodeMap[i], i+width
+					{
+						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
+						RoomNode node_1 = nodeMap[i + width]?.GetComponent<RoomNode>();
+						node_0.filled = true;
+						node_1.filled = true;
+						var sr_0 = node_0.GetComponent<SpriteRenderer>();
+						var sr_1 = node_1.GetComponent<SpriteRenderer>();
+
+						
+						sr_0.size = new Vector2(0.36f, 0.36f);
+						sr_1.size = new Vector2(0.36f, 0.36f);
+
+						
+						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x2).Sprites[0];
+						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x2).Sprites[1];
+						break;
+					}
+				case EDecorateBlockSize.Size_1x1:
+					{
+						// nodeMap[i]
+
+						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
+						node_0.filled = true;
+						var sr = node_0.GetComponent<SpriteRenderer>();
+						
+						nodeMap[i].transform.localScale = new Vector2(0.36f, 0.36f);
+
+						sr.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x1).Sprites[0];
+						break;
+					}
 			}
 		}
+	}
+	
+	public DecorateBlock GetRandomBlockOfSize(EDecorateBlockSize size)
+    {
+        var candidates = decorateBlocks.Where(db => db.Size == size).ToList();
+        if (candidates.Count == 0) return null;
+        return candidates[Random.Range(0, candidates.Count)];
+    }
+
+	 public bool HasBlockOfSize(EDecorateBlockSize size)
+	{
+		return decorateBlocks.Any(db => db.Size == size);
+	}
+	bool CanPlace1x1(int i)
+	{
+		if (!HasBlockOfSize(EDecorateBlockSize.Size_1x1)) return false;
+
+		RoomNode node = nodeMap[i]?.GetComponent<RoomNode>();
+		return node != null && !node.filled && node.GetRoomType() == ERoomType.EWall;
+	}
+
+	bool CanPlace2x1(int i) // 가로 2칸
+	{
+		if (!HasBlockOfSize(EDecorateBlockSize.Size_2x1)) return false;
+		if (i % width == width - 1) return false; // 오른쪽 경계면 막힘
+
+		RoomNode node1 = nodeMap[i]?.GetComponent<RoomNode>();
+		RoomNode node2 = nodeMap[i + 1]?.GetComponent<RoomNode>();
+
+		return node1 != null && node2 != null &&
+			!node1.filled && !node2.filled &&
+			node1.GetRoomType() == ERoomType.EWall &&
+			node2.GetRoomType() == ERoomType.EWall;
+	}
+
+	bool CanPlace1x2(int i) // 세로 2칸
+	{
+		if (!HasBlockOfSize(EDecorateBlockSize.Size_1x2)) return false;
+		if (i + width >= nodeMap.Count) return false; // 맵 아래 범위 벗어남
+
+		RoomNode node1 = nodeMap[i]?.GetComponent<RoomNode>();
+		RoomNode node2 = nodeMap[i + width]?.GetComponent<RoomNode>();
+
+		return node1 != null && node2 != null &&
+			!node1.filled && !node2.filled &&
+			node1.GetRoomType() == ERoomType.EWall &&
+			node2.GetRoomType() == ERoomType.EWall;
+	}
+
+	bool CanPlace2x2(int i)
+	{
+		if (!HasBlockOfSize(EDecorateBlockSize.Size_2x2)) return false;
+
+		if (i % width == width - 1) return false; // 오른쪽 경계
+		if (i + width >= nodeMap.Count) return false; // 아래쪽 경계
+
+		RoomNode node1 = nodeMap[i]?.GetComponent<RoomNode>();
+		RoomNode node2 = nodeMap[i + 1]?.GetComponent<RoomNode>();
+		RoomNode node3 = nodeMap[i + width]?.GetComponent<RoomNode>();
+		RoomNode node4 = nodeMap[i + width + 1]?.GetComponent<RoomNode>();
+
+		return node1 != null && node2 != null &&
+			node3 != null && node4 != null &&
+			!node1.filled && !node2.filled &&
+			!node3.filled && !node4.filled &&
+			node1.GetRoomType() == ERoomType.EWall &&
+			node2.GetRoomType() == ERoomType.EWall &&
+			node3.GetRoomType() == ERoomType.EWall &&
+			node4.GetRoomType() == ERoomType.EWall;
 	}
 	public void ReCreateEnemy()
 	{
 
-		foreach(KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
+		foreach (KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
 		{
 			GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
 			enemyObject.GetComponent<DungeonEnemy>().SetEnemy(dungeonEnemy.Key.GetEnemy());
@@ -1176,9 +1326,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 			enemyObject.GetComponent<DungeonEnemy>().SetMoveLock(
 			dungeonEnemy.Value + 1 == currentPlayerLocation
-			||dungeonEnemy.Value - 1 == currentPlayerLocation
-			||dungeonEnemy.Value + width == currentPlayerLocation
-			||dungeonEnemy.Value - width == currentPlayerLocation
+			|| dungeonEnemy.Value - 1 == currentPlayerLocation
+			|| dungeonEnemy.Value + width == currentPlayerLocation
+			|| dungeonEnemy.Value - width == currentPlayerLocation
 			);
 
 			enemyObjectList.Add(enemyObject);
@@ -1187,8 +1337,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		dungeonEnemies = new Dictionary<DungeonEnemy, int>();
 
-		foreach(GameObject dungeonEnemy in enemyObjectList)
-		{dungeonEnemies.Add(dungeonEnemy.GetComponent<DungeonEnemy>(), dungeonEnemy.GetComponent<DungeonEnemy>().GetCurrentNodeNum());}
+		foreach (GameObject dungeonEnemy in enemyObjectList)
+		{ dungeonEnemies.Add(dungeonEnemy.GetComponent<DungeonEnemy>(), dungeonEnemy.GetComponent<DungeonEnemy>().GetCurrentNodeNum()); }
 
 		MoveEnemy();
 	}
@@ -1198,16 +1348,16 @@ public class DungeonManager : MonoBehaviour, ILockable
 		List<int> usedNumbers = new List<int>();
 		dungeonEnemies.Clear();
 
-		for(int i = 0; i < enemyLimit; ++i)
+		for (int i = 0; i < enemyLimit; ++i)
 		{
 			int num;
-			do {num = Random.Range(0, nodeNumList.Count);}
+			do { num = Random.Range(0, nodeNumList.Count); }
 			while (usedNumbers.Contains(num) || nodeNumList[num] == currentPlayerLocation);
-			
+
 			usedNumbers.Add(nodeNumList[num]);
 		}
 
-		for(int i = 0; i < enemyLimit; ++i)
+		for (int i = 0; i < enemyLimit; ++i)
 		{
 			GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
 
@@ -1216,16 +1366,16 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 			List<EEnemyDirection> dummy = new();
 
-			if(nodeNumList.Contains(usedNumbers[i] + 1)) 
+			if (nodeNumList.Contains(usedNumbers[i] + 1))
 				dummy.Add(EEnemyDirection.East);
-			
-			if(nodeNumList.Contains(usedNumbers[i] - 1)) 
+
+			if (nodeNumList.Contains(usedNumbers[i] - 1))
 				dummy.Add(EEnemyDirection.West);
-			
-			if(nodeNumList.Contains(usedNumbers[i] + width)) 
+
+			if (nodeNumList.Contains(usedNumbers[i] + width))
 				dummy.Add(EEnemyDirection.South);
-			
-			if(nodeNumList.Contains(usedNumbers[i] - width)) 
+
+			if (nodeNumList.Contains(usedNumbers[i] - width))
 				dummy.Add(EEnemyDirection.North);
 
 			dungeonEnemies.Add(enemyObject.GetComponent<DungeonEnemy>(), usedNumbers[i]);
@@ -1239,10 +1389,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 			.GetComponent<RoomNode>().GetVisited());
 			enemyObject.GetComponent<DungeonEnemy>().SetMoveLock(
 			dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + 1 == currentPlayerLocation
-			||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - 1 == currentPlayerLocation
-			||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + width == currentPlayerLocation
-			||dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - width == currentPlayerLocation
-			);
+			|| dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - 1 == currentPlayerLocation
+			|| dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] + width == currentPlayerLocation
+			|| dungeonEnemies[enemyObject.GetComponent<DungeonEnemy>()] - width == currentPlayerLocation);
 
 		}
 		MoveEnemy();
@@ -1250,10 +1399,10 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void DestroyFloor()
 	{
-		foreach(GameObject node in nodeMap)
-		{Destroy(node);}
+		foreach (GameObject node in nodeMap)
+		{ Destroy(node); }
 
-		foreach(GameObject enemyObject in enemyObjectList)
+		foreach (GameObject enemyObject in enemyObjectList)
 		{
 			DOTween.Kill(enemyObject);
 			Destroy(enemyObject);
@@ -1268,23 +1417,23 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private void CreateRoomNode(int roomNum)
 	{
-		if(!CheckOutOfIndex(roomNum))
-		{return;}
+		if (!CheckOutOfIndex(roomNum))
+		{ return; }
 
-		if(map[roomNum] != null)
-		{return;}
-		if(roomNum % width == width - 1)
-		return;
+		if (map[roomNum] != null)
+		{ return; }
+		if (roomNum % width == width - 1)
+			return;
 
-		if(TrueOrFalse())
-		{return;}
+		if (TrueOrFalse())
+		{ return; }
 
-		if(CountNeighbourhood(roomNum) >= 2)
-		{return;}
+		if (CountNeighbourhood(roomNum) >= 2)
+		{ return; }
 
 		map[roomNum] = new Node();
 
-	
+
 		CreateRoomNode(roomNum + 1);
 		CreateRoomNode(roomNum - 1);
 		CreateRoomNode(roomNum + width);
@@ -1293,7 +1442,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private Vector3 CalculateNodePosition(int roomNum)
 	{
-		int x = ((roomNum  % width) - 9) * 2;
+		int x = ((roomNum % width) - 9) * 2;
 		int y = -(((roomNum / width) - 8) * 2);
 
 		return new Vector3(x, y, 0);
@@ -1303,28 +1452,28 @@ public class DungeonManager : MonoBehaviour, ILockable
 	{
 		int count = 0;
 
-		if(CheckOutOfIndex(roomNum - 1))
+		if (CheckOutOfIndex(roomNum - 1))
 		{
-			if(map[roomNum - 1] != null)
-			{count++;}
+			if (map[roomNum - 1] != null)
+			{ count++; }
 		}
 
-		if(CheckOutOfIndex(roomNum + 1))
+		if (CheckOutOfIndex(roomNum + 1))
 		{
-			if(map[roomNum + 1] != null)
-			{count++;}
+			if (map[roomNum + 1] != null)
+			{ count++; }
 		}
 
-		if(CheckOutOfIndex(roomNum + width))
+		if (CheckOutOfIndex(roomNum + width))
 		{
-			if(map[roomNum + width] != null)
-			{count++;}
+			if (map[roomNum + width] != null)
+			{ count++; }
 		}
 
-		if(CheckOutOfIndex(roomNum - width))
+		if (CheckOutOfIndex(roomNum - width))
 		{
-			if(map[roomNum - width] != null)
-			{count++;}
+			if (map[roomNum - width] != null)
+			{ count++; }
 		}
 
 		return count;
@@ -1333,11 +1482,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private bool CheckOutOfIndex(int roomNum)
 	{
-		if(roomNum < 0)
-		{return false;}
+		if (roomNum < 0)
+		{ return false; }
 
-		if(roomNum > floorSize - 1)
-		{return false;}
+		if (roomNum > floorSize - 1)
+		{ return false; }
 
 		return true;
 	}
@@ -1383,27 +1532,27 @@ public class DungeonManager : MonoBehaviour, ILockable
 	private bool CheckCorridor(int value)
 	{
 
-		if(!CheckOutOfIndex(value))
-		{return true;}
+		if (!CheckOutOfIndex(value))
+		{ return true; }
 
-		if(map[value] == null)
-		{return true;}
+		if (map[value] == null)
+		{ return true; }
 
-		if(CountNeighbourhood(value) != 2)
-		{return false;}
+		if (CountNeighbourhood(value) != 2)
+		{ return false; }
 
-		if(CheckOutOfIndex(value - 1) && CheckOutOfIndex(value + 1))
+		if (CheckOutOfIndex(value - 1) && CheckOutOfIndex(value + 1))
 		{
-			if(map[value + 1] != null && map[value - 1] != null)
-			{return true;}
+			if (map[value + 1] != null && map[value - 1] != null)
+			{ return true; }
 		}
 
-		if(CheckOutOfIndex(value - width) && CheckOutOfIndex(value + width))
+		if (CheckOutOfIndex(value - width) && CheckOutOfIndex(value + width))
 		{
-			if(map[value + width] != null && map[value - width] != null)
-			{return true;}
+			if (map[value + width] != null && map[value - width] != null)
+			{ return true; }
 		}
-		
+
 		return false;
 	}
 
@@ -1414,14 +1563,22 @@ public class DungeonManager : MonoBehaviour, ILockable
 		StartCoroutine(ReadyNextFloor());
 	}
 
+	private IEnumerator ShowFloorDialogue()
+	{
+		
+
+		ShowEncounter(dungeon.GetFloorDialogueMap()[floor]);
+		yield return new WaitUntil(() => !moveLocked);
+	}
+
 	private IEnumerator ReadyNextFloor()
 	{
-		StartCoroutine(FadeOut());
-		yield return new WaitForSeconds(1f);
+
+		yield return StartCoroutine(FadeOut());
 		if (safeFloorList == null)
 		{
 			DestroyFloor();
-			CreateFloor();
+			CreateRandomFloor();
 			CameraController.Inst.SetFollowing();
 		}
 		else if (safeFloorList.ContainsKey(floor))
@@ -1435,15 +1592,48 @@ public class DungeonManager : MonoBehaviour, ILockable
 			moveLocked = true;
 			DungeonData.Reset();
 		}
+		else if (dungeon.GetHasStaticFloor())
+		{
+			DestroyFloor();
+			CreateStaticFloor();
+			CameraController.Inst.SetFollowing();
+		}
 		else
 		{
 			DestroyFloor();
-			CreateFloor();
+			CreateRandomFloor();
 			CameraController.Inst.SetFollowing();
 		}
+		yield return StartCoroutine(FadeIn());
+		
+		if (dungeon.GetFloorDialogueMap() != null)
+			yield return StartCoroutine(ShowFloorDialogue());
+	}
 
+	public void CreateStaticFloor()
+	{
+		map = dungeon.GetStaticFloors()[floor - 1];
 
-		StartCoroutine(FadeIn());
+		for (int i = 0; i < map.Count; ++i)
+		{
+			if (map[i].GetRoomType() == ERoomType.EStart)
+				currentPlayerLocation = i;
+		}
+
+		floorText.text = floor.ToString() + "F";
+		dungeonEnemies = new();
+
+		InstantiateNode();
+
+		MovePlayer(currentPlayerLocation);
+		nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
+		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
+		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
+
+		if (dungeonEnemies != null)
+			ReCreateEnemy();
+		
+		DecorateFloor();
 	}
 
 	public void RemoveClickedItem()
@@ -1461,7 +1651,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public void UseItem()
 	{
 
-		switch(clickedItem.GetNum())
+		switch (clickedItem.GetNum())
 		{
 			case "1": // 거대한포션
 				PlayerData.saveData.health += 5;
@@ -1470,20 +1660,20 @@ public class DungeonManager : MonoBehaviour, ILockable
 				break;
 
 			case "2": // 황금주사위
-			
-			break;
+
+				break;
 
 			case "3": // 부숴진나침반
-			
-			break;
+
+				break;
 
 			case "4": // 불길한향로
-			
-			break;
+
+				break;
 
 			case "5": // 불길한향로
-			
-			break;
+
+				break;
 
 			case "6": // 빨간 포션
 				PlayerData.saveData.health += 2;
@@ -1498,10 +1688,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void UpdatePlayerData()
 	{
-		goldText.text = PlayerData.saveData.gold.ToString();
-		healthText.text = PlayerData.saveData.health.ToString() +" / 30";
+		healthText.text = PlayerData.saveData.health.ToString() + " / 30";
 
-		if(PlayerData.saveData.health <= 0)
+		if (PlayerData.saveData.health <= 0)
 		{
 			updateLock = true;
 			PlayerData.saveData.health = 0;
@@ -1537,7 +1726,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	public void MoveLock(bool value)
 	{ moveLocked = value; }
-	
+
 
 	public void MovePlayer(int roomNum)
 	{
@@ -1545,10 +1734,10 @@ public class DungeonManager : MonoBehaviour, ILockable
 		nodeMap[roomNum].SetActive(true);
 		nodeMap[roomNum].GetComponent<RoomNode>().SetVisited();
 
-		if(CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
+		if (CheckOutOfIndex(roomNum + 1) && roomNum % width != width - 1)
 		{
 
-			if(nodeMap[roomNum + 1].GetComponent<RoomNode>().filled)
+			if (nodeMap[roomNum + 1].GetComponent<RoomNode>().filled)
 			{
 				if (!nodeMap[roomNum + 1].activeSelf)
 				{
@@ -1556,12 +1745,12 @@ public class DungeonManager : MonoBehaviour, ILockable
 					StartCoroutine(nodeMap[roomNum + 1].GetComponent<RoomNode>().FadeOut());
 				}
 			}
-			
+
 		}
 
-		if(CheckOutOfIndex(roomNum + width))
+		if (CheckOutOfIndex(roomNum + width))
 		{
-			if(nodeMap[roomNum + width].GetComponent<RoomNode>().filled)
+			if (nodeMap[roomNum + width].GetComponent<RoomNode>().filled)
 			{
 				if (!nodeMap[roomNum + width].activeSelf)
 				{
@@ -1570,12 +1759,12 @@ public class DungeonManager : MonoBehaviour, ILockable
 				}
 
 			}
-			
+
 		}
 
-		if(CheckOutOfIndex(roomNum - 1) && roomNum % width != 0)
+		if (CheckOutOfIndex(roomNum - 1) && roomNum % width != 0)
 		{
-			if(nodeMap[roomNum - 1].GetComponent<RoomNode>().filled)
+			if (nodeMap[roomNum - 1].GetComponent<RoomNode>().filled)
 			{
 				if (!nodeMap[roomNum - 1].activeSelf)
 				{
@@ -1583,14 +1772,14 @@ public class DungeonManager : MonoBehaviour, ILockable
 					StartCoroutine(nodeMap[roomNum - 1].GetComponent<RoomNode>().FadeOut());
 				}
 			}
-			
+
 
 
 		}
 
-		if(CheckOutOfIndex(roomNum - width))
+		if (CheckOutOfIndex(roomNum - width))
 		{
-			if(nodeMap[roomNum - width].GetComponent<RoomNode>().filled)
+			if (nodeMap[roomNum - width].GetComponent<RoomNode>().filled)
 			{
 				if (!nodeMap[roomNum - width].activeSelf)
 				{
@@ -1598,26 +1787,27 @@ public class DungeonManager : MonoBehaviour, ILockable
 					StartCoroutine(nodeMap[roomNum - width].GetComponent<RoomNode>().FadeOut());
 				}
 			}
-			
+
 		}
 
-		if(map[roomNum].GetRoomType() == ERoomType.EStair)
-		{ShowStairAlert();}
-		else if(map[roomNum].GetRoomType() == ERoomType.EEncount)
+		if (map[roomNum].GetRoomType() == ERoomType.EStair)
+		{ ShowStairAlert(); }
+		else if (map[roomNum].GetRoomType() == ERoomType.EEncount ||
+		map[roomNum].GetRoomType() == ERoomType.EStory )
 		{
 			ShowEncounter(map[roomNum].GetDialogueNum());
 			map[roomNum].SetRoomType(ERoomType.None);
 			nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 		}
-		else if(map[roomNum].GetRoomType() == ERoomType.EGold)
+		else if (map[roomNum].GetRoomType() == ERoomType.EGold)
 		{
 			GainGold(map[roomNum]);
 			map[roomNum].SetRoomType(ERoomType.None);
 			nodeMap[roomNum].GetComponent<RoomNode>().ClearRoom();
 		}
-		else if(map[roomNum].GetRoomType() == ERoomType.EItem)
+		else if (map[roomNum].GetRoomType() == ERoomType.EItem)
 		{
-			switch(map[roomNum].GetItem().GetItemCategory())
+			switch (map[roomNum].GetItem().GetItemCategory())
 			{
 				case EItemCategory.ETool:
 					if (PlayerData.saveData.inventory_items.Count <= 8)
@@ -1633,7 +1823,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 					}
 					break;
 			}
-			
+
 		}
 	}
 
@@ -1648,7 +1838,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	private void GainGold(Node node)
 	{
 		PlayerData.saveData.gold += node.GetGold();
-		AlertPopUpMessage(node.GetGold().ToString() + " " +"골드 획득");
+		AlertPopUpMessage(node.GetGold().ToString() + " " + "골드 획득");
 	}
 
 	private void GainItem(Node node)
@@ -1670,23 +1860,94 @@ public class DungeonManager : MonoBehaviour, ILockable
 	}
 
 	public int ReturnMouseOnNode()
-	{return mouseOnRoomNum;}
+	{ return mouseOnRoomNum; }
 
 	public void SetMouseOnNode(int roomNum)
-	{mouseOnRoomNum = roomNum;}
+	{ mouseOnRoomNum = roomNum; }
 
 	public void ResetMouseOnNode()
-	{mouseOnRoomNum = 0;}
+	{ mouseOnRoomNum = 0; }
 
 
 	private bool TrueOrFalse()
 	{
-		int value = Random.Range(0,3);
-		
-		if(value == 0)
-		{return true;}
+		int value = Random.Range(0, 3);
+
+		if (value == 0)
+		{ return true; }
 		else
-		{return false;}
+		{ return false; }
+	}
+	
+	public void InputKeyNorth()
+	{
+		if (player.GetComponent<Player>().GetDirection() != EDirection.North) { player.GetComponent<Player>().SetDirection(EDirection.North); }
+			else if (CheckOutOfIndex(currentPlayerLocation - width))
+			{
+				if (nodeMap[currentPlayerLocation - width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation -= width;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.up);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+	}
+
+	public void InputKeyWest()
+	{
+		if (currentPlayerLocation % width == 0)
+				return;
+
+			if (player.GetComponent<Player>().GetDirection() != EDirection.West) { player.GetComponent<Player>().SetDirection(EDirection.West); }
+			else if(CheckOutOfIndex(currentPlayerLocation - 1))
+			{
+				if (nodeMap[currentPlayerLocation - 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation -= 1;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.left);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+	}
+
+	public void InputKeySouth()
+	{
+		if (player.GetComponent<Player>().GetDirection() != EDirection.South) { player.GetComponent<Player>().SetDirection(EDirection.South); }
+			else if(CheckOutOfIndex(currentPlayerLocation + width))
+			{
+				if (nodeMap[currentPlayerLocation + width].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+				{
+					previousPlayerLocation = currentPlayerLocation;
+					currentPlayerLocation += width;
+					MovePlayer(currentPlayerLocation);
+					EnqueueMove(Vector2.down);
+				}
+			}
+			CameraController.Inst.SetFollowing();
+	}
+
+	public void InputKeyEast()
+	{
+		if (currentPlayerLocation % width == width - 1)
+			return;
+
+		if (player.GetComponent<Player>().GetDirection() != EDirection.East) { player.GetComponent<Player>().SetDirection(EDirection.East); }
+		else if (CheckOutOfIndex(currentPlayerLocation + 1))
+		{
+			if (nodeMap[currentPlayerLocation + 1].GetComponent<RoomNode>().GetRoomType() != ERoomType.EWall)
+			{
+				previousPlayerLocation = currentPlayerLocation;
+				currentPlayerLocation += 1;
+				MovePlayer(currentPlayerLocation);
+
+				EnqueueMove(Vector2.right);
+			}
+		}
+		CameraController.Inst.SetFollowing();
 	}
 }
 
@@ -1698,7 +1959,9 @@ public enum ERoomType
 	EGold,
 	EItem,
 	EWall,
-	EObstacle // 퍼즐로 제거될 장애물
+	EObstacle,
+	EStory,
+	EStart
 }
 public enum EDirection
 {North,South,West,East}

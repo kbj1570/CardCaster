@@ -489,7 +489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5803922}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.70980394}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -615,8 +615,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3.1625, y: -65.3614}
-  m_SizeDelta: {x: 1610.5427, y: 762.6508}
+  m_AnchoredPosition: {x: -0.000024319, y: -26.896484}
+  m_SizeDelta: {x: 1610.5427, y: 868.4438}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7764188488178302982
 CanvasRenderer:
@@ -794,16 +794,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6705789c0a85e91478c951a45e1d37b6, type: 2}
   - {fileID: 11400000, guid: 11d48fc31aee0cd478546c8cd4970b90, type: 2}
   - {fileID: 11400000, guid: da3c4c1f6d8a9a14cab540ba69e665c9, type: 2}
+  - {fileID: 11400000, guid: f53aa94a2b5a20a408208855bb02ce36, type: 2}
+  - {fileID: 11400000, guid: 5a642e84d24a16846acbffedcd25d872, type: 2}
+  - {fileID: 11400000, guid: 393ecd6bda640bf4b9394b33ad4ac0d1, type: 2}
   alertObject: {fileID: 5263348565243779524, guid: f39a1bf3f7c49e54a8389a3ca67fb2e5, type: 3}
   FadeImage: {fileID: 5780896284899908404}
   portraitImage: {fileID: 6379487974350636114}
   portraitFrame: {fileID: 6147066550446570380}
   situationImage: {fileID: 9115849170092166974}
   fadeImage: {fileID: 9036189122559008546}
+  maskImage: {fileID: 4284209509431068703}
   backgroundImage: {fileID: 8025468160948989393}
-  portraits:
-  - {fileID: 0}
-  - {fileID: 0}
+  portraits: []
   situationSprites: []
 --- !u!1 &4190946426343563600
 GameObject:

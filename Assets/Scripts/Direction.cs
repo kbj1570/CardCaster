@@ -3,126 +3,104 @@ using UnityEngine;
 
 public class Direction : MonoBehaviour
 {
-	float floatSize = 0.15f;
-	float floatSpeed = 3f;
-	private float startY;
-	private float startX;
-	float radius = 2f;
-	float rotateDuration = 0.1f;
-	public EDirection direction;
-	private float currentAngle;
-	private float targetAngle;
-	private bool isRotating = false;
-	void Start()
-	{
-		SetStartXY(transform.localPosition.x, transform.localPosition.y);
-	}
+    float floatSize = 0.15f;
+    float floatSpeed = 3f;
+    private float startY;
+    private float startX;
+    float radius = 2f;
+    float rotateDuration = 0.1f;
+    public EDirection direction;
+    private float currentAngle;
+    private float targetAngle;
+    private bool isRotating = false;
 
-	void Update()
-	{
-		if (isRotating) {return;}
-		else if (direction == EDirection.North || direction == EDirection.South)
-		{
-			float newY = startY + Mathf.Sin(Time.time * floatSpeed) * floatSize;
-			transform.localPosition = new Vector3(transform.localPosition.x, newY, transform.localPosition.z);
-		}
-		else
-		{
-			float newX = startX + Mathf.Sin(Time.time * floatSpeed) * floatSize;
-			transform.localPosition = new Vector3(newX, transform.localPosition.y, transform.localPosition.z);
-		}
+    void Start()
+    {
+        SetStartXY(transform.localPosition.x, transform.localPosition.y);
+    }
 
-		if (isRotating) return;
+    void Update()
+    {
+        // ÌîåÎ°úÌåÖ Ïï†ÎãàÎ©îÏù¥ÏÖòÎßå Ïú†ÏßÄ
+        if (direction == EDirection.North || direction == EDirection.South)
+        {
+            float newY = startY + Mathf.Sin(Time.time * floatSpeed) * floatSize;
+            transform.localPosition = new Vector3(transform.localPosition.x, newY, transform.localPosition.z);
+        }
+        else
+        {
+            float newX = startX + Mathf.Sin(Time.time * floatSpeed) * floatSize;
+            transform.localPosition = new Vector3(newX, transform.localPosition.y, transform.localPosition.z);
+        }
+    }
 
-		if (Input.GetKeyDown(KeyCode.UpArrow))
-			SetTargetAngle(90f);     // ¿ß
-		else if (Input.GetKeyDown(KeyCode.RightArrow))
-			SetTargetAngle(0f);      // ø¿∏•¬ 
-		else if (Input.GetKeyDown(KeyCode.DownArrow))
-			SetTargetAngle(270f);    // æ∆∑°
-		else if (Input.GetKeyDown(KeyCode.LeftArrow))
-			SetTargetAngle(180f);    // øﬁ¬ 
+    void SetStartXY(float x, float y)
+    {
+        startX = x;
+        startY = y;
+    }
 
+    public EDirection GetDirection()
+    {
+        return direction;
+    }
 
+    public void SetDirection(EDirection newDirection)
+    {
+        if (direction == newDirection) return; // Í∞ôÏùÄ Î∞©Ìñ•Ïù¥Î©¥ Î¨¥Ïãú
+        direction = newDirection;
 
-		if (Input.GetKeyDown(KeyCode.W))
-		{
-			SetTargetAngle(90f);
-		}
-		else if (Input.GetKeyDown(KeyCode.D))
-		{
-			SetTargetAngle(0f);
-		}
-		else if (Input.GetKeyDown(KeyCode.S))
-		{
-			SetTargetAngle(270f);
-		}
-		else if (Input.GetKeyDown(KeyCode.A))
-		{
-			SetTargetAngle(180f);
-		}
+        // Î∞©Ìñ•Ïóê Îî∞Îùº Î™©Ìëú Í∞ÅÎèÑ ÏßÄÏ†ï
+        float degrees = 0f;
+        switch (newDirection)
+        {
+            case EDirection.North:
+                degrees = 90f; break;
+            case EDirection.East:
+                degrees = 0f; break;
+            case EDirection.South:
+                degrees = 270f; break;
+            case EDirection.West:
+                degrees = 180f; break;
+        }
 
-	}
+        // ÌöåÏ†Ñ ÏãúÏûë
+        targetAngle = degrees * Mathf.Deg2Rad;
+        StartCoroutine(RotateAlongCircle());
+    }
 
-	void SetTargetAngle(float degrees)
-	{
-		targetAngle = degrees * Mathf.Deg2Rad; // ∂Ûµæ» ∫Ø»Ø
-		StartCoroutine(RotateAlongCircle());
-	}
+    IEnumerator RotateAlongCircle()
+    {
+        isRotating = true;
 
+        float startAngle = currentAngle;
+        float angleDiffDeg = Mathf.DeltaAngle(startAngle * Mathf.Rad2Deg, targetAngle * Mathf.Rad2Deg);
+        float finalAngle = startAngle + angleDiffDeg * Mathf.Deg2Rad;
 
-	void SetStartXY(float x, float y)
-	{
-		startX = x;
-		startY = y;
-	}
+        float time = 0f;
+        while (time < rotateDuration)
+        {
+            time += Time.deltaTime;
+            float t = time / rotateDuration;
 
-	public EDirection GetDirection()
-	{
-		return direction;
-	}
+            float angleNow = Mathf.LerpAngle(startAngle * Mathf.Rad2Deg, finalAngle * Mathf.Rad2Deg, t) * Mathf.Deg2Rad;
+            UpdateArrowPosition(angleNow);
 
-	public void SetDirection(EDirection newDirection)
-	{direction = newDirection;}
+            yield return null;
+        }
 
-	IEnumerator RotateAlongCircle()
-	{
-		isRotating = true;
+        currentAngle = finalAngle;
+        UpdateArrowPosition(currentAngle);
+        SetStartXY(transform.localPosition.x, transform.localPosition.y);
+        isRotating = false;
+    }
 
-		float startAngle = currentAngle;
+    void UpdateArrowPosition(float angle)
+    {
+        Vector3 offset = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
+        transform.localPosition = offset;
 
-		// √÷¥‹ ∞≈∏Æ ∞¢µµ ¬˜¿Ã ∞ËªÍ (DeltaAngle¿∫ ∞·∞˙∞° -180~180µµ π¸¿ß)
-		float angleDiffDeg = Mathf.DeltaAngle(startAngle * Mathf.Rad2Deg, targetAngle * Mathf.Rad2Deg);
-		float finalAngle = startAngle + angleDiffDeg * Mathf.Deg2Rad; // √÷¡æ ∏Ò«• ∂Ûµæ»
-
-		float time = 0f;
-		while (time < rotateDuration)
-		{
-			time += Time.deltaTime;
-			float t = time / rotateDuration;
-
-			// ∞¢µµ ∫∏∞£ (∫ŒµÂ∑ØøÓ »∏¿¸)
-			float angleNow = Mathf.LerpAngle(startAngle * Mathf.Rad2Deg, finalAngle * Mathf.Rad2Deg, t) * Mathf.Deg2Rad;
-			UpdateArrowPosition(angleNow);
-
-			yield return null;
-		}
-
-		// »∏¿¸ ¡æ∑· »ƒ √÷¡æ ∞¢µµ »Æ¡§
-		currentAngle = finalAngle;
-		UpdateArrowPosition(currentAngle);
-		SetStartXY(transform.localPosition.x, transform.localPosition.y);
-		isRotating = false;
-	}
-
-	void UpdateArrowPosition(float angle)
-	{
-		// ø¯ µ—∑π ¿ßƒ° = ¡ﬂΩ… + (cos,sin)*π›¡ˆ∏ß
-		Vector3 offset = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-		transform.localPosition = Vector3.zero + offset;
-
-		// »≠ªÏ«• »∏¿¸ (¡ﬂΩ… πŸ∂Û∫∏¥¬ πÊ«‚ ±‚¡ÿ¿∏∑Œ -90µµ ∫∏¡§)
-		float zRotation = angle * Mathf.Rad2Deg - 90f;
-		transform.rotation = Quaternion.Euler(0, 0, zRotation);
-	}
+        float zRotation = angle * Mathf.Rad2Deg - 90f;
+        transform.rotation = Quaternion.Euler(0, 0, zRotation);
+    }
 }

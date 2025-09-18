@@ -45,7 +45,7 @@ EditorBuildSettings:
     path: Assets/Scenes/CutScene/Intro.unity
     guid: dda6e04ed3f83a442ba104f54c9924fe
   - enabled: 1
-    path: Assets/Scenes/Prologue/Prologue.unity
+    path: Assets/Scenes/Prologue.unity
     guid: 615c1849d27dc114dbf471cc23f46219
   - enabled: 1
     path: Assets/Scenes/Prologue/PrologueDungeon.unity

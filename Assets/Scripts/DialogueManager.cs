@@ -29,6 +29,7 @@ public class DialogueManager : MonoBehaviour
 	public Image portraitFrame;
 	public Image situationImage;
 	public Image fadeImage;
+	public Image maskImage;
 	public Image backgroundImage;
 	public Sprite[] portraits;
 	public Sprite[] situationSprites;
@@ -68,27 +69,30 @@ public class DialogueManager : MonoBehaviour
 		
 		documentFrame.SetActive(false);
 		isActionDone = false;
-		
-		if(line.background != null)
-		{ backgroundImage.sprite = line.background; }
+
+		if (line.background != null)
+		{
+			backgroundImage.color = new Color(1, 1, 1, 1);
+			backgroundImage.sprite = line.background;
+		}
 
 		if (!string.IsNullOrEmpty(line.text))
-			{
-				textBox.SetActive(true);
-				speakerText.text = line.speaker;
-				dialogueText.text = "";
-				portraitFrame.gameObject.SetActive(line.portrait != null);
-				portraitImage.sprite = line.portrait;
+		{
+			textBox.SetActive(true);
+			speakerText.text = line.speaker;
+			dialogueText.text = "";
+			portraitFrame.gameObject.SetActive(line.portrait != null);
+			portraitImage.sprite = line.portrait;
 
 
 
-				yield return StartCoroutine(TypeText(line.text));
-				yield return new WaitUntil(() => isActionDone);
-			}
-			else
-			{
-				textBox.SetActive(false);
-			}
+			yield return StartCoroutine(TypeText(line.text));
+			yield return new WaitUntil(() => isActionDone);
+		}
+		else
+		{
+			textBox.SetActive(false);
+		}
 
 
 		if (line.choices != null && line.choices.Length > 0)
@@ -199,6 +203,29 @@ public class DialogueManager : MonoBehaviour
 				yield return new WaitUntil(() => isActionDone);
 				documentFrame.SetActive(false);
 				break;
+			case DialogueEventType.ClearBackground:
+				backgroundImage.color = new Color(1, 1, 1, 0);
+				break;
+
+			case DialogueEventType.KeyInputRight:
+				DungeonManager.Inst.InputKeyEast();
+				yield return new WaitForSeconds(0.8f);
+				break;
+			case DialogueEventType.KeyInputLeft:
+				DungeonManager.Inst.InputKeyWest();
+				yield return new WaitForSeconds(0.8f);
+				break;
+			case DialogueEventType.KeyInputUp:
+				DungeonManager.Inst.InputKeyNorth();
+				yield return new WaitForSeconds(0.8f);
+				break;
+			case DialogueEventType.ShowMaskImage:
+				maskImage.gameObject.SetActive(true);
+				break;
+			case DialogueEventType.HideMaskImage:
+				maskImage.gameObject.SetActive(false);
+				break;
+
 		}
 	}
 
