@@ -9,7 +9,7 @@ public class CameraController : MonoBehaviour
 	public GameObject player;
 	private float followSpeed = 0.7f;
 	private float returnToFollowDelay = 3f;
-	private bool isFollowing = true;
+	public bool isFollowing = true;
 	private float lastDragTime;
 	private Coroutine zoomCoroutine;
 	private float originSize;
@@ -24,15 +24,15 @@ public class CameraController : MonoBehaviour
 	void Update()
 	{
 		// 마우스 드래그로 카메라 이동 감지
-		if (Input.GetMouseButton(0) && !dragLocked)
-		{
+		// if (Input.GetMouseButton(0) && !dragLocked)
+		// {
 		
-			isFollowing = false;
-			lastDragTime = Time.time;
-			DragCamera();
-		}
-		else if (!isFollowing && Time.time - lastDragTime > returnToFollowDelay)
-		{isFollowing = true;}
+		// 	isFollowing = false;
+		// 	lastDragTime = Time.time;
+		// 	DragCamera();
+		// }
+		// else if (!isFollowing && Time.time - lastDragTime > returnToFollowDelay)
+		// {isFollowing = true;}
 	}
 
 	void LateUpdate()
@@ -71,7 +71,14 @@ public class CameraController : MonoBehaviour
 		zoomCoroutine = StartCoroutine(CameraZoomOutEffect(time));
 	}
 
-	public IEnumerator  CameraZoomInEffect(float time)
+	public void SetPosition(Vector3 nodePosition)
+	{
+		Vector3 targetPosition = new Vector3(nodePosition.x, nodePosition.y, camera.transform.position.z);
+		
+		camera.transform.DOMove(targetPosition, 0.4f).SetEase(Ease.OutSine);
+	}
+
+	public IEnumerator CameraZoomInEffect(float time)
 	{
 		float startSize = originSize;
 		float targetSize = startSize * 0.7f;
@@ -111,7 +118,14 @@ public class CameraController : MonoBehaviour
 	public void SetFollowing()
 	{isFollowing = true;}
 
+	public void SetFollowing(bool value)
+	{
+		isFollowing = value;
+		if (!value)
+			camera.transform.DOKill();
+	}
+
 	public void SetDragLock(bool value)
-	{dragLocked = value;}
+	{ dragLocked = value; }
 }
 

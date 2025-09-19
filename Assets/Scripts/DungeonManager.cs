@@ -18,7 +18,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public Image fadeImage;
 	int lineCount;
 	int mouseOnRoomNum;
-	bool moveLocked;
+	public bool moveLocked;
 	ItemData clickedItem;
 	GameObject clickedItemInfo;
 	public GameObject itemDescriptionWindow;
@@ -89,8 +89,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public static DungeonManager Inst { get; private set; }
 
 	public float moveDelay = 0.2f; // 이동 간격 (초 단위)
-    private bool isRepeating = false;
-    private Coroutine repeatCoroutine;
+	private bool isRepeating = false;
+	private Coroutine repeatCoroutine;
 	int currentPage;
 
 
@@ -99,7 +99,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	void Update()
 	{
-		
+
 		if (moveLocked)
 		{ StopRepeatMove(); }
 
@@ -108,49 +108,49 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 
 		UpdatePlayerData();
-        // 첫 입력은 즉시 실행
-        if (Input.GetKeyDown(KeyCode.W)) StartRepeatMove(InputKeyNorth);
-        else if (Input.GetKeyDown(KeyCode.A)) StartRepeatMove(InputKeyWest);
-        else if (Input.GetKeyDown(KeyCode.S)) StartRepeatMove(InputKeySouth);
-        else if (Input.GetKeyDown(KeyCode.D)) StartRepeatMove(InputKeyEast);
+		// 첫 입력은 즉시 실행
+		if (Input.GetKeyDown(KeyCode.W)) StartRepeatMove(InputKeyNorth);
+		else if (Input.GetKeyDown(KeyCode.A)) StartRepeatMove(InputKeyWest);
+		else if (Input.GetKeyDown(KeyCode.S)) StartRepeatMove(InputKeySouth);
+		else if (Input.GetKeyDown(KeyCode.D)) StartRepeatMove(InputKeyEast);
 
-        // 키를 뗐을 때 반복 중단
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) ||
-            Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
-        {
-            StopRepeatMove();
-        }
+		// 키를 뗐을 때 반복 중단
+		if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.A) ||
+			Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D))
+		{
+			StopRepeatMove();
+		}
 	}
-	  void StartRepeatMove(System.Action moveAction)
-    {
-        // 이미 반복 중이면 중단하고 새로 시작
-        if (repeatCoroutine != null) StopCoroutine(repeatCoroutine);
-        repeatCoroutine = StartCoroutine(RepeatMove(moveAction));
-    }
+	void StartRepeatMove(System.Action moveAction)
+	{
+		// 이미 반복 중이면 중단하고 새로 시작
+		if (repeatCoroutine != null) StopCoroutine(repeatCoroutine);
+		repeatCoroutine = StartCoroutine(RepeatMove(moveAction));
+	}
 
-    void StopRepeatMove()
-    {
-        if (repeatCoroutine != null)
-        {
-            StopCoroutine(repeatCoroutine);
-            repeatCoroutine = null;
-        }
-    }
+	void StopRepeatMove()
+	{
+		if (repeatCoroutine != null)
+		{
+			StopCoroutine(repeatCoroutine);
+			repeatCoroutine = null;
+		}
+	}
 
-    IEnumerator RepeatMove(System.Action moveAction)
-    {
-        // 첫 입력 즉시 실행
-        moveAction();
+	IEnumerator RepeatMove(System.Action moveAction)
+	{
+		// 첫 입력 즉시 실행
+		moveAction();
 
-        // 일정 텀마다 반복 실행
-        yield return new WaitForSeconds(moveDelay); 
+		// 일정 텀마다 반복 실행
+		yield return new WaitForSeconds(moveDelay);
 
-        while (true)
-        {
-            moveAction();
-            yield return new WaitForSeconds(moveDelay);
-        }
-    }
+		while (true)
+		{
+			moveAction();
+			yield return new WaitForSeconds(moveDelay);
+		}
+	}
 
 
 
@@ -474,7 +474,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 
 			if (dummy.Count == 0)
-
 			{
 
 
@@ -1163,7 +1162,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 			switch (decorateBlockSize)
 			{
 				case EDecorateBlockSize.Size_2x2:
-				// nodeMap[i], i+1, i+width, i+width+1 에 스프라이트 적용
+					// nodeMap[i], i+1, i+width, i+width+1 에 스프라이트 적용
 					{
 						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
 						RoomNode node_1 = nodeMap[i + 1]?.GetComponent<RoomNode>();
@@ -1181,14 +1180,14 @@ public class DungeonManager : MonoBehaviour, ILockable
 						sr_1.size = new Vector2(0.36f, 0.36f);
 						sr_2.size = new Vector2(0.36f, 0.36f);
 						sr_3.size = new Vector2(0.36f, 0.36f);
-						
+
 						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[0];
 						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[1];
 						sr_2.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[2];
 						sr_3.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x2).Sprites[3];
 						break;
 					}
-					
+
 				case EDecorateBlockSize.Size_2x1:
 					{
 						// nodeMap[i], i+1
@@ -1199,16 +1198,16 @@ public class DungeonManager : MonoBehaviour, ILockable
 						var sr_0 = node_0.GetComponent<SpriteRenderer>();
 						var sr_1 = node_1.GetComponent<SpriteRenderer>();
 
-						
+
 						nodeMap[i].transform.localScale = new Vector2(0.36f, 0.36f);
 						nodeMap[i + 1].transform.localScale = new Vector2(0.36f, 0.36f);
 
-						
+
 						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x1).Sprites[0];
 						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_2x1).Sprites[1];
 						break;
 					}
-					
+
 				case EDecorateBlockSize.Size_1x2:
 					// nodeMap[i], i+width
 					{
@@ -1219,11 +1218,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 						var sr_0 = node_0.GetComponent<SpriteRenderer>();
 						var sr_1 = node_1.GetComponent<SpriteRenderer>();
 
-						
+
 						sr_0.size = new Vector2(0.36f, 0.36f);
 						sr_1.size = new Vector2(0.36f, 0.36f);
 
-						
+
 						sr_0.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x2).Sprites[0];
 						sr_1.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x2).Sprites[1];
 						break;
@@ -1235,7 +1234,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 						RoomNode node_0 = nodeMap[i]?.GetComponent<RoomNode>();
 						node_0.filled = true;
 						var sr = node_0.GetComponent<SpriteRenderer>();
-						
+
 						nodeMap[i].transform.localScale = new Vector2(0.36f, 0.36f);
 
 						sr.sprite = GetRandomBlockOfSize(EDecorateBlockSize.Size_1x1).Sprites[0];
@@ -1244,15 +1243,15 @@ public class DungeonManager : MonoBehaviour, ILockable
 			}
 		}
 	}
-	
-	public DecorateBlock GetRandomBlockOfSize(EDecorateBlockSize size)
-    {
-        var candidates = decorateBlocks.Where(db => db.Size == size).ToList();
-        if (candidates.Count == 0) return null;
-        return candidates[Random.Range(0, candidates.Count)];
-    }
 
-	 public bool HasBlockOfSize(EDecorateBlockSize size)
+	public DecorateBlock GetRandomBlockOfSize(EDecorateBlockSize size)
+	{
+		var candidates = decorateBlocks.Where(db => db.Size == size).ToList();
+		if (candidates.Count == 0) return null;
+		return candidates[Random.Range(0, candidates.Count)];
+	}
+
+	public bool HasBlockOfSize(EDecorateBlockSize size)
 	{
 		return decorateBlocks.Any(db => db.Size == size);
 	}
@@ -1351,6 +1350,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		for (int i = 0; i < enemyLimit; ++i)
 		{
 			int num;
+
 			do { num = Random.Range(0, nodeNumList.Count); }
 			while (usedNumbers.Contains(num) || nodeNumList[num] == currentPlayerLocation);
 
@@ -1446,6 +1446,13 @@ public class DungeonManager : MonoBehaviour, ILockable
 		int y = -(((roomNum / width) - 8) * 2);
 
 		return new Vector3(x, y, 0);
+	}
+
+	public void RevealNode(string nodeNum)
+	{
+		nodeMap[Int32.Parse(nodeNum)].SetActive(true);
+		CameraController.Inst.SetPosition(nodeMap[Int32.Parse(nodeNum)].transform.position);
+		StartCoroutine(nodeMap[Int32.Parse(nodeNum)].GetComponent<RoomNode>().FadeOut());
 	}
 
 	private int CountNeighbourhood(int roomNum)
@@ -1610,6 +1617,71 @@ public class DungeonManager : MonoBehaviour, ILockable
 			yield return StartCoroutine(ShowFloorDialogue());
 	}
 
+	public void SpawnEnemy(string nodeNum)
+	{
+		GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
+		enemyObject.transform.localPosition = CalculateNodePosition(Int32.Parse(nodeNum)) + mapObject.transform.position;
+
+		enemyObject.GetComponent<DungeonEnemy>().SetEnemy(new UnknownMonster());
+		enemyObject.GetComponent<DungeonEnemy>().SetCurrentNodeNum(Int32.Parse(nodeNum));
+		enemyObject.GetComponent<DungeonEnemy>().SetEnemyDirection(EEnemyDirection.North);
+		
+		enemyObject.GetComponent<DungeonEnemy>().SetVisible(true);
+		enemyObjectList.Add(enemyObject);
+
+		dungeonEnemies.Add(enemyObject.GetComponent<DungeonEnemy>(), Int32.Parse(nodeNum));
+	}
+
+	public void MoveEnemy(int enemyNum, EDirection direction)
+	{
+		if (dungeonEnemies.Count == 0)
+		{ return; }
+
+		List<DungeonEnemy> keyList = dungeonEnemies.Keys.ToList();
+		DungeonEnemy dungeonEnemy = keyList[enemyNum];
+		int value = 0;
+		switch (direction)
+		{
+			case EDirection.North:
+				value = -width;
+				break;
+
+			case EDirection.East:
+				value = 1;
+				break;
+
+			case EDirection.South:
+				value = width;
+				break;
+
+			case EDirection.West:
+				value = -1;
+				break;
+
+
+		}
+
+		dungeonEnemies[dungeonEnemy] += value;
+
+		List<int> valueList = dungeonEnemies.Values.ToList();
+		int currentLocation = valueList[enemyNum];
+
+
+		enemyObjectList[enemyNum].transform.DOMove(CalculateNodePosition(currentLocation) + mapObject.transform.position, moveDuration)
+			.SetEase(Ease.OutQuad)
+			.OnStart(() =>
+			{
+
+
+			})
+			.OnComplete(() =>
+			{
+
+			});
+			
+		CameraController.Inst.SetPosition(enemyObjectList[enemyNum].transform.position);
+	}
+
 	public void CreateStaticFloor()
 	{
 		map = dungeon.GetStaticFloors()[floor - 1];
@@ -1622,6 +1694,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		floorText.text = floor.ToString() + "F";
 		dungeonEnemies = new();
+		CreateNodeNumList();
 
 		InstantiateNode();
 
@@ -1632,7 +1705,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		if (dungeonEnemies != null)
 			ReCreateEnemy();
-		
+
 		DecorateFloor();
 	}
 

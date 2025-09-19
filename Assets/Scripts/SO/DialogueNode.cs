@@ -53,5 +53,13 @@ public enum DialogueEventType
 	KeyInputDown,
 	KeyInputLeft,
 	ShowMaskImage,
-	HideMaskImage
+	HideMaskImage,
+	SpawnEnemy,
+	MoveEnemyRight,
+	MoveEnemyUp,
+	MoveEnemyLeft,
+	MoveEnemyDown,
+	RevealNode,
+	CameraFollowingON,
+	CameraFollowingOFF
 }

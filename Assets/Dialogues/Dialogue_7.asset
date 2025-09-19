@@ -1,0 +1,132 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63270e1dec17bfc4a99b21cf610bba98, type: 3}
+  m_Name: Dialogue_7
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uD55C\uBC24\uC911\uC5D0 \uC774\uB807\uAC8C \uC73C\uC2A4\uC2A4\uD55C \uC232\uC744\n\uC9C0\uB098\uAC00\uC57C
+      \uD55C\uB2E4\uB2C8..."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uC644\uC804 \uCD5C\uC545\uC774\uC57C..."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC774\uAC8C \uB2E4 \uB204\uAD6C \uB54C\uBB38\uC778\uB370."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB124\uAC00 \uC7A5\uAC70\uB9AC \uC6CC\uD504\uB97C \uD574\uBCF4\uACE0
+      \uC2F6\uB2E4\uACE0\n\uC878\uB77C\uB300\uC9C0\uB9CC \uC54A\uC558\uC5B4\uB3C4"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC9C4\uC791\uC5D0 \uB3C4\uCC29\uD558\uACE0\uB3C4 \uB0A8\uC558\uC744\uAC70\uB2E4."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uB098\uB294 \uB108\uB97C \uB3C4\uC640\uC8FC\uB824\uACE0 \uD55C\uAC70\uC600\uB2E4\uACE0."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uADF8\uB7F0\uB370 \uC774\uC0C1\uD558\uB2E4...."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uBD84\uBA85\uD788 \uC9C0\uB3C4\uB791 \uB098\uCE68\uBC18\uC744 \uBCF4\uACE0
+      \uC81C\uB300\uB85C \uC6CC\uD504\uD55C\uAC74\uB370."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: "\uC0D0\uB9AC\uC628"
+    text: "\uB300\uCCB4 \uBB50\uAC00 \uBB38\uC81C\uC600\uC9C0?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uBD84\uBA85\uD788 \uADF8\uB7EC\uAE34 \uD588\uC9C0."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB124\uAC00 \uBE68\uAC04\uBC14\uB298\uC774 \uB0A8\uCABD\uC774\uB77C\uACE0
+      \uC54C\uACE0 \uC788\uB2E4\uB294\uAC78 \uB0B4\uAC00 \uBBF8\uB9AC \uB208\uCE58\uCC58\uC5B4\uC57C
+      \uD588\uB294\uB370."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC544."
+    choices: []
+    lineEvent:
+      eventType: 1
+      parameter: 
+  - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4\uCA54 \uC218 \uC5C6\uC9C0! \uB2E4\uC74C\uC5D4 \uC798 \uD574\uBCFC\uAC8C!"
+    choices: []
+    lineEvent:
+      eventType: 1
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB9D0\uC744 \uB9D0\uC790...."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 

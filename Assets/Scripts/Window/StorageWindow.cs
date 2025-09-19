@@ -12,10 +12,10 @@ public class StorageWindow : Window
 	public Transform storageLocationParent;
 	private List<Transform> invnetoryLocations;
 
-	public GameObject scrollView;
 
 	public  GridLayoutGroup gridLayout;
 
+	public GameObject scrollView;
 	public GameObject storageItemPrefab;
 
 	private List<GameObject> itemObjectList;
@@ -110,14 +110,14 @@ public class StorageWindow : Window
 				(item, eventData) => {
 					//ShowItemDescription(Int32.Parse(item.GetItem().GetNum()));
 				}
-			, // Å¬¸¯ ½Ã
+			, // Å¬ï¿½ï¿½ ï¿½ï¿½
 			(itemSlot, eventData) => {
 				//ShowItemDescription(Int32.Parse(itemSlot.GetItem().GetNum()));
-			} // ¸¶¿ì½º ÀÔÀå
+			} // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½
 			,
 			(itemSlot, eventData) => {
 				//HideItemDescription();
-			} // ¸¶¿ì½º ÅðÀå
+			} // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½
 			,
 			(itemSlot, eventData) => {
 				storageArea.SetActive(true);
@@ -125,11 +125,11 @@ public class StorageWindow : Window
 				inventoryArea.transform.SetSiblingIndex(transform.childCount - 1);
 				storageArea.transform.SetSiblingIndex(transform.childCount - 2);
 				itemLocationParent.transform.SetSiblingIndex(transform.childCount - 3);
-			}, // µå·¡±× ½ÃÀÛ
+			}, // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			(itemSlot, eventData) => {
 				//itemSlot.transform.position = Input.mousePosition;
 				itemSlot.transform.position = Vector3.SmoothDamp(itemSlot.transform.position, Input.mousePosition, ref velocity, 0.015f);
-			}, // µå·¡±× Áß
+			}, // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½
 			(itemSlot, eventData) => {
 				if (mouseOnArea == EMouseOnArea.Storage)
 				{
@@ -146,7 +146,7 @@ public class StorageWindow : Window
 				storageArea.SetActive(false);
 				inventoryArea.SetActive(false);
 				ResetMouseOnArea();
-			} // µå·¡±× ³¡
+			} // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½
 
 			);
 
@@ -167,14 +167,14 @@ public class StorageWindow : Window
 			(deckCard, eventData) => {
 
 			}
-			, // Å¬¸¯ ½Ã
+			, // Å¬ï¿½ï¿½ ï¿½ï¿½
 			(deckCard, eventData) => {
 
-			} // ¸¶¿ì½º ÀÔÀå
+			} // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½
 			,
 			(deckCard, eventData) => {
 
-			} // ¸¶¿ì½º ÅðÀå
+			} // ï¿½ï¿½ï¿½ì½º ï¿½ï¿½ï¿½ï¿½
 			,
 			(deckCard, eventData) => {
 				storageArea.SetActive(true);
@@ -184,10 +184,10 @@ public class StorageWindow : Window
 				storageArea.transform.SetSiblingIndex(transform.childCount - 1);
 				inventoryArea.transform.SetSiblingIndex(transform.childCount - 2);
 				deckCard.transform.SetSiblingIndex(transform.childCount - 3);
-			}, // µå·¡±× ½ÃÀÛ
+			}, // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			(deckCard, eventData) => {
 				deckCard.transform.position = Vector3.SmoothDamp(deckCard.transform.position, Input.mousePosition, ref velocity, 0.015f);
-			}, // µå·¡±× Áß
+			}, // ï¿½å·¡ï¿½ï¿½ ï¿½ï¿½
 			(deckCard, eventData) => {
 				if (mouseOnArea == EMouseOnArea.Storage)
 				{
@@ -205,7 +205,7 @@ public class StorageWindow : Window
 				storageArea.SetActive(false);
 				inventoryArea.SetActive(false);
 				ResetMouseOnArea();
-			} // µå·¡±× ³¡
+			}
 
 		);
 
@@ -220,8 +220,7 @@ public class StorageWindow : Window
 
 	public void StoreItem(ItemData item)
 	{
-		PlayerData.saveData.storage_items.Add(item.GetNum());
-	}
+		PlayerData.saveData.storage_items.Add(item.GetNum());}
 
 	public void ShowItemDescription(int itemNum)
 	{

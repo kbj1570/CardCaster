@@ -28,8 +28,8 @@ public class RedForest : Dungeon
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EStair,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EStair,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EStart,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EGold,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall
@@ -40,13 +40,13 @@ public class RedForest : Dungeon
             ERoomType.EGold,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EItem,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EStory,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
             ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EStair,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
-            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EStart
+            ERoomType.EStair,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EStart
         };
         List<ERoomType> tileType_3 = new()
         {
@@ -91,7 +91,7 @@ public class RedForest : Dungeon
             { nodes[i].SetItem(new RedPotion()); }
         }
         nodes[24].SetDialogueNum(5);
-        nodes[41].SetDialogueNum(6);
+        nodes[42].SetDialogueNum(6);
         staticFloors.Add(nodes);
 
         nodes = new();

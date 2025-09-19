@@ -84,8 +84,6 @@ public class DialogueManager : MonoBehaviour
 			portraitFrame.gameObject.SetActive(line.portrait != null);
 			portraitImage.sprite = line.portrait;
 
-
-
 			yield return StartCoroutine(TypeText(line.text));
 			yield return new WaitUntil(() => isActionDone);
 		}
@@ -225,15 +223,35 @@ public class DialogueManager : MonoBehaviour
 			case DialogueEventType.HideMaskImage:
 				maskImage.gameObject.SetActive(false);
 				break;
+			case DialogueEventType.SpawnEnemy:
+				DungeonManager.Inst.SpawnEnemy(evt.parameter);
+				yield return new WaitForSeconds(0.1f);
+				break;
+			case DialogueEventType.MoveEnemyUp:
+				DungeonManager.Inst.MoveEnemy(Int32.Parse(evt.parameter), EDirection.North);
+				yield return new WaitForSeconds(0.4f);
+				break;
+			case DialogueEventType.RevealNode:
+				DungeonManager.Inst.RevealNode(evt.parameter);
+				break;
+
+			case DialogueEventType.CameraFollowingON:
+				CameraController.Inst.SetFollowing(true);
+				yield return null; // 프레임 하나 쉬어주기
+				break;
+
+			case DialogueEventType.CameraFollowingOFF:
+				CameraController.Inst.SetFollowing(false);
+				yield return null; // 프레임 하나 쉬어주기
+				break;
 
 		}
 	}
-
 	private IEnumerator GetGold(string parameter)
 	{
 		PlayerData.saveData.gold += Int32.Parse(parameter);
 		yield return null;
-    }
+	}
 
 	private IEnumerator GetItem(string parameter)
     {
