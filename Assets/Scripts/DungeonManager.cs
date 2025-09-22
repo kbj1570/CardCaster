@@ -434,23 +434,14 @@ public class DungeonManager : MonoBehaviour, ILockable
 		//UpdateItemPage();
 	}
 	public void SetEnemyCourse()
-
 	{
 		List<DungeonEnemy> keys = dungeonEnemies.Keys.ToList();
 
-
-
 		for (int index = 0; index < keys.Count; index++)
-
 		{
-
 			DungeonEnemy enemy = keys[index];
 
-
-
 			List<EEnemyDirection> dummy = new();
-
-
 
 			if (nodeNumList.Contains(enemy.GetCurrentNodeNum() + 1) && !dungeonEnemies.ContainsValue(enemy.GetCurrentNodeNum() + 1))
 
@@ -686,7 +677,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		foreach (KeyValuePair<DungeonEnemy, int> dungeonEnemy in dungeonEnemies)
 		{
-
 			enemyObjectList[count].transform.DOMove(CalculateNodePosition(dungeonEnemy.Value) + mapObject.transform.position, moveDuration)
 			.SetEase(Ease.OutQuad)
 			.OnStart(() =>
@@ -1124,7 +1114,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		nodeNumList = new List<int>();
 		for (int i = 0; i < map.Count; ++i)
 		{
-			if (map[i] != null)
+			if (map[i] != null && map[i].GetRoomType()!= ERoomType.EWall) 
 				nodeNumList.Add(i);
 		}
 	}
@@ -1620,16 +1610,18 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public void SpawnEnemy(string nodeNum)
 	{
 		GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
-		enemyObject.transform.localPosition = CalculateNodePosition(Int32.Parse(nodeNum)) + mapObject.transform.position;
+		// enemyObject.transform.localPosition = CalculateNodePosition(Int32.Parse(nodeNum)) + mapObject.transform.position;
 
 		enemyObject.GetComponent<DungeonEnemy>().SetEnemy(new UnknownMonster());
 		enemyObject.GetComponent<DungeonEnemy>().SetCurrentNodeNum(Int32.Parse(nodeNum));
 		enemyObject.GetComponent<DungeonEnemy>().SetEnemyDirection(EEnemyDirection.North);
-		
+
 		enemyObject.GetComponent<DungeonEnemy>().SetVisible(true);
 		enemyObjectList.Add(enemyObject);
 
 		dungeonEnemies.Add(enemyObject.GetComponent<DungeonEnemy>(), Int32.Parse(nodeNum));
+		MoveEnemy();
+		
 	}
 
 	public void MoveEnemy(int enemyNum, EDirection direction)
@@ -1662,6 +1654,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 
 		dungeonEnemies[dungeonEnemy] += value;
+		dungeonEnemy.SetCurrentNodeNum(dungeonEnemies[dungeonEnemy]);
 
 		List<int> valueList = dungeonEnemies.Values.ToList();
 		int currentLocation = valueList[enemyNum];
@@ -1676,7 +1669,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 			})
 			.OnComplete(() =>
 			{
-
+				if (CheckBattleStart())
+				{ StartCoroutine(ReadyBattle()); }
 			});
 			
 		CameraController.Inst.SetPosition(enemyObjectList[enemyNum].transform.position);

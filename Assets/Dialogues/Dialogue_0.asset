@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dialogue_0
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
-  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+  - portrait: {fileID: 3445674281854026479, guid: d93de57c886074a449950993e2db6cf7, type: 3}
     background: {fileID: 0}
     speaker: 
     text: 
@@ -21,7 +21,7 @@ MonoBehaviour:
     lineEvent:
       eventType: 17
       parameter: 
-  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+  - portrait: {fileID: 3445674281854026479, guid: d93de57c886074a449950993e2db6cf7, type: 3}
     background: {fileID: 0}
     speaker: 
     text: 
@@ -152,7 +152,7 @@ MonoBehaviour:
     lineEvent:
       eventType: 5
       parameter: 100
-  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+  - portrait: {fileID: 3445674281854026479, guid: d93de57c886074a449950993e2db6cf7, type: 3}
     background: {fileID: 0}
     speaker: 
     text: "\uB135."

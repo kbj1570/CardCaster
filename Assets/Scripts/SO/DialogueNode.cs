@@ -61,5 +61,6 @@ public enum DialogueEventType
 	MoveEnemyDown,
 	RevealNode,
 	CameraFollowingON,
-	CameraFollowingOFF
+	CameraFollowingOFF,
+	FadeOutSituationImage
 }

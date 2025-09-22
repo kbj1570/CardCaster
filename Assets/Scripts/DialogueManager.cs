@@ -14,7 +14,6 @@ public class DialogueManager : MonoBehaviour
 	public TMP_Text dialogueText;
 	public TMP_Text documentText;
 	public GameObject documentFrame;
-
 	public GameObject choiceButtonPrefab;
 	public Transform choiceContainer;
 	public Transform alertPosition;
@@ -237,12 +236,15 @@ public class DialogueManager : MonoBehaviour
 
 			case DialogueEventType.CameraFollowingON:
 				CameraController.Inst.SetFollowing(true);
-				yield return null; // 프레임 하나 쉬어주기
+				yield return null;
 				break;
 
 			case DialogueEventType.CameraFollowingOFF:
 				CameraController.Inst.SetFollowing(false);
-				yield return null; // 프레임 하나 쉬어주기
+				yield return null;
+				break;
+			case DialogueEventType.FadeOutSituationImage:
+				yield return StartCoroutine(FadeOutSituationImage());
 				break;
 
 		}
@@ -385,8 +387,8 @@ public class DialogueManager : MonoBehaviour
 		textBox.SetActive(false);
 		float alpha = 0f;
 		float t = 0f;
-		float fadeDuration = 0.6f; // ��Ÿ���ų� ������� �� �ɸ��� �ð�
-		float stayDuration = 2.2f; // �� ��Ÿ�� �� ���� �ð�
+		float fadeDuration = 0.6f; 
+		float stayDuration = 2.2f;
 
 		// Fade In
 		while (t < fadeDuration)
@@ -399,8 +401,32 @@ public class DialogueManager : MonoBehaviour
 			situationImage.color = msgColor;
 			yield return null;
 		}
+		yield return new WaitForSeconds(stayDuration);
 
-		// ���
+		textBox.SetActive(true);
+	}
+
+
+	private IEnumerator FadeOutSituationImage()
+	{
+
+		textBox.SetActive(false);
+		float alpha = 1f;
+		float t = 0f;
+		float fadeDuration = 0.5f; 
+		float stayDuration = 1.5f;
+
+		// Fade In
+		while (t < fadeDuration)
+		{
+			t += Time.deltaTime;
+			alpha = Mathf.Clamp01(1 - t / fadeDuration);
+
+			Color msgColor = situationImage.color;
+			msgColor.a = alpha;
+			situationImage.color = msgColor;
+			yield return null;
+		}
 		yield return new WaitForSeconds(stayDuration);
 
 		textBox.SetActive(true);

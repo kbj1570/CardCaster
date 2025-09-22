@@ -59,7 +59,7 @@ MonoBehaviour:
     text: "\uC78A\uC5B4\uBC84\uB9AC\uACE0 \uC788\uC5C8\uB124."
     choices: []
     lineEvent:
-      eventType: 0
+      eventType: 13
       parameter: 
   - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
     background: {fileID: 0}
@@ -75,7 +75,7 @@ MonoBehaviour:
     text: "\uC7A0\uC740 \uC774\uC81C \uB2E4 \uC7A4\uB098\uBCF4\uC9C0?"
     choices: []
     lineEvent:
-      eventType: 0
+      eventType: 32
       parameter: 
   - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
     background: {fileID: 0}
@@ -283,6 +283,22 @@ MonoBehaviour:
     lineEvent:
       eventType: 29
       parameter: 52
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 26
+      parameter: 0
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 29
+      parameter: 42
   - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
     background: {fileID: 0}
     speaker: 
