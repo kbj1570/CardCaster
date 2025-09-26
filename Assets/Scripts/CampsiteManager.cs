@@ -36,6 +36,7 @@ public static class PlayerData
 public static class BattleData
 {
 	public static List<Enemy> enemies;
+	public static string nextScene;
 }
 
 public static class DungeonClearData

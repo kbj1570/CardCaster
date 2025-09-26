@@ -28,7 +28,7 @@ public class RedForest : Dungeon
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EStair,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EStart,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EGold,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
@@ -39,7 +39,7 @@ public class RedForest : Dungeon
         {
             ERoomType.EGold,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EItem,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
@@ -52,11 +52,11 @@ public class RedForest : Dungeon
         {
             ERoomType.EGold,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,
-            ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
-            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
+            ERoomType.EWall,ERoomType.EWall,ERoomType.EStory,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EStair,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EStart,ERoomType.None,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,
             ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.EWall,ERoomType.EWall,ERoomType.EWall,ERoomType.None,ERoomType.None,
             ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.EWall,ERoomType.EItem,ERoomType.None
@@ -116,13 +116,14 @@ public class RedForest : Dungeon
         };
 
         safeFloorList = new()
-        {};
+        { };
 
         enemyList = new(){
             {new UnknownMonster(), 3}
         };
 
         maxGold = 10;
+        nextScene = "Chapter 1";
     }
 
 }

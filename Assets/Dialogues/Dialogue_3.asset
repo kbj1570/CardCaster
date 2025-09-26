@@ -13,49 +13,56 @@ MonoBehaviour:
   m_Name: Dialogue_3
   m_EditorClassIdentifier: Assembly-CSharp::DialogueData
   lines:
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC774\uAC74 \uBB50\uC9C0?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC885?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uB204\uAC00 \uC124\uCE58\uD574\uB454\uAC74\uAC00."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC774\uB7F0\uAC8C \uC5EC\uAE30 \uC65C \uC788\uB294\uAC70\uC57C?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: .....
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uD55C\uBC88 \uC6B8\uB824\uBCFC\uAE4C?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uAD1C\uD788 \uB2E4\uB978 \uAD34\uBB3C\uB4E4\uAE4C\uC9C0 \uBD88\uB7EC\uC624\uACE0
       \uC2F6\uC740\uAC8C \uC544\uB2C8\uB77C\uBA74."
@@ -63,49 +70,56 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uADF8\uB9CC\uB450\uB294\uAC8C \uC88B\uC744\uAC78."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC5D0\uC774 \uC124\uB9C8  \uBCC4 \uC77C \uC788\uACA0\uC5B4?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC544\uBB34\uC77C\uB3C4 \uC5C6\uB294\uB370?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uC7A0\uAE50\uB9CC."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uBB54\uAC00 \uC624\uACE0\uC788\uC5B4."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC624\uB798 \uAE30\uB2E4\uB9AC\uC168\uC2B5\uB2C8\uB2E4! \uACE0\uAC1D\uB2D8!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC800\uD76C \uC11C\uBE44\uC2A4\uB97C \uC774\uC6A9\uD574\uC8FC\uC154\uC11C
       \uC815\uB9D0\uB85C \uAC10\uC0AC\uD569...."
@@ -113,28 +127,32 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC5B4\uB77C? \uB204\uAD6C.... \uC2DC\uC8E0?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "(\uBB50\uC57C. \uC774 \uB140\uC11D\uC740?)"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC544! \uC81C \uC18C\uAC1C\uAC00 \uB2A6\uC5C8\uB124\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC800\uB294 \uD50C\uB77C\uC774\uC5B4\uC6E8\uC774 \uB51C\uB9AC\uBC84\uB9AC
       \uC11C\uBE44\uC2A4!"
@@ -142,42 +160,48 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: ???
     text: "\uC77C\uBA85 FADS\uC758 \uCD5C\uC6B0\uC218 \uC0AC\uC6D0!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uD398\uC988\uB77C\uACE0 \uD569\uB2C8\uB2E4! \uC798 \uBD80\uD0C1\uB4DC\uB824\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uD639\uC2DC \uB4E4\uC5B4\uBCF8 \uC801 \uC788\uC5B4?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uC804\uD600. \uBAA8\uB974\uACA0\uB294\uB370."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uD558\uD558\uD558! \uAD1C\uCC2E\uC544\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC800\uD76C \uC11C\uBE44\uC2A4\uB294 \uC544\uC9C1 \uC2DC\uC791\uD55C\uC9C0
       \uC5BC\uB9C8 \uC548 \uB410\uC73C\uB2C8."
@@ -185,140 +209,158 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uBAA8\uB974\uC2DC\uB294 \uAC83\uB3C4 \uC5B4\uCC0C\uBCF4\uBA74 \uB2F9\uC5F0\uD558\uC8E0."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uAC70\uAE30 \uACC4\uC2E0 \uC2E0\uC0AC\uBD84!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC2E0\uC0AC? \uC124\uB9C8 \uC598 \uB9D0\uD558\uB294\uAC70\uC57C?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: .....
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uD639\uC2DC \uC800\uD76C \uC11C\uBE44\uC2A4\uB97C \uC774\uC6A9\uD574\uBCF4\uC2E4
-      \uC0DD\uAC01\uC740 \uC5C6\uC73C\uC2E0\uAC00\uC694?"
+    text: "\uD639\uC2DC \uC800\uD76C \uC11C\uBE44\uC2A4\uB97C \uC774\uC6A9\uD574\uBCF4\uC2E4\n\uC0DD\uAC01\uC740
+      \uC5C6\uC73C\uC2E0\uAC00\uC694?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uC815\uB9D0 \uD544\uC694\uD55C \uBB3C\uAC74\uC774 \uC788\uB294\uB370
-      \uD558\uD544 \uC9C0\uAE08\uC740 \uB450\uACE0\uC654\uB2E4\uB4E0\uC9C0!"
+    text: "\uC815\uB9D0 \uD544\uC694\uD55C \uBB3C\uAC74\uC774 \uC788\uB294\uB370\n\uD558\uD544
+      \uC9C0\uAE08\uC740 \uB450\uACE0\uC654\uB2E4\uB4E0\uC9C0!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uD639\uC740 \uB3C4\uAD6C\uB97C \uB109\uB109\uD558\uAC8C \uCC59\uACA8\uC654\uB294\uB370!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uC608\uC0C1\uCE58\uB3C4 \uBABB\uD55C \uC0C1\uD669\uC744 \uB9CC\uB098\uC11C
-      \uC804\uBD80 \uC368\uBC84\uB838\uB2E4\uB4E0\uC9C0!"
+    text: "\uC608\uC0C1\uCE58\uB3C4 \uBABB\uD55C \uC0C1\uD669\uC744 \uB9CC\uB098\uC11C\n\uC804\uBD80
+      \uC368\uBC84\uB838\uB2E4\uB4E0\uC9C0!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC774\uB7F0 \uC704\uD5D8\uD55C \uACF3\uC744 \uD0D0\uD5D8\uD558\uB2E4\uBCF4\uBA74"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uD55C \uBC88\uC529\uC740 \uC774\uB7F0 \uC0C1\uD669\uC744 \uACAA\uC9C0
-      \uC54A\uACA0\uC2B5\uB2C8\uAE4C?"
+    text: "\uD55C \uBC88\uC529\uC740 \uC774\uB7F0 \uC0C1\uD669\uC744 \uACAA\uC9C0\n\uC54A\uACA0\uC2B5\uB2C8\uAE4C?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uBB50... \uADF8\uB7F4\uC218\uB3C4 \uC788\uACA0\uB2E4\uB9CC."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uADF8\uB7F4 \uB54C \uC774\uC6A9\uD574\uC8FC\uC2DC\uB294\uAC8C \uBC14\uB85C
-      \uC800\uD76C \uC11C\uBE44\uC2A4\uC785\uB2C8\uB2E4!"
+    text: "\uADF8\uB7F4 \uB54C \uC774\uC6A9\uD574\uC8FC\uC2DC\uB294\uAC8C \uBC14\uB85C\n\uC800\uD76C
+      \uC11C\uBE44\uC2A4\uC785\uB2C8\uB2E4!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uC800\uD76C\uC5D0\uAC8C \uBBF8\uB9AC \uBB3C\uAC74\uC744 \uB9E1\uC544\uB450\uC5C8\uB2E4\uAC00!"
+    text: "\uC800\uD76C\uC5D0\uAC8C \uBBF8\uB9AC \uBB3C\uAC74\uC744\n\uB9E1\uC544\uB450\uC5C8\uB2E4\uAC00!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uD544\uC694\uD55C \uC21C\uAC04\uC5D0 \uC81C\uAC00 \uC124\uCE58\uD574\uB193\uC740
-      \uC774 \uC885\uC744 \uC6B8\uB9AC\uC2DC\uBA74!"
+    text: "\uD544\uC694\uD55C \uC21C\uAC04\uC5D0 \uC81C\uAC00 \uC124\uCE58\uD574\uB193\uC740\n\uC774
+      \uC885\uC744 \uC6B8\uB9AC\uC2DC\uBA74!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uC81C\uAC00 \uB531 \uB0A0\uC544\uC640\uC11C \uAC00\uC838\uB2E4 \uB4DC\uB9AC\uB294\uAC70\uC8E0!"
+    text: "\uC81C\uAC00 \uB531 \uB0A0\uC544\uC640\uC11C \uAC00\uC838\uB2E4\n\uB4DC\uB9AC\uB294\uAC70\uC8E0!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uD639\uC2DC, \uC9C0\uAE08 \uC0C1\uD669\uD30C\uC545\uC774 \uC548\uB418\uB294\uAC74\uAC00?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
-    text: "\uC870\uAE08\uB9CC \uB458\uB7EC\uBD10\uB3C4 \uAD34\uBB3C\uB4E4\uC774 \uB4DD\uC2E4\uAC70\uB9AC\uB294
-      \uC774\uB7F0 \uACF3\uC5D0\uC11C \uBC30\uB2EC\uC774\uB77C\uB2C8."
+    text: "\uC870\uAE08\uB9CC \uB458\uB7EC\uBD10\uB3C4 \uAD34\uBB3C\uB4E4\uC774 \uB4DD\uC2E4\uAC70\uB9AC\uB294\n\uC774\uB7F0
+      \uACF3\uC5D0\uC11C \uBC30\uB2EC\uC774\uB77C\uB2C8."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uADF8\uAC74 \uC544\uC9C1 \uC798 \uBAA8\uB974\uC154\uC11C \uADF8\uB7F0\uAC70\uC5D0\uC694."
+    text: "\uADF8\uAC74 \uC544\uC9C1 \uC798 \uBAA8\uB974\uC154\uC11C\n\uADF8\uB7F0\uAC81\uB2C8\uB2E4\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC774\uB7F0 \uC704\uD5D8\uD55C \uC0C1\uD669\uC77C\uC218\uB85D \uC601\uC6C5\uC740
       \uB098\uD0C0\uB098\uB294 \uBC95!"
@@ -326,7 +368,8 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC704\uD5D8\uC5D0 \uBE60\uC9C4 \uC0AC\uB78C\uB4E4\uC744 \uC704\uD574\uC11C
       \uC801\uB4E4\uC744 \uBB3C\uB9AC\uCE58\uACE0!"
@@ -334,7 +377,8 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC0AC\uB78C\uB4E4\uC744 \uBA4B\uC788\uAC8C \uAD6C\uD574\uC8FC\uB294 \uADF8\uB7F0
       \uBD84\uB4E4\uC774!"
@@ -342,111 +386,127 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uB354\uC6B1 \uC21C\uC870\uB85C\uC6B4 \uD65C\uB3D9\uC744 \uD558\uAE30
-      \uC704\uD574\uC11C \uC774\uC6A9\uD558\uC2E4\uAC70\uB77C\uACE0 \uBBFF\uACE0\uC788\uC8E0!"
+      \uC704\uD574\uC11C\n\uC774\uC6A9\uD558\uC2E4\uAC70\uB77C\uACE0 \uBBFF\uACE0
+      \uC788\uC8E0!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uB531 \uB124 \uC598\uAE30 \uAC19\uC740\uB370?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: ...
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
-    text: "\uD558\uC9C0\uB9CC \uC544\uC27D\uAC8C\uB3C4 \uC800\uD76C\uB294 \uD68C\uC6D0\uC81C\uB85C
-      \uC6B4\uC601\uC744 \uD558\uACE0\uC788\uC5B4\uC11C."
+    text: "\uD558\uC9C0\uB9CC \uC544\uC27D\uAC8C\uB3C4 \uC800\uD76C\uB294 \uD68C\uC6D0\uC81C\uB85C\n\uC6B4\uC601\uC744
+      \uD558\uACE0\uC788\uC5B4\uC11C."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
-    text: "\uAC00\uC785\uC744 \uD558\uC9C0 \uC54A\uC73C\uC2DC\uBA74 \uC11C\uBE44\uC2A4\uB97C
-      \uC774\uC6A9\uD558\uC2E4 \uC218\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4\uC694."
+    text: "\uAC00\uC785\uC744 \uD558\uC9C0 \uC54A\uC73C\uC2DC\uBA74 \uC11C\uBE44\uC2A4\uB97C\n\uC774\uC6A9\uD558\uC2E4
+      \uC218\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4\uC694."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uADF8\uB798\uB3C4 \uBAA8\uCC98\uB7FC \uC774\uB807\uAC8C \uC2DC\uAC04\uC744
+    text: "\uADF8\uB798\uB3C4 \uBAA8\uCC98\uB7FC \uC774\uB807\uAC8C\n\uC2DC\uAC04\uC744
       \uB0B4\uC8FC\uC168\uC73C\uB2C8."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC774\uAC74 \uAE30\uB150\uD488\uC73C\uB85C \uB4DC\uB9AC\uACA0\uC2B5\uB2C8\uB2E4!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uB9CC\uC57D \uAC00\uC785\uD558\uC2E4 \uC0DD\uAC01\uC774 \uC788\uB2E4\uBA74"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uC774 \uC885\uC5D0 \uADF8\uB824\uC9C4 \uB9C8\uD06C\uB97C \uC798 \uAE30\uC5B5\uD574\uB450\uC168\uB2E4\uAC00"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
-    text: "\uB300\uD53C\uC18C\uC5D0\uC11C \uC774 \uB9C8\uD06C\uAC00 \uADF8\uB824\uC9C4
-      \uAC74\uBB3C\uC744 \uCC3E\uC544\uC640\uC8FC\uC138\uC694!"
+    text: "\uB300\uD53C\uC18C\uC5D0\uC11C \uC774 \uB9C8\uD06C\uAC00 \uADF8\uB824\uC9C4\n\uAC74\uBB3C\uC744
+      \uCC3E\uC544\uC640\uC8FC\uC138\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uADC0\uD55C \uC2DC\uAC04 \uB0B4\uC8FC\uC154\uC11C \uAC10\uC0AC\uD569\uB2C8\uB2E4\uC694!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uD398\uC988"
     text: "\uADF8\uB7FC \uC800\uB294 \uC774\uB9CC!"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uAC00\uBC84\uB838\uB124...."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
-    text: "\uC800 \uB140\uC11D\uB3C4 \uADF8\uB807\uACE0 \uC544\uAE4C \uADF8 \uC7A5\uC0AC\uAFBC
+    text: "\uC800 \uB140\uC11D\uB3C4 \uADF8\uB807\uACE0 \uC544\uAE4C \uADF8\n\uC7A5\uC0AC\uAFBC
       \uC544\uC800\uC528\uB3C4 \uADF8\uB807\uACE0"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uC5EC\uAE30\uC120 \uC815\uB9D0\uB85C \uBCC4\uC758\uBCC4\uAC78 \uB2E4
       \uBCF4\uB294\uAD70."
@@ -454,28 +514,30 @@ MonoBehaviour:
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
-    text: "\uAE0D\uC815\uC801\uC778\uAC74\uC9C0 \uD0DC\uD3C9\uD55C\uAC74\uC9C0\uB294
-      \uC798 \uBAA8\uB974\uACA0\uC9C0\uB9CC...."
+    text: "\uAE0D\uC815\uC801\uC778\uAC74\uC9C0 \uD0DC\uD3C9\uD55C\uAC74\uC9C0\uB294\n\uC798
+      \uBAA8\uB974\uACA0\uC9C0\uB9CC..."
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
     text: "\uC0AC\uC2E4\uC740 \uC6B0\uB9AC\uB9CC \uC9C0\uAE08 \uC0C1\uD669\uC744
-      \uC2EC\uAC01\uD558\uAC8C \uBC1B\uC544\uB4E4\uC774\uACE0 \uC788\uB294\uAC8C
+      \uC2EC\uAC01\uD558\uAC8C\n\uBC1B\uC544\uB4E4\uC774\uACE0 \uC788\uB294\uAC8C
       \uC544\uB2D0\uAE4C?"
     choices: []
     lineEvent:
       eventType: 0
       parameter: 
-  - mugShot: {fileID: 0}
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
     speaker: 
     text: "\uADF8\uB7F4\uC9C0\uB3C4.."
     choices: []
     lineEvent:
       eventType: 1
       parameter: 
-  signalText: 

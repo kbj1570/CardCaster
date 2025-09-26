@@ -1,0 +1,176 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63270e1dec17bfc4a99b21cf610bba98, type: 3}
+  m_Name: Dialogue_9
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 17
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB9C8\uC744\uC740 \uC644\uC804 \uD3D0\uD5C8\uC778\uB370\uB2E4\uAC00."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC815\uCCB4\uB3C4 \uBAA8\uB97C \uAD34\uBB3C\uB4E4\uC774 \uB4DD\uC2E4\uAC70\uB9AC\uACE0.\n\uC0AC\uB78C\uC740
+      \uC544\uBB34\uB3C4 \uBCF4\uC774\uC9C0 \uC54A\uC544."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB2E4\uB4E4 \uC5B4\uB514\uB85C \uAC04\uAC70\uC9C0?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB180\uB7EC\uAC14\uB098?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC9C0\uAE08\uC740 \uB18D\uB2F4\uD560 \uB54C\uAC00 \uC544\uB2C8\uAC70\uB4E0."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4\uB77C? \uC800\uAC74...?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 31
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 23
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 29
+      parameter: 64
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 24
+      parameter: 64
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB204\uAC00 \uC788\uC5B4!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 29
+      parameter: 49
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 26
+      parameter: 0
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 29
+      parameter: 34
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 26
+      parameter: 0
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC790, \uC7A0\uAE50\uB9CC!\n\uAE30\uB2E4\uB824!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 30
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 22
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4\uC11C \uCAD3\uC544\uAC00\uBCF4\uC790!"
+    choices: []
+    lineEvent:
+      eventType: 1
+      parameter: 

@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63270e1dec17bfc4a99b21cf610bba98, type: 3}
+  m_Name: Dialogue_10
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB193\uCE5C\uAC74\uAC00..."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4\uB514\uB85C \uAC14\uC9C0?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uBD84\uBA85\uD788 \uC774 \uCABD\uC73C\uB85C..."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC73C\uC544\uC544\uC544\uC545!!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC0B4\uB824\uC918!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC800\uAC74... \uC704\uD5D8\uD574 \uBCF4\uC774\uB124."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4\uC11C \uAD6C\uD574\uC8FC\uC790!"
+    choices: []
+    lineEvent:
+      eventType: 1
+      parameter: 

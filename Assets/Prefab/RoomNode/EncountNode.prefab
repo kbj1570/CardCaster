@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 8866241802618016658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 1.1840112}
+  m_LocalPosition: {x: 0.0188, y: 0.0133, z: 0}
+  m_LocalScale: {x: 0.07033347, y: 0.07033347, z: 0.10409453}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8866241803749357966}
@@ -52,6 +52,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -73,10 +75,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 2bac73793ea64744aa3620c40ea77b4e, type: 3}
+  m_Sprite: {fileID: -1690761290895858283, guid: 4eddbfcd3506a114fb6f665b908da55b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -141,6 +144,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -162,6 +167,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
@@ -189,6 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomNum: 0
+  filled: 0
   roomType: 0
   roomMark: {fileID: 8866241802618016658}
   renderer: {fileID: 8866241803749357967}
@@ -197,17 +204,3 @@ MonoBehaviour:
   leftBlocked: 0
   rightBlocked: 0
   visited: 0
-  leftDownCorner: {fileID: 21300000, guid: 38877fb19e905d745b995faca254dfb6, type: 3}
-  leftUpCorner: {fileID: 21300000, guid: b1018626530622449bc0f2ff9e22129e, type: 3}
-  rightDownCorner: {fileID: 21300000, guid: 7c30971b8797f524c8e18d5da1bac681, type: 3}
-  rightUpCorner: {fileID: 21300000, guid: d5cad51d7228f38459d2d5b4490c46f1, type: 3}
-  leftDeadEnd: {fileID: 21300000, guid: c6c5650b0f9134e409e3e7af8287d89b, type: 3}
-  rightDeadEnd: {fileID: 21300000, guid: add4a56570d8f4e4b987730d1710fd8f, type: 3}
-  downDeadEnd: {fileID: 21300000, guid: 26882daa49dec5b408485a3976bf5960, type: 3}
-  upDeadEnd: {fileID: 21300000, guid: 395dffeaaa2006a4686e66fc4e9d4e79, type: 3}
-  leftRightCorridor: {fileID: 21300000, guid: a30dfc058c797d84b9af526efc5cd803, type: 3}
-  upDownCorridor: {fileID: 21300000, guid: e3cab8684c0994e41b013500d364929d, type: 3}
-  leftWall: {fileID: 21300000, guid: 157c9e3f108d257469cd81783e3f05b2, type: 3}
-  rightWall: {fileID: 21300000, guid: b00897aba4c50f64688ef446eda27489, type: 3}
-  downWall: {fileID: 21300000, guid: 1835b0f82ce58c54a993d1342d35cbca, type: 3}
-  upWall: {fileID: 21300000, guid: 8278e244cc2be964493a7a102f32d0c1, type: 3}

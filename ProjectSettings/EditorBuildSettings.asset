@@ -8,24 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Campsite/Campsite.unity
     guid: f581297a38568fa49bde8bc000d2f575
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 0
-    path: Assets/Scenes/Void.unity
-    guid: 54f83055fa90f0349b495abe043a358d
-  - enabled: 0
-    path: Assets/Scenes/Camp.unity
-    guid: 6c105b72e1f12524c8d3cd0b6f7d1d47
   - enabled: 1
     path: Assets/Scenes/Dungeon.unity
     guid: 50c344e037fa4e747b5ce4755eae86bd
-  - enabled: 0
-    path: Assets/Scenes/Shop.unity
-    guid: d90d13ad8ac776144a333dbc70b5cfec
-  - enabled: 0
-    path: Assets/Scenes/DeckCustom.unity
-    guid: 2393535d2f10e4b4f9b246e2b4837086
   - enabled: 1
     path: Assets/Scenes/Battle.unity
     guid: 81e42075b1757634da23cfbb5dae31f0
@@ -45,10 +30,13 @@ EditorBuildSettings:
     path: Assets/Scenes/CutScene/Intro.unity
     guid: dda6e04ed3f83a442ba104f54c9924fe
   - enabled: 1
-    path: Assets/Scenes/Prologue.unity
+    path: Assets/Scenes/Chapters/Prologue.unity
     guid: 615c1849d27dc114dbf471cc23f46219
   - enabled: 1
-    path: Assets/Scenes/Prologue/PrologueDungeon.unity
-    guid: 0b087548e8fd75c47bc4fecc756de36e
+    path: Assets/Scenes/Chapters/Chapter 1.unity
+    guid: 6f9c351e67a0c3d45b131bce91b88723
+  - enabled: 1
+    path: Assets/Scenes/Chapters/Chapter 2.unity
+    guid: 9479b63c8bed1d641a226c8c95718480
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

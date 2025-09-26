@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63270e1dec17bfc4a99b21cf610bba98, type: 3}
+  m_Name: DIalogue_17
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  lines:
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB3C4\uCC29\uD588\uB2E4."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC624\uB294 \uAE38\uC5D0 \uBCC4 \uC77C \uC5C6\uC5B4\uC11C \uB2E4\uD589\uC774\uB124."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC5B4? \uC5EC\uAE34?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC774\uC81C \uC5B4\uBA38\uB2C8\uD55C\uD14C \uAC00\uBD10.\n\uC5C4\uCCAD\uB098\uAC8C
+      \uAC71\uC815\uD558\uC2DC\uB358\uB370."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC7A1\uC544\uBA39\uB294\uAC70 \uC544\uB2C8\uC5C8\uC5B4?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC9C4\uC9DC\uB85C \uC7A1\uC544\uBA39\uAE30 \uC804\uC5D0\n\uBE68\uB9AC
+      \uAC00\uB77C."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC73C\uC544\uC545!!"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC544\uC774\uB294 \uC7BD\uC2F8\uAC8C \uC904\uD589\uB791\uCE58\uBA70\n\uD150\uD2B8
+      \uC548\uC73C\uB85C \uC0AC\uB77C\uC84C\uB2E4."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uC560\uB4E4\uC774\uB780..."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uADF8\uB798\uB3C4 \uC560\uB4E4 \uB300\uD558\uB294\n\uC2E4\uB825\uC774
+      \uB9CE\uC774 \uB298\uC5C8\uB294\uB370?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB204\uAD6C \uB180\uB9AC\uB294 \uAC70\uC57C?"
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uD788\uD788. \uC544\uBB34\uD2BC \uC544\uC774\uB97C \uBB34\uC0AC\uD788\n\uB370\uB824\uC654\uC73C\uB2C8\uAE4C."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: "\uB85C\uB12C\uC774\uB77C\uB294 \uC5EC\uC790\uB97C\n\uB2E4\uC2DC \uB9CC\uB098\uBCF4\uC790."
+    choices: []
+    lineEvent:
+      eventType: 0
+      parameter: 

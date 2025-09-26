@@ -648,8 +648,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3d42d746e29f58749b3c084c41eedfdc, type: 2}
-  m_sharedMaterial: {fileID: 8499105237769732837, guid: 3d42d746e29f58749b3c084c41eedfdc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 075a4730753da174c9b57486dcaf53c0, type: 2}
+  m_sharedMaterial: {fileID: 2174089992967252254, guid: 075a4730753da174c9b57486dcaf53c0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -798,6 +798,19 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5a642e84d24a16846acbffedcd25d872, type: 2}
   - {fileID: 11400000, guid: 393ecd6bda640bf4b9394b33ad4ac0d1, type: 2}
   - {fileID: 11400000, guid: cc4161439c25fe243aa7b01731e66d27, type: 2}
+  - {fileID: 11400000, guid: 5895539b06314b5429c8c52001c78eb1, type: 2}
+  - {fileID: 11400000, guid: f2fc2296a13bbcf4eb9d653efc2b1bdb, type: 2}
+  - {fileID: 11400000, guid: f664b839a177d5b4d95ac0fafc251210, type: 2}
+  - {fileID: 11400000, guid: aa7d6db8a0028444f81ac69c74bec2a9, type: 2}
+  - {fileID: 11400000, guid: d3be9469eee199e49a3f6dc5e8072987, type: 2}
+  - {fileID: 11400000, guid: df508dd014c79054b83b4aa700239734, type: 2}
+  - {fileID: 11400000, guid: 86ff76be8c6c2cd448c6284a96f447ab, type: 2}
+  - {fileID: 11400000, guid: df508dd014c79054b83b4aa700239734, type: 2}
+  - {fileID: 11400000, guid: 5d11d7151b6c2634285f96b9fe57bf92, type: 2}
+  - {fileID: 11400000, guid: c40dca72a11b2b74188a59cbe9d3e0bc, type: 2}
+  - {fileID: 11400000, guid: 9ff31058329db4346abfae80e44d996a, type: 2}
+  - {fileID: 11400000, guid: 59b873028cb813744a846a45d2d4ba81, type: 2}
+  - {fileID: 11400000, guid: 9e9ae6d4d72cfe341846521bd71fdadd, type: 2}
   alertObject: {fileID: 5263348565243779524, guid: f39a1bf3f7c49e54a8389a3ca67fb2e5, type: 3}
   FadeImage: {fileID: 5780896284899908404}
   portraitImage: {fileID: 6379487974350636114}
@@ -1168,7 +1181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

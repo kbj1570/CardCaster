@@ -1584,10 +1584,11 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 		else if (dungeonEndFloor == floor)
 		{
-			Debug.Log("던전을 클리어 했습니다");
-			dungeonClearWindow.GetComponent<Window>().OnOff();
+
 			moveLocked = true;
 			DungeonData.Reset();
+			
+			SceneManager.LoadScene(dungeon.GetNextScene());
 		}
 		else if (dungeon.GetHasStaticFloor())
 		{
@@ -1610,9 +1611,10 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public void SpawnEnemy(string nodeNum)
 	{
 		GameObject enemyObject = Instantiate(dungeonEnemyPrefab);
-		// enemyObject.transform.localPosition = CalculateNodePosition(Int32.Parse(nodeNum)) + mapObject.transform.position;
+		enemyObject.transform.localPosition = CalculateNodePosition(Int32.Parse(nodeNum)) + mapObject.transform.position;
 
 		enemyObject.GetComponent<DungeonEnemy>().SetEnemy(new UnknownMonster());
+
 		enemyObject.GetComponent<DungeonEnemy>().SetCurrentNodeNum(Int32.Parse(nodeNum));
 		enemyObject.GetComponent<DungeonEnemy>().SetEnemyDirection(EEnemyDirection.North);
 

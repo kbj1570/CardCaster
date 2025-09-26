@@ -201,6 +201,14 @@ MonoBehaviour:
     text: 
     choices: []
     lineEvent:
+      eventType: 31
+      parameter: 
+  - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
       eventType: 23
       parameter: 
   - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
@@ -310,7 +318,7 @@ MonoBehaviour:
   - portrait: {fileID: -6382524348662822855, guid: f06b233c95fa86c4585f2e89c9a080a5, type: 3}
     background: {fileID: 0}
     speaker: "\uC0D0\uB9AC\uC628"
-    text: "\uC800\uAC74 \uB610 \uBB50\uC57C?"
+    text: "\uC774\uAC74 \uB610 \uBB50\uC57C!?"
     choices: []
     lineEvent:
       eventType: 1

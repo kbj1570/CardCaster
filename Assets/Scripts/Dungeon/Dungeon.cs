@@ -12,6 +12,7 @@ public class Dungeon
     protected int dungeonHeight;
     protected int maxGold;
     protected int enemyLimit;
+    protected string nextScene;
 
     protected Dictionary<Enemy, int> enemyList;
     protected Dictionary<ItemData, int> itemList;
@@ -25,43 +26,32 @@ public class Dungeon
     { return dungeonName; }
     public int GetDungeonNum()
     { return dungeonNum; }
-
+    public string GetNextScene()
+    { return nextScene; }
 	public int GetDungeonEndFloor()
-    {return dungeonEndFloor;}
-
+    { return dungeonEndFloor; }
     public int GetDungeonFloorSize()
     {return dungeonFloorSize;}
-
     public int GetDungeonWidth()
     {return dungeonWidth;}
-
     public int GetDungeonHeight()
     {return dungeonHeight;}
-
     public int GetMaxGold()
     {return maxGold;}
-
     public int GetEnemyLimit()
     {return enemyLimit;}
-    
     public bool GetHasStaticFloor()
     { return hasStaticFloor; }
     public List<List<Node>> GetStaticFloors()
     { return staticFloors; }
-
     public Dictionary<int, string> GetSafeFloorList()
     { return safeFloorList; }
     public Dictionary<Enemy, int> GetEnemyList()
     {return enemyList;}
-
     public Dictionary<ItemData, int> GetItemList()
     {return itemList;}
-    
     public Dictionary<int, int> GetFloorDialogueMap()
     { return floorDialogueMap; }
-
 	public List<int> GetDialogueList()
     { return dialogueList; }
-
-
 }

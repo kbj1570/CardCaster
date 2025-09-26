@@ -81,7 +81,7 @@ MonoBehaviour:
   - portrait: {fileID: 21300000, guid: dbf85913df6f05c4db3e9465472d66d5, type: 3}
     background: {fileID: 0}
     speaker: 
-    text: "(\uACE4\uB780\uD55C\uB370...)"
+    text: "(\uACE4\uB780\uD558\uAC8C \uB410\uB294\uB370...)"
     choices: []
     lineEvent:
       eventType: 0
