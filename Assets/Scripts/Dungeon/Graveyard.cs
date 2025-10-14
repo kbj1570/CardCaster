@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class Graveyard : Dungeon
 {
     public Graveyard()
@@ -19,6 +21,30 @@ public class Graveyard : Dungeon
         safeFloorList = new(){
             {1,"SafeZone_Graveyard"}
         };
+
+
+        List<ERoomType> tileType = new()
+        {
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,
+            ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None,ERoomType.None
+        };
+
+        List<Node> nodes = new();
+        for (int i = 0; i < tileType.Count; ++i)
+        {
+            nodes.Add(new Node());
+            nodes[i].SetRoomType(tileType[i]);
+        }
+
+        safeFloor = nodes;
 
         enemyList = new(){
             {new UnknownMonster(), 3}

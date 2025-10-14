@@ -64,8 +64,32 @@ MonoBehaviour:
   - portrait: {fileID: 0}
     background: {fileID: 0}
     speaker: 
-    text: "\uC5B4\uC11C \uAD6C\uD574\uC8FC\uC790!"
+    text: "\uC5B4\uC11C \uB3C4\uC640\uC8FC\uC790."
     choices: []
     lineEvent:
-      eventType: 1
+      eventType: 0
       parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 20
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 20
+      parameter: 
+  - portrait: {fileID: 0}
+    background: {fileID: 0}
+    speaker: 
+    text: 
+    choices: []
+    lineEvent:
+      eventType: 2
+      parameter: Campsite

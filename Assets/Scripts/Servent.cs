@@ -40,7 +40,6 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public Color fadeColor;
 	public int serventNum;
-	private bool mouseOn;
 
 	public Texture2D texture2D;
 	private Material monsterMaterial;
@@ -88,14 +87,14 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public IEnumerator DieCoroutine()
 	{
-		float fade = 1f; // √≥¿Ω ∆‰¿ÃµÂ ∞™
+		float fade = 1f; // √≥ÔøΩÔøΩ ÔøΩÔøΩÔøΩÃµÔøΩ ÔøΩÔøΩ
 		BattleManager.Inst.PlayServentDeathSound();
 
 		while (fade > 0.1f)
 		{
 			fade -= Time.deltaTime * 1.1f;
 			monsterMaterial.SetFloat("_Fade", fade);
-			yield return null; // ¥Ÿ¿Ω «¡∑π¿”±Ó¡ˆ ¥Î±‚
+			yield return null;
 		}
 
 		fade = 0f;
@@ -130,14 +129,11 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		}
 	}
 
-	public void OnMouseEnter()
-	{ mouseOn = true; }
-	public void OnMouseExit()
-	{ mouseOn = false; }
 
 	void OnDestroy()
 	{
-		field.SetFilled(false);
+		if (field != null)
+			field.SetFilled(false);
 	}
 
 	public void SetLock(bool locked)

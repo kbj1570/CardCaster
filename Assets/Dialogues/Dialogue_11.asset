@@ -153,5 +153,5 @@ MonoBehaviour:
       \uAC00\uC2DC\uC8E0."
     choices: []
     lineEvent:
-      eventType: 0
+      eventType: 2
       parameter: Campsite

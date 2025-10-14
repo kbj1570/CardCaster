@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 4eddbfcd3506a114fb6f665b908da55b
+guid: c1f2d137cf37894418269e2b4287a8d0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1690761290895858283
-    second: EventNode_0
-  - first:
-      213: -4160086636126751728
-    second: EventNode_1
+      213: -8460771901972215451
+    second: RoomNodeTile_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -103,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: EventNode_0
+      name: RoomNodeTile_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1005
-        width: 12
-        height: 19
+        y: 0
+        width: 90
+        height: 90
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,30 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 595eb2060953988e0800000000000000
-      internalID: -1690761290895858283
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: EventNode_1
-      rect:
-        serializedVersion: 2
-        x: 117
-        y: 61
-        width: 787
-        height: 924
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 014b0dade376446c0800000000000000
-      internalID: -4160086636126751728
+      spriteID: 569075148cc459a80800000000000000
+      internalID: -8460771901972215451
       vertices: []
       indices: 
       edges: []
@@ -160,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      EventNode_0: -1690761290895858283
-      EventNode_1: -4160086636126751728
+      RoomNodeTile_0: -8460771901972215451
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

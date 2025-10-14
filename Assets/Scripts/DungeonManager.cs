@@ -89,7 +89,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public static DungeonManager Inst { get; private set; }
 
 	public float moveDelay = 0.2f; // 이동 간격 (초 단위)
-	private bool isRepeating = false;
 	private Coroutine repeatCoroutine;
 	int currentPage;
 
@@ -139,10 +138,8 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	IEnumerator RepeatMove(System.Action moveAction)
 	{
-		// 첫 입력 즉시 실행
 		moveAction();
 
-		// 일정 텀마다 반복 실행
 		yield return new WaitForSeconds(moveDelay);
 
 		while (true)
@@ -152,7 +149,10 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 	}
 
-
+	void OnDestroy()
+	{
+		if (Inst == this) Inst = null;
+	}
 
 	void Awake()
 	{
@@ -200,7 +200,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 	private void CreateSecretRoom()
 	{
-		// 1) 비밀방 시작 위치: 맵의 빈 공간 중 하나
 		int start;
 		do
 		{
@@ -413,12 +412,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public void SetSelectedItem(int itemNum)
 	{ selectedItem = itemDatabase[itemNum]; }
 
-	//public void LoadItemList()
-	//{
-	//	foreach(KeyValuePair<string, int> value in PlayerData.saveData.others)
-	//	{myItemList.Add(itemDatabase[Int32.Parse(value.Key)], value.Value);}
-	//}
-
 	public void ChangePage(bool value)
 	{
 		if (value)
@@ -430,8 +423,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		if (currentPage >= pageLimit)
 		{ currentPage = pageLimit; }
-
-		//UpdateItemPage();
 	}
 	public void SetEnemyCourse()
 	{
@@ -507,13 +498,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 			}
 
 
-
 			enemy.SetMoveLock(enemy.GetCurrentNodeNum() + 1 == currentPlayerLocation
-
 			|| enemy.GetCurrentNodeNum() - 1 == currentPlayerLocation
-
 			|| enemy.GetCurrentNodeNum() + width == currentPlayerLocation
-
 			|| enemy.GetCurrentNodeNum() - width == currentPlayerLocation);
 
 		}
@@ -622,6 +609,7 @@ public class DungeonManager : MonoBehaviour, ILockable
 		SceneManager.LoadScene("Battle");
 	}
 
+
 	IEnumerator SetActiveBattleScene()
 	{
 		yield return new WaitForSeconds(0.2f);
@@ -663,8 +651,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 			path1 = currentPlayerLocation + width;
 			path2 = currentPlayerLocation - 1;
 		}
-
-
 		return nodeNumList.Contains(path1) || nodeNumList.Contains(path2);
 	}
 
@@ -799,9 +785,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 					StartNextMove(); // 다음 이동 실행
 				});
 
-			// if(CheckBattleStart())
-			// {moveDistance = moveDistance / 2;}
-
 			MoveEnemy();
 			if (CheckBattleStart())
 			{ StartCoroutine(ReadyBattle()); }
@@ -820,34 +803,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 			Destroy(clickedItemInfo.gameObject);
 		}
 	}
-
-	//public bool Foo(EventSelection selectionNode)
-	//{
-	//	if(selectionNode == null)
-	//	return false;
-
-	//	switch(selectionNode.GetRequireType())
-	//	{
-	//		case ERequireType.None:
-	//		return true;
-
-	//		case ERequireType.EGold:
-	//		return selectionNode.GetRequireGold() <= PlayerManager.Inst.GetGold();
-
-	//		case ERequireType.EHealth:
-	//		return selectionNode.GetRequireHealth() <= PlayerManager.Inst.GetHealth();
-
-	//		// case ERequireType.EItem:
-	//		// return myItemList.Contains(selectionNode.GetRequireItem());
-
-	//		case ERequireType.ECard:
-	//		return true;
-	//	}
-	//	return false;
-
-	//	//아이템 종류
-
-	//}
 
 
 
@@ -880,10 +835,9 @@ public class DungeonManager : MonoBehaviour, ILockable
 		return null;
 	}
 
-	public void SetEnemyInNode(Node node)
-	{
-		node.SetEnemy(new UnknownMonster());
-	}
+	// public void SetEnemyInNode(Node node)
+	// {
+	// 	node.SetEnemy(new UnknownMonster());}
 
 	public void ReCreateFloor()
 	{
@@ -916,6 +870,29 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		if (dungeonEnemies != null)
 			ReCreateEnemy();
+	}
+
+
+	public void CreateSafeFloor()
+	{
+		map = dungeon.GetSafeFloor();
+
+		for (int i = 0; i < map.Count; ++i)
+		{
+			if (map[i].GetRoomType() == ERoomType.EStart)
+				currentPlayerLocation = i;
+		}
+
+		floorText.text = floor.ToString() + "F";
+		dungeonEnemies = new();
+
+		CreateNodeNumList();
+		InstantiateNode();
+		MovePlayer(currentPlayerLocation);
+
+		nodeMap[currentPlayerLocation].GetComponent<RoomNode>().SetVisited();
+		player.transform.position = CalculateNodePosition(currentPlayerLocation) + mapObject.transform.position;
+		camera.transform.position = new Vector3(player.transform.position.x, player.transform.position.y, camera.transform.position.z);
 	}
 
 
@@ -1580,14 +1557,15 @@ public class DungeonManager : MonoBehaviour, ILockable
 		}
 		else if (safeFloorList.ContainsKey(floor))
 		{
-			SceneManager.LoadScene(safeFloorList[floor]);
+			CreateSafeFloor();
+			enemyLimit = 0;
 		}
 		else if (dungeonEndFloor == floor)
 		{
 
 			moveLocked = true;
 			DungeonData.Reset();
-			
+
 			SceneManager.LoadScene(dungeon.GetNextScene());
 		}
 		else if (dungeon.GetHasStaticFloor())

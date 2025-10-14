@@ -264,8 +264,9 @@ GameObject:
   - component: {fileID: 126513395}
   - component: {fileID: 126513394}
   - component: {fileID: 126513396}
+  - component: {fileID: 126513397}
   m_Layer: 0
-  m_Name: OldStore
+  m_Name: Merchant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -280,8 +281,8 @@ Transform:
   m_GameObject: {fileID: 126513391}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.86, y: -8.527, z: -1}
-  m_LocalScale: {x: 6.240607, y: 6.3648205, z: 6.456}
+  m_LocalPosition: {x: 14.817, y: -8.527, z: -1}
+  m_LocalScale: {x: 12.156702, y: 6.3648205, z: 6.456}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1324746743}
@@ -397,11 +398,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 126513391}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: def8ce56a59f46f47b08c2c8fbc3d863, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &126513397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 126513391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c15cd72b8f1a341b846c9fd321774c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExaminePoint
+  dialogueIndex: 0
+  examinePoint: 4
 --- !u!1001 &168301890
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1879,6 +1894,7 @@ GameObject:
   - component: {fileID: 446868903}
   - component: {fileID: 446868905}
   - component: {fileID: 446868904}
+  - component: {fileID: 446868906}
   m_Layer: 0
   m_Name: BigTent
   m_TagString: Untagged
@@ -1966,7 +1982,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446868901}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 702bbfc40acf60c4f839eaffce4021be, type: 3}
   m_Name: 
@@ -2017,6 +2033,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &446868906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 446868901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c15cd72b8f1a341b846c9fd321774c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExaminePoint
+  dialogueIndex: 0
+  examinePoint: 3
 --- !u!1 &497412218
 GameObject:
   m_ObjectHideFlags: 0
@@ -2265,7 +2295,7 @@ GameObject:
   - component: {fileID: 502631705}
   - component: {fileID: 502631707}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Storage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2299,6 +2329,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueIndex: 2
+  examinePoint: 5
 --- !u!212 &502631706
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7408,8 +7439,9 @@ GameObject:
   - component: {fileID: 1555607311}
   - component: {fileID: 1555607312}
   - component: {fileID: 1555607313}
+  - component: {fileID: 1555607314}
   m_Layer: 0
-  m_Name: OldHouse
+  m_Name: Lygate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7424,7 +7456,7 @@ Transform:
   m_GameObject: {fileID: 1555607309}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.9, y: 5.6, z: -1}
+  m_LocalPosition: {x: 22.45, y: 2.38, z: -1}
   m_LocalScale: {x: 9.947361, y: 8.27558, z: 6.3923845}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7495,7 +7527,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1555607309}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9714a894f8db1094fbbbbe31c80457fd, type: 3}
   m_Name: 
@@ -7546,6 +7578,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1555607314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1555607309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c15cd72b8f1a341b846c9fd321774c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExaminePoint
+  dialogueIndex: 0
+  examinePoint: 2
 --- !u!1 &1564340101
 GameObject:
   m_ObjectHideFlags: 0

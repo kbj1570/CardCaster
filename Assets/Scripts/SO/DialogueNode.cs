@@ -62,5 +62,9 @@ public enum DialogueEventType
 	RevealNode,
 	CameraFollowingON,
 	CameraFollowingOFF,
-	FadeOutSituationImage
+	FadeOutSituationImage,
+	SetTentSeqNum,
+	SetLygateSeqNum,
+	SetStorageSeqNum,
+	SetNPCSeqNum
 }

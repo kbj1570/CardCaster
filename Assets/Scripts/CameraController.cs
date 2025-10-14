@@ -8,7 +8,6 @@ public class CameraController : MonoBehaviour
 	public GameObject camera;
 	public GameObject player;
 	private float followSpeed = 0.7f;
-	private float returnToFollowDelay = 3f;
 	public bool isFollowing = true;
 	private float lastDragTime;
 	private Coroutine zoomCoroutine;

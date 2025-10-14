@@ -16,30 +16,31 @@ public class Dungeon
 
     protected Dictionary<Enemy, int> enemyList;
     protected Dictionary<ItemData, int> itemList;
-	protected Dictionary<int, string> safeFloorList;
-	protected Dictionary<RandomEvent, int> randomEventList;
+    protected Dictionary<int, string> safeFloorList;
+    protected Dictionary<RandomEvent, int> randomEventList;
     protected Dictionary<int, int> floorDialogueMap;
     protected List<RandomEvent> bannedEncounterList;
-	protected List<int> dialogueList;
+    protected List<int> dialogueList;
     protected List<List<Node>> staticFloors;
-	public string GetDungeonName()
+    protected List<Node> safeFloor;
+    public string GetDungeonName()
     { return dungeonName; }
     public int GetDungeonNum()
     { return dungeonNum; }
     public string GetNextScene()
     { return nextScene; }
-	public int GetDungeonEndFloor()
+    public int GetDungeonEndFloor()
     { return dungeonEndFloor; }
     public int GetDungeonFloorSize()
-    {return dungeonFloorSize;}
+    { return dungeonFloorSize; }
     public int GetDungeonWidth()
-    {return dungeonWidth;}
+    { return dungeonWidth; }
     public int GetDungeonHeight()
-    {return dungeonHeight;}
+    { return dungeonHeight; }
     public int GetMaxGold()
-    {return maxGold;}
+    { return maxGold; }
     public int GetEnemyLimit()
-    {return enemyLimit;}
+    { return enemyLimit; }
     public bool GetHasStaticFloor()
     { return hasStaticFloor; }
     public List<List<Node>> GetStaticFloors()
@@ -47,11 +48,13 @@ public class Dungeon
     public Dictionary<int, string> GetSafeFloorList()
     { return safeFloorList; }
     public Dictionary<Enemy, int> GetEnemyList()
-    {return enemyList;}
+    { return enemyList; }
     public Dictionary<ItemData, int> GetItemList()
-    {return itemList;}
+    { return itemList; }
     public Dictionary<int, int> GetFloorDialogueMap()
     { return floorDialogueMap; }
-	public List<int> GetDialogueList()
+    public List<int> GetDialogueList()
     { return dialogueList; }
+    public List<Node> GetSafeFloor()
+    { return safeFloor; }
 }

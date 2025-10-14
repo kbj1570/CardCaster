@@ -16,7 +16,6 @@ public class RoomNode : MonoBehaviour
     public bool downBlocked;
     public bool leftBlocked;
     public bool rightBlocked;
-
     public bool visited;
 
 

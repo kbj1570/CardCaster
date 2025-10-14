@@ -538,15 +538,18 @@ public class BattleManager : MonoBehaviour , ILockable
 	}
 	public void CloseServentInfo()
 	{
-		if(clickedServentInfo.GetComponent<ServentInfoWindow>().onMouse)
-		{ return; }
+		// 클릭된 정보창 자체가 없으면 종료
+		if (clickedServentInfo == null) return;
 
-		if (clickedServent == null)
-		{return;}
+		var info = clickedServentInfo.GetComponent<ServentInfoWindow>();
+		// 마우스가 정보창 위에 있으면 닫지 않음
+		if (info != null && info.onMouse) return;
 
+		// 선택된 소환수 참조 해제 및 창 파괴
 		if (clickedServent != null)
 		{
 			Destroy(clickedServentInfo);
+			clickedServentInfo = null;
 			clickedServent = null;
 		}
 	}
@@ -610,39 +613,22 @@ public class BattleManager : MonoBehaviour , ILockable
 			deckList[b] = c;
 		}
 	}
- 
 	public void UpdateCondition()
 	{
-		if(deckList == null)
-		return;
-		
+		if (deckList == null) return;
+
 		deckCount = deckList.Count;
 		trashCount = trashList.Count;
 
 		costCountText.text = "Cost: " + costCount.ToString();
 		cardCountText.text = trashCount.ToString() + " / " + deckCount.ToString();
-		playerHealthText.text = "Player HP: "+ playerHealth.ToString();
-		enemyHealthText.text = "Enemy HP: "+ enemyHealth.ToString();
-
-		//field_1.UpdateHealth();
-		//field_2.UpdateHealth();
-		//field_3.UpdateHealth();
-		//field_4.UpdateHealth();
-		//field_5.UpdateHealth();
-		//field_6.UpdateHealth();
-
-		if(enemyHealth <= 0)
-		{
-			enemyHealth = 0;
-			StartCoroutine(WinBattle());
-		}
+		playerHealthText.text = "Player HP: " + playerHealth.ToString();
+		enemyHealthText.text = "Enemy HP: " + enemyHealth.ToString();
 
 		if (playerHealth <= 0)
 		{
 			playerHealth = 0;
-
 			StopAllCoroutines();
-
 			StartCoroutine(GameOver());
 		}
 	}
@@ -652,7 +638,6 @@ public class BattleManager : MonoBehaviour , ILockable
 
 	public IEnumerator DrawPhase()
 	{
-		Debug.Log("Draw Phase");
 		/*
 		 * 패가 5장이 될 때까지 드로우하고 드로우페이즈를 마친다.
 		 * 만약 덱이 0장이라면 대신 묘지에서 카드를 드로우하고,
@@ -675,7 +660,6 @@ public class BattleManager : MonoBehaviour , ILockable
 	}
 	public IEnumerator StandByPhase()
 	{
-		Debug.Log("StandBy Phase");
 		/*
 		 * 턴 시작시 효과들을 처리하는 단계
 		 * 필드 효과, 소환수에게 걸려있는 상태 효과, 소환수 효과, 마법 효과 순서대로 처리된다.
@@ -691,12 +675,12 @@ public class BattleManager : MonoBehaviour , ILockable
 
 	public IEnumerator MainPhase()
 	{
-		Debug.Log("Main Phase");
 		/* 플레이어가 행동하는 단계
 		 * 행동을 모두 마치고 메인 페이즈를 마친다.
 		 * 행동이란 소환, 마법 사용, 공격, 패 버리기 등을 포함한다.
 		 * 행동을 모두 마쳤다면 메인 페이즈를 마친다.
 		 */
+
 
 		foreach (GameObject card in cardObjectList)
 		{ card.GetComponent<Card>().SetLock(false); }
@@ -705,13 +689,10 @@ public class BattleManager : MonoBehaviour , ILockable
 	}
 	public IEnumerator EndPhase()
 	{
-		Debug.Log("End Phase");
-
 		/*
 		 * 턴 종료시 효과들을 처리하는 단계
 		 * 필드 효과, 소환수에게 걸려있는 상태 효과, 소환수 효과, 마법 효과 순서대로 처리된다.
 		 */
-
 		//foreach (var card in activatingCards)
 		//{
 		//	yield return StartCoroutine(card.GetCardData().EndPhaseEffectExecute(this));
@@ -726,123 +707,372 @@ public class BattleManager : MonoBehaviour , ILockable
 
 
 	IEnumerator PlayerTurn()
-	{        
+	{
 		phaseFlag = false;
 
-		foreach(Servent servent in summonedServents)
+		foreach (Servent servent in summonedServents)
 		{
 			servent.ResetAttackCount();
 		}
 		enemyDamageBlock = false;
 
-		foreach(GameObject card in cardObjectList)
-		{card.GetComponent<Card>().HideAndReveal(false); }
-		yield return new WaitForSeconds(0.4f);
+		foreach (GameObject card in cardObjectList)
+		{ card.GetComponent<Card>().HideAndReveal(false); }
 
+		yield return new WaitForSeconds(0.4f);
 		yield return StartCoroutine(DrawPhase());
 		yield return StartCoroutine(StandByPhase());
 		yield return StartCoroutine(MainPhase());
 		yield return StartCoroutine(EndPhase());
 	}
 
-	IEnumerator EnemyTurn()
-	{
-		yield return new WaitForSeconds(0.3f);
-		int actionToken = currentEnemy.GetActionToken();
 
-		for (int i = 0; i < actionToken; ++i)
-		{
-			List<Field> filledField = new();
-			List<Field> emptyField = new();
-			List<Servent> attackableServent = new();
 
-			Field[] enemyFields = { field_4, field_5, field_6 };
 
-			for (int idx = 0; idx < enemyFields.Length; idx++)
-			{
-				if (enemyFields[idx].IsFilled())
-				{
-					filledField.Add(enemyFields[idx]);
-					if (!enemyFields[idx].GetServent().IsAttackable())
-						attackableServent.Add(enemyFields[idx].GetServent());
 
-				}
-				else
-				{ emptyField.Add(enemyFields[idx]); }
-			}
 
-			EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableServent.Count);
 
-			switch (action)
-			{
-				case EEnemyAction.Summon:
-					if (emptyField.Count > 0)
-					{
 
-						Field field = emptyField[Random.Range(0, emptyField.Count)];
-						field.locked = true;
 
-						List<EnemyServentCardData> serventList = currentEnemy.GetServentDeck();
-						EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
 
-						yield return ShowEnemyActionCard(randomServent, field.transform);
 
-						GameObject serventObject =
-							Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
-						field.Summon(serventObject.GetComponent<Servent>(), randomServent);
-						serventObject.GetComponent<Servent>().InitWithEffect();
-						summonedServents.Add(serventObject.GetComponent<Servent>());
 
-						soundEffect.PlayOneShot(serventSummon);
-						field.locked = false;
-					}
-					break;
 
-				case EEnemyAction.Attack:
-					if (attackableServent.Count > 0)
-					{
-						List<EMouseOnArea> playerTargets = new List<EMouseOnArea> { EMouseOnArea.Player };
-						if (field_1.IsFilled()) playerTargets.Add(EMouseOnArea.Field_1);
-						if (field_2.IsFilled()) playerTargets.Add(EMouseOnArea.Field_2);
-						if (field_3.IsFilled()) playerTargets.Add(EMouseOnArea.Field_3);
 
-						Servent attacker = attackableServent[Random.Range(0, attackableServent.Count)];
-						EMouseOnArea targetField = playerTargets[Random.Range(0, playerTargets.Count)];
 
-						if(targetField == EMouseOnArea.Player)
-						{
-							yield return EnemyAttackPlayer(attacker, playerObject);
-						}
-						else
-						{
-							Servent defender = null;
-							switch (targetField)
-							{
-								case EMouseOnArea.Field_1:
-									{ defender = field_1.GetServent(); }
-									break;
-								case EMouseOnArea.Field_2:
-									{ defender = field_2.GetServent(); ; }
-									break;
-								case EMouseOnArea.Field_3:
-									{ defender = field_3.GetServent(); }
-									break;
-							}
 
-							yield return EnemyAttackServent(attacker, defender);
-						}
 
-						
-					}
-					break;
 
-				case EEnemyAction.None:
-					AlertMessage("적이 아무것도 할 수 없습니다.");
-					break;
-			}
-			yield return new WaitForSeconds(2.5f);
-		}
-	}
+	// IEnumerator EnemyTurn()
+	// {
+	// 	yield return new WaitForSeconds(0.3f);
+	// 	int actionToken = currentEnemy.GetActionToken();
+
+	// 	for (int i = 0; i < actionToken; ++i)
+	// 	{
+	// 		List<Field> filledField = new();
+	// 		List<Field> emptyField = new();
+	// 		List<Servent> attackableServent = new();
+
+	// 		Field[] enemyFields = { field_4, field_5, field_6 };
+
+	// 		for (int idx = 0; idx < enemyFields.Length; idx++)
+	// 		{
+	// 			if (enemyFields[idx].IsFilled())
+	// 			{
+	// 				filledField.Add(enemyFields[idx]);
+	// 				if (!enemyFields[idx].GetServent().IsAttackable())
+	// 					attackableServent.Add(enemyFields[idx].GetServent());
+
+	// 			}
+	// 			else
+	// 			{ emptyField.Add(enemyFields[idx]); }
+	// 		}
+
+	// 		EEnemyAction action = SelectEnemyAction(emptyField.Count, attackableServent.Count);
+
+	// 		switch (action)
+	// 		{
+	// 			case EEnemyAction.Summon:
+	// 				if (emptyField.Count > 0)
+	// 				{
+
+	// 					Field field = emptyField[Random.Range(0, emptyField.Count)];
+	// 					field.locked = true;
+
+	// 					List<EnemyServentCardData> serventList = currentEnemy.GetServentDeck();
+	// 					EnemyServentCardData randomServent = serventList[Random.Range(0, serventList.Count)];
+
+	// 					yield return ShowEnemyActionCard(randomServent, field.transform);
+
+	// 					GameObject serventObject =
+	// 						Instantiate(enemyServentPrefabList[cardHashMap[randomServent.GetCardNum()]], field.transform.position, Utils.QI);
+	// 					field.Summon(serventObject.GetComponent<Servent>(), randomServent);
+	// 					serventObject.GetComponent<Servent>().InitWithEffect();
+	// 					summonedServents.Add(serventObject.GetComponent<Servent>());
+
+	// 					soundEffect.PlayOneShot(serventSummon);
+	// 					field.locked = false;
+	// 				}
+	// 				break;
+
+	// 			case EEnemyAction.Attack:
+	// 				if (attackableServent.Count > 0)
+	// 				{
+	// 					List<EMouseOnArea> playerTargets = new List<EMouseOnArea> { EMouseOnArea.Player };
+	// 					if (field_1.IsFilled()) playerTargets.Add(EMouseOnArea.Field_1);
+	// 					if (field_2.IsFilled()) playerTargets.Add(EMouseOnArea.Field_2);
+	// 					if (field_3.IsFilled()) playerTargets.Add(EMouseOnArea.Field_3);
+
+	// 					Servent attacker = attackableServent[Random.Range(0, attackableServent.Count)];
+	// 					EMouseOnArea targetField = playerTargets[Random.Range(0, playerTargets.Count)];
+
+	// 					if (targetField == EMouseOnArea.Player)
+	// 					{
+	// 						yield return EnemyAttackPlayer(attacker, playerObject);
+	// 					}
+	// 					else
+	// 					{
+	// 						Servent defender = null;
+	// 						switch (targetField)
+	// 						{
+	// 							case EMouseOnArea.Field_1:
+	// 								{ defender = field_1.GetServent(); }
+	// 								break;
+	// 							case EMouseOnArea.Field_2:
+	// 								{ defender = field_2.GetServent(); ; }
+	// 								break;
+	// 							case EMouseOnArea.Field_3:
+	// 								{ defender = field_3.GetServent(); }
+	// 								break;
+	// 						}
+
+	// 						yield return EnemyAttackServent(attacker, defender);
+	// 					}
+
+
+	// 				}
+	// 				break;
+
+	// 			case EEnemyAction.None:
+	// 				AlertMessage("적이 아무것도 할 수 없습니다.");
+	// 				break;
+	// 		}
+	// 		yield return new WaitForSeconds(2.5f);
+	// 	}
+	// }
+	
+IEnumerator EnemyTurn()
+{
+    yield return new WaitForSeconds(0.3f);
+
+    int tokens = currentEnemy.GetActionToken();
+    for (int t = 0; t < tokens; t++)
+    {
+        // 매 토큰마다 보드 상태를 다시 평가
+        var action = SelectEnemyAction_V2();
+
+        switch (action)
+        {
+            case EEnemyAction.Summon:
+                yield return TryEnemySummon();
+                break;
+
+            case EEnemyAction.Attack:
+                yield return TryEnemyAttack();
+                break;
+
+            case EEnemyAction.ServentAbility:
+                yield return TryUseServentAbility();
+                break;
+
+            case EEnemyAction.EnemyAbility:
+                yield return TryUseEnemyAbility();
+                break;
+
+            case EEnemyAction.None:
+                AlertMessage("적이 할 수 있는 행동이 없습니다.");
+                yield return new WaitForSeconds(0.5f);
+                break;
+        }
+
+        // 매 액션 사이 약간의 텀
+        yield return new WaitForSeconds(0.6f);
+    }
+}
+
+
+EEnemyAction SelectEnemyAction_V2()
+{
+    // 적/아군 필드 스캔
+    var enemyFields = new[] { field_4, field_5, field_6 };
+    var playerFields = new[] { field_1, field_2, field_3 };
+
+    List<Field> emptyEnemy = new();
+    List<Servent> attackable = new();
+    List<Servent> activatable = new();
+
+    foreach (var f in enemyFields)
+    {
+        if (!f.IsFilled()) emptyEnemy.Add(f);
+        else
+        {
+            var s = f.GetServent();
+            if (s != null)
+            {
+                if (s.IsAttackable()) attackable.Add(s); // ✅ 공격 가능만 수집
+                if (s.IsActivationable() && s.GetCardData().IsCardUsable(this))
+                    activatable.Add(s);
+            }
+        }
+    }
+
+    bool canSummon = emptyEnemy.Count > 0 && currentEnemy.GetServentDeck() != null && currentEnemy.GetServentDeck().Count > 0;
+    bool canAttack = attackable.Count > 0; // 플레이어/소환수 중 하나는 항상 타깃 가능(필드/플레이어 HP 따라)
+    bool canServentAbility = activatable.Count > 0;
+    bool canEnemyAbility = true; // 규칙이 정해지면 여기서 조건 체크
+
+    // 가중치 튜닝 포인트
+    int wSummon = canSummon ? emptyEnemy.Count * 3 : 0;
+    int wAttack = canAttack ? attackable.Count * 2 : 0;
+    int wServentAbility = canServentAbility ? activatable.Count * 2 : 0;
+    int wEnemyAbility = canEnemyAbility ? 2 : 0;
+
+    // 플레이어가 위기 상황이면 공격 성향 강화
+    if (playerHealth <= 10) wAttack = Mathf.CeilToInt(wAttack * 1.5f);
+
+    // 초반 전개 시 소환 우대
+    if (emptyEnemy.Count >= 2) wSummon *= 2;
+
+    int total = wSummon + wAttack + wServentAbility + wEnemyAbility;
+    if (total <= 0) return EEnemyAction.None;
+
+    int roll = Random.Range(0, total);
+    if ((roll -= wSummon) < 0) return EEnemyAction.Summon;
+    if ((roll -= wAttack) < 0) return EEnemyAction.Attack;
+    if ((roll -= wServentAbility) < 0) return EEnemyAction.ServentAbility;
+    return EEnemyAction.EnemyAbility;
+}
+IEnumerator TryEnemySummon()
+{
+    var enemyFields = new[] { field_4, field_5, field_6 };
+    List<Field> empty = new();
+    foreach (var f in enemyFields) if (!f.IsFilled()) empty.Add(f);
+
+    var deck = currentEnemy.GetServentDeck();
+    if (empty.Count == 0 || deck == null || deck.Count == 0) yield break;
+
+    Field field = empty[Random.Range(0, empty.Count)];
+    field.locked = true;
+
+    EnemyServentCardData pick = deck[Random.Range(0, deck.Count)];
+
+    // 연출 카드 보여주기
+    yield return ShowEnemyActionCard(pick, field.transform);
+
+    // 소환
+    GameObject obj = Instantiate(
+        enemyServentPrefabList[cardHashMap[pick.GetCardNum()]],
+        field.transform.position, Utils.QI);
+
+    field.Summon(obj.GetComponent<Servent>(), pick);
+    obj.GetComponent<Servent>().InitWithEffect();
+    summonedServents.Add(obj.GetComponent<Servent>());
+
+    soundEffect.PlayOneShot(serventSummon);
+    field.locked = false;
+
+    // 혹시 즉발 알림/패시브 반응이 있으면 호출
+    yield return StartCoroutine(NotifyServentSummon(obj.GetComponent<Servent>()));
+    yield return StartCoroutine(CheckServentsCondition());
+}
+
+IEnumerator TryEnemyAttack()
+{
+    var enemyFields = new[] { field_4, field_5, field_6 };
+    List<Servent> canAtk = new();
+    foreach (var f in enemyFields)
+        if (f.IsFilled() && f.GetServent().IsAttackable())
+            canAtk.Add(f.GetServent());
+
+    if (canAtk.Count == 0) yield break;
+
+    Servent attacker = canAtk[Random.Range(0, canAtk.Count)];
+
+    // 타깃 후보: 플레이어 + 존재하는 아군 소환수들
+    List<EMouseOnArea> targets = new() { EMouseOnArea.Player };
+    if (field_1.IsFilled()) targets.Add(EMouseOnArea.Field_1);
+    if (field_2.IsFilled()) targets.Add(EMouseOnArea.Field_2);
+    if (field_3.IsFilled()) targets.Add(EMouseOnArea.Field_3);
+
+    var pick = targets[Random.Range(0, targets.Count)];
+
+    if (pick == EMouseOnArea.Player)
+    {
+        yield return EnemyAttackPlayer(attacker, playerObject);
+    }
+    else
+    {
+        Servent defender = null;
+        switch (pick)
+        {
+            case EMouseOnArea.Field_1: defender = field_1.GetServent(); break;
+            case EMouseOnArea.Field_2: defender = field_2.GetServent(); break;
+            case EMouseOnArea.Field_3: defender = field_3.GetServent(); break;
+        }
+        if (defender != null)
+            yield return EnemyAttackServent(attacker, defender);
+    }
+
+    // 공격 후 조건 체크
+    yield return StartCoroutine(CheckServentsCondition());
+}
+
+IEnumerator TryUseServentAbility()
+{
+    var enemyFields = new[] { field_4, field_5, field_6 };
+    List<Servent> candidates = new();
+
+    foreach (var f in enemyFields)
+    {
+        if (!f.IsFilled()) continue;
+        var s = f.GetServent();
+        if (s != null && s.IsActivationable() && s.GetCardData().IsCardUsable(this))
+            candidates.Add(s);
+    }
+
+    if (candidates.Count == 0) yield break;
+
+    Servent caster = candidates[Random.Range(0, candidates.Count)];
+
+    // 연출 카드(적 행동 카드)로 "능력 사용" 표기하고 싶다면 아래 사용 가능
+    // yield return ShowEnemyActionCard("적 소환수 능력", caster.GetCardData().GetCardName());
+
+    activatingServent = caster;
+    caster.AddActivationCount();
+    yield return StartCoroutine(caster.GetCardData().ActivationEffectExecute(this));
+    activatingServent = null;
+
+    yield return StartCoroutine(CheckServentsCondition());
+}
+
+
+IEnumerator TryUseEnemyAbility()
+{
+    // UI로 보여주고 싶으면 사용
+    // yield return ShowEnemyActionCard("적의 능력", currentEnemy.GetName() + "이(가) 기술을 사용했다.");
+
+    yield return StartCoroutine(currentEnemy.EffectExecute(this));
+    yield return StartCoroutine(CheckServentsCondition());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	public void SelectServentOnField(EServentAttribute targetServentAttribute)
 	{
 		this.targetServentAttribute = targetServentAttribute;
@@ -1005,74 +1235,62 @@ public class BattleManager : MonoBehaviour , ILockable
 		yield return new WaitForSeconds(0.5f);
 	}
 
-
 	public GameObject InstantiateCard(CardData battleCardData)
 	{
-
 		GameObject selectedCardPrefab = null;
 
 		switch (battleCardData.GetCardType())
 		{
-			case ECardType.Servent:
-				selectedCardPrefab = serventCardPrefab;
-				break;
-			case ECardType.Spell:
-				selectedCardPrefab = spellCardPrefab;
-				break;
-
+			case ECardType.Servent: selectedCardPrefab = serventCardPrefab; break;
+			case ECardType.Spell:   selectedCardPrefab = spellCardPrefab;  break;
 		}
+
 		GameObject cardObject = Instantiate(selectedCardPrefab, Vector3.zero, Utils.QI);
+
+		// 🔧 일관성: 여기에서도 상태 조건을 적용
+		if (battleCardData.statusConditions != null)
+			foreach (EStatusCondition status in battleCardData.statusConditions)
+				cardObject.GetComponent<Card>().AddStatusCondition(status);
 
 		cardObject.GetComponent<Card>().InitiateActionInBattle();
 
 		cardObject.GetComponent<Card>().Init(
 			(card, eventData) =>
 			{
-				if (card.locked)
-				{ return; }
-
+				if (card.locked) return;
 				if (eventData.button == PointerEventData.InputButton.Right)
-				{ DiscardCard(card); }
-			}
-			,
-			(card, eventData) => {
-
-				if (card.locked)
-				{ return; }
-
+					DiscardCard(card);
+			},
+			(card, eventData) =>
+			{
+				if (card.locked) return;
 				CardBeginDrag(card.gameObject);
 			},
-			(card, eventData) => {
-
-				if (card.locked)
-				{ return; }
+			(card, eventData) =>
+			{
+				if (card.locked) return;
 				card.transform.localScale = new Vector3(0.4f, 0.4f, 1);
 				card.transform.position = card.originPRS.pos;
 				CardOnDrag(card.gameObject);
 			},
-			(card, eventData) => {
-				if (card.locked)
-				{ return; }
+			(card, eventData) =>
+			{
+				if (card.locked) return;
 				StartCoroutine(CardEndDrag(card, ReturnMouseOnField()));
-			}
-			,
-			(card, eventData) => {
-				if (card.locked)
-				{ return; }
-
+			},
+			(card, eventData) =>
+			{
+				if (card.locked) return;
 				if (card.currentSequence != null && card.currentSequence.IsActive())
 					card.currentSequence.Kill();
-
 
 				card.currentSequence = DOTween.Sequence()
 					.Append(card.transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.13f).SetEase(Ease.InOutQuad))
 					.Append(card.transform.DOMoveY(card.originPRS.pos.y + 130, 0.13f).SetEase(Ease.OutCirc));
-			}
-			,
-			(card, eventData) => {
-				if (card.locked)
-				{ return; }
-
+			},
+			(card, eventData) =>
+			{
+				if (card.locked) return;
 				if (card.currentSequence != null && card.currentSequence.IsActive())
 					card.currentSequence.Kill();
 
@@ -1760,11 +1978,11 @@ public class BattleManager : MonoBehaviour , ILockable
 
 	public void DiscardAllHands()
 	{
-		int count = cardObjectList.Count;
-
-		for(int i = 0; i < count; ++i)
+		// 뒤에서부터 안전하게 버리기
+		for (int i = cardObjectList.Count - 1; i >= 0; --i)
 		{
-			DiscardCard(cardObjectList[cardObjectList.Count].GetComponent<Card>());
+			var card = cardObjectList[i].GetComponent<Card>();
+			DiscardCard(card);
 		}
 	}
 	public void DrawCard()
@@ -1824,10 +2042,40 @@ public class BattleManager : MonoBehaviour , ILockable
 	{mouseOnArea = EMouseOnArea.None;}
 
 	public void SelectTarget(GameObject field)
-	{missileTarget = field;}
+	{ missileTarget = field; }
+	
+	void OnDestroy()
+	{
+		if (Inst == this) Inst = null;
+	}
 
-	public void CardAlignmentAlt() { if (handList.Count == 0) { return; } List<PRS> originCardPRSs = new List<PRS>(); originCardPRSs = RoundAlignment(cardAreaBorderLeft, cardAreaBorderRight, cardObjectList.Count, 0.5f, Vector3.one * 2.3f); for (int i = 0; i < cardObjectList.Count; ++i) { var targetCard = cardObjectList[i]; targetCard.GetComponent<Card>().originPRS = originCardPRSs[i]; targetCard.transform.position = originCardPRSs[i].pos; targetCard.GetComponent<Card>().UpdateCardCost(costCount); } }
+	public void CardAlignmentAlt()
+	{
+		if (handList.Count == 0) return;
 
+		List<PRS> originCardPRSs = RoundAlignment(
+			cardAreaBorderLeft,
+			cardAreaBorderRight,
+			cardObjectList.Count,
+			0.5f,
+			Vector3.one * 2.3f
+		);
+
+		for (int i = 0; i < cardObjectList.Count; ++i)
+		{
+			var targetCard = cardObjectList[i];
+			var cardComp = targetCard.GetComponent<Card>();
+
+			cardComp.originPRS = originCardPRSs[i];
+
+			// 동일한 트윈 연출 적용
+			targetCard.transform.DOMove(originCardPRSs[i].pos, 0.3f).SetEase(Ease.InOutQuad);
+			targetCard.transform.DORotateQuaternion(originCardPRSs[i].rot, 0.3f).SetEase(Ease.InOutQuad);
+			//targetCard.transform.DOScale(originCardPRSs[i].scale, 0.3f).SetEase(Ease.InOutQuad);
+
+			cardComp.UpdateCardCost(costCount);
+		}
+	}
 	public void CardAlignment()
 	{
 		if (handList.Count == 0)
@@ -2343,7 +2591,11 @@ public class BattleManager : MonoBehaviour , ILockable
 	{
 		StartCoroutine(FadeOut());
 		yield return new WaitForSeconds(1.5f);
-		SceneManager.LoadScene("Dungeon");
+
+		if(BattleData.nextScene != null)
+		{SceneManager.LoadScene(BattleData.nextScene);}
+		else{SceneManager.LoadScene("Dungeon");}
+		
 	}
 
 	

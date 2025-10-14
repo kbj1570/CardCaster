@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -34,6 +35,16 @@ public class DialogueManager : MonoBehaviour
 	public Sprite[] situationSprites;
 	bool isActionDone;
 	float typingSpeed = 0.04f;
+
+	// === DialogueManager 멤버 필드에 추가 ===
+	bool autoFastForward = false;      // F로 토글: 자동으로 빠르게 넘김 (선택지 있을 땐 멈춤)
+	bool skipAllRequested = false;     // Ctrl+Tab: 대화 전체 스킵
+	bool skipCurrentRequested = false; // Tab: 현재 줄 즉시 완성/다음으로
+
+	// 타이핑 속도 프로파일
+	readonly float typeSpeedNormal = 0.05f;
+	readonly float typeSpeedPunct  = 0.17f;  // . ! ? 뒤 잠깐 쉬는 느낌
+	readonly float typeSpeedFast   = 0.001f; // 빨리감기시
 	bool isTyping = false;
 
 	public static DialogueManager Inst { get; private set; }
@@ -61,73 +72,95 @@ public class DialogueManager : MonoBehaviour
 		StartCoroutine(ShowLine());
 	}
 	IEnumerator ShowLine()
-	{
-		if (currentData == null) yield break;
-		DialogueNode line = currentData.lines[currentIndex];
-		ClearChoices();
-		
-		documentFrame.SetActive(false);
-		isActionDone = false;
+{
+    if (currentData == null) yield break;
+    DialogueNode line = currentData.lines[currentIndex];
+    ClearChoices();
 
-		if (line.background != null)
-		{
-			backgroundImage.color = new Color(1, 1, 1, 1);
-			backgroundImage.sprite = line.background;
-		}
+    documentFrame.SetActive(false);
+    isActionDone = false;
 
-		if (!string.IsNullOrEmpty(line.text))
-		{
-			textBox.SetActive(true);
-			speakerText.text = line.speaker;
-			dialogueText.text = "";
-			portraitFrame.gameObject.SetActive(line.portrait != null);
-			portraitImage.sprite = line.portrait;
+    if (line.background != null)
+    {
+        backgroundImage.color = new Color(1, 1, 1, 1);
+        backgroundImage.sprite = line.background;
+    }
 
-			yield return StartCoroutine(TypeText(line.text));
-			yield return new WaitUntil(() => isActionDone);
-		}
-		else
-		{
-			textBox.SetActive(false);
-		}
+    if (!string.IsNullOrEmpty(line.text))
+    {
+        textBox.SetActive(true);
+        speakerText.text = line.speaker;
+        dialogueText.text = "";
+        portraitFrame.gameObject.SetActive(line.portrait != null);
+        portraitImage.sprite = line.portrait;
 
+        yield return StartCoroutine(TypeText(line.text));
 
-		if (line.choices != null && line.choices.Length > 0)
-		{
-			foreach (var choice in line.choices)
-			{
-				GameObject btnObj = Instantiate(choiceButtonPrefab, choiceContainer);
-				btnObj.GetComponentInChildren<TMP_Text>().text = choice.choiceText;
-				btnObj.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(choice));
-			}
-		}
-		else
-		{
-			StartCoroutine(NextLine());
-		}
-	}
+        // ✅ 자동 빨리감기 중이고, 현재 줄에 선택지가 없는 경우 자동 진행
+        if (autoFastForward && (line.choices == null || line.choices.Length == 0))
+            isActionDone = true;
+
+        yield return new WaitUntil(() => isActionDone);
+    }
+    else
+    {
+        textBox.SetActive(false);
+    }
+
+    if (line.choices != null && line.choices.Length > 0)
+    {
+        foreach (var choice in line.choices)
+        {
+            GameObject btnObj = Instantiate(choiceButtonPrefab, choiceContainer);
+            btnObj.GetComponentInChildren<TMP_Text>().text = choice.choiceText;
+            btnObj.GetComponent<Button>().onClick.AddListener(() => OnChoiceSelected(choice));
+        }
+        // 자동 빨리감기여도 "선택"은 플레이어가 하게 둔다 (자동 선택 X)
+    }
+    else
+    {
+        StartCoroutine(NextLine());
+    }
+}
 
 	private IEnumerator TypeText(string text)
 	{
 		isTyping = true;
 		dialogueText.text = "";
+		skipCurrentRequested = false; // 줄 시작 시 리셋
 
 		for (int i = 0; i < text.Length; i++)
 		{
+			// 전체 스킵 중이면 즉시 종료
+			if (skipAllRequested)
+			{
+				dialogueText.text = text;
+				break;
+			}
+
+			// 현재 줄 스킵이면 즉시 완성
+			if (skipCurrentRequested)
+			{
+				dialogueText.text = text;
+				break;
+			}
+
+			// 캐리지리턴+뉴라인 처리 (원래 로직 유지)
 			if (text[i] == '\r' && i + 1 < text.Length && text[i + 1] == '\n')
 			{
 				dialogueText.text = text.Substring(0, i + 2);
 				i++;
 			}
 			else
-			{dialogueText.text = text.Substring(0, i + 1);}
+			{
+				dialogueText.text = text.Substring(0, i + 1);
+			}
 
-			if (text[i] == '.' || text[i] == '!' || text[i] == '?')
-			{typingSpeed = 0.17f;}
-			else
-			{typingSpeed = 0.05f;}
+			// 속도 결정: 빨리감기면 극단적으로 빠르게
+			bool isPunct = (text[i] == '.' || text[i] == '!' || text[i] == '?');
+			float delay = autoFastForward ? typeSpeedFast : (isPunct ? typeSpeedPunct : typeSpeedNormal);
 
-			yield return new WaitForSeconds(typingSpeed);
+			yield return new WaitForSeconds(delay);
 		}
 
 		isTyping = false;
@@ -136,14 +169,36 @@ public class DialogueManager : MonoBehaviour
 
 
 	void Update()
-	{
+{
+    // Space: (원래 있던 로직) 타이핑 중이 아니면 다음으로
+    if (Input.GetKeyDown(KeyCode.Space))
+    {
+        if (!isTyping) { isActionDone = true; }
+    }
 
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			if (!isTyping)
-			{isActionDone = true;}
-		}
-	}
+    // Tab: 스킵
+    if (Input.GetKeyDown(KeyCode.Tab))
+    {
+        if (isTyping)  // 현재 줄 타이핑 중이면 즉시 완성
+            skipCurrentRequested = true;
+        else           // 이미 완성된 상태면 다음 줄로Fty
+            isActionDone = true;
+    }
+
+    // Ctrl+Tab: 전체 스킵
+    if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) &&
+        Input.GetKeyDown(KeyCode.Tab))
+    {
+        skipAllRequested = true;
+        SkipAllDialogue(); // 아래 헬퍼
+    }
+
+    // F: 자동 빨리감기 토글 (선택지/문서 화면에서는 자동 선택/닫기 안 함)
+    if (Input.GetKeyDown(KeyCode.F))
+    {
+        autoFastForward = !autoFastForward;
+    }
+}
 
 	IEnumerator ExecuteEvent(DialogueEvent evt)
 	{
@@ -216,6 +271,10 @@ public class DialogueManager : MonoBehaviour
 				DungeonManager.Inst.InputKeyNorth();
 				yield return new WaitForSeconds(0.8f);
 				break;
+			case DialogueEventType.KeyInputDown:
+				DungeonManager.Inst.InputKeySouth();
+				yield return new WaitForSeconds(0.8f);
+				break;
 			case DialogueEventType.ShowMaskImage:
 				maskImage.gameObject.SetActive(true);
 				break;
@@ -254,11 +313,24 @@ public class DialogueManager : MonoBehaviour
 		PlayerData.saveData.gold += Int32.Parse(parameter);
 		yield return null;
 	}
+	void SkipAllDialogue()
+	{
+		// 이미 엔딩 처리 중이면 무시
+		if (currentData == null) return;
+
+		// 코루틴 상태를 정리하고 바로 종료 처리
+		StopAllCoroutines();
+		// 텍스트/선택지 초기화
+		ClearChoices();
+		textBox.SetActive(false);
+
+		// 인덱스를 끝으로 밀고 종료 코루틴 실행
+		currentIndex = currentData.lines.Length;
+		StartCoroutine(EndDialogue());
+	}
 
 	private IEnumerator GetItem(string parameter)
     {
-
-		// ItemData item = DataController.Inst.LoadItemDatabase()[Int32.Parse(parameter)];
 		if(PlayerData.saveData.inventory_items.Count <= 8)
 		{PlayerData.saveData.inventory_items.Add(parameter);}
 		else
@@ -298,6 +370,7 @@ public class DialogueManager : MonoBehaviour
 		}
 		color.a = 1f;
 		fadeImage.color = color;
+		DOTween.KillAll();
 		
 		SceneManager.LoadScene(value);
 	}
