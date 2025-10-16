@@ -3556,19 +3556,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemLocationParent: {fileID: 3388153732017162088}
   itemSpriteList:
-  - {fileID: 21300000, guid: b4233d637d7391b44ad40c4d0ab1917a, type: 3}
-  - {fileID: 21300000, guid: 179baa9f6345b494f856c345c44da9ed, type: 3}
-  - {fileID: 21300000, guid: 2b6c59ad1eb582247ab26d7153a798e9, type: 3}
-  - {fileID: 21300000, guid: d79868178030d534fb607f12b14c77a8, type: 3}
-  - {fileID: 21300000, guid: c3b480c543e6f894585800bf99e59a37, type: 3}
-  - {fileID: 21300000, guid: dfb88a2523802c049bcf398658939de6, type: 3}
-  - {fileID: 21300000, guid: 0eb8c0dddce02e74b955d1892e38c36e, type: 3}
-  - {fileID: 21300000, guid: f2fe03b2af7605248b5b8dea0eddb1d6, type: 3}
-  - {fileID: 21300000, guid: 808eeb9273ed69348b7d08f6d261f83e, type: 3}
-  - {fileID: 21300000, guid: 4d52494e84ab247419902a7e3cb12ee7, type: 3}
-  - {fileID: 21300000, guid: 5d18d8b40a6dd924da010bd054a4aaa1, type: 3}
-  - {fileID: 21300000, guid: 6b1dc85328663af43a174955fe2bb08b, type: 3}
-  - {fileID: 21300000, guid: b1159bd1bb5799e4d8a171d2289d6f9b, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -4848539590029916005, guid: 5473b27cd311ca542b3531ba622410ce, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
+  - {fileID: -7930571331049095873, guid: 57af62e0d4c8ff741958f02b2f0e8317, type: 3}
   itemPrefab: {fileID: 1310393156257509718, guid: 5daf8be5a2927484888843cf9ab93984, type: 3}
   toolToggle: {fileID: 8398810687822202823}
   itemDescriptionWindow: {fileID: 5231090263643440659}

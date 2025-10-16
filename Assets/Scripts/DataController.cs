@@ -48,7 +48,7 @@ public class  DataController : MonoBehaviour
 		TextAsset jsonFile = Resources.Load<TextAsset>("CutScenes/cutscene_" + cutSceneNum +".json");
 		if (jsonFile == null)
 		{
-			Debug.LogError("dialogues.json ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+			Debug.LogError("dialogues.json ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 			return null;
 		}
 
@@ -60,7 +60,7 @@ public class  DataController : MonoBehaviour
 		TextAsset jsonFile = Resources.Load<TextAsset>("Dialogues/" + fileName);
 		if (jsonFile == null)
 		{
-			Debug.LogError("dialogues.json ÆÄÀÏÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+			Debug.LogError("dialogues.json ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 			return null;
 		}
 

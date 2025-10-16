@@ -33,7 +33,7 @@ public class BattleWindow : MonoBehaviour
 	public void SetActor(GameObject actor)
 	{
 		actor.transform.SetParent(transform);
-		actor.transform.localScale = new Vector3(0.6f, 0.6f, 1f);
+		actor.transform.localScale = new Vector3(0.55f, 0.55f, 1f);
 		actor.transform.localPosition = actorPosition.localPosition;
 		currentActor = actor;
 	}

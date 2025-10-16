@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 7468473441850001520}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.19764534}
-  m_LocalScale: {x: 1, y: 1, z: 0.92923796}
+  m_LocalPosition: {x: -1.58, y: 1.38, z: -0.19764534}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7468473442354731414}
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
+  m_Sprite: {fileID: -855298285791758126, guid: 2c234f79b145065499f491f6299352e0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 12.92, y: 19.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -135,17 +135,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70dacefdee0cab245bca77ae8b7d0187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  idle: {fileID: -855298285791758126, guid: 2c234f79b145065499f491f6299352e0, type: 3}
+  attack: {fileID: 5136614538161792609, guid: f786a659ff71b0046965ca8a000a978f, type: 3}
+  ready: {fileID: 3301243711951162130, guid: c4354d44a9187904dab48642fd186c39, type: 3}
+  guard: {fileID: 6937817954938267909, guid: 82c53d28841775c4c8569bafa2bd0253, type: 3}
+  death: {fileID: 6937817954938267909, guid: 82c53d28841775c4c8569bafa2bd0253, type: 3}
   dragPoint: {fileID: 1602376820656342994}
   currentForce: 0
   border: {fileID: 0}
   infoWindow: {fileID: 415667162582626545, guid: 45d7fa17f6101a44f8e3d1b44c96ebb5, type: 3}
   floatingTextPrefab: {fileID: 5577212868850533928, guid: 435c3ec4acf82db41ae2936f88adc52f, type: 3}
   serventForceText: {fileID: 3965241541678656265}
-  activationButton: {fileID: 0}
   spriteRenderer: {fileID: 7468473441850001522}
   fadeColor: {r: 0.9433962, g: 0.87972414, b: 0.28835884, a: 0}
   serventNum: 0
-  texture2D: {fileID: 2800000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
+  texture2D: {fileID: 2800000, guid: 2c234f79b145065499f491f6299352e0, type: 3}
   battleObjectType: 2
 --- !u!61 &7468473442354731415
 BoxCollider2D:
@@ -258,7 +262,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.77, y: 4.75}
+  m_AnchoredPosition: {x: 4.83, y: 5.41}
   m_SizeDelta: {x: 2.0165, y: 2.6001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &1414717745525832447

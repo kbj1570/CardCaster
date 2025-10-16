@@ -17,6 +17,7 @@ using Random = UnityEngine.Random;
 
 public class BattleManager : MonoBehaviour , ILockable
 {
+	Tween parryTween;
 	public AudioSource backGroundMusic;
 	public AudioSource soundEffect;
 	public AudioClip serventDeath;
@@ -191,7 +192,7 @@ public class BattleManager : MonoBehaviour , ILockable
 		battleWindowRightSide.transform.DOMove(battleWindowRightSideFirstPosition.position,
 		0.2f).SetEase(Ease.InQuad);
 
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.2f);
 
 		foreach (Servent servent in summonedServents)
 		{ servent.ShowForce(); }
@@ -378,40 +379,74 @@ public class BattleManager : MonoBehaviour , ILockable
 		{
 			switch (battleState)
 			{
-				case BattleState.Idle:
-					HandleIdleClick();
-					break;
-				case BattleState.SelectingServent:
-					HandleSelectServentClick();
-					break;
-				case BattleState.EnemyTurn:
-					break;
+				case BattleState.Idle: HandleIdleClick(); break;
+				case BattleState.SelectingServent: HandleSelectServentClick(); break;
+				case BattleState.EnemyTurn: break;
 			}
 		}
 
 		UpdateCondition();
 
-
-		if (Input.GetKeyDown(KeyCode.Space))
+		// ⬇️ 패링 입력 처리
+		if (Input.GetKeyDown(KeyCode.Space) && parryState == EParryState.Parry)
 		{
-			if(parryState != EParryState.Parry)
-			return;
-
-			if(isParryWindowActive)
+			if (isParryWindowActive)
 			{
 				GameObject damageText = Instantiate(floatingTextPrefab, alertPoint);
 				damageText.GetComponent<FloatingDamageText>().SetDamageText("Guard!!");
 				damageText.GetComponent<FloatingDamageText>().SetFont(30);
 				damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
 				parryState = EParryState.Succecced;
-				
 			}
 			else
-			{parryState = EParryState.Failed;}
+			{
+				parryState = EParryState.Failed;
+			}
 
-			StopCoroutine(ParryWindowCoroutine());
+			// 진행 중인 패링 트윈/창 닫기
+			if (parryTween != null && parryTween.IsActive()) parryTween.Kill();
 			isParryWindowActive = false;
 		}
+	}
+	IEnumerator StartParrySequence(float duration, float windowCenterNorm, float windowDuration)
+	{
+		// 초기화
+		isParryWindowActive = false;
+		parryState = EParryState.Parry;
+
+		Vector3 targetScale = bigCircle.transform.localScale;
+		smallCircle.transform.localScale = Vector3.zero;
+
+		// 노멀라이즈드 윈도우 구간 계산
+		float winHalf = Mathf.Clamp01((windowDuration / duration) * 0.5f);
+		float winStart = Mathf.Clamp01(windowCenterNorm - winHalf);
+		float winEnd   = Mathf.Clamp01(windowCenterNorm + winHalf);
+
+		float u = 0f;
+
+		// 진행 트윈: u를 0→1로 선형 진행하면서 스케일 보간, 윈도우 on/off 제어
+		parryTween = DOTween.To(() => u, x =>
+		{
+			u = x;
+			smallCircle.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, u);
+
+			if (!isParryWindowActive && u >= winStart && u < winEnd) isParryWindowActive = true;
+			if (isParryWindowActive && u >= winEnd)                 isParryWindowActive = false;
+
+		}, 1f, duration)
+		.SetEase(Ease.Linear)
+		.OnKill(() =>
+		{
+			// 트윈이 중도 종료되든 자연 종료되든 원을 초기화
+			smallCircle.transform.localScale = Vector3.zero;
+			isParryWindowActive = false;
+		});
+
+		yield return parryTween.WaitForCompletion();
+
+		// 플레이어 입력이 없었다면 실패 판정
+		if (parryState == EParryState.Parry)
+			parryState = EParryState.Failed;
 	}
 
 	public void StartParryWindow()
@@ -569,7 +604,18 @@ public class BattleManager : MonoBehaviour , ILockable
 		trashCount = 0;
 		deckCount = 0;
 		costCount = 0;
+
+
+		if (PlayerData.saveData == null)
+		{ PlayerData.saveData = DataController.Inst.LoadData(); }
+
 		playerHealth = PlayerData.saveData.health;
+		
+		if(enemies == null)
+		{
+			enemies = new();
+			enemies.Add(new UnknownMonster()); 
+		}
 
 		currentEnemy = enemies[enemyIndex];
 		enemyHealth = currentEnemy.GetHealth();
@@ -579,9 +625,12 @@ public class BattleManager : MonoBehaviour , ILockable
 		List<CardData> cardDatabase = DataController.Inst.LoadCardDatabase();
 		Dictionary<string, int> myDeck = PlayerData.saveData.deck;
 
+		if (DungeonData.dungeon != null)
+        {
+            battleWindowLeftSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
+			battleWindowRightSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
+        }
 
-		battleWindowLeftSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
-		battleWindowRightSide.GetComponent<BattleWindow>().SetBackGround(DungeonData.dungeon.GetDungeonNum());
 
 
 		foreach (KeyValuePair<string, int> value in myDeck)
@@ -1373,13 +1422,9 @@ IEnumerator TryUseEnemyAbility()
 
 	IEnumerator EnemyAttackServent(Servent attacker, Servent defender)
 	{
-		parryState = EParryState.Parry;
-		StartCoroutine(DrawAttackLine(attacker.transform.position
-		, defender.transform.position, circleSpeed));
-
-		ParryCircle();
-		yield return new WaitForSeconds(circleSpeed - parryWindowTime);
-		StartParryWindow();
+		StartCoroutine(DrawAttackLine(attacker.transform.position, defender.transform.position, circleSpeed));
+		// 예시: 전체 진행의 80% 지점에서 parryWindowTime 길이만큼 창 열기
+		yield return StartCoroutine(StartParrySequence(circleSpeed, 0.80f, parryWindowTime));
 
 		int attackerForce = attacker.GetForce();
 		int defenderForce = defender.GetForce();
@@ -1438,13 +1483,8 @@ IEnumerator TryUseEnemyAbility()
 
 	IEnumerator EnemyAttackPlayer(Servent attacker, GameObject defender)
 	{
-		parryState = EParryState.Parry;
-		StartCoroutine(DrawAttackLine(attacker.transform.position
-		, defender.transform.position, circleSpeed));
-
-		ParryCircle();
-		yield return new WaitForSeconds(circleSpeed - parryWindowTime);
-		StartParryWindow();
+		StartCoroutine(DrawAttackLine(attacker.transform.position, defender.transform.position, circleSpeed));
+		yield return StartCoroutine(StartParrySequence(circleSpeed, 0.80f, parryWindowTime));
 
 		
 		int attackerForce = attacker.GetForce();
@@ -2014,12 +2054,9 @@ IEnumerator TryUseEnemyAbility()
 		foreach (Servent summonedServent in summonedServents)
 		{ summonedServent.SetLock(true); }	
 
-
 		Destroy(clickedServentInfo);
 		clickedServent.AddActivationCount();
 		StartCoroutine(ActivateCardEffectCo(servent));
-
-
 	}
 
 	public IEnumerator ActivateCardEffectCo(Servent servent)
@@ -2068,11 +2105,8 @@ IEnumerator TryUseEnemyAbility()
 
 			cardComp.originPRS = originCardPRSs[i];
 
-			// 동일한 트윈 연출 적용
 			targetCard.transform.DOMove(originCardPRSs[i].pos, 0.3f).SetEase(Ease.InOutQuad);
 			targetCard.transform.DORotateQuaternion(originCardPRSs[i].rot, 0.3f).SetEase(Ease.InOutQuad);
-			//targetCard.transform.DOScale(originCardPRSs[i].scale, 0.3f).SetEase(Ease.InOutQuad);
-
 			cardComp.UpdateCardCost(costCount);
 		}
 	}
@@ -2099,7 +2133,6 @@ IEnumerator TryUseEnemyAbility()
 			// 💡 DOTween으로 부드럽게 이동/회전/스케일 적용
 			targetCard.transform.DOMove(originCardPRSs[i].pos, 0.3f).SetEase(Ease.InOutQuad);
 			targetCard.transform.DORotateQuaternion(originCardPRSs[i].rot, 0.3f).SetEase(Ease.InOutQuad);
-			//targetCard.transform.DOScale(originCardPRSs[i].scale, 0.3f).SetEase(Ease.InOutQuad);
 
 			// 카드 코스트 갱신
 			cardComp.UpdateCardCost(costCount);
@@ -2209,7 +2242,6 @@ IEnumerator TryUseEnemyAbility()
 		GameObject defender = hit.collider.gameObject;
 
 
-
 		attacker.AddAttackCount();
 
 		if (defender.CompareTag("Enemy")) // 직접 공격시
@@ -2230,6 +2262,10 @@ IEnumerator TryUseEnemyAbility()
 
 			GameObject rightActor = Instantiate(enemyObject, new Vector3(), Utils.QI);
 
+
+			attacker.ChangeState(EServentState.Attack, false, 0.1f);
+			leftActor.GetComponent<Servent>().ChangeState(EServentState.Attack);
+
 			battleWindowLeftSide.GetComponent<BattleWindow>().SetActor(leftActor);
 			leftActor.GetComponent<Servent>().OnBattleWindow();
 			battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
@@ -2237,6 +2273,8 @@ IEnumerator TryUseEnemyAbility()
 
 			yield return StartCoroutine(ShowBattleWindow(0, attackerForce));
 			enemyHealth -= attackerForce;
+			
+			attacker.ChangeState(EServentState.Idle, false, 0.1f);
 
 			yield return StartCoroutine(CheckEnemyCondition());
 		}
@@ -2274,6 +2312,7 @@ IEnumerator TryUseEnemyAbility()
 			yield return StartCoroutine(attacker.GetCardData().AttackEffectExecute(this));
 			defender.GetComponent<Servent>().TakeDamage(defenderDamage);
 			yield return StartCoroutine(defender.GetComponent<Servent>().GetCardData().HitEffectExecute(this));
+			
 			yield return StartCoroutine(CheckServentsCondition());
 
 			StartCoroutine(CheckEnemyCondition());

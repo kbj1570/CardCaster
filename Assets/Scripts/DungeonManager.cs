@@ -16,7 +16,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 	public DecorateBlock[] decorateBlocks;
 	public Sprite decorateBlock;
 	public Image fadeImage;
-	int lineCount;
 	int mouseOnRoomNum;
 	public bool moveLocked;
 	ItemData clickedItem;
@@ -176,7 +175,6 @@ public class DungeonManager : MonoBehaviour, ILockable
 
 		itemDatabase = DataController.Inst.LoadItemDatabase();
 		currentPage = 0;
-		lineCount = 30;
 
 		DungeonSetUp();
 		if (DungeonData.map != null)

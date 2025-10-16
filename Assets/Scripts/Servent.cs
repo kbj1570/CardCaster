@@ -16,15 +16,17 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	private Field field;
 
-	private Sprite idle;
-	private Sprite attack;
-	private Sprite ready;
-	private Sprite guard;
-	private Sprite death;
+	public Sprite idle;
+	public Sprite attack;
+	public Sprite ready;
+	public Sprite guard;
+	public Sprite death;
 
 	public Transform dragPoint;
 	public int currentForce;
 
+	private Tweener fadeTween;
+	private bool isTransitioning = false;
 
 	public GameObject border;
 	public GameObject infoWindow;
@@ -53,7 +55,10 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	void Awake()
 	{
-		monsterMaterial = spriteRenderer.GetComponent<SpriteRenderer>().material;
+		// 머티리얼 인스턴스 분리(공유 머티리얼 오염 방지)
+		spriteRenderer.material = new Material(spriteRenderer.material);
+		monsterMaterial = spriteRenderer.material;
+
 		monsterMaterial.SetTexture("_MainTex", texture2D);
 		monsterMaterial.SetFloat("_Fade", fade);
 		monsterMaterial.SetColor("_Color", fadeColor);
@@ -77,6 +82,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 			}
 			monsterMaterial.SetFloat("_Fade", fade);
 		}
+
 	}
 	public void InitWithEffect()
 	{
@@ -107,7 +113,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		Destroy(gameObject);
 		yield break;
 	}
-	public void ChangeState(EServentState state)
+	private void ChangeState(EServentState state)
 	{
 		switch (state)
 		{
@@ -173,10 +179,64 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public EServentAttribute GetAttribute()
 	{ return serventAttribute; }
 
+	private Sprite SpriteForState(EServentState state)
+	{
+		switch (state)
+		{
+			case EServentState.Idle:   return idle;
+			case EServentState.Attack: return attack;
+			case EServentState.Guard:  return guard;
+			case EServentState.Death:  return death;
+			case EServentState.Ready:  return ready;
+			default:                   return idle;
+		}
+	}
+
+	// 외부에서 상태 바꾸고 싶을 때 이걸 호출하세요.
+	public void ChangeState(EServentState state, bool instant = false, float duration = 0.1f)
+	{
+		if (instant)
+		{
+			// 즉시 교체(연출 없이 바뀌어야 하는 특수 상황용)
+			spriteRenderer.sprite = SpriteForState(state);
+			return;
+		}
+		StartCoroutine(StateTransitionCoroutine(state, duration));
+	}
+
+	private IEnumerator StateTransitionCoroutine(EServentState nextState, float halfDuration)
+	{
+		if (isDying) yield break;
+		if (isTransitioning) yield break;
+		isTransitioning = true;
+
+		if (fadeTween != null && fadeTween.IsActive()) fadeTween.Kill();
+
+		try
+		{
+			// 알파 1 -> 0
+			fadeTween = spriteRenderer.DOFade(0f, halfDuration).SetEase(Ease.OutQuad);
+			yield return fadeTween.WaitForCompletion();
+
+			// 스프라이트 교체
+			spriteRenderer.sprite = SpriteForState(nextState);
+
+			// 알파 0 -> 1
+			fadeTween = spriteRenderer.DOFade(1f, halfDuration).SetEase(Ease.InQuad);
+			yield return fadeTween.WaitForCompletion();
+		}
+		finally
+		{
+			// 트윈이 중간에 Kill 되거나 예외가 나도 상태 잠금 해제
+			isTransitioning = false;
+		}
+	}
+
 	public void OnBeginDrag(PointerEventData eventData)
 	{
 		if(locked) return;
-
+		
+		ChangeState(EServentState.Ready, false, 0.1f);
 		BattleManager.Inst.ReadyServentAttack(this);
 	}
 
@@ -189,8 +249,12 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public void OnEndDrag(PointerEventData eventData)
 	{
 		if (locked) return;
+
 		if (BattleManager.Inst.CheckAttackable(this))
 			StartCoroutine(BattleManager.Inst.BattlePhase());
+		else
+			ChangeState(EServentState.Idle, false, 0.1f);
+		
 
 		BattleManager.Inst.ClearLine();
 	}
