@@ -52,8 +52,6 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -75,7 +73,6 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 4
@@ -137,7 +134,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70dacefdee0cab245bca77ae8b7d0187, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dragPoint: {fileID: 0}
+  idle: {fileID: 2536022573172547876, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
+  attack: {fileID: 2536022573172547876, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
+  ready: {fileID: 2536022573172547876, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
+  guard: {fileID: 2536022573172547876, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
+  death: {fileID: 2536022573172547876, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
+  dragPoint: {fileID: 7468473441850001521}
   currentForce: 0
   border: {fileID: 0}
   infoWindow: {fileID: 0}
@@ -146,7 +148,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 7468473441850001522}
   fadeColor: {r: 0.057105, g: 0.4811321, b: 0, a: 0}
   serventNum: 1001
-  texture2D: {fileID: 2800000, guid: 79ae3037f4c9f854f9bdccd3fba54326, type: 3}
+  texture2D: {fileID: 2800000, guid: 5d7d4781a7ad6e349a3ca52717ccfb9b, type: 3}
   battleObjectType: 2
 --- !u!61 &7468473442354731415
 BoxCollider2D:
@@ -251,8 +253,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -274,7 +274,6 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0

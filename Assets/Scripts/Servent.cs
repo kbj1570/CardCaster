@@ -55,10 +55,8 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	void Awake()
 	{
-		// 머티리얼 인스턴스 분리(공유 머티리얼 오염 방지)
 		spriteRenderer.material = new Material(spriteRenderer.material);
 		monsterMaterial = spriteRenderer.material;
-
 		monsterMaterial.SetTexture("_MainTex", texture2D);
 		monsterMaterial.SetFloat("_Fade", fade);
 		monsterMaterial.SetColor("_Color", fadeColor);
@@ -93,7 +91,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 	public IEnumerator DieCoroutine()
 	{
-		float fade = 1f; // ó�� ���̵� ��
+		float fade = 1f;
 		BattleManager.Inst.PlayServentDeathSound();
 
 		while (fade > 0.1f)
@@ -113,27 +111,27 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		Destroy(gameObject);
 		yield break;
 	}
-	private void ChangeState(EServentState state)
-	{
-		switch (state)
-		{
-			case EServentState.Idle:
-				spriteRenderer.sprite = idle;
-				break;
-			case EServentState.Attack:
-				spriteRenderer.sprite = attack;
-				break;
-			case EServentState.Guard:
-				spriteRenderer.sprite = guard;
-				break;
-			case EServentState.Death:
-				spriteRenderer.sprite = death;
-				break;
-			case EServentState.Ready:
-				spriteRenderer.sprite = ready;
-				break;
-		}
-	}
+	// private void ChangeState(EServentState state)
+	// {
+	// 	switch (state)
+	// 	{
+	// 		case EServentState.Idle:
+	// 			spriteRenderer.sprite = idle;
+	// 			break;
+	// 		case EServentState.Attack:
+	// 			spriteRenderer.sprite = attack;
+	// 			break;
+	// 		case EServentState.Guard:
+	// 			spriteRenderer.sprite = guard;
+	// 			break;
+	// 		case EServentState.Death:
+	// 			spriteRenderer.sprite = death;
+	// 			break;
+	// 		case EServentState.Ready:
+	// 			spriteRenderer.sprite = ready;
+	// 			break;
+	// 	}
+	// }
 
 
 	void OnDestroy()
@@ -192,7 +190,6 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		}
 	}
 
-	// 외부에서 상태 바꾸고 싶을 때 이걸 호출하세요.
 	public void ChangeState(EServentState state, bool instant = false, float duration = 0.1f)
 	{
 		if (instant)
@@ -214,20 +211,14 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 
 		try
 		{
-			// 알파 1 -> 0
 			fadeTween = spriteRenderer.DOFade(0f, halfDuration).SetEase(Ease.OutQuad);
 			yield return fadeTween.WaitForCompletion();
-
-			// 스프라이트 교체
 			spriteRenderer.sprite = SpriteForState(nextState);
-
-			// 알파 0 -> 1
 			fadeTween = spriteRenderer.DOFade(1f, halfDuration).SetEase(Ease.InQuad);
 			yield return fadeTween.WaitForCompletion();
 		}
 		finally
 		{
-			// 트윈이 중간에 Kill 되거나 예외가 나도 상태 잠금 해제
 			isTransitioning = false;
 		}
 	}
@@ -254,7 +245,6 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 			StartCoroutine(BattleManager.Inst.BattlePhase());
 		else
 			ChangeState(EServentState.Idle, false, 0.1f);
-		
 
 		BattleManager.Inst.ClearLine();
 	}

@@ -32,9 +32,16 @@ public class BattleWindow : MonoBehaviour
 	}
 	public void SetActor(GameObject actor)
 	{
-		actor.transform.SetParent(transform);
-		actor.transform.localScale = new Vector3(0.55f, 0.55f, 1f);
-		actor.transform.localPosition = actorPosition.localPosition;
+		    // 부모 스케일/좌표계 **상속** (월드 보존 X)
+		actor.transform.SetParent(actorPosition, false);
+
+		// 부모의 기준점에 정확히 붙이기
+		actor.transform.localPosition = Vector3.zero;
+		actor.transform.localRotation = Quaternion.identity;
+
+		// 원하는 기본 스케일(부모 스케일을 상속하길 원하면 Vector3.one 권장)
+		actor.transform.localScale = new Vector3(0.4f, 0.4f, 1);
+
 		currentActor = actor;
 	}
 

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CrescentLancer : ServentCardData
@@ -8,7 +7,7 @@ public class CrescentLancer : ServentCardData
     {
         cardNum = "101";
         cardName = "크레센트 랜서";
-        cardCost = 1;
+        cardCost = 0;
         cardType = ECardType.Servent;
         serventType = EServentType.Player;
         force = 3;

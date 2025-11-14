@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
-  m_sharedMaterial: {fileID: -4522723343932014805, guid: 8aaab2171a2faeb44a2e7936dab51d06, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4af11458df1ea6544a17f14a2f6b0367, type: 2}
+  m_sharedMaterial: {fileID: 2300274847626471789, guid: 4af11458df1ea6544a17f14a2f6b0367, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 15
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -549,6 +549,9 @@ MonoBehaviour:
   nameTMP: {fileID: 664345565945116137}
   descTMP: {fileID: 8221799803271859746}
   costTMP: {fileID: 367451032921137738}
+  cardData:
+    hasStatusEffect: 0
+    statusConditions: 
   cardHighlightBorder: {fileID: 0}
   cardImage: {fileID: 8794293437166776768}
   forceAttribute: {fileID: 5311901821716322660}
@@ -567,6 +570,8 @@ MonoBehaviour:
   darknessElement: {fileID: 5563156162451677595, guid: a004302d70210d44d94668f4e908dd6d, type: 3}
   lightElement: {fileID: 4869821591411520033, guid: 52c175ed1027ac748b8b804b30dd3243, type: 3}
   locked: 0
+  statusConditionWindow: {fileID: 0}
+  statusConditionPanel: {fileID: 0}
 --- !u!1 &9201726132868512375
 GameObject:
   m_ObjectHideFlags: 0

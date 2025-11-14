@@ -180,10 +180,10 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 	public void SetCard(CardData cardData, Sprite sprite)
 	{
 		this.cardData = cardData;
-		nameTMP.text = this.cardData.GetCardName();
-		cardType = cardData.GetCardType();
-		costTMP.text = this.cardData.GetCardCost().ToString();
-		descTMP.text = this.cardData.GetCardDesc();
+		this.nameTMP.text = this.cardData.GetCardName();
+		this.cardType = cardData.GetCardType();
+		this.costTMP.text = this.cardData.GetCardCost().ToString();
+		this.descTMP.text = this.cardData.GetCardDesc();
 
 		int fontSize = 0;
 		cardImage.sprite = sprite;
@@ -288,14 +288,14 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		Sequence seq = DOTween.Sequence();
 
 		seq.Append(transform.DOMove(alertPoint.position, 0.3f).SetEase(Ease.OutQuad))
-		.Append(transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.5f).SetEase(Ease.InOutQuad));
+		.Append(transform.DOScale(new Vector3(0.7f, 0.7f, 1), 0.3f).SetEase(Ease.InOutQuad));
 
-		seq.Append(transform.DOScale(Vector3.zero, 0.3f).SetEase(Ease.InBack));
+		seq.Append(transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.InBack));
 
 		seq.AppendCallback(() => BattleManager.Inst.ShotMissile(alertPoint, targetPoint));
 
 		// 3. 일정 시간 대기 후 오브젝트 삭제
-		seq.AppendInterval(0.5f); // 0.5초 기다리기
+		seq.AppendInterval(0.3f); // 0.5초 기다리기
 		seq.AppendCallback(() => Destroy(gameObject));
 
 		DOTween.Kill(seq);
@@ -307,11 +307,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		nameTMP.text = this.cardData.GetCardName();
 		cardType = cardData.GetCardType();
 		costTMP.text = this.cardData.GetCardCost().ToString();
-	}
-
-	public void ShowCardCondition()
-	{
-
 	}
 
 	public void MoveTransform(PRS prs, bool useDotween, float dotweenTime = 0)
