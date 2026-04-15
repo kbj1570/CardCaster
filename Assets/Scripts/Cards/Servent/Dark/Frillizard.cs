@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class Frillizard : ServentCardData
+public class Frillizard : ServantCardData
 {
     public Frillizard()
     {

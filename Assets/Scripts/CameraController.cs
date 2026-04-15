@@ -9,7 +9,6 @@ public class CameraController : MonoBehaviour
 	public GameObject player;
 	private float followSpeed = 0.7f;
 	public bool isFollowing = true;
-	private float lastDragTime;
 	private Coroutine zoomCoroutine;
 	private float originSize;
 	public static CameraController Inst{get; private set;}
@@ -19,21 +18,6 @@ public class CameraController : MonoBehaviour
 
 	void Start()
 	{originSize = camera.GetComponent<Camera>().orthographicSize;}
-
-	void Update()
-	{
-		// 마우스 드래그로 카메라 이동 감지
-		// if (Input.GetMouseButton(0) && !dragLocked)
-		// {
-		
-		// 	isFollowing = false;
-		// 	lastDragTime = Time.time;
-		// 	DragCamera();
-		// }
-		// else if (!isFollowing && Time.time - lastDragTime > returnToFollowDelay)
-		// {isFollowing = true;}
-	}
-
 	void LateUpdate()
 	{
 		if (isFollowing)

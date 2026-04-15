@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-public class GreenSlime : ServentCardData
+public class GreenSlime : ServantCardData
 {
     public GreenSlime()
     {
@@ -17,11 +17,11 @@ public class GreenSlime : ServentCardData
         serventAttribute = EServentAttribute.Wind;
     }
 
-	public override IEnumerator NotifySummonEffectExecute(BattleManager bm, Servent servent)
+	public override IEnumerator NotifySummonEffectExecute(BattleManager bm, Servant servent)
 	{
-        if(servent.GetAttribute() == EServentAttribute.Wind && servent != bm.activatingServent)
+        if(servent.GetAttribute() == EServentAttribute.Wind && servent != bm.activatingServant)
         {
-            bm.activatingServent.GainForce(1);
+            bm.activatingServant.GainForce(1);
         }
 		yield return null;
 	}

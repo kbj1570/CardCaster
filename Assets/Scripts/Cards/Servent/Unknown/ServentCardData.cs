@@ -1,6 +1,6 @@
 using System.Collections;
 
-public abstract class ServentCardData : CardData
+public abstract class ServantCardData : CardData
 {
 	protected EServentAttribute serventAttribute;
 	protected EServentSize serventSize;

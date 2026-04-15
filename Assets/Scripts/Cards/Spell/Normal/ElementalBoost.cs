@@ -24,15 +24,15 @@ public class ElementalBoost : SpellCardData
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
 		List<EServentAttribute> attributes = new();
-		List<Servent> playerServents = bm.GetServents(EServentType.Player);
+		List<Servant> playerServents = bm.GetServents(EServentType.Player);
 
-		foreach (Servent servent in playerServents)
+		foreach (Servant servent in playerServents)
 		{
 			if (!attributes.Contains(servent.GetAttribute()))
 			{ attributes.Add(servent.GetAttribute()); }
 		}
 
-		foreach (Servent servent in playerServents)
+		foreach (Servant servent in playerServents)
 		{
 			servent.GainForce(attributes.Count);
 		}

@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class NamelessTraveler : ServentCardData
+public class NamelessTraveler : ServantCardData
 {
     public NamelessTraveler()
     {

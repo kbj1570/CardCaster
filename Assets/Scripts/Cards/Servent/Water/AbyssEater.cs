@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class AbyssEater : ServentCardData
+public class AbyssEater : ServantCardData
 {
     public AbyssEater()
     {
@@ -18,11 +18,11 @@ public class AbyssEater : ServentCardData
         serventAttribute = EServentAttribute.Water;
 	}
 
-	public override IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servent servent)
+	public override IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servant servent)
 	{
-		if (servent.GetAttribute() == EServentAttribute.Water && servent != bm.activatingServent)
+		if (servent.GetAttribute() == EServentAttribute.Water && servent != bm.activatingServant)
 		{
-			bm.activatingServent.GainForce(2);
+			bm.activatingServant.GainForce(2);
 		}
 		yield return null;
 	}

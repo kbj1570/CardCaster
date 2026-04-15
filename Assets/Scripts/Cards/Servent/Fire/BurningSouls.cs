@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class BurningSouls : ServentCardData
+public class BurningSouls : ServantCardData
 {
 	public BurningSouls()
 	{

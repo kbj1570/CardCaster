@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public bool onMouse;
-    public ServentCardData cardData;
+    public ServantCardData cardData;
 
     public TMP_Text originForce;
     public TMP_Text serventName;
@@ -29,13 +29,13 @@ public class ServentInfoWindow : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         ScaleZero();
     }
-    public ServentCardData GetCardData()
+    public ServantCardData GetCardData()
     {
         return cardData;
 
 	}
 
-    public void UpdateCardData(Servent servent)
+    public void UpdateCardData(Servant servent)
     {
         cardData = servent.GetCardData();
 		originForce.text = cardData.GetForce().ToString();

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Georgius : ServentCardData
+public class Georgius : ServantCardData
 {
     public Georgius()
     {

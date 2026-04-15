@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class StorageWindow : Window
 {
-
 	private EMouseOnArea mouseOnArea;
 	public Transform itemLocationParent;
 	public Transform storageLocationParent;

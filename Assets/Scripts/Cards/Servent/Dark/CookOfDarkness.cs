@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class CookOfDarkness : ServentCardData
+public class CookOfDarkness : ServantCardData
 {
 	public CookOfDarkness()
 	{

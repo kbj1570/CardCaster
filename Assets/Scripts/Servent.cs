@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler , IPointerClickHandler
+public class Servant : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler , IPointerClickHandler
 {
-	private ServentCardData cardData;
+	private ServantCardData cardData;
 
 	private EServentType serventType;
 	private EServentState serventState;
@@ -171,7 +171,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 	public void SetAttribute(EServentAttribute value)
 	{ serventAttribute = value; }
 
-	public ServentCardData GetCardData()
+	public ServantCardData GetCardData()
 	{ return cardData; }
 
 	public EServentAttribute GetAttribute()
@@ -293,7 +293,7 @@ public class Servent : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
 		serventForceText.gameObject.SetActive(true);
 	}
 
-	public void SetCardData(ServentCardData cardData)
+	public void SetCardData(ServantCardData cardData)
 	{this.cardData = cardData;}
 
 

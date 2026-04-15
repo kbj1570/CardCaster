@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class CrescentLancer : ServentCardData
+public class CrescentLancer : ServantCardData
 {
     public CrescentLancer()
     {

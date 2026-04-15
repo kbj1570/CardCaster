@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class BrownSlime : ServentCardData
+public class BrownSlime : ServantCardData
 {
 	public BrownSlime()
 	{

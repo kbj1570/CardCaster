@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class BlackSlime : ServentCardData
+public class BlackSlime : ServantCardData
 {
     public BlackSlime()
     {
@@ -17,13 +17,13 @@ public class BlackSlime : ServentCardData
         cardTargetType = ECardTargetType.Targeting;
         serventAttribute = EServentAttribute.Dark;
     }
-	public override IEnumerator NotifySummonEffectExecute(BattleManager bm, Servent servent)
+	public override IEnumerator NotifySummonEffectExecute(BattleManager bm, Servant servent)
 	{
-		if (servent.GetAttribute() == EServentAttribute.Dark && servent != bm.activatingServent)
+		if (servent.GetAttribute() == EServentAttribute.Dark && servent != bm.activatingServant)
 		{
             int force = servent.GetForce();
 			servent.SetForce(0);
-            bm.activatingServent.GainForce(force);
+            bm.activatingServant.GainForce(force);
 		}
 		yield return null;
 	}

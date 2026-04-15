@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Executioner: ServentCardData
+public class Executioner: ServantCardData
 {
     public Executioner()
     {
@@ -23,7 +23,7 @@ public class Executioner: ServentCardData
 	{
 		bm.SelectServentOnField(EServentAttribute.Water);
         yield return new WaitUntil(() => bm.actionFlag);
-        Servent servent = bm.GetSelectedServent();
+        Servant servent = bm.GetSelectedServent();
         servent.SetForce(0);
 	}
 }

@@ -21,8 +21,8 @@ public class SilentFog : SpellCardData
 
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
-		List<Servent> allServents = bm.GetServents(EServentType.None);
-		foreach (Servent servent in allServents)
+		List<Servant> allServents = bm.GetServents(EServentType.None);
+		foreach (Servant servent in allServents)
 		{
 			servent.SetForce(0);
 		}

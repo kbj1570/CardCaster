@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-public class Griffin : ServentCardData
+public class Griffin : ServantCardData
 {
     public Griffin()
     {
@@ -23,11 +23,11 @@ public class Griffin : ServentCardData
 	{
 
 		List<EServentAttribute> attributes = new();
-		List<Servent> playerServents = bm.GetServents(EServentType.Player);
+		List<Servant> playerServents = bm.GetServents(EServentType.Player);
 
 		int count = 0;
 
-		foreach (Servent servent in playerServents)
+		foreach (Servant servent in playerServents)
 		{
 			if (servent.GetAttribute() == EServentAttribute.Wind)
 			{count++;}

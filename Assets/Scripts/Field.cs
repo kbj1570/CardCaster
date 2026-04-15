@@ -37,11 +37,11 @@ public class Field : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	int damageIncrease;
 
 	int additionalForce;
-	private Servent serventObject;
+	private Servant serventObject;
 
 	public EServentAttribute GetServentAttribute(){return serventAttribute;}
 
-	public Servent GetServent()
+	public Servant GetServent()
 	{ return serventObject;}
 
 	//public void UpdateHealth()
@@ -66,7 +66,7 @@ public class Field : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	//	}
 	//}
 
-	public void Summon(Servent serventObject, ServentCardData cardData)
+	public void Summon(Servant serventObject, ServantCardData cardData)
 	{
 		this.serventObject = serventObject;
 		filled = true;

@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class ForbiddenedSavior : ServentCardData
+public class ForbiddenedSavior : ServantCardData
 {
     public ForbiddenedSavior()
     {

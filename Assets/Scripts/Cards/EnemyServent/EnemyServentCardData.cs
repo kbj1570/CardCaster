@@ -1,5 +1,5 @@
 using System.Collections;
 
-public class EnemyServentCardData : ServentCardData
+public class EnemyServentCardData : ServantCardData
 {
 }

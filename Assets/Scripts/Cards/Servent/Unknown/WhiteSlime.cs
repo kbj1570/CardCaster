@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class WhiteSlime : ServentCardData
+public class WhiteSlime : ServantCardData
 {
     public WhiteSlime()
     {

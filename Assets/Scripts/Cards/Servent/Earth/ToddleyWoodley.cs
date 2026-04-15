@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class ToddleyWoodley : ServentCardData
+public class ToddleyWoodley : ServantCardData
 {
     public ToddleyWoodley()
     {

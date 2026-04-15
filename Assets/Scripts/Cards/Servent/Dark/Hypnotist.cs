@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Hypnotist : ServentCardData
+public class Hypnotist : ServantCardData
 {
     public Hypnotist()
     {

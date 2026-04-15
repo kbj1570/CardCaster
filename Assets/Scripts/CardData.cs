@@ -41,8 +41,8 @@ public class CardData : ICardEffect
 	public virtual IEnumerator StandByPhaseEffectExecute(BattleManager bm) { yield break; }
 	public virtual IEnumerator EndPhaseEffectExecute(BattleManager bm) { yield break; }
 	public virtual bool IsCardUsable(BattleManager bm) { return true; }
-	public virtual IEnumerator NotifySummonEffectExecute(BattleManager bm, Servent servent) { yield break; }
-	public virtual IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servent servent) { yield break; }
+	public virtual IEnumerator NotifySummonEffectExecute(BattleManager bm, Servant servent) { yield break; }
+	public virtual IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servant servent) { yield break; }
 }
 public interface ICardEffect
 {
@@ -54,6 +54,6 @@ public interface ICardEffect
 	IEnumerator StandByPhaseEffectExecute(BattleManager bm);
 	IEnumerator EndPhaseEffectExecute(BattleManager bm);
 	IEnumerator ActivationEffectExecute(BattleManager bm);
-	IEnumerator NotifySummonEffectExecute(BattleManager bm, Servent servent);
-	IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servent servent);
+	IEnumerator NotifySummonEffectExecute(BattleManager bm, Servant servent);
+	IEnumerator NotifyDeathEffectExecute(BattleManager bm, Servant servent);
 }

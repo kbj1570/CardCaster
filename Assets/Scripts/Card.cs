@@ -65,26 +65,6 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 		this.transform.localScale = Vector3.zero; // 처음 크기를 0으로 설정
 		StartCoroutine(AppearAfterDelay(0.3f)); // 0.3초 후 애니메이션 실행
 	}
-
-	public IEnumerator PlayRevealAnimation()
-	{
-		//// 1) shard 흔들림
-		//shardImage.transform.DOShakeRotation(0.5f, strength: new Vector3(0, 0, 20), vibrato: 10);
-		//yield return new WaitForSeconds(0.5f);
-
-		//// 2) shard 껍질 벗겨짐 (흰색 페이드아웃)
-		//shardImage.DOFade(0, 1.0f);
-		//yield return new WaitForSeconds(1.0f);
-
-		//// 3) 카드 드러남 (페이드 인 + 확대 후 원래 크기)
-		//cardImage.DOFade(1, 0.3f);
-		//cardImage.transform.DOScale(1.2f, 0.2f).OnComplete(() =>
-		//{
-		//	cardImage.transform.DOScale(1.0f, 0.2f);
-		//});
-
-		yield return new WaitForSeconds(0.5f);
-	}
 	public void Init(Action<Card, PointerEventData> clickAction,
 					Action<Card, PointerEventData> beginDragAction,
 					Action<Card, PointerEventData> onDragAction,
@@ -208,7 +188,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
 		if (cardData.GetCardType() == ECardType.Servent)
 		{
-			ServentCardData serventCardData = this.cardData as ServentCardData;
+			ServantCardData serventCardData = this.cardData as ServantCardData;
 
 			Image image = null;
 			switch (serventCardData.GetAttribute())

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class BlueSlime : ServentCardData
+public class BlueSlime : ServantCardData
 {
     public BlueSlime()
     {
@@ -21,7 +21,7 @@ public class BlueSlime : ServentCardData
 	public override IEnumerator ActivationEffectExecute(BattleManager bm)
 	{
         bm.DrawCard();
-        Servent servent = bm.clickedServent;
+        Servant servent = bm.clickedServent;
         servent.SetForce(0);
 		yield return new WaitForSeconds(0.2f);
 	}

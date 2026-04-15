@@ -116,7 +116,7 @@ public class DummyCard : MonoBehaviour, IPointerClickHandler
 
 		if (cardData.GetCardType() == ECardType.Servent)
 		{
-			ServentCardData serventCardData = this.cardData as ServentCardData;
+			ServantCardData serventCardData = this.cardData as ServantCardData;
 
 			forceTMP.text = serventCardData.GetForce().ToString();
 			Image image = null;

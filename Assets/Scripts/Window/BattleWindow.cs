@@ -17,16 +17,6 @@ public class BattleWindow : MonoBehaviour
 	public void SetBackGround(int dungeonNum)
 	{
 		this.dungeonNum = dungeonNum;
-		//if (reversed)
-		//{
-		//	backGroundSpriteRenderer.sprite = rightBackGroundSprite[dungeonNum];
-		//	actorPosition.localPosition = new Vector3(3.5f, actorPosition.localPosition.y, actorPosition.localPosition.z);
-		//}
-		//else
-		//{
-		//	backGroundSpriteRenderer.sprite = leftBackGroundSprite[dungeonNum];
-		//	actorPosition.localPosition = new Vector3(-3.5f, actorPosition.localPosition.y, actorPosition.localPosition.z);
-		//}
 
 		floorSpriteRenderer.sprite = floorSprite[dungeonNum];
 	}

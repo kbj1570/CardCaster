@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class GiantLarva : ServentCardData
+public class GiantLarva : ServantCardData
 {
     public GiantLarva()
     {

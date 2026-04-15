@@ -16,8 +16,8 @@ public class HolyPowerBoost : SpellCardData
     }
     public override IEnumerator ActivationEffectExecute(BattleManager bm)
     {
-        List<Servent> servents = bm.GetServents(EServentType.None);
-        foreach (Servent servent in servents)
+        List<Servant> servents = bm.GetServents(EServentType.None);
+        foreach (Servant servent in servents)
         {
             servent.SetForce(0);
 		}

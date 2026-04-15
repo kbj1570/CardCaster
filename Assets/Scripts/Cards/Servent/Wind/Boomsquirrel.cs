@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Boomsquirrel : ServentCardData
+public class Boomsquirrel : ServantCardData
 {
     public Boomsquirrel()
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEditor.UIElements;
 using UnityEngine;
 
-public class StrayCat : ServentCardData
+public class StrayCat : ServantCardData
 {
     public StrayCat()
     {
@@ -21,7 +21,7 @@ public class StrayCat : ServentCardData
 
 	public override IEnumerator SummonEffectExecute(BattleManager bm)
 	{
-        Servent servent = bm.activatingServent;
+        Servant servent = bm.activatingServant;
 		servent.GainForce(PlayerData.saveData.gold / 100);
 		yield return new WaitForSeconds(0.2f);
 	}

@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TheSacredBeast : ServentCardData
+public class TheSacredBeast : ServantCardData
 {
 	public TheSacredBeast()
 	{
 		cardNum = "121";
-		cardName = "½£ÀÇ ½Å¼ö ¹é·Ï";
+		cardName = "ï¿½ï¿½ï¿½ï¿½ ï¿½Å¼ï¿½ ï¿½ï¿½ï¿½";
 		cardCost = 1;
 		cardType = ECardType.Servent;
 		serventType = EServentType.Player;
 		force = 3;
 		cardStoryDesc = "";
-		cardDesc = "¼ÒÈ¯ ½Ã ÀÚ½ÅÀÇ Hp°¡ 5 ÀÌÇÏ¶ó¸é »ó´ë ¼ÒÈ¯¼ö¸¦ ¹«ÀÛÀ§·Î ¼Ò¸ê½ÃÅ²´Ù.";
+		cardDesc = "ï¿½ï¿½È¯ ï¿½ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ Hpï¿½ï¿½ 5 ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½ï¿½Å²ï¿½ï¿½.";
 		serventSize = EServentSize.Small;
 		cardTargetType = ECardTargetType.Targeting;
 		serventAttribute = EServentAttribute.Light;

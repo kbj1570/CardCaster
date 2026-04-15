@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class FireBat : ServentCardData
+public class FireBat : ServantCardData
 {
 	public FireBat()
 	{

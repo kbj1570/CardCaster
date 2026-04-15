@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class KnightOfTheRedFlame : ServentCardData
+public class KnightOfTheRedFlame : ServantCardData
 {
     public KnightOfTheRedFlame()
     {

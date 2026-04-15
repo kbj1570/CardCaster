@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class KnightOfTheAzure : ServentCardData
+public class KnightOfTheAzure : ServantCardData
 {
     public KnightOfTheAzure()
     {

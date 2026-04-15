@@ -1,6 +1,6 @@
 using System.Collections;
 
-public class RedSlime : ServentCardData
+public class RedSlime : ServantCardData
 {
     public RedSlime()
     {
