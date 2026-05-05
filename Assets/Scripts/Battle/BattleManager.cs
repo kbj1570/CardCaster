@@ -111,7 +111,7 @@ public class BattleManager : MonoBehaviour , ILockable
 
 	private BattleState battleState = BattleState.Idle;
 
-	public List<Servant> summonedServents;
+	public List<Servant> summonedServants;
 	public List<CardData> selectedCards;
 	public List<Servant> activatingServ;
 
@@ -143,7 +143,7 @@ public class BattleManager : MonoBehaviour , ILockable
 
 	private IEnumerator ShowBattleWindow(int attackerDamage, int defenderDamage)
 	{
-		foreach (Servant servent in summonedServents)
+		foreach (Servant servent in summonedServants)
 		{servent.HideForce();}
 
 		foreach (GameObject card in cardObjectList)
@@ -185,7 +185,7 @@ public class BattleManager : MonoBehaviour , ILockable
 
 		yield return new WaitForSeconds(0.2f);
 
-		foreach (Servant servent in summonedServents)
+		foreach (Servant servent in summonedServants)
 		{ servent.ShowForce(); }
 
 		battleWindowLeftSide.GetComponent<BattleWindow>().ClearActor();
@@ -244,7 +244,7 @@ public class BattleManager : MonoBehaviour , ILockable
 		reward = new();
 		handList = new();
 		selectedCards = new();
-		summonedServents = new();
+		summonedServants = new();
 		mouseOnArea = EMouseOnArea.None;
 
 		StartCoroutine(FadeIn());
@@ -257,9 +257,20 @@ public class BattleManager : MonoBehaviour , ILockable
 		yield return new WaitForSeconds(1f);
 		while (true)
 		{
-			yield return StartCoroutine(PlayerTurn());
-			yield return StartCoroutine(EnemyTurn());
+			yield return PlayerTurn();
+			yield return EnemyTurn();
 		}
+	}
+
+	void ResetTurnState()
+	{
+		foreach (Servant servant in summonedServants)
+			servant.ResetAttackCount();
+
+		enemyDamageBlock = false;
+
+		foreach (GameObject card in cardObjectList)
+			card.GetComponent<Card>().HideAndReveal(false);
 	}
 
 	void GameSetup()
@@ -719,20 +730,12 @@ public class BattleManager : MonoBehaviour , ILockable
 	{
 		phaseFlag = false;
 
-		foreach (Servant servent in summonedServents)
-		{
-			servent.ResetAttackCount();
-		}
-		enemyDamageBlock = false;
-
-		foreach (GameObject card in cardObjectList)
-		{ card.GetComponent<Card>().HideAndReveal(false); }
-
+		ResetTurnState();
 		yield return new WaitForSeconds(0.4f);
-		yield return StartCoroutine(DrawPhase());
-		yield return StartCoroutine(StandByPhase());
-		yield return StartCoroutine(MainPhase());
-		yield return StartCoroutine(EndPhase());
+		yield return DrawPhase();
+		yield return StandByPhase();
+		yield return MainPhase();
+		yield return EndPhase();
 	}
 
 	IEnumerator EnemyTurn()
@@ -897,6 +900,8 @@ EEnemyAction SelectEnemyAction_V2()
     var enemyFields = new[] { field_4, field_5, field_6 };
     var playerFields = new[] { field_1, field_2, field_3 };
 
+
+
     List<Field> emptyEnemy = new();
     List<Servant> attackable = new();
     List<Servant> activatable = new();
@@ -966,7 +971,7 @@ IEnumerator TryEnemySummon()
 
     field.Summon(obj.GetComponent<Servant>(), pick);
     obj.GetComponent<Servant>().InitWithEffect();
-    summonedServents.Add(obj.GetComponent<Servant>());
+    summonedServants.Add(obj.GetComponent<Servant>());
 
     soundEffect.PlayOneShot(serventSummon);
     field.locked = false;
@@ -1010,7 +1015,7 @@ IEnumerator TryEnemyAttack()
             case EMouseOnArea.Field_3: defender = field_3.GetServent(); break;
         }
         if (defender != null)
-            yield return EnemyAttackServent(attacker, defender);
+            yield return EnemyAttackServant(attacker, defender);
     }
 
     // 공격 후 조건 체크
@@ -1378,22 +1383,12 @@ IEnumerator TryUseEnemyAbility()
 		return EEnemyAction.EnemyAbility;
 	}
 
-	IEnumerator EnemyAttackServent(Servant attacker, Servant defender)
+	IEnumerator EnemyAttackServant(Servant attacker, Servant defender)
 	{
 		StartCoroutine(DrawAttackLine(attacker.transform.position, defender.transform.position, circleSpeed));
 		yield return StartCoroutine(StartParrySequence(circleSpeed, 0.80f, parryWindowTime));
 
-		int attackerForce = attacker.GetForce();
-		int defenderForce = defender.GetForce();
-
-		int attackerDamage = Math.Abs(defenderForce);
-		int defenderDamage = Math.Abs(attackerForce);
-
-		if (parryState == EParryState.Succecced)
-		{ defenderDamage -= 1; }
-
-		if (attackerForce < 0)
-		{ defenderDamage = 0; }
+		var damage = CalculateDamage(attacker, defender);
 
 		GameObject leftActor = Instantiate(
 				playerServentPrefabList[cardHashMap[defender.GetCardData().GetCardNum()]], new Vector3(), Utils.QI);
@@ -1408,13 +1403,12 @@ IEnumerator TryUseEnemyAbility()
 		battleWindowRightSide.GetComponent<BattleWindow>().SetActor(rightActor);
 		rightActor.GetComponent<Servant>().OnBattleWindow();
 
-		ServentTakeAttack(defenderDamage, attackerDamage, parryState == EParryState.Succecced);
 
-		yield return new WaitForSeconds(2f);
 
-		attacker.TakeDamage(attackerDamage);
-		defender.TakeDamage(defenderDamage);
+		ApplyDamage(attacker, defender, damage);
 		attackDragLine.positionCount = 0;
+		
+		yield return new WaitForSeconds(2f);
 
 
 		Color originColor = bigCircle.color;
@@ -1436,6 +1430,29 @@ IEnumerator TryUseEnemyAbility()
 		attacker.AddAttackCount();
 		yield return null;
 	}
+	void ApplyDamage(Servant attacker, Servant defender, DamageResult damage)
+	{
+		attacker.TakeDamage(damage.attackerDamage);
+		defender.TakeDamage(damage.defenderDamage);
+	}
+
+	DamageResult CalculateDamage(Servant attacker, Servant defender)
+	{
+		int attackerForce = attacker.GetForce();
+		int defenderForce = defender.GetForce();
+
+		int attackerDamage = Math.Abs(defenderForce);
+		int defenderDamage = Math.Abs(attackerForce);
+
+		if (parryState == EParryState.Succecced)
+			defenderDamage -= 1;
+
+		if (attackerForce < 0)
+			defenderDamage = 0;
+
+		return new DamageResult(attackerDamage, defenderDamage);
+	}
+		
 
 	IEnumerator EnemyAttackPlayer(Servant attacker, GameObject defender)
 	{
@@ -1765,7 +1782,7 @@ IEnumerator TryUseEnemyAbility()
 						serventObject.GetComponent<Servant>(), serventCardData);
 
 					serventObject.GetComponent<Servant>().InitWithEffect();
-					summonedServents.Add(serventObject.GetComponent<Servant>());
+					summonedServants.Add(serventObject.GetComponent<Servant>());
 					soundEffect.PlayOneShot(serventSummon);
 
 
@@ -1860,7 +1877,7 @@ IEnumerator TryUseEnemyAbility()
 
 	public void ActivateCardEffect(Servant servent)
 	{
-		foreach (Servant summonedServent in summonedServents)
+		foreach (Servant summonedServent in summonedServants)
 		{ summonedServent.SetLock(true); }	
 
 		Destroy(clickedServentInfo);
@@ -1875,7 +1892,7 @@ IEnumerator TryUseEnemyAbility()
 		activatingServant = null;
 		clickedServent = null;
 		yield return StartCoroutine(CheckServentsCondition());
-		foreach (Servant summonedServent in summonedServents)
+		foreach (Servant summonedServent in summonedServants)
 		{ summonedServent.SetLock(false); }
 	}
 
@@ -2148,10 +2165,10 @@ IEnumerator TryUseEnemyAbility()
 
 	public IEnumerator CheckServentsCondition()
 	{
-		summonedServents.RemoveAll(x => x == null);
+		summonedServants.RemoveAll(x => x == null);
 
 		List<Servant> deadServents = new List<Servant>();
-		foreach (Servant servent in summonedServents)
+		foreach (Servant servent in summonedServants)
 		{
 			if (servent.GetForce() <= 0)
 				deadServents.Add(servent);
@@ -2164,7 +2181,7 @@ IEnumerator TryUseEnemyAbility()
 			yield return StartCoroutine(dead.DieCoroutine());
 		}
 
-		summonedServents.RemoveAll(x => x == null);
+		summonedServants.RemoveAll(x => x == null);
 	}
 
 	public IEnumerator DrawAttackLine(Vector2 startPoint, Vector2 targetPoint, float duration)
@@ -2472,11 +2489,11 @@ IEnumerator TryUseEnemyAbility()
 	public List<Servant> GetServents(EServentType serventType)
 	{
 		if (serventType == EServentType.None)
-			return summonedServents;
+			return summonedServants;
 
 		List<Servant> serventList = new List<Servant>();
 		
-		foreach(Servant servent in summonedServents)
+		foreach(Servant servent in summonedServants)
 		{
 			if(servent.GetServentType() == serventType)
 			{serventList.Add(servent); }
@@ -2488,7 +2505,7 @@ IEnumerator TryUseEnemyAbility()
 	public IEnumerator BackToHands()
 	{
 		StartCoroutine(InstantiateCardFromServent(clickedServent.GetCardData()));
-		summonedServents.Remove(clickedServent);
+		summonedServants.Remove(clickedServent);
 		Destroy(clickedServent.gameObject);
 		clickedServent = null;
 		yield return new WaitForSeconds(1f);
@@ -2497,7 +2514,7 @@ IEnumerator TryUseEnemyAbility()
 
 	IEnumerator NotifyServentSummon(Servant servent)
 	{
-		foreach(Servant summonedServent in summonedServents)
+		foreach(Servant summonedServent in summonedServants)
 		{
 			activatingServant = summonedServent;
 			yield return StartCoroutine(summonedServent.GetCardData().NotifySummonEffectExecute(this, servent));
@@ -2508,7 +2525,7 @@ IEnumerator TryUseEnemyAbility()
 
 	IEnumerator NotifyServentDeath(Servant servent)
 	{
-		foreach (Servant summonedServent in summonedServents)
+		foreach (Servant summonedServent in summonedServants)
 		{
 			activatingServant = summonedServent;
 			yield return StartCoroutine(summonedServent.GetCardData().NotifyDeathEffectExecute(this, servent));
@@ -2519,4 +2536,16 @@ IEnumerator TryUseEnemyAbility()
 
 
 
+}
+
+public struct DamageResult
+{
+    public int attackerDamage;
+    public int defenderDamage;
+
+    public DamageResult(int attackerDamage, int defenderDamage)
+    {
+        this.attackerDamage = attackerDamage;
+        this.defenderDamage = defenderDamage;
+    }
 }
