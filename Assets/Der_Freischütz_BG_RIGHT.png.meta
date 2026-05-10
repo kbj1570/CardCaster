@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "Der_Freisch\xFCtz_BG_RIGHT_0": 6134812779180991299
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

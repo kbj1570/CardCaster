@@ -1,10 +1,18 @@
-public class ItemData
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "New Item", menuName = "Game/Item Data")]
+public class ItemData : ScriptableObject
 {
-    protected string itemName;//아이템의 이름
-    protected string itemNum;//아이템의 고유번호
-    protected string itemDescription; //아이템의 효과 설명
-    protected string itemInfo; // 아이템의 도감설명
-    protected EItemCategory itemCategory;//아이템 분류
+    [SerializeField]
+    private string itemName;//아이템의 이름
+    [SerializeField]
+    private string itemNum;//아이템의 고유번호
+    [SerializeField]
+    private string itemDescription; //아이템의 효과 설명
+    [SerializeField]
+    private string itemInfo; // 아이템의 도감설명
+    [SerializeField]
+    private EItemCategory itemCategory;//아이템 분류
     
     public string GetName()
     {return itemName;}

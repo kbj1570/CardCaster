@@ -1,12 +1,12 @@
 public class ShardOfStarlight : ItemData
 {
-	public ShardOfStarlight()
-	{
-		itemNum = "0";
-		itemName = "º°ÀÇ Á¶°¢";
-		itemInfo = "";
-		itemDescription = "";
+	// public ShardOfStarlight()
+	// {
+	// 	itemNum = "0";
+	// 	itemName = "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½";
+	// 	itemInfo = "";
+	// 	itemDescription = "";
 
-		itemCategory = EItemCategory.EImportantItem;
-	}
+	// 	itemCategory = EItemCategory.EImportantItem;
+	// }
 }

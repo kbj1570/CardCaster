@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47343b4cc06ebd6468f22ea4bafcb56c, type: 3}
+  m_Name: BrokenCompass
+  m_EditorClassIdentifier: 
+  itemName: "\uACE0\uC7A5\uB09C \uB098\uCE68\uBC18"
+  itemNum: 
+  itemDescription: "\uD574\uB2F9 \uCE35\uC758 \uBB34\uC791\uC704\uC758 \uC7A5\uC18C\uB85C
+    \uC774\uB3D9\uD55C\uB2E4."
+  itemInfo: "\uACE0\uC7A5\uB0AC\uC9C0\uB9CC \uC774\uC0C1\uD558\uAC8C \uD558\uB8E8\uC5D0
+    \uB450 \uBC88 \uC815\uB3C4\uB294 \uC62C\uBC14\uB978 \uBC29\uD5A5\uC744 \uAC00\uB974\uD0A4\uB294
+    \uB098\uCE68\uBC18. \uBC29\uD5A5\uC744 \uB530\uB77C \uC815\uC2E0\uC5C6\uC774
+    \uB530\uB77C\uAC00\uBCF4\uBA74 \uBCF4\uBB3C\uC774 \uC788\uB294 \uC7A5\uC18C\uC5D0
+    \uB3C4\uCC29\uD55C\uB2E4\uB294 \uC18C\uBB38\uC774 \uC788."
+  itemCategory: 0
