@@ -144,13 +144,13 @@ public class BattleManager : MonoBehaviour , ILockable
 	private IEnumerator ShowBattleWindow(int attackerDamage, int defenderDamage)
 	{
 		foreach (Servant servent in summonedServants)
-		{servent.HideForce();}
+		{servent.HideForce();} // 공격/방어력 수치 숨김
 
 		foreach (GameObject card in cardObjectList)
-		{card.GetComponent<Card>().SetLock(true);}
+		{card.GetComponent<Card>().SetLock(true);} // 카드 클릭 잠금
 
 		battleWindowLeftSide.transform.DOMove(battleWindowLeftSideSecondPosition.position,
-		0.2f).SetEase(Ease.Linear);
+		0.2f).SetEase(Ease.Linear);	
 		battleWindowRightSide.transform.DOMove(battleWindowRightSideSecondPosition.position,
 		0.2f).SetEase(Ease.Linear);
 
@@ -160,7 +160,7 @@ public class BattleManager : MonoBehaviour , ILockable
 			defenderDamageText.transform.SetParent(battleWindowRightSide.transform, false);
 			defenderDamageText.GetComponent<FloatingDamageText>().SetDamageText(defenderDamage);
 			defenderDamageText.GetComponent<FloatingDamageText>().SetFont(30);
-		}
+		}// 방어자 대미지 표시
 
 		if (attackerDamage != 0)
 		{
@@ -168,7 +168,7 @@ public class BattleManager : MonoBehaviour , ILockable
 			attackerDamageText.transform.SetParent(battleWindowLeftSide.transform, false);
 			attackerDamageText.GetComponent<FloatingDamageText>().SetDamageText(attackerDamage);
 			attackerDamageText.GetComponent<FloatingDamageText>().SetFont(30);
-		}
+		}// 공격자 대미지 표시
 
 		yield return new WaitForSeconds(0.2f);
 
@@ -1998,6 +1998,26 @@ IEnumerator TryUseEnemyAbility()
 		return results;
 	}
 
+	private FloatingDamageText CreateDamageText(
+		int damage, Transform parent, Color? color = null, int fontSize = 30)
+	{
+		GameObject damageTextObj;
+		if(parent == null)
+		{ damageTextObj = Instantiate(floatingTextPrefab); }
+		else
+		{ damageTextObj = Instantiate(floatingTextPrefab, parent); }
+
+		FloatingDamageText text = damageTextObj.GetComponent<FloatingDamageText>();
+		
+		text.SetDamageText(damage);
+		text.SetFont(fontSize);
+
+		if (color.HasValue)
+		{ text.SetColor(color.Value); }
+		
+		return text;
+	}
+
 
 
 	public void DeleteDragLine()
@@ -2008,19 +2028,14 @@ IEnumerator TryUseEnemyAbility()
 
 	public void DealDamageToEnemy(int damage)
 	{
-		GameObject damageText = Instantiate(floatingTextPrefab);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-		damageText.GetComponent<FloatingDamageText>().SetFont(30);
-
+		FloatingDamageText damageText = CreateDamageText(damage, null, null, 30);
 		enemyHealth -= damage;
 	}
 
 
 	public void PlayerTakeDamage(int damage)
 	{
-		GameObject damageText = Instantiate(floatingTextPrefab);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-		damageText.GetComponent<FloatingDamageText>().SetFont(30);
+		FloatingDamageText damageText = CreateDamageText(damage, null, null, 30);
 
 		playerHealth -= damage;
 	}
@@ -2031,12 +2046,10 @@ IEnumerator TryUseEnemyAbility()
 	{
 		StartCoroutine(ShowBattleWindow(damage, 0));  
 
-		GameObject damageText = Instantiate(floatingTextPrefab, battleWindowLeftSideFloatTextLocation);
-		damageText.GetComponent<FloatingDamageText>().SetDamageText(damage);
-		damageText.GetComponent<FloatingDamageText>().SetFont(30);
+		FloatingDamageText damageText = CreateDamageText(damage, battleWindowLeftSideFloatTextLocation, null, 30);
 
 		if(guarded)
-		damageText.GetComponent<FloatingDamageText>().SetColor(Color.blue);
+			damageText.SetColor(Color.blue);
 
 		playerHealth -= damage;
 
