@@ -17,7 +17,7 @@ public class TitleManager : MonoBehaviour
 		StartCoroutine(FadeOut());
 		yield return new WaitForSeconds(1f);
 		SceneManager.LoadScene("Campsite");
-	}
+	}                                                                                                                           
 
 	private IEnumerator FadeOut()
 	{

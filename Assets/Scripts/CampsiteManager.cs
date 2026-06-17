@@ -67,7 +67,7 @@ public class CampsiteManager : MonoBehaviour, ILockable
 
 	void Start()
 	{
-		// PlayerData.saveData = DataController.Inst.LoadData();
+		PlayerData.saveData = DataController.Inst.LoadData();
 		DeckManager.Inst.LoadDeck();
 		Inst = this;
 		StartCoroutine(FadeIn());
